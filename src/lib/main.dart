@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/onboarding/onboarding.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding.dart";
+import "package:openeatsjournal/ui/screens/home.dart";
 
 void main() {
   runApp(const OpenEatsJournalApp());
@@ -12,7 +13,7 @@ class OpenEatsJournalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home:   UiRoot(),
+      home: UiRoot(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale("de"),
@@ -30,13 +31,16 @@ class UiRoot extends StatefulWidget {
 }
 
 class _UiRootState extends State<UiRoot> {
+  String? data;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.welcome_to_openeatsjournal),
-      ),
-      body:const OnboardingPageView(),
-    );
+    if (data == null) {
+      return OnboardingScreen();
+    }
+    else
+    {
+      return HomeScreen();
+    }
   }
 }
