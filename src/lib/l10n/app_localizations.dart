@@ -98,11 +98,269 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
-  /// No description provided for @welcome_to_openeatsjournal.
+  /// No description provided for @daily_overview.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Open Eats Journal!'**
-  String get welcome_to_openeatsjournal;
+  /// **'Daily Overview'**
+  String get daily_overview;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome! '**
+  String get welcome;
+
+  /// No description provided for @welcome_message_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Welccome to Open Eats Journal, a free and Open Source Eats Journal to track your food intake and nutritions.'**
+  String get welcome_message_1;
+
+  /// No description provided for @welcome_message_2.
+  ///
+  /// In en, this message translates to:
+  /// **'The app needs to know some data from you to calculate nutrition target value proposals, this data is only stored on your device.'**
+  String get welcome_message_2;
+
+  /// No description provided for @welcome_message_3.
+  ///
+  /// In en, this message translates to:
+  /// **'Please notice, that this is no medical advice and that the app was not made by a medic or nutrition expert.'**
+  String get welcome_message_3;
+
+  /// No description provided for @welcome_message_4.
+  ///
+  /// In en, this message translates to:
+  /// **'The local standard groceries database was made by best effort and for barcode food Open Food Facts is used.'**
+  String get welcome_message_4;
+
+  /// No description provided for @welcome_message_5.
+  ///
+  /// In en, this message translates to:
+  /// **'In any doubt consult a doctor.'**
+  String get welcome_message_5;
+
+  /// No description provided for @welcome_message_6.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay healthy!'**
+  String get welcome_message_6;
+
+  /// No description provided for @welcome_message_7.
+  ///
+  /// In en, this message translates to:
+  /// **'The app comes with no warranties and is licensed under AGPLv3. Please visit https://github.com/Drexel2k/OpenEatsJournal to give feedback, report issues or contribute.'**
+  String get welcome_message_7;
+
+  /// No description provided for @agree_proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree & Proceed'**
+  String get agree_proceed;
+
+  /// No description provided for @proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get proceed;
+
+  /// No description provided for @finish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get finish;
+
+  /// No description provided for @license_agree.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the license and to the data privacy policy.'**
+  String get license_agree;
+
+  /// No description provided for @license_must_agree.
+  ///
+  /// In en, this message translates to:
+  /// **'You must agree to the license and privacy policy.'**
+  String get license_must_agree;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @understood.
+  ///
+  /// In en, this message translates to:
+  /// **'I understood.'**
+  String get understood;
+
+  /// No description provided for @must_understood.
+  ///
+  /// In en, this message translates to:
+  /// **'You must confirm to understand the hints.'**
+  String get must_understood;
+
+  /// No description provided for @your_gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gender:'**
+  String get your_gender;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'female'**
+  String get female;
+
+  /// No description provided for @your_birthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Your birth day:'**
+  String get your_birthday;
+
+  /// No description provided for @your_height.
+  ///
+  /// In en, this message translates to:
+  /// **'Your height (cm):'**
+  String get your_height;
+
+  /// No description provided for @your_weight.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weight (kg):'**
+  String get your_weight;
+
+  /// No description provided for @your_acitivty_level.
+  ///
+  /// In en, this message translates to:
+  /// **'Your activity level:'**
+  String get your_acitivty_level;
+
+  /// No description provided for @acitivity_level_explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Very low: \nSitting, no activity\n\nLow: \nSitting, light sports (1-2 times / week)\n\nMedium: \nPredominantly sitting, some walking, moderate sports (2-3 times / week)\n\nHigh: \nPredominantly standing/walking, demanding sports (3-5 times / week)\n\nVery high: \nPhysical demanding, demanding sports (6-7 times / week)'**
+  String get acitivity_level_explanation;
+
+  /// No description provided for @very_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Very low'**
+  String get very_low;
+
+  /// No description provided for @low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get low;
+
+  /// No description provided for @medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// No description provided for @high.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get high;
+
+  /// No description provided for @very_high.
+  ///
+  /// In en, this message translates to:
+  /// **'Very High'**
+  String get very_high;
+
+  /// No description provided for @professional_athlete.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Athlete'**
+  String get professional_athlete;
+
+  /// No description provided for @select_gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your gender.'**
+  String get select_gender;
+
+  /// No description provided for @select_birthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your birth day.'**
+  String get select_birthday;
+
+  /// No description provided for @select_height.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your height.'**
+  String get select_height;
+
+  /// No description provided for @select_weight.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your weight.'**
+  String get select_weight;
+
+  /// No description provided for @select_activity_level.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your activity level.'**
+  String get select_activity_level;
+
+  /// No description provided for @your_weight_target.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weight target:'**
+  String get your_weight_target;
+
+  /// No description provided for @keep_weight.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep weight'**
+  String get keep_weight;
+
+  /// No description provided for @lose_025.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose 0,25kg per week'**
+  String get lose_025;
+
+  /// No description provided for @lose_05.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose 0,5kg per week'**
+  String get lose_05;
+
+  /// No description provided for @lose_075.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose 0,75kg per week'**
+  String get lose_075;
+
+  /// No description provided for @proposed_values.
+  ///
+  /// In en, this message translates to:
+  /// **'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings.'**
+  String get proposed_values;
+
+  /// No description provided for @in_doubt_consult_doctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual values may differ, losing weight too fast is unhealthy and may be dangerous. In doubt consult a nutrition expert or doctor.'**
+  String get in_doubt_consult_doctor;
+
+  /// No description provided for @select_target.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a target.'**
+  String get select_target;
 }
 
 class _AppLocalizationsDelegate

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="250"
+   height="250"
+   viewBox="0 0 250 250"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <path
+     id="Knife"
+     style="display:inline;fill:none;stroke:#000000;stroke-width:2;paint-order:markers fill stroke"
+     d="m 204.19698,71 c 1.38333,0 2.49698,1.129304 2.49698,2.514555 V 176.479 c 0,1.39307 -1.11365,2.51496 -2.49698,2.51496 -1.42563,0 -2.49698,-1.10553 -2.49698,-2.51496 V 73.514555 C 201.7,72.121492 202.81365,71 204.19698,71 Z" />
+  <path
+     style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-dasharray:none;stroke-opacity:1"
+     d="m 35.06,73.515 v 25.967 c 0,1.3872 1.110938,2.615 2.497,2.615 h 3.252 c 1.385425,0 2.497,1.12634 2.497,2.515 v 71.867 c 0,1.3919 1.109974,2.515 2.497,2.515 1.387026,0 2.497,-1.12272 2.497,-2.515 v -71.867 c 0,-1.38962 1.113254,-2.515 2.497,-2.515 h 3.252 c 1.393368,0 2.497,-1.12194 2.497,-2.515 V 73.515 C 56.546,72.123345 55.437455,71 54.049,71 c -1.388455,0 -2.497,1.127611 -2.497,2.515 V 94.94 c 0,1.386463 -0.238138,2.515 -1.626,2.515 -1.387862,0 -1.626,-1.122876 -1.626,-2.515 V 73.515 C 48.3,72.1224 47.193863,71 45.803,71 c -1.389964,0 -2.497,1.127422 -2.497,2.515 V 94.94 c 0,1.385307 -0.2393,2.515 -1.626,2.515 -1.392405,0 -1.626,-1.135938 -1.626,-2.515 V 73.515 C 40.054,72.12483 38.946708,71 37.557,71 36.167292,71 35.06,72.128397 35.06,73.515 Z"
+     id="Fork" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:2"
+     d="m 27.311271,206.87912 -2.7e-4,-160.735 C 79.663211,32.536656 108.95331,29.767671 124.99995,49.14406 141.04658,29.767551 170.33668,32.536536 222.68889,46.144 l -2.7e-4,160.735 c -52.35576,-13.60565 -81.6447,-17.37247 -97.68868,2.00006 -16.04397,-19.37241 -45.332909,-15.60559 -97.688669,-1.99994 z"
+     id="BookInner" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:2"
+     d="M 227.85744,63.963 V 214.71173 C 194.37441,203.31135 144.34589,194.91836 125.33998,215.2062 106.33407,194.91846 56.305549,203.31145 22.822516,214.71183 V 63.963103"
+     id="BookOuter" />
+  <circle
+     style="display:inline;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+     id="PlateOuter"
+     cx="125"
+     cy="125"
+     r="67" />
+  <circle
+     style="display:inline;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+     id="PlateInner"
+     cx="125"
+     cy="125"
+     r="50" />
+</svg>
