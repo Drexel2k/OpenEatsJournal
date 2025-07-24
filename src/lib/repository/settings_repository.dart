@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:openeatsjournal/domain/settings.dart';
 import 'package:openeatsjournal/service/oej_database_service.dart';
 
@@ -7,11 +8,24 @@ class SettingsRepositoy {
 
   SettingsRepositoy._singleton();
 
+  late ValueNotifier<bool> darkMode;
+
   void setOejDatabase(OejDatabaseService oejDataBase) {
     _oejDatabase = oejDataBase;
   }
 
+  Future<bool> initSettings() async {
+    bool? darkModeSetting = await _getDarkModeSetting();
+    if (darkModeSetting == null) {
+      return false;
+    }
+
+    darkMode = ValueNotifier(darkModeSetting);
+    return true;    
+  }
+
   Future<void> setSettings(Settings settings) async {
+    await _oejDatabase.setBoolSetting("darkmode", settings.darkMode);
     await _oejDatabase.setIntSetting("gender", settings.gender.value);
     await _oejDatabase.setDateTimeSetting("birthday", settings.birthday);
     await _oejDatabase.setIntSetting("height", settings.height);
@@ -27,8 +41,7 @@ class SettingsRepositoy {
     await _oejDatabase.setDoubleSetting("kcals_sunday", settings.kCalsSunday);
   }
 
-  Future<DateTime?> getBirthday() async {
-    return await _oejDatabase.getDateTimeSetting("birthday");
+  Future<bool?> _getDarkModeSetting() async {
+    return await _oejDatabase.getBoolSetting("darkmode");
   }
-
 }

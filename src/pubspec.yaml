@@ -26,4 +26,4 @@ flutter:
   generate: true
 
   assets:
-    - assets/openeatsjournal_logo.svg
+    - assets/

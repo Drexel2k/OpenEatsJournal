@@ -130,24 +130,7 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
             Spacer(),
             FilledButton(
               onPressed: () {
-                if (widget._onboardingViewModel.weightTarget.value == null) {
-                  SnackBar snackBar = SnackBar(
-                    content: Text(AppLocalizations.of(context)!.select_target),
-                    action: SnackBarAction(
-                      label: AppLocalizations.of(context)!.close,
-                      onPressed: () {
-                        //Click on SnackbarAction closes the SnackBar,
-                        //nothing else to do here...
-                      },
-                    ),
-                  );
-
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  return;
-                }
                 setState(() {
-                    
-
                     widget._onboardingViewModel.saveOnboardingData();
                   }
                 );
