@@ -4,70 +4,85 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
 import "package:openeatsjournal/service/oej_database_service.dart";
-import "package:openeatsjournal/ui/future_builder_nullable_result.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding.dart";
 import "package:openeatsjournal/ui/screens/home.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 
-void main() {
+Future<void> main() async {
+  final OejDatabaseService oejDatabase = OejDatabaseService.instance;
+  final SettingsRepositoy settingsRepositoy = SettingsRepositoy.instance;
+  final WeightRepositoy weightRepository = WeightRepositoy.instance;
+
+  settingsRepositoy.setOejDatabase(oejDatabase);
+  weightRepository.setOejDatabase(oejDatabase);
+
+  WidgetsFlutterBinding.ensureInitialized();
   //debugPaintSizeEnabled=true;
-  runApp(OpenEatsJournalApp());
+  bool initialized = await settingsRepositoy.initSettings();
+
+  runApp(
+    OpenEatsJournalApp(
+      initialized: initialized,
+      settingsRepositoy: settingsRepositoy,
+      weightRepository: weightRepository
+    ),
+  );
 }
 
 class OpenEatsJournalApp extends StatelessWidget {
-  const OpenEatsJournalApp({super.key});
+  const OpenEatsJournalApp({
+      super.key,
+      required initialized,
+      required settingsRepositoy,
+      required weightRepository,
+    }
+  ) : 
+    _initialized = initialized,
+    _settingsRepositoy = settingsRepositoy,
+    _weightRepository = weightRepository;
+
+  final bool _initialized;
+  final SettingsRepositoy _settingsRepositoy;
+  final WeightRepositoy _weightRepository;  
 
   @override
   Widget build(BuildContext context) {
+    ThemeMode themeMode = ThemeMode.light;
+    if (_initialized) {
+      if(_settingsRepositoy.darkMode.value) {
+        themeMode = ThemeMode.dark;
+      }
+    }
+    else {
+      Brightness brightness = MediaQuery.of(context).platformBrightness;
+      if (brightness == Brightness.dark) {
+        themeMode = ThemeMode.dark;
+      }
+    }
+
     return MaterialApp(
-      home: UiRoot(),
+      home: Builder(
+        builder: (BuildContext context) {
+          if (_initialized) {
+              return HomeScreen();
+            }
+          else {
+            return OnboardingScreen(
+              onboardingViewModel: OnboardingViewModel(
+                themeMode == ThemeMode.dark,
+                _settingsRepositoy,
+                _weightRepository,
+              ),
+            );
+          }
+        }
+      ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale("de"),
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant)
-      ),
-    );
-  }
-}
-
-class UiRoot extends StatelessWidget {
-  UiRoot({super.key});
-
-  final OejDatabaseService _oejDatabase = OejDatabaseService.instance;
-  final SettingsRepositoy _settingsRepositoy = SettingsRepositoy.instance;
-  final WeightRepositoy _weightRepository = WeightRepositoy.instance;
-  
-  @override
-  Widget build(BuildContext context)  {
-    _settingsRepositoy.setOejDatabase(_oejDatabase);
-    _weightRepository.setOejDatabase(_oejDatabase);
-
-    FutureBuilderNullableResult<DateTime?> birthdayFuture = FutureBuilderNullableResult<DateTime?>(computation: () => _settingsRepositoy.getBirthday());
-
-    return FutureBuilder<FutureBuilderNullableResult<DateTime?>>(
-      future: birthdayFuture.getFutureBuilderResult(), // a previously-obtained Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<FutureBuilderNullableResult<DateTime?>> snapshot) {
-        if (snapshot.hasData) {
-          if(snapshot.data!.result != null) {
-            return HomeScreen();
-          }
-          else {
-            return OnboardingScreen(onboardingViewModel:OnboardingViewModel(_settingsRepositoy, _weightRepository));
-          }
-        } else if (snapshot.hasError) {
-          return Icon(Icons.error_outline, color: const Color.fromARGB(255, 199, 175, 173), size: 60);
-        } else {
-          return Scaffold(
-            body: Center(
-              child: SizedBox(
-                width: 80,
-                height: 80,
-                child: CircularProgressIndicator(),
-              )
-            )
-          ); 
-        }
-      }
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant)),
+      darkTheme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant, brightness: Brightness.dark)),
+      themeMode: themeMode
     );
   }
 }

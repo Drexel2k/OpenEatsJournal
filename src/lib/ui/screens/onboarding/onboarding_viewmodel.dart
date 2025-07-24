@@ -7,10 +7,11 @@ import 'package:openeatsjournal/repository/settings_repository.dart';
 import 'package:openeatsjournal/repository/weight_repository.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel(
+  OnboardingViewModel(bool darkMode,
     SettingsRepositoy settingsRepositoy,
-    WeightRepositoy weighRepository,
-  ) : _settingsRepositoy = settingsRepositoy,
+    WeightRepositoy weighRepository,) :
+      _darkMode = darkMode,
+      _settingsRepositoy = settingsRepositoy,
       _weighRepository = weighRepository,
       _gender = ValueNotifier(null),
       _birthday = ValueNotifier(null),
@@ -22,6 +23,7 @@ class OnboardingViewModel extends ChangeNotifier {
   final WeightRepositoy _weighRepository;
   final SettingsRepositoy _settingsRepositoy;
 
+  final bool _darkMode;
   final ValueNotifier<Gender?> _gender;
   final ValueNotifier<DateTime?> _birthday;
   final ValueNotifier<int?> _height;
@@ -29,6 +31,7 @@ class OnboardingViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
 
+  bool get darkMode => _darkMode;
   ValueNotifier<Gender?> get gender => _gender;
   ValueNotifier<DateTime?> get birthday => _birthday;
   ValueNotifier<int?> get height => _height;
@@ -76,12 +79,13 @@ class OnboardingViewModel extends ChangeNotifier {
 
     _settingsRepositoy.setSettings(
       Settings(
+        darkMode: _darkMode,
         gender: _gender.value!,
         birthday: _birthday.value!,
         height: _height.value!,
         weight: _weight.value!,
         activityFactor: _activityFactor.value!,
-        weightTarget: _weightTarget.value!,
+        weightTarget: _weightTarget.value,
         kCalsMonday: dailyWeightLossCaloriesD,
         kCalsTuesday: dailyWeightLossCaloriesD,
         kCalsWednesday: dailyWeightLossCaloriesD,

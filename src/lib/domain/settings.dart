@@ -3,6 +3,7 @@ import 'package:openeatsjournal/domain/weight_target.dart';
 
 class Settings {
   Settings({
+    required this.darkMode,
     required this.gender,
     required this.birthday,
     required this.height,
@@ -18,6 +19,7 @@ class Settings {
     required this.kCalsSunday,
   });
 
+  final bool darkMode;
   final Gender gender;
   final DateTime birthday;
   final int height;

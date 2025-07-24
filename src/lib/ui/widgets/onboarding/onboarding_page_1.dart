@@ -3,9 +3,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 
 class OnboardingPage1 extends StatefulWidget {
-  const OnboardingPage1({super.key, required this.onDone});
+  const OnboardingPage1({super.key, required this.onDone, required this.darkMode});
 
   final VoidCallback onDone;
+  final bool darkMode;
 
   @override
   State<OnboardingPage1> createState() => _OnboardingPage1State();
@@ -18,13 +19,19 @@ class _OnboardingPage1State extends State<OnboardingPage1> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     
+    String logoPath = "assets/openeatsjournal_logo_lightmode.svg";
+    if (widget.darkMode) {
+      logoPath = "assets/openeatsjournal_logo_darkmode.svg";
+    }
+
     return Column(
       children: [
         SvgPicture.asset(
-          "assets/openeatsjournal_logo.svg",
+          logoPath,
           semanticsLabel: 'App Logo',
           height: 150,
-          width: 150),
+          width: 150,
+          ),
         Text(
           style: textTheme.headlineMedium,
           "Open Eats Journal"),

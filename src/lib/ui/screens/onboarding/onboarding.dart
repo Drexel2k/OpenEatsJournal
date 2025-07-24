@@ -51,7 +51,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             controller: _pageViewController,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              OnboardingPage1(onDone: () { _movePageIndex(1, pageTitles); }),
+              OnboardingPage1(onDone: () { _movePageIndex(1, pageTitles); }, darkMode: widget._onboardingViewModel.darkMode),
               OnboardingPage2(onDone: () { _movePageIndex(1, pageTitles); }),
               OnboardingPage3(onDone: () { _movePageIndex(1, pageTitles); }, onboardingViewModel:widget._onboardingViewModel),
               OnboardingPage4(onDone: () { }, onboardingViewModel:widget._onboardingViewModel),  
