@@ -31,9 +31,9 @@ class _OnboardingPage1State extends State<OnboardingPage1> {
         SizedBox(height: 10.0),
         Row(
           mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(AppLocalizations.of(context)!.welcome, style: textTheme.headlineSmall),
-          Icon(Icons.waving_hand_outlined)
+          children: [
+            Text(AppLocalizations.of(context)!.welcome, style: textTheme.headlineSmall),
+            Icon(Icons.waving_hand_outlined)
           ],
         ),
         SizedBox(height: 12.0),
@@ -44,12 +44,19 @@ class _OnboardingPage1State extends State<OnboardingPage1> {
         Text(AppLocalizations.of(context)!.welcome_message_7,
           style: textTheme.bodyLarge, textAlign: TextAlign.center
         ),
-        Row(children: [
-            Checkbox(value: _licenseAgreed, onChanged: (value) { setState(() {
-               _licenseAgreed = value ?? false;
-            }); }),
-            Text(AppLocalizations.of(context)!.license_agree)
-          ]
+        SizedBox(height: 12.0),
+        CheckboxListTile(
+          controlAffinity: ListTileControlAffinity.leading,
+          title: Text(
+            AppLocalizations.of(context)!.license_agree,
+            style: textTheme.labelLarge,
+            textAlign: TextAlign.center,
+            ),
+          value: _licenseAgreed, onChanged:  (value) { setState(() {
+                _licenseAgreed = value ?? false;
+              }
+            ); 
+          }
         ),
         FilledButton (onPressed: () {
             if(!_licenseAgreed) {

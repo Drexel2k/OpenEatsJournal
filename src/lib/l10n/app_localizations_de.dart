@@ -9,6 +9,15 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get about_this_app => 'Über diese App';
+
+  @override
+  String get tell_about_yourself => 'Erzähle von Dir';
+
+  @override
+  String get your_targets => 'Deine Ziele';
+
+  @override
   String get daily_overview => 'Tagesübersicht';
 
   @override
@@ -24,7 +33,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get welcome_message_3 =>
-      'Bitte beachte, dass das kein medizinischer Rat ist und dass die App nicht von einem Mediziner oper Ernährunggenderperten erstellt wurde.';
+      'Bitte beachte, dass das kein medizinischer Rat ist und dass die App nicht von einem Mediziner oder Ernährungsexperten erstellt wurde.';
 
   @override
   String get welcome_message_4 =>
@@ -86,6 +95,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get your_weight => 'Dein Gewicht (kg):';
 
   @override
+  String get birthday => 'Geburtstag';
+
+  @override
+  String get height => 'Größe';
+
+  @override
+  String get weight => 'Gewicht';
+
+  @override
   String get your_acitivty_level => 'Dein Aktivitätslevel:';
 
   @override
@@ -132,22 +150,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get keep_weight => 'Gewicht halten';
 
   @override
-  String get lose_025 => '0,25kg pro Woche abnehmen';
+  String get lose025 => '0,25kg pro Woche abnehmen';
 
   @override
-  String get lose_05 => '0,5kg pro Woche abnehmen';
+  String get lose05 => '0,5kg pro Woche abnehmen';
 
   @override
-  String get lose_075 => '0,75kg pro Woche abnehmen';
+  String get lose075 => '0,75kg pro Woche abnehmen';
 
   @override
   String get proposed_values =>
-      'Die sind vorgeschlagene Zielwerte basierend auf  Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden.';
+      'Die sind vorgeschlagene Zielwerte basierend auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden (auch pro Wochentag).';
 
   @override
   String get in_doubt_consult_doctor =>
-      'Individuelle Werte können abweichen, zu schnell Gewicht zu verlieren ist ungesund und kann gefährlich sein. Im Zweifel konsultiere einen Ernährungsexperten oder Arzt..';
+      'Individuelle Werte können abweichen, zu schnell Gewicht zu verlieren ist ungesund und kann gefährlich sein. Im Zweifel konsultiere einen Ernährungsexperten oder Arzt.';
 
   @override
   String get select_target => 'Please select a target.';
+
+  @override
+  String get your_calories_values => 'Deine Kalorien Werte:';
+
+  @override
+  String get daily_calories => 'Tägliche kKalorien:';
+
+  @override
+  String get daily_weightloss_calories => 'Tägliche Abnehm-kKalorien:';
 }

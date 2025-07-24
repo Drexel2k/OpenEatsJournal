@@ -9,6 +9,15 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get about_this_app => 'About this app';
+
+  @override
+  String get tell_about_yourself => 'Tell about yourself';
+
+  @override
+  String get your_targets => 'You targets';
+
+  @override
   String get daily_overview => 'Daily Overview';
 
   @override
@@ -76,13 +85,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get female => 'female';
 
   @override
-  String get your_birthday => 'Your birth day:';
+  String get your_birthday => 'Your birthday:';
 
   @override
   String get your_height => 'Your height (cm):';
 
   @override
   String get your_weight => 'Your weight (kg):';
+
+  @override
+  String get birthday => 'Birthday';
+
+  @override
+  String get height => 'Height';
+
+  @override
+  String get weight => 'Weight';
 
   @override
   String get your_acitivty_level => 'Your activity level:';
@@ -131,17 +149,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keep_weight => 'Keep weight';
 
   @override
-  String get lose_025 => 'Lose 0,25kg per week';
+  String get lose025 => 'Lose 0,25kg per week';
 
   @override
-  String get lose_05 => 'Lose 0,5kg per week';
+  String get lose05 => 'Lose 0,5kg per week';
 
   @override
-  String get lose_075 => 'Lose 0,75kg per week';
+  String get lose075 => 'Lose 0,75kg per week';
 
   @override
   String get proposed_values =>
-      'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings.';
+      'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings (even per weekday).';
 
   @override
   String get in_doubt_consult_doctor =>
@@ -149,4 +167,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get select_target => 'Please select a target.';
+
+  @override
+  String get your_calories_values => 'Your calories values:';
+
+  @override
+  String get daily_calories => 'Daily kCalories:';
+
+  @override
+  String get daily_weightloss_calories => 'Daily weightloss kCalories:';
 }

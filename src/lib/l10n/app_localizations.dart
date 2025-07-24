@@ -98,6 +98,24 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @about_this_app.
+  ///
+  /// In en, this message translates to:
+  /// **'About this app'**
+  String get about_this_app;
+
+  /// No description provided for @tell_about_yourself.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell about yourself'**
+  String get tell_about_yourself;
+
+  /// No description provided for @your_targets.
+  ///
+  /// In en, this message translates to:
+  /// **'You targets'**
+  String get your_targets;
+
   /// No description provided for @daily_overview.
   ///
   /// In en, this message translates to:
@@ -221,7 +239,7 @@ abstract class AppLocalizations {
   /// No description provided for @your_birthday.
   ///
   /// In en, this message translates to:
-  /// **'Your birth day:'**
+  /// **'Your birthday:'**
   String get your_birthday;
 
   /// No description provided for @your_height.
@@ -235,6 +253,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your weight (kg):'**
   String get your_weight;
+
+  /// No description provided for @birthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get birthday;
+
+  /// No description provided for @height.
+  ///
+  /// In en, this message translates to:
+  /// **'Height'**
+  String get height;
+
+  /// No description provided for @weight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get weight;
 
   /// No description provided for @your_acitivty_level.
   ///
@@ -326,28 +362,28 @@ abstract class AppLocalizations {
   /// **'Keep weight'**
   String get keep_weight;
 
-  /// No description provided for @lose_025.
+  /// No description provided for @lose025.
   ///
   /// In en, this message translates to:
   /// **'Lose 0,25kg per week'**
-  String get lose_025;
+  String get lose025;
 
-  /// No description provided for @lose_05.
+  /// No description provided for @lose05.
   ///
   /// In en, this message translates to:
   /// **'Lose 0,5kg per week'**
-  String get lose_05;
+  String get lose05;
 
-  /// No description provided for @lose_075.
+  /// No description provided for @lose075.
   ///
   /// In en, this message translates to:
   /// **'Lose 0,75kg per week'**
-  String get lose_075;
+  String get lose075;
 
   /// No description provided for @proposed_values.
   ///
   /// In en, this message translates to:
-  /// **'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings.'**
+  /// **'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings (even per weekday).'**
   String get proposed_values;
 
   /// No description provided for @in_doubt_consult_doctor.
@@ -361,6 +397,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please select a target.'**
   String get select_target;
+
+  /// No description provided for @your_calories_values.
+  ///
+  /// In en, this message translates to:
+  /// **'Your calories values:'**
+  String get your_calories_values;
+
+  /// No description provided for @daily_calories.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily kCalories:'**
+  String get daily_calories;
+
+  /// No description provided for @daily_weightloss_calories.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily weightloss kCalories:'**
+  String get daily_weightloss_calories;
 }
 
 class _AppLocalizationsDelegate
