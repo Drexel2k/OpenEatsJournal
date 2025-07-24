@@ -16,8 +16,9 @@ Use paths for SDKs without spaces and sepcial characers.
 1. Download Android Studio from https://developer.android.com/studio and install. Keep "Android Virtual Device" checked. Start Android Studio after installation.
 2. Install the Android SDK when asked.
 3. After finishing the SDK installation you should the "Welcome to Android Studio" Screen. Click on "More Actions" -> "SDK Manager", switch to "SDK Tools" tab and check "Android SDK Command-line Tools (latest)", click "OK" and install the tools. 
-4. Check under "More Actions" -> "Virtual Device Manager" if a virtual phone was set up, if not create one, e.g. a Medium Phone with Default Settings.
-5. Close Android Studio.
+4. Also in the "SDK Manager" check "Show Package Details" (bottom right), switch to "SDK Tools", in the section NDK (Side by side) check version 28.2.13676358 and click "Apply" to isntall it. The default NDK version that is configured with Flutter is too low for sqflite, therefore the NDK version was overriden in this project in src/android/app/build.gradle.kts (ndkVersion = "28.2.13676358").
+5. Check under "More Actions" -> "Virtual Device Manager" if a virtual phone was set up, if not create one, e.g. a Medium Phone with Default Settings.
+6. Close Android Studio.
 
 #### Setup Flutter SDK
 1. Download Flutter (currently 3.32.6 is used) from https://docs.flutter.dev/install/archive and extract.
