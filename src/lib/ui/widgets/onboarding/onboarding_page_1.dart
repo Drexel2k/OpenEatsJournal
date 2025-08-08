@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
+import "package:flutter/material.dart";
+import "package:flutter_svg/svg.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class OnboardingPage1 extends StatefulWidget {
   const OnboardingPage1({super.key, required this.onDone, required this.darkMode});
@@ -28,7 +28,7 @@ class _OnboardingPage1State extends State<OnboardingPage1> {
       children: [
         SvgPicture.asset(
           logoPath,
-          semanticsLabel: 'App Logo',
+          semanticsLabel: "App Logo",
           height: 150,
           width: 150,
           ),

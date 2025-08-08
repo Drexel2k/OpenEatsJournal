@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/weight_target.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/weight_target.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 
 class OnboardingPage4 extends StatefulWidget {
   const OnboardingPage4({

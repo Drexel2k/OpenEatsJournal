@@ -1,17 +1,17 @@
-import 'package:flutter/foundation.dart';
-import 'package:openeatsjournal/domain/gender.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/settings.dart';
-import 'package:openeatsjournal/domain/weight_target.dart';
-import 'package:openeatsjournal/repository/settings_repository.dart';
-import 'package:openeatsjournal/repository/weight_repository.dart';
+import "package:flutter/foundation.dart";
+import "package:openeatsjournal/domain/gender.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/settings.dart";
+import "package:openeatsjournal/domain/weight_target.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
+import "package:openeatsjournal/repository/weight_repository.dart";
 
 class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel(bool darkMode,
-    SettingsRepositoy settingsRepositoy,
-    WeightRepositoy weighRepository,) :
+  OnboardingViewModel({required bool darkMode,
+    required SettingsRepositoy settingsRepositoy,
+    required WeightRepositoy weighRepository}) :
       _darkMode = darkMode,
-      _settingsRepositoy = settingsRepositoy,
+      _settingsRepository = settingsRepositoy,
       _weighRepository = weighRepository,
       _gender = ValueNotifier(null),
       _birthday = ValueNotifier(null),
@@ -21,7 +21,7 @@ class OnboardingViewModel extends ChangeNotifier {
       _weightTarget = ValueNotifier(WeightTarget.keep);
 
   final WeightRepositoy _weighRepository;
-  final SettingsRepositoy _settingsRepositoy;
+  final SettingsRepositoy _settingsRepository;
 
   final bool _darkMode;
   final ValueNotifier<Gender?> _gender;
@@ -30,6 +30,9 @@ class OnboardingViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _weight;
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
+
+  set scaffoldTitle(String value) => _settingsRepository.scaffoldTitle.value = value;
+  set scaffoldLeadingAction(Function() action) => _settingsRepository.scaffoldLeadingAction = action;
 
   bool get darkMode => _darkMode;
   ValueNotifier<Gender?> get gender => _gender;
@@ -77,7 +80,7 @@ class OnboardingViewModel extends ChangeNotifier {
           weightLossKg,
         );
 
-    _settingsRepositoy.setSettings(
+    _settingsRepository.setSettings(
       Settings(
         darkMode: _darkMode,
         gender: _gender.value!,

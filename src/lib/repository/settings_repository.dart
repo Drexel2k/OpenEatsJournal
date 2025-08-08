@@ -1,27 +1,52 @@
-import 'package:flutter/cupertino.dart';
-import 'package:openeatsjournal/domain/settings.dart';
-import 'package:openeatsjournal/service/oej_database_service.dart';
+import "package:flutter/cupertino.dart";
+import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/settings.dart";
+import "package:openeatsjournal/service/oej_database_service.dart";
 
-class SettingsRepositoy {
+class SettingsRepositoy extends ChangeNotifier{
+  SettingsRepositoy._singleton() :
+    _scaffoldTitle = ValueNotifier("") {
+      _scaffoldLeadingAction = _emptyLeadingAction;
+  }
+    
   static final SettingsRepositoy instance = SettingsRepositoy._singleton();
+
   late OejDatabaseService _oejDatabase;
 
-  SettingsRepositoy._singleton();
+  //persistand settings
+  final ValueNotifier<bool> _darkMode = ValueNotifier(false);
 
-  late ValueNotifier<bool> darkMode;
+  //non persistand app wide settings
+  final ValueNotifier<bool> _initialized = ValueNotifier(false);
+  final ValueNotifier<String> _scaffoldTitle;
+  late Function() _scaffoldLeadingAction;
 
+  set scaffoldLeadingAction(Function() action) => _scaffoldLeadingAction = action;
+
+  ValueNotifier<bool> get initialized => _initialized;
+  ValueNotifier<bool> get darkMode => _darkMode;
+  ValueNotifier<String> get scaffoldTitle => _scaffoldTitle;
+  bool get showScaffoldLeadingAction {
+    if(_scaffoldLeadingAction == _emptyLeadingAction) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Function() get scaffoldLeadingAction => _scaffoldLeadingAction;
+
+  //must be called once before the singleton is used
   void setOejDatabase(OejDatabaseService oejDataBase) {
     _oejDatabase = oejDataBase;
   }
 
-  Future<bool> initSettings() async {
+  Future<void> initSettings() async {
     bool? darkModeSetting = await _getDarkModeSetting();
-    if (darkModeSetting == null) {
-      return false;
-    }
-
-    darkMode = ValueNotifier(darkModeSetting);
-    return true;    
+    if (darkModeSetting != null) {
+      _initialized.value = true;
+      _darkMode.value = darkModeSetting;
+    }  
   }
 
   Future<void> setSettings(Settings settings) async {
@@ -43,5 +68,15 @@ class SettingsRepositoy {
 
   Future<bool?> _getDarkModeSetting() async {
     return await _oejDatabase.getBoolSetting("darkmode");
+  }
+
+  _emptyLeadingAction(){}
+
+  @override
+  void dispose() {
+    _darkMode.dispose();
+    _scaffoldTitle.dispose();
+
+    super.dispose();
   }
 }

@@ -1,4 +1,4 @@
-import 'package:openeatsjournal/domain/gender.dart';
+import "package:openeatsjournal/domain/gender.dart";
 
 class NutritionCalculator {
 

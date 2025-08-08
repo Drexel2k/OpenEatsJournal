@@ -1,5 +1,5 @@
-import 'package:openeatsjournal/domain/gender.dart';
-import 'package:openeatsjournal/domain/weight_target.dart';
+import "package:openeatsjournal/domain/gender.dart";
+import "package:openeatsjournal/domain/weight_target.dart";
 
 class Settings {
   Settings({

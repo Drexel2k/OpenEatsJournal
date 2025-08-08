@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class OnboardingPage2 extends StatefulWidget {
   const OnboardingPage2({super.key, required this.onDone});

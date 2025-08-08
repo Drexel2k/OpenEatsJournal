@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:openeatsjournal/domain/gender.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart';
-import 'package:openeatsjournal/ui/widgets/onboarding/onboarding_textfield.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/gender.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
+import "package:openeatsjournal/ui/widgets/onboarding/onboarding_textfield.dart";
 
 class OnboardingPage3 extends StatefulWidget {
   const OnboardingPage3({
@@ -57,7 +57,7 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
             SizedBox(width: 8),
             ValueListenableBuilder(
               valueListenable: widget._onboardingViewModel.gender,
-              builder: (context, value, _) {
+              builder: (context, _, _) {
                 return ChoiceChip(
                   padding: EdgeInsets.symmetric(vertical: 13.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

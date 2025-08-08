@@ -1,5 +1,5 @@
 class FutureBuilderNullableResult<T> {
-  FutureBuilderNullableResult({required Future<T> computation()}) : _computation = computation;
+  FutureBuilderNullableResult({required Future<T> Function() computation}) : _computation = computation;
   final Future<T> Function() _computation;
   late T? result;
 

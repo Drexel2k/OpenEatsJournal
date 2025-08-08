@@ -3,7 +3,9 @@ import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 
 class OejDatabaseService {
+  OejDatabaseService._singleton();
   static final OejDatabaseService instance = OejDatabaseService._singleton();
+
   static Database? _database;
 
   final Map<int, String> _migrationScripts = {
@@ -12,8 +14,6 @@ class OejDatabaseService {
               first_name TEXT)
               """
   };
-
-  OejDatabaseService._singleton();
 
   Future<Database> get db async {
     if (_database != null) {
@@ -132,9 +132,9 @@ class OejDatabaseService {
     }
   }
 
-  Future<String?> getStringSetting(String setting) async {
+  Future<Object?> _getSetting(String setting) async {
     Database db = await instance.db;
-    final result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
+    final List<Map<String, Object?>> result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
 
     if(result.length > 1) {
       throw StateError("A setting must exist only once, mutiple instances of $setting found.");
@@ -144,68 +144,37 @@ class OejDatabaseService {
       return null;
     }
 
-    return result[0]["value"] as String;
+    return result[0]["value"];
+  }
+
+  Future<String?> getStringSetting(String setting) async {
+    Object? result = await _getSetting(setting);
+    return result == null ? null : result as String;
   }
 
   Future<int?> getIntSetting(String setting) async {
-    Database db = await instance.db;
-    final result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
-
-    if(result.length > 1) {
-      throw StateError("A setting must exist only once, mutiple instances of $setting found.");
-    }
-
-    if(result.isEmpty) {
-      return null;
-    }
-
-    return result[0]["value"] as int;
+    Object? result = await _getSetting(setting);
+    return result == null ? null : result as int;
   }
 
   Future<double?> getDoubleSetting(String setting) async {
-    Database db = await instance.db;
-    final result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
-
-    if(result.length > 1) {
-      throw StateError("A setting must exist only once, mutiple instances of $setting found.");
-    }
-
-    if(result.isEmpty) {
-      return null;
-    }
-
-    return result[0]["value"] as double;
+    Object? result = await _getSetting(setting);
+    return result == null ? null : result as double;
   }
 
   Future<bool?> getBoolSetting(String setting) async {
-    Database db = await instance.db;
-    final result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
-
-    if(result.length > 1) {
-      throw StateError("A setting must exist only once, mutiple instances of $setting found.");
-    }
-
-    if(result.isEmpty) {
-      return null;
-    }
-
-    return result[0]["value"] == "true";
+    Object? result = await _getSetting(setting);
+    return result == null ? null : result == "true";
   }
 
   Future<DateTime?> getDateTimeSetting(String setting) async {
-    Database db = await instance.db;
-    final result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
-
-    if(result.length > 1) {
-      throw StateError("A setting must exist only once, mutiple instances of $setting found.");
-    }
-
-    if(result.isEmpty) {
+    Object? result = await _getSetting(setting);
+    if(result == null) {
       return null;
     }
 
     final DateFormat formatter = DateFormat("y-M-d H:m:s:S");
-    DateTime resultDate = formatter.parse(result[0]["value"] as String);
+    DateTime resultDate = formatter.parse(await _getSetting(setting) as String);
 
     return resultDate;
   }
