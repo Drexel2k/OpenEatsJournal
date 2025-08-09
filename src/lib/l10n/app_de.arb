@@ -46,7 +46,7 @@
   "lose025": "0,25kg pro Woche abnehmen",
   "lose05": "0,5kg pro Woche abnehmen",
   "lose075": "0,75kg pro Woche abnehmen",
-  "proposed_values": "Die sind vorgeschlagene Zielwerte basierend auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden (auch pro Wochentag).",
+  "proposed_values": "Die vorgeschlagenen Zielwerte basieren auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden (auch pro Wochentag).",
   "in_doubt_consult_doctor": "Individuelle Werte können abweichen, zu schnell Gewicht zu verlieren ist ungesund und kann gefährlich sein. Im Zweifel konsultiere einen Ernährungsexperten oder Arzt.",
   "select_target": "Please select a target.",
   "your_calories_values": "Deine Kalorien Werte:",

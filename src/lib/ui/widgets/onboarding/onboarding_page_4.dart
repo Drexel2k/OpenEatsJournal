@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/screens/home.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 
 class OnboardingPage4 extends StatefulWidget {
@@ -129,11 +130,12 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
               style: textTheme.bodyLarge),
             Spacer(),
             FilledButton(
-              onPressed: () {
-                setState(() {
-                    widget._onboardingViewModel.saveOnboardingData();
-                  }
-                );
+              onPressed: () async {
+                await widget._onboardingViewModel.saveOnboardingData();
+                if(context.mounted) {
+                  //home (route "/") is always on top of the MaterialApp's navigations stack.
+                  Navigator.pop(context);
+                }    
               },
               child: Text(AppLocalizations.of(context)!.finish),
             ),

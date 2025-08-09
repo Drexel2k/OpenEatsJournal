@@ -7,12 +7,10 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
 
 class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel({required bool darkMode,
-    required SettingsRepositoy settingsRepositoy,
-    required WeightRepositoy weighRepository}) :
-      _darkMode = darkMode,
+  OnboardingViewModel({required SettingsRepositoy settingsRepositoy,
+    required WeightRepositoy weightRepository}) :
       _settingsRepository = settingsRepositoy,
-      _weighRepository = weighRepository,
+      _weightRepository = weightRepository,
       _gender = ValueNotifier(null),
       _birthday = ValueNotifier(null),
       _height = ValueNotifier(null),
@@ -20,10 +18,9 @@ class OnboardingViewModel extends ChangeNotifier {
       _activityFactor = ValueNotifier(null),
       _weightTarget = ValueNotifier(WeightTarget.keep);
 
-  final WeightRepositoy _weighRepository;
+  final WeightRepositoy _weightRepository;
   final SettingsRepositoy _settingsRepository;
 
-  final bool _darkMode;
   final ValueNotifier<Gender?> _gender;
   final ValueNotifier<DateTime?> _birthday;
   final ValueNotifier<int?> _height;
@@ -31,10 +28,7 @@ class OnboardingViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
 
-  set scaffoldTitle(String value) => _settingsRepository.scaffoldTitle.value = value;
-  set scaffoldLeadingAction(Function() action) => _settingsRepository.scaffoldLeadingAction = action;
-
-  bool get darkMode => _darkMode;
+  bool get darkMode => _settingsRepository.darkMode.value;
   ValueNotifier<Gender?> get gender => _gender;
   ValueNotifier<DateTime?> get birthday => _birthday;
   ValueNotifier<int?> get height => _height;
@@ -42,7 +36,7 @@ class OnboardingViewModel extends ChangeNotifier {
   ValueNotifier<double?> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget> get weightTarget => _weightTarget;
 
-  void saveOnboardingData() {
+  Future<void> saveOnboardingData() async {
     int age = 0;
     final DateTime today = DateTime.now();
     age = today.year - _birthday.value!.year;
@@ -80,9 +74,9 @@ class OnboardingViewModel extends ChangeNotifier {
           weightLossKg,
         );
 
-    _settingsRepository.setSettings(
+    await _settingsRepository.setSettings(
       Settings(
-        darkMode: _darkMode,
+        darkMode: _settingsRepository.darkMode.value,
         gender: _gender.value!,
         birthday: _birthday.value!,
         height: _height.value!,
@@ -96,10 +90,11 @@ class OnboardingViewModel extends ChangeNotifier {
         kCalsFriday: dailyWeightLossCaloriesD,
         kCalsSaturday: dailyWeightLossCaloriesD,
         kCalsSunday: dailyWeightLossCaloriesD,
+        locale: _settingsRepository.languageCode.value
       ),
     );
 
-    _weighRepository.insertWeight(DateTime.now(), _weight.value!);
+    await _weightRepository.insertWeight(DateTime.now(), _weight.value!);
   }
 
   @override

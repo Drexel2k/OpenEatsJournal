@@ -35,40 +35,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       3: AppLocalizations.of(context)!.your_targets
     };
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 25.0), 
-      child: ListenableBuilder(
-        listenable: widget._onboardingViewModel,
-        builder: (context, _) {
-          return PageView(
-          controller: _pageViewController,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            OnboardingPage1(onDone: () { _movePageIndex(1, pageTitles!); }, darkMode: widget._onboardingViewModel.darkMode),
-            OnboardingPage2(onDone: () { _movePageIndex(1, pageTitles!); }),
-            OnboardingPage3(onDone: () { _movePageIndex(1, pageTitles!); }, onboardingViewModel:widget._onboardingViewModel),
-            OnboardingPage4(onDone: () { }, onboardingViewModel:widget._onboardingViewModel),  
-            ],
-          );
-        }
-      ),
+    return Scaffold(
+      appBar: _currentPageIndex > 0 ? 
+        AppBar(
+          leading: IconButton(icon: BackButtonIcon(), onPressed: () {
+            _movePageIndex(-1, pageTitles!);
+          }),
+          title: Text(pageTitles![_currentPageIndex])
+        ) :
+        null,
+      body: SafeArea( 
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0), 
+          child:  PageView(
+            controller: _pageViewController,
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              OnboardingPage1(onDone: () { _movePageIndex(1, pageTitles!); }, darkMode: widget._onboardingViewModel.darkMode),
+              OnboardingPage2(onDone: () { _movePageIndex(1, pageTitles!); }),
+              OnboardingPage3(onDone: () { _movePageIndex(1, pageTitles!); }, onboardingViewModel:widget._onboardingViewModel),
+              OnboardingPage4(onDone: () { }, onboardingViewModel:widget._onboardingViewModel),  
+            ]
+          )
+        )
+      )
     );
   }
 
   void _movePageIndex(int steps, Map pageTitles) {
-  _currentPageIndex = _currentPageIndex + steps;
-    _pageViewController.animateToPage(
-      _currentPageIndex,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
-
-    widget._onboardingViewModel.scaffoldTitle = pageTitles[_currentPageIndex];
-    widget._onboardingViewModel.scaffoldLeadingAction = _stepBack;
-  }
-
-  void _stepBack() {
-    _movePageIndex(-1, pageTitles!);
+    setState(() {
+      _currentPageIndex = _currentPageIndex + steps;
+        _pageViewController.animateToPage(
+          _currentPageIndex,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+    });
   }
 
   @override

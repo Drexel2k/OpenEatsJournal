@@ -17,6 +17,7 @@ class Settings {
     required this.kCalsFriday,
     required this.kCalsSaturday,
     required this.kCalsSunday,
+    required this.locale
   });
 
   final bool darkMode;
@@ -33,4 +34,5 @@ class Settings {
   final double kCalsFriday;
   final double kCalsSaturday;
   final double kCalsSunday;
+  final String locale;
 }

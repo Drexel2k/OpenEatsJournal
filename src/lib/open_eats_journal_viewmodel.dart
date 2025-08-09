@@ -8,19 +8,23 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
     _settingsRepository = settingsRepository,
     _initialized = ValueNotifier(settingsRepository.initialized.value),
     _darkMode = ValueNotifier(settingsRepository.darkMode.value),
+    _locale = ValueNotifier(settingsRepository.languageCode.value),
     _scaffoldTitle = ValueNotifier("") {
       _settingsRepository.initialized.addListener(_initializedChanged);
       _settingsRepository.scaffoldTitle.addListener(_scaffoldTitleChanged);
       _settingsRepository.darkMode.addListener(_darkModeChanged);
+      _settingsRepository.languageCode.addListener(_localeChanged);
   }
 
   final SettingsRepositoy _settingsRepository;
   final ValueNotifier<bool> _initialized;
   final ValueNotifier<bool> _darkMode;
+  final ValueNotifier<String> _locale;
   final ValueNotifier<String> _scaffoldTitle;
 
   ValueNotifier<bool> get initialized => _initialized;
   ValueNotifier<bool> get darkMode => _darkMode;
+  ValueNotifier<String> get locale => _locale;
   ValueNotifier<String> get scaffoldTitle => _scaffoldTitle;
   bool get showScaffoldLeadingAction => _settingsRepository.showScaffoldLeadingAction;
   Function()? get scaffoldLeadingAction => _settingsRepository.scaffoldLeadingAction;
@@ -31,6 +35,10 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
 
   _darkModeChanged() {
     _darkMode.value = _settingsRepository.darkMode.value;
+  }
+
+  _localeChanged() {
+    _locale.value = _settingsRepository.languageCode.value;
   }
 
   void _scaffoldTitleChanged() {

@@ -160,7 +160,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get proposed_values =>
-      'Die sind vorgeschlagene Zielwerte basierend auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden (auch pro Wochentag).';
+      'Die vorgeschlagenen Zielwerte basieren auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden (auch pro Wochentag).';
 
   @override
   String get in_doubt_consult_doctor =>

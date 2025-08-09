@@ -2,11 +2,11 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MainLayout(route: NavigatorRoutes.home, body: Text("Home"), title: "HOME");
+    return Text("Settings");
   }
 }

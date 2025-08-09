@@ -5,36 +5,36 @@ import "package:openeatsjournal/service/oej_database_service.dart";
 
 class SettingsRepositoy extends ChangeNotifier{
   SettingsRepositoy._singleton() :
-    _scaffoldTitle = ValueNotifier("") {
-      _scaffoldLeadingAction = _emptyLeadingAction;
-  }
+    _scaffoldTitle = ValueNotifier("");
     
   static final SettingsRepositoy instance = SettingsRepositoy._singleton();
 
   late OejDatabaseService _oejDatabase;
 
-  //persistand settings
+  //persistant settings
   final ValueNotifier<bool> _darkMode = ValueNotifier(false);
+  final ValueNotifier<String> _languaceCode = ValueNotifier("en");
 
   //non persistand app wide settings
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
   final ValueNotifier<String> _scaffoldTitle;
-  late Function() _scaffoldLeadingAction;
+  Function()? _scaffoldLeadingAction;
 
-  set scaffoldLeadingAction(Function() action) => _scaffoldLeadingAction = action;
+  set scaffoldLeadingAction(Function()? action) => _scaffoldLeadingAction = action;
 
-  ValueNotifier<bool> get initialized => _initialized;
   ValueNotifier<bool> get darkMode => _darkMode;
+  ValueNotifier<String> get languageCode => _languaceCode;
+  ValueNotifier<bool> get initialized => _initialized;
   ValueNotifier<String> get scaffoldTitle => _scaffoldTitle;
   bool get showScaffoldLeadingAction {
-    if(_scaffoldLeadingAction == _emptyLeadingAction) {
+    if(_scaffoldLeadingAction == null) {
       return false;
     }
 
     return true;
   }
 
-  Function() get scaffoldLeadingAction => _scaffoldLeadingAction;
+  Function()? get scaffoldLeadingAction => _scaffoldLeadingAction;
 
   //must be called once before the singleton is used
   void setOejDatabase(OejDatabaseService oejDataBase) {
@@ -46,6 +46,7 @@ class SettingsRepositoy extends ChangeNotifier{
     if (darkModeSetting != null) {
       _initialized.value = true;
       _darkMode.value = darkModeSetting;
+      _languaceCode.value = (await _getLanguaceCodeSetting())!;
     }  
   }
 
@@ -64,13 +65,16 @@ class SettingsRepositoy extends ChangeNotifier{
     await _oejDatabase.setDoubleSetting("kcals_friday", settings.kCalsFriday);
     await _oejDatabase.setDoubleSetting("kcals_saturday", settings.kCalsSaturday);
     await _oejDatabase.setDoubleSetting("kcals_sunday", settings.kCalsSunday);
+    await _oejDatabase.setStringSetting("language_code", settings.locale);
   }
 
   Future<bool?> _getDarkModeSetting() async {
     return await _oejDatabase.getBoolSetting("darkmode");
   }
 
-  _emptyLeadingAction(){}
+  Future<String?> _getLanguaceCodeSetting() async {
+    return await _oejDatabase.getStringSetting("language_code");
+  }
 
   @override
   void dispose() {
