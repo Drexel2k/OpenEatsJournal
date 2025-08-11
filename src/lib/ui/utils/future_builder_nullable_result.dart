@@ -2,7 +2,7 @@
 //so nullable results can be wrapped with thid class.
 //usage: 
 
-// FutureBuilderNullableResult<DateTime?> birthdayFuture = FutureBuilderNullableResult<DateTime?>(computation: () => _settingsRepositoy.getBirthday());
+// FutureBuilderNullableResult<DateTime?> birthdayFuture = FutureBuilderNullableResult<DateTime?>(computation: () => _settingsRepository.getBirthday());
 
 //     return FutureBuilder<FutureBuilderNullableResult<DateTime?>>(
 //       future: birthdayFuture.getFutureBuilderResult(), // a previously-obtained Future<String> or null

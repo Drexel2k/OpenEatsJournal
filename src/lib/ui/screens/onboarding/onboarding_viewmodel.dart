@@ -7,9 +7,9 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
 
 class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel({required SettingsRepositoy settingsRepositoy,
-    required WeightRepositoy weightRepository}) :
-      _settingsRepository = settingsRepositoy,
+  OnboardingViewModel({required SettingsRepository settingsRepository,
+    required WeightRepository weightRepository}) :
+      _settingsRepository = settingsRepository,
       _weightRepository = weightRepository,
       _gender = ValueNotifier(null),
       _birthday = ValueNotifier(null),
@@ -18,8 +18,8 @@ class OnboardingViewModel extends ChangeNotifier {
       _activityFactor = ValueNotifier(null),
       _weightTarget = ValueNotifier(WeightTarget.keep);
 
-  final WeightRepositoy _weightRepository;
-  final SettingsRepositoy _settingsRepository;
+  final WeightRepository _weightRepository;
+  final SettingsRepository _settingsRepository;
 
   final ValueNotifier<Gender?> _gender;
   final ValueNotifier<DateTime?> _birthday;
@@ -90,7 +90,7 @@ class OnboardingViewModel extends ChangeNotifier {
         kCalsFriday: dailyWeightLossCaloriesD,
         kCalsSaturday: dailyWeightLossCaloriesD,
         kCalsSunday: dailyWeightLossCaloriesD,
-        locale: _settingsRepository.languageCode.value
+        languageCode: _settingsRepository.languageCode.value
       ),
     );
 

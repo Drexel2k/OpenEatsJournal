@@ -1,4 +1,4 @@
-package com.example.openeatsjournal
+package com.drexeldevelopment.openeatsjournal
 
 import io.flutter.embedding.android.FlutterActivity
 

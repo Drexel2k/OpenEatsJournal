@@ -3,10 +3,10 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
-import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/repository/weight_repository.dart";
+import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/food.dart";
 import "package:openeatsjournal/ui/screens/home.dart";
+import "package:openeatsjournal/ui/screens/home_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings.dart";
@@ -18,17 +18,14 @@ class OpenEatsJournalApp extends StatefulWidget {
   const OpenEatsJournalApp({
       super.key,
       required OpenEatsJournalAppViewModel openEatsJournalAppViewModel,
-      required settingsRepositoy,
-      required weightRepository,
+      required Repositories repositories
     }
   ) :
-    _openEatsJournalAppViewModel = openEatsJournalAppViewModel,
-    _settingsRepositoy = settingsRepositoy,
-    _weightRepository = weightRepository;
+    _repositories = repositories,
+    _openEatsJournalAppViewModel = openEatsJournalAppViewModel;
 
   final OpenEatsJournalAppViewModel _openEatsJournalAppViewModel;
-  final SettingsRepositoy _settingsRepositoy;
-  final WeightRepositoy _weightRepository;
+  final Repositories _repositories;
 
   @override
   State<OpenEatsJournalApp> createState() => _OpenEatsJournalAppState();
@@ -40,27 +37,27 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
   @override
   Widget build(BuildContext context) {
     ThemeMode themeMode = ThemeMode.light;
-    if (widget._settingsRepositoy.initialized.value) {
-      if(widget._settingsRepositoy.darkMode.value) {
+    if (widget._openEatsJournalAppViewModel.initialized.value) {
+      if(widget._openEatsJournalAppViewModel.darkMode.value) {
         themeMode = ThemeMode.dark;
       }
     }
     else {
       Brightness brightness = MediaQuery.of(context).platformBrightness;
       if (brightness == Brightness.dark) {
-        widget._settingsRepositoy.darkMode.value = true;
+        widget._openEatsJournalAppViewModel.darkMode.value = true;
         themeMode = ThemeMode.dark;
       }
       
       String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
       if(AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
-         widget._settingsRepositoy.languageCode.value = platformLanguageCode;
+         widget._openEatsJournalAppViewModel.languageCode.value = platformLanguageCode;
       }
     }
 
-    String initialRoute = "/";
-    if (!widget._settingsRepositoy.initialized.value) {
-      initialRoute = "/onboarding";
+    String initialRoute = NavigatorRoutes.home;
+    if (!widget._openEatsJournalAppViewModel.initialized.value) {
+      initialRoute = NavigatorRoutes.onboarding;
     }
 
     return ValueListenableBuilder(
@@ -69,7 +66,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
         return MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(widget._openEatsJournalAppViewModel.locale.value),
+          locale: Locale(widget._openEatsJournalAppViewModel.languageCode.value),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
             pageTransitionsTheme: PageTransitionsTheme(
@@ -91,14 +88,18 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
           themeMode: themeMode,
           initialRoute: initialRoute,
           routes: {
-           NavigatorRoutes.home: (context) => const HomeScreen(),
-           NavigatorRoutes.statistics: (context) => const StatisticsScreen(),
-           NavigatorRoutes.food: (context) => const FoodScreen(),
-           NavigatorRoutes.settings: (context) => const SettingsScreen(),
-           NavigatorRoutes.onboarding: (context) => OnboardingScreen(
-              onboardingViewModel: OnboardingViewModel(
-                settingsRepositoy: widget._settingsRepositoy,
-                weightRepository: widget._weightRepository))
+            NavigatorRoutes.home: (context) => HomeScreen(
+            homeViewModel: HomeViewModel(
+              settingsRepository: widget._repositories.settingsRepository
+            )
+          ),
+          NavigatorRoutes.statistics: (context) => const StatisticsScreen(),
+          NavigatorRoutes.food: (context) => const FoodScreen(),
+          NavigatorRoutes.settings: (context) => const SettingsScreen(),
+          NavigatorRoutes.onboarding: (context) => OnboardingScreen(
+            onboardingViewModel: OnboardingViewModel(
+              settingsRepository: widget._repositories.settingsRepository,
+              weightRepository: widget._repositories.weightRepository))
           },
         );
       },

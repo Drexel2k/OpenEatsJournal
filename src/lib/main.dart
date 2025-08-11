@@ -5,23 +5,28 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
 import "package:openeatsjournal/service/oej_database_service.dart";
 
+//for debugPaintSizeEnabled=true;
+//import "package:flutter/rendering.dart";
+import "package:openeatsjournal/ui/repositories.dart";
+
 Future<void> main() async {
   final OejDatabaseService oejDatabase = OejDatabaseService.instance;
-  final SettingsRepositoy settingsRepositoy = SettingsRepositoy.instance;
-  final WeightRepositoy weightRepository = WeightRepositoy.instance;
+  final Repositories repositories = Repositories(
+    settingsRepository: SettingsRepository.instance,
+    weightRepository: WeightRepository.instance);
 
-  settingsRepositoy.setOejDatabase(oejDatabase);
-  weightRepository.setOejDatabase(oejDatabase);
+  repositories.settingsRepository.setOejDatabase(oejDatabase);
+  repositories.weightRepository.setOejDatabase(oejDatabase);
 
   WidgetsFlutterBinding.ensureInitialized();
+  await repositories.settingsRepository.initSettings();
+
   //debugPaintSizeEnabled=true;
-  await settingsRepositoy.initSettings();
 
   runApp(
     OpenEatsJournalApp(
-      openEatsJournalAppViewModel: OpenEatsJournalAppViewModel(settingsRepository: settingsRepositoy),
-      settingsRepositoy: settingsRepositoy,
-      weightRepository: weightRepository
+      openEatsJournalAppViewModel: OpenEatsJournalAppViewModel(settingsRepository: repositories.settingsRepository),
+      repositories: repositories,
     ),
   );
 }

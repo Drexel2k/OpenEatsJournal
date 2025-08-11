@@ -3,11 +3,10 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/settings.dart";
 import "package:openeatsjournal/service/oej_database_service.dart";
 
-class SettingsRepositoy extends ChangeNotifier{
-  SettingsRepositoy._singleton() :
-    _scaffoldTitle = ValueNotifier("");
+class SettingsRepository extends ChangeNotifier{
+  SettingsRepository._singleton();
     
-  static final SettingsRepositoy instance = SettingsRepositoy._singleton();
+  static final SettingsRepository instance = SettingsRepository._singleton();
 
   late OejDatabaseService _oejDatabase;
 
@@ -17,24 +16,10 @@ class SettingsRepositoy extends ChangeNotifier{
 
   //non persistand app wide settings
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
-  final ValueNotifier<String> _scaffoldTitle;
-  Function()? _scaffoldLeadingAction;
-
-  set scaffoldLeadingAction(Function()? action) => _scaffoldLeadingAction = action;
 
   ValueNotifier<bool> get darkMode => _darkMode;
   ValueNotifier<String> get languageCode => _languaceCode;
   ValueNotifier<bool> get initialized => _initialized;
-  ValueNotifier<String> get scaffoldTitle => _scaffoldTitle;
-  bool get showScaffoldLeadingAction {
-    if(_scaffoldLeadingAction == null) {
-      return false;
-    }
-
-    return true;
-  }
-
-  Function()? get scaffoldLeadingAction => _scaffoldLeadingAction;
 
   //must be called once before the singleton is used
   void setOejDatabase(OejDatabaseService oejDataBase) {
@@ -65,7 +50,7 @@ class SettingsRepositoy extends ChangeNotifier{
     await _oejDatabase.setDoubleSetting("kcals_friday", settings.kCalsFriday);
     await _oejDatabase.setDoubleSetting("kcals_saturday", settings.kCalsSaturday);
     await _oejDatabase.setDoubleSetting("kcals_sunday", settings.kCalsSunday);
-    await _oejDatabase.setStringSetting("language_code", settings.locale);
+    await _oejDatabase.setStringSetting("language_code", settings.languageCode);
   }
 
   Future<bool?> _getDarkModeSetting() async {
@@ -79,7 +64,6 @@ class SettingsRepositoy extends ChangeNotifier{
   @override
   void dispose() {
     _darkMode.dispose();
-    _scaffoldTitle.dispose();
 
     super.dispose();
   }
