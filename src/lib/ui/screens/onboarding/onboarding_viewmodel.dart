@@ -1,7 +1,7 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
-import "package:openeatsjournal/domain/settings.dart";
+import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
@@ -68,14 +68,15 @@ class OnboardingViewModel extends ChangeNotifier {
       ),
       _activityFactor.value!,
     );
-    double dailyWeightLossCaloriesD =
+    
+    int dailyWeightLossCalories =
         NutritionCalculator.calculateTotalWithWeightLoss(
           dailyKCaloriesD,
           weightLossKg,
-        );
+        ).round();
 
-    await _settingsRepository.setSettings(
-      Settings(
+    await _settingsRepository.saveAllSettings(
+      AllSettings(
         darkMode: _settingsRepository.darkMode.value,
         gender: _gender.value!,
         birthday: _birthday.value!,
@@ -83,13 +84,13 @@ class OnboardingViewModel extends ChangeNotifier {
         weight: _weight.value!,
         activityFactor: _activityFactor.value!,
         weightTarget: _weightTarget.value,
-        kCalsMonday: dailyWeightLossCaloriesD,
-        kCalsTuesday: dailyWeightLossCaloriesD,
-        kCalsWednesday: dailyWeightLossCaloriesD,
-        kCalsThursday: dailyWeightLossCaloriesD,
-        kCalsFriday: dailyWeightLossCaloriesD,
-        kCalsSaturday: dailyWeightLossCaloriesD,
-        kCalsSunday: dailyWeightLossCaloriesD,
+        kCalsMonday: dailyWeightLossCalories,
+        kCalsTuesday: dailyWeightLossCalories,
+        kCalsWednesday: dailyWeightLossCalories,
+        kCalsThursday: dailyWeightLossCalories,
+        kCalsFriday: dailyWeightLossCalories,
+        kCalsSaturday: dailyWeightLossCalories,
+        kCalsSunday: dailyWeightLossCalories,
         languageCode: _settingsRepository.languageCode.value
       ),
     );

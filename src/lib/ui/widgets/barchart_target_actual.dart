@@ -1,17 +1,19 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/domain/statistic_type.dart";
 
 class BarchartTargetActual extends StatelessWidget {
   const BarchartTargetActual({
     super.key,
     required data,
-    required dateInformation,
+    required statisticsType,
   }) : _data = data,
-       _dateInformation = dateInformation;
+       _statisticsType = statisticsType;
 
   final List<Tuple> _data;
-  final String _dateInformation;
+  final StatisticsType _statisticsType;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class BarchartTargetActual extends StatelessWidget {
       Localizations.localeOf(context).languageCode,
     );
 
-    double barSize = _dateInformation == "day" ? 4 : 18;
+    double barSize = _statisticsType == StatisticsType.daily ? 4 : 18;
 
     int maxkCalIntakeEntry = _data.reduce(
       (currentEntry, nextEntry) =>
@@ -57,11 +59,14 @@ class BarchartTargetActual extends StatelessWidget {
       yAxisScaleMaxValue = (maxValue * 1.5).toInt();
     }
 
-    double xAxisOffset = 20;
-    if (_dateInformation == "week") {
-      xAxisOffset = 13;
-    } else if (_dateInformation == "month") {
-      xAxisOffset = 15;
+    double xAxisLabelXOffset = 12;
+    double xAxisLabelYOffset = 15;
+    if (_statisticsType == StatisticsType.weekly) {
+      xAxisLabelXOffset = 6;
+      xAxisLabelYOffset = 10;
+    } else if (_statisticsType == StatisticsType.monthly) {
+      xAxisLabelXOffset = 8;
+      xAxisLabelYOffset = 11;
     }
 
     num totalkCalIntake = _data.fold(
@@ -70,14 +75,20 @@ class BarchartTargetActual extends StatelessWidget {
     );
     int average = (totalkCalIntake / _data.length).toInt();
 
-    String header = "Last ${_data.length} ${_dateInformation}s";
+    String timeInfo = AppLocalizations.of(context)!.days;
+    if (_statisticsType == StatisticsType.weekly) {
+      timeInfo = AppLocalizations.of(context)!.weeks;
+    } else if (_statisticsType == StatisticsType.monthly) {
+      timeInfo = AppLocalizations.of(context)!.months;
+    }
+
+    String header = AppLocalizations.of(context)!.last_amount_timeinfo(_data.length, timeInfo);
 
     return Column(
       children: [
         Center(child: Text(header, style: textTheme.titleMedium)),
         Center(
-          child: Text(
-            "Average: ${formatter.format(average)}",
+          child: Text(AppLocalizations.of(context)!.average_number(formatter.format(average)),
             style: textTheme.titleSmall,
           ),
         ),
@@ -130,7 +141,7 @@ class BarchartTargetActual extends StatelessWidget {
                 position: Varset("date_information") * Varset("kCalTarget"),
                 size: SizeEncode(value: 1.5),
                 color: ColorEncode(
-                  value: Theme.of(context).colorScheme.inversePrimary,
+                  value: Theme.of(context).colorScheme.tertiary,
                 ),
               ),
             ],
@@ -144,10 +155,10 @@ class BarchartTargetActual extends StatelessWidget {
                 label: LabelStyle(
                   textStyle: TextStyle(
                     fontSize: 10,
-                    color: Theme.of(context).colorScheme.outline,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                  offset: Offset(0, xAxisOffset),
-                  rotation: 1.55,
+                  offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
+                  rotation: 1,
                 ),
               ),
               AxisGuide(
@@ -155,7 +166,7 @@ class BarchartTargetActual extends StatelessWidget {
                 label: LabelStyle(
                   textStyle: TextStyle(
                     fontSize: 10,
-                    color: Theme.of(context).colorScheme.outline,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   offset: const Offset(-7.5, 0),
                 ),

@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
+import "package:openeatsjournal/domain/statistic_type.dart";
 import "package:openeatsjournal/ui/widgets/barchart_target_actual.dart";
 
 class StatisticsScreen extends StatelessWidget {
@@ -9,7 +11,6 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
 
     List<Tuple> dayData = [
       {'dateInformation': '10.Aug', 'kCalIntake': 2300, 'kCalTarget': 2400},
@@ -79,14 +80,14 @@ class StatisticsScreen extends StatelessWidget {
       route: NavigatorRoutes.statistics,
       body: Column(
         children: [
-          BarchartTargetActual(data: dayData, dateInformation: "day"),
+          BarchartTargetActual(data: dayData, statisticsType: StatisticsType.daily),
           SizedBox(height:30),
-          BarchartTargetActual(data: weekData, dateInformation: "week"),
+          BarchartTargetActual(data: weekData, statisticsType: StatisticsType.weekly),
           SizedBox(height:20),
-          BarchartTargetActual(data: monthData, dateInformation: "month"),
+          BarchartTargetActual(data: monthData, statisticsType: StatisticsType.monthly),
         ],
       ),
-      title: "STATS",
+      title: AppLocalizations.of(context)!.statistics,
     );
   }
 }

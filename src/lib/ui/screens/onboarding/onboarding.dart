@@ -28,20 +28,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    pageTitles ??= {
-      0: "",
-      1: AppLocalizations.of(context)!.about_this_app,
-      2: AppLocalizations.of(context)!.tell_about_yourself,
-      3: AppLocalizations.of(context)!.your_targets
-    };
+    String pageTitle = "";
+    if (_currentPageIndex == 1) {
+      pageTitle = AppLocalizations.of(context)!.about_this_app;
+    } else if (_currentPageIndex == 2) {
+      pageTitle = AppLocalizations.of(context)!.tell_about_yourself;
+    } else if (_currentPageIndex == 3) {
+      pageTitle = AppLocalizations.of(context)!.your_targets;
+    }
 
     return Scaffold(
       appBar: _currentPageIndex > 0 ? 
         AppBar(
           leading: IconButton(icon: BackButtonIcon(), onPressed: () {
-            _movePageIndex(-1, pageTitles!);
+            _movePageIndex(-1);
           }),
-          title: Text(pageTitles![_currentPageIndex])
+          title: Text(pageTitle)
         ) :
         null,
       body: SafeArea( 
@@ -51,9 +53,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             controller: _pageViewController,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              OnboardingPage1(onDone: () { _movePageIndex(1, pageTitles!); }, darkMode: widget._onboardingViewModel.darkMode),
-              OnboardingPage2(onDone: () { _movePageIndex(1, pageTitles!); }),
-              OnboardingPage3(onDone: () { _movePageIndex(1, pageTitles!); }, onboardingViewModel:widget._onboardingViewModel),
+              OnboardingPage1(onDone: () { _movePageIndex(1); }, darkMode: widget._onboardingViewModel.darkMode),
+              OnboardingPage2(onDone: () { _movePageIndex(1); }),
+              OnboardingPage3(onDone: () { _movePageIndex(1); }, onboardingViewModel:widget._onboardingViewModel),
               OnboardingPage4(onDone: () { }, onboardingViewModel:widget._onboardingViewModel),  
             ]
           )
@@ -62,7 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  void _movePageIndex(int steps, Map pageTitles) {
+  void _movePageIndex(int steps) {
     setState(() {
       _currentPageIndex = _currentPageIndex + steps;
         _pageViewController.animateToPage(

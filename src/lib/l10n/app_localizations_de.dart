@@ -126,7 +126,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get very_high => 'Sehr hoch';
 
   @override
-  String get professional_athlete => 'Professioneller Sportler';
+  String get professional_athlete => 'Prof. Sportler';
 
   @override
   String get select_gender => 'Bitte wähle Dein Geschlecht.';
@@ -150,13 +150,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get keep_weight => 'Gewicht halten';
 
   @override
-  String get lose025 => '0,25kg pro Woche abnehmen';
+  String get lose025 => '-0,25kg pro Woche';
 
   @override
-  String get lose05 => '0,5kg pro Woche abnehmen';
+  String get lose05 => '-0,5kg pro Woche';
 
   @override
-  String get lose075 => '0,75kg pro Woche abnehmen';
+  String get lose075 => '-0,75kg pro Woche';
 
   @override
   String get proposed_values =>
@@ -173,8 +173,117 @@ class AppLocalizationsDe extends AppLocalizations {
   String get your_calories_values => 'Deine Kalorien Werte:';
 
   @override
-  String get daily_calories => 'Tägliche kKalorien:';
+  String get daily_calories => 'Täglicher Bedarf:';
 
   @override
-  String get daily_weightloss_calories => 'Tägliche Abnehm-kKalorien:';
+  String get daily_target_calories => 'Tägliches Ziel kCal (⌀):';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get kcal => 'kCal';
+
+  @override
+  String get fat => 'Fett';
+
+  @override
+  String get carb => 'KH';
+
+  @override
+  String get prot => 'Prot';
+
+  @override
+  String get days => 'Tage';
+
+  @override
+  String get weeks => 'Wochen';
+
+  @override
+  String get months => 'Monate';
+
+  @override
+  String last_amount_timeinfo(Object ammount, Object timeInfo) {
+    return 'Letzte $ammount $timeInfo';
+  }
+
+  @override
+  String average_number(Object average) {
+    return 'Durchschnitt: $average';
+  }
+
+  @override
+  String get app_settings => 'App Einstellungen';
+
+  @override
+  String get personal_settings => 'Persönliche Einstellungen';
+
+  @override
+  String get app_settings_linebreak => 'App\nEinstellungen';
+
+  @override
+  String get personal_settings_linebreak => 'Persönliche\nEinstellungen';
+
+  @override
+  String get dark_mode => 'Dark mode';
+
+  @override
+  String get language => 'Sprache:';
+
+  @override
+  String get english => 'Englisch';
+
+  @override
+  String get german => 'Deutsch';
+
+  @override
+  String get recalculate_calories_target => 'Kal. Ziele neu berechnen';
+
+  @override
+  String get recalculate_calories_target_hint =>
+      'Das Neuberechnen der Kalorien Ziele überschreibt alle täglichen Kalorien Zielwerte.';
+
+  @override
+  String get are_you_sure => 'Bist Du sicher?';
+
+  @override
+  String get cancel => 'Abbrechen';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get edit_calories_target => 'Kalorien Ziele bearbeiten';
+
+  @override
+  String get daily_target_new => 'Tägl. Ziel (⌀) neu:';
+
+  @override
+  String get daily_target_original => 'Tägl. Ziel (⌀) Original:';
+
+  @override
+  String get monday_kcals => 'Montag kCal:';
+
+  @override
+  String get tuesday_kcals => 'Dienstag kCal:';
+
+  @override
+  String get wednesday_kcals => 'Mittwoch kCal:';
+
+  @override
+  String get thursday_kcals => 'Donnerstag kCal:';
+
+  @override
+  String get friday_kcals => 'Freitag kCal:';
+
+  @override
+  String get saturday_kcals => 'Samstag kCal:';
+
+  @override
+  String get sunday_kcals => 'Sonntag kCal:';
+
+  @override
+  String amount_kcal(Object amount) {
+    return '$amount kcal';
+  }
 }

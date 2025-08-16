@@ -154,12 +154,12 @@ class OejDatabaseService {
 
   Future<int?> getIntSetting(String setting) async {
     Object? result = await _getSetting(setting);
-    return result == null ? null : result as int;
+    return result == null ? null : int.parse(result as String);
   }
 
   Future<double?> getDoubleSetting(String setting) async {
     Object? result = await _getSetting(setting);
-    return result == null ? null : result as double;
+    return result == null ? null : double.parse(result as String);
   }
 
   Future<bool?> getBoolSetting(String setting) async {

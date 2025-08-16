@@ -149,13 +149,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keep_weight => 'Keep weight';
 
   @override
-  String get lose025 => 'Lose 0,25kg per week';
+  String get lose025 => '-0,25kg per week';
 
   @override
-  String get lose05 => 'Lose 0,5kg per week';
+  String get lose05 => '-0,5kg per week';
 
   @override
-  String get lose075 => 'Lose 0,75kg per week';
+  String get lose075 => '-0,75kg per week';
 
   @override
   String get proposed_values =>
@@ -175,5 +175,114 @@ class AppLocalizationsEn extends AppLocalizations {
   String get daily_calories => 'Daily kCalories:';
 
   @override
-  String get daily_weightloss_calories => 'Daily weightloss kCalories:';
+  String get daily_target_calories => 'Daily target kCals (⌀):';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get kcal => 'kCal';
+
+  @override
+  String get fat => 'Fat';
+
+  @override
+  String get carb => 'Carb';
+
+  @override
+  String get prot => 'Prot';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get weeks => 'weeks';
+
+  @override
+  String get months => 'months';
+
+  @override
+  String last_amount_timeinfo(Object ammount, Object timeInfo) {
+    return 'Last $ammount $timeInfo';
+  }
+
+  @override
+  String average_number(Object average) {
+    return 'Average: $average';
+  }
+
+  @override
+  String get app_settings => 'App Settings';
+
+  @override
+  String get personal_settings => 'Personal Settings';
+
+  @override
+  String get app_settings_linebreak => 'App\nSettings';
+
+  @override
+  String get personal_settings_linebreak => 'Personal\nSettings';
+
+  @override
+  String get dark_mode => 'Dark mode';
+
+  @override
+  String get language => 'Language:';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get german => 'German';
+
+  @override
+  String get recalculate_calories_target => 'Recalc. Calories Targets';
+
+  @override
+  String get recalculate_calories_target_hint =>
+      'Recalculating calories targets will overwrite all currently set daily calories target values.';
+
+  @override
+  String get are_you_sure => 'Are you sure?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get edit_calories_target => 'Edit Calories Targets';
+
+  @override
+  String get daily_target_new => 'Daily tgt. (⌀) new:';
+
+  @override
+  String get daily_target_original => 'Daily target (⌀) original:';
+
+  @override
+  String get monday_kcals => 'Monday kCals:';
+
+  @override
+  String get tuesday_kcals => 'Tuesday kCals:';
+
+  @override
+  String get wednesday_kcals => 'Wednesday kCals:';
+
+  @override
+  String get thursday_kcals => 'Thursday kCals:';
+
+  @override
+  String get friday_kcals => 'Friday kCals:';
+
+  @override
+  String get saturday_kcals => 'Saturday kCals:';
+
+  @override
+  String get sunday_kcals => 'Sunday kCals:';
+
+  @override
+  String amount_kcal(Object amount) {
+    return '$amount kcal';
+  }
 }

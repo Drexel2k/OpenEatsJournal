@@ -29,20 +29,20 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
 
     return ListenableBuilder(
       listenable: widget._onboardingViewModel,
-      builder: (context, _) {
+      builder: (contextBuilder, _) {
         return Column(
           children: [
             Text(
-              AppLocalizations.of(context)!.your_weight_target,
+              AppLocalizations.of(contextBuilder)!.your_weight_target,
               style: textTheme.titleMedium
             ),
             ValueListenableBuilder(
               valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (context, value, _) {
+              builder: (contextBuilder, _, _) {
                 return ChoiceChip(
                   padding: EdgeInsets.symmetric(vertical: 13.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(context)!.keep_weight),
+                  label: Text(AppLocalizations.of(contextBuilder)!.keep_weight),
                   selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.keep,
                   onSelected: (bool selected) {
                     widget._onboardingViewModel.weightTarget.value = WeightTarget.keep;
@@ -57,11 +57,11 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
             SizedBox(height: 10.0),
             ValueListenableBuilder(
               valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (context, value, _) {
+              builder: (contextBuilder, _, _) {
                 return ChoiceChip(
                   padding: EdgeInsets.symmetric(vertical: 13.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(context)!.lose025),
+                  label: Text(AppLocalizations.of(contextBuilder)!.lose025),
                   selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.lose025,
                   onSelected: (bool selected) {
                     widget._onboardingViewModel.weightTarget.value = WeightTarget.lose025;
@@ -76,11 +76,11 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
             SizedBox(height: 10.0),
             ValueListenableBuilder(
               valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (context, value, _) {
+              builder: (contextBuilder, _, _) {
                 return ChoiceChip(
                   padding: EdgeInsets.symmetric(vertical: 13.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(context)!.lose05),
+                  label: Text(AppLocalizations.of(contextBuilder)!.lose05),
                   selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.lose05,
                   onSelected: (bool selected) {
                     widget._onboardingViewModel.weightTarget.value = WeightTarget.lose05;
@@ -95,11 +95,11 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
             SizedBox(height: 10.0),
             ValueListenableBuilder(
               valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (context, value, _) {
+              builder: (contextBuilder, _, _) {
                 return ChoiceChip(
                   padding: EdgeInsets.symmetric(vertical: 13.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(context)!.lose075),
+                  label: Text(AppLocalizations.of(contextBuilder)!.lose075),
                   selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.lose075,
                   onSelected: (bool selected) {
                     widget._onboardingViewModel.weightTarget.value = WeightTarget.lose075;
@@ -112,31 +112,31 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
               },
             ),
             SizedBox(height: 20),
-            Text(AppLocalizations.of(context)!.your_calories_values,
+            Text(AppLocalizations.of(contextBuilder)!.your_calories_values,
               style: textTheme.titleMedium,
               textAlign: TextAlign.center
             ),
-            Text("${AppLocalizations.of(context)!.daily_calories} ${dailyKCalories == null ? "" : dailyKCalories!.toString()}",
+            Text("${AppLocalizations.of(contextBuilder)!.daily_calories} ${dailyKCalories == null ? "" : dailyKCalories!.toString()}",
               style: textTheme.bodyLarge),
-            Text("${AppLocalizations.of(context)!.daily_weightloss_calories} ${dailyWeightLossCalories == null ? "" : dailyWeightLossCalories!.toString()}",
+            Text("${AppLocalizations.of(contextBuilder)!.daily_target_calories} ${dailyWeightLossCalories == null ? "" : dailyWeightLossCalories!.toString()}",
               style: textTheme.bodyLarge),
             SizedBox(height: 10),
-            Text(AppLocalizations.of(context)!.proposed_values,
+            Text(AppLocalizations.of(contextBuilder)!.proposed_values,
               textAlign: TextAlign.center,
               style: textTheme.bodyLarge),
-            Text(AppLocalizations.of(context)!.in_doubt_consult_doctor,
+            Text(AppLocalizations.of(contextBuilder)!.in_doubt_consult_doctor,
               textAlign: TextAlign.center,
               style: textTheme.bodyLarge),
             Spacer(),
             FilledButton(
               onPressed: () async {
                 await widget._onboardingViewModel.saveOnboardingData();
-                if(context.mounted) {
+                if(contextBuilder.mounted) {
                   //home (route "/") is always on top of the MaterialApp's navigations stack.
-                  Navigator.pop(context);
+                  Navigator.pop(contextBuilder);
                 }    
               },
-              child: Text(AppLocalizations.of(context)!.finish),
+              child: Text(AppLocalizations.of(contextBuilder)!.finish),
             ),
           ],
         );

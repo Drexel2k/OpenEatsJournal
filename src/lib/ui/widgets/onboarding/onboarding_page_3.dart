@@ -4,30 +4,30 @@ import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
-import "package:openeatsjournal/ui/widgets/onboarding/onboarding_textfield.dart";
+import "package:openeatsjournal/ui/utils/convert_validate.dart";
+import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
+import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
-class OnboardingPage3 extends StatefulWidget {
-  const OnboardingPage3({
+class OnboardingPage3 extends StatelessWidget {
+  OnboardingPage3({
     super.key,
-    required this.onDone,
     required OnboardingViewModel onboardingViewModel,
-  }) : _onboardingViewModel = onboardingViewModel;
+    required VoidCallback onDone,
+  }) : _onboardingViewModel = onboardingViewModel,
+       _onDone = onDone,
+       _birthDayController = TextEditingController();
+
   final OnboardingViewModel _onboardingViewModel;
-
-  final VoidCallback onDone;
-
-  @override
-  State<OnboardingPage3> createState() => _OnboardingPage3State();
-}
-
-class _OnboardingPage3State extends State<OnboardingPage3> {
-  final TextEditingController _birthDayController = TextEditingController();
+  final VoidCallback _onDone;
+  final TextEditingController _birthDayController;
 
   @override
   Widget build(BuildContext context) {
-    final String currentLocale = Localizations.localeOf(context).toString();
+    final String languageCode = Localizations.localeOf(context).toString();
     final TextTheme textTheme = Theme.of(context).textTheme;
-    String decimalSeparator = NumberFormat.decimalPattern(currentLocale).symbols.DECIMAL_SEP;
+    final String decimalSeparator = NumberFormat.decimalPattern(
+      languageCode,
+    ).symbols.DECIMAL_SEP;
 
     return Column(
       children: [
@@ -39,34 +39,28 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ValueListenableBuilder(
-              valueListenable: widget._onboardingViewModel.gender,
-              builder: (context, value, _) {
-                return ChoiceChip(
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  avatar: Icon(Icons.male),
-                  label: Text(AppLocalizations.of(context)!.male),
-                  showCheckmark: false,
-                  selected: widget._onboardingViewModel.gender.value == Gender.male,
+              valueListenable: _onboardingViewModel.gender,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  icon: Icons.male,
+                  label: AppLocalizations.of(contextBuilder)!.male,
+                  selected: _onboardingViewModel.gender.value == Gender.male,
                   onSelected: (bool selected) {
-                    widget._onboardingViewModel.gender.value = Gender.male;
+                    _onboardingViewModel.gender.value = Gender.male;
                   },
                 );
               },
             ),
             SizedBox(width: 8),
             ValueListenableBuilder(
-              valueListenable: widget._onboardingViewModel.gender,
-              builder: (context, _, _) {
-                return ChoiceChip(
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  avatar: Icon(Icons.female),
-                  label: Text(AppLocalizations.of(context)!.female),
-                  showCheckmark: false,
-                  selected: widget._onboardingViewModel.gender.value == Gender.femail,
+              valueListenable: _onboardingViewModel.gender,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  icon: Icons.female,
+                  label: AppLocalizations.of(contextBuilder)!.female,
+                  selected: _onboardingViewModel.gender.value == Gender.femail,
                   onSelected: (bool selected) {
-                    widget._onboardingViewModel.gender.value = Gender.femail;
+                    _onboardingViewModel.gender.value = Gender.femail;
                   },
                 );
               },
@@ -78,12 +72,16 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
           AppLocalizations.of(context)!.your_birthday,
           style: textTheme.titleMedium,
         ),
-        OnboardingTextField(
+        SettingsTextField(
           controller: _birthDayController,
           onTap: () {
-            _selectDate(currentLocale);
+            _selectDate(
+              initialDate:
+                  _onboardingViewModel.birthday.value ?? DateTime.now(),
+              context: context,
+            );
           },
-          readOnly: true
+          readOnly: true,
         ),
         SizedBox(height: 10.0),
         Text(
@@ -91,23 +89,23 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
           style: textTheme.titleMedium,
         ),
         ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.height,
-          builder: (context, value, _) {
-            return OnboardingTextField(
+          valueListenable: _onboardingViewModel.height,
+          builder: (_, _, _) {
+            return SettingsTextField(
               keyboardType: TextInputType.numberWithOptions(signed: false),
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
                 TextInputFormatter.withFunction((oldValue, newValue) {
-                  final String text = newValue.text;
+                  final String text = newValue.text.trim();
                   return text.isEmpty
                       ? newValue
-                      : text.length > 3
-                      ? oldValue
-                      : newValue;
+                      : text.length <= 3
+                      ? newValue
+                      : oldValue;
                 }),
               ],
               onChanged: (value) {
-                widget._onboardingViewModel.height.value = int.tryParse(value);
+                _onboardingViewModel.height.value = int.tryParse(value);
               },
             );
           },
@@ -118,9 +116,9 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
           style: textTheme.titleMedium,
         ),
         ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.weight,
-          builder: (context, value, _) {
-            return OnboardingTextField(
+          valueListenable: _onboardingViewModel.weight,
+          builder: (_, _, _) {
+            return SettingsTextField(
               keyboardType: TextInputType.numberWithOptions(
                 decimal: true,
                 signed: false,
@@ -130,22 +128,23 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
                 //which feels strange in the ui
                 //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
                 TextInputFormatter.withFunction((oldValue, newValue) {
-                  final String text = newValue.text;
+                  final String text = newValue.text.trim();
                   return text.isEmpty
                       ? newValue
-                      : _matchWeight(text, decimalSeparator)
+                      : ConvertValidate.validateWeight(
+                          weight: text,
+                          decimalSeparator: decimalSeparator,
+                        )
                       ? newValue
                       : oldValue;
                 }),
               ],
               onChanged: (value) {
-                num? weightNum = NumberFormat(
-                  null,
-                  currentLocale,
-                ).tryParse(value);
-                widget._onboardingViewModel.weight.value = weightNum != null
-                  ? weightNum as double
-                  : null;
+                double? weightNum = ConvertValidate.convertLocalStringToDouble(
+                  numberString: value,
+                  languageCode: languageCode,
+                );
+                _onboardingViewModel.weight.value = weightNum;
               },
             );
           },
@@ -168,99 +167,102 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
             ),
           ],
         ),
-        ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.activityFactor,
-          builder: (context, value, _) {
-            return ChoiceChip(
-              padding: EdgeInsets.symmetric(vertical: 13.0),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              label: Text(AppLocalizations.of(context)!.very_low),
-              selected: widget._onboardingViewModel.activityFactor.value == 1.2,
-              onSelected: (bool selected) {
-                widget._onboardingViewModel.activityFactor.value = 1.2;
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.activityFactor,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  label: AppLocalizations.of(contextBuilder)!.very_low,
+                  selected: _onboardingViewModel.activityFactor.value == 1.2,
+                  onSelected: (bool selected) {
+                    _onboardingViewModel.activityFactor.value = 1.2;
+                  },
+                );
               },
-            );
-          },
+            ),
+            SizedBox(width: 8),
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.activityFactor,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  label: AppLocalizations.of(contextBuilder)!.low,
+                  selected: _onboardingViewModel.activityFactor.value == 1.4,
+                  onSelected: (bool selected) {
+                    _onboardingViewModel.activityFactor.value = 1.4;
+                  },
+                );
+              },
+            ),
+          ],
         ),
         SizedBox(height: 8),
-        ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.activityFactor,
-          builder: (context, value, _) {
-            return ChoiceChip(
-              padding: EdgeInsets.symmetric(vertical: 13.0),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              label: Text(AppLocalizations.of(context)!.low),
-              selected: widget._onboardingViewModel.activityFactor.value == 1.4,
-              onSelected: (bool selected) {
-                widget._onboardingViewModel.activityFactor.value = 1.4;
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.activityFactor,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  label: AppLocalizations.of(contextBuilder)!.medium,
+                  selected: _onboardingViewModel.activityFactor.value == 1.6,
+                  onSelected: (bool selected) {
+                    _onboardingViewModel.activityFactor.value = 1.6;
+                  },
+                );
               },
-            );
-          },
+            ),
+            SizedBox(width: 8),
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.activityFactor,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  label: AppLocalizations.of(contextBuilder)!.high,
+                  selected: _onboardingViewModel.activityFactor.value == 1.8,
+                  onSelected: (bool selected) {
+                    _onboardingViewModel.activityFactor.value = 1.8;
+                  },
+                );
+              },
+            ),
+          ],
         ),
         SizedBox(height: 8),
-        ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.activityFactor,
-          builder: (context, value, _) {
-            return ChoiceChip(
-              padding: EdgeInsets.symmetric(vertical: 13.0),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              label: Text(AppLocalizations.of(context)!.medium),
-              selected: widget._onboardingViewModel.activityFactor.value == 1.6,
-              onSelected: (bool selected) {
-                widget._onboardingViewModel.activityFactor.value = 1.6;
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.activityFactor,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  label: AppLocalizations.of(contextBuilder)!.very_high,
+                  selected: _onboardingViewModel.activityFactor.value == 2.1,
+                  onSelected: (bool selected) {
+                    _onboardingViewModel.activityFactor.value = 2.1;
+                  },
+                );
               },
-            );
-          },
-        ),
-        SizedBox(height: 8),
-        ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.activityFactor,
-          builder: (context, value, _) {
-            return ChoiceChip(
-              padding: EdgeInsets.symmetric(vertical: 13.0),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              label: Text(AppLocalizations.of(context)!.high),
-              selected: widget._onboardingViewModel.activityFactor.value == 1.8,
-              onSelected: (bool selected) {
-                widget._onboardingViewModel.activityFactor.value = 1.8;
+            ),
+            SizedBox(width: 8),
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.activityFactor,
+              builder: (contextBuilder, _, _) {
+                return TransparentChoiceChip(
+                  label: AppLocalizations.of(contextBuilder)!.professional_athlete,
+                  selected: _onboardingViewModel.activityFactor.value == 2.4,
+                  onSelected: (bool selected) {
+                    _onboardingViewModel.activityFactor.value = 2.4;
+                  },
+                );
               },
-            );
-          },
-        ),
-        SizedBox(height: 8),
-        ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.activityFactor,
-          builder: (context, value, _) {
-            return ChoiceChip(
-              padding: EdgeInsets.symmetric(vertical: 13.0),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              label: Text(AppLocalizations.of(context)!.very_high),
-              selected: widget._onboardingViewModel.activityFactor.value == 2.1,
-              onSelected: (bool selected) {
-                widget._onboardingViewModel.activityFactor.value = 2.1;
-              },
-            );
-          },
-        ),
-        SizedBox(height: 8),
-        ValueListenableBuilder(
-          valueListenable: widget._onboardingViewModel.activityFactor,
-          builder: (context, value, _) {
-            return ChoiceChip(
-              padding: EdgeInsets.symmetric(vertical: 13.0),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              label: Text(AppLocalizations.of(context)!.professional_athlete),
-              selected: widget._onboardingViewModel.activityFactor.value == 2.4,
-              onSelected: (bool selected) {
-                widget._onboardingViewModel.activityFactor.value = 2.4;
-              },
-            );
-          },
+            ),
+          ],
         ),
         Spacer(),
         FilledButton(
           onPressed: () {
-            if (widget._onboardingViewModel.gender.value == null) {
+            if (_onboardingViewModel.gender.value == null) {
               SnackBar snackBar = SnackBar(
                 content: Text(AppLocalizations.of(context)!.select_gender),
                 action: SnackBarAction(
@@ -276,7 +278,7 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
               return;
             }
 
-            if (widget._onboardingViewModel.birthday.value == null) {
+            if (_onboardingViewModel.birthday.value == null) {
               SnackBar snackBar = SnackBar(
                 content: Text(AppLocalizations.of(context)!.select_birthday),
                 action: SnackBarAction(
@@ -292,8 +294,8 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
               return;
             }
 
-            if (widget._onboardingViewModel.height.value == null ||
-                widget._onboardingViewModel.height.value! <= 0) {
+            if (_onboardingViewModel.height.value == null ||
+                _onboardingViewModel.height.value! <= 0) {
               SnackBar snackBar = SnackBar(
                 content: Text(AppLocalizations.of(context)!.select_height),
                 action: SnackBarAction(
@@ -309,8 +311,8 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
               return;
             }
 
-            if (widget._onboardingViewModel.weight.value == null ||
-                widget._onboardingViewModel.weight.value! <= 0) {
+            if (_onboardingViewModel.weight.value == null ||
+                _onboardingViewModel.weight.value! <= 0) {
               SnackBar snackBar = SnackBar(
                 content: Text(AppLocalizations.of(context)!.select_weight),
                 action: SnackBarAction(
@@ -326,7 +328,7 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
               return;
             }
 
-            if (widget._onboardingViewModel.activityFactor.value == null) {
+            if (_onboardingViewModel.activityFactor.value == null) {
               SnackBar snackBar = SnackBar(
                 content: Text(
                   AppLocalizations.of(context)!.select_activity_level,
@@ -344,7 +346,7 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
               return;
             }
 
-            widget.onDone();
+            _onDone();
           },
 
           child: Text(AppLocalizations.of(context)!.proceed),
@@ -353,50 +355,22 @@ class _OnboardingPage3State extends State<OnboardingPage3> {
     );
   }
 
-  Future<void> _selectDate(String locale) async {
+  Future<void> _selectDate({
+    required DateTime initialDate,
+    required BuildContext context,
+  }) async {
+    final String languageCode = Localizations.localeOf(context).toString();
+
     DateTime? date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
 
     if (date != null) {
-      _birthDayController.text = DateFormat.yMMMMd(locale).format(date);
-      widget._onboardingViewModel.birthday.value = date;
+      _birthDayController.text = DateFormat.yMMMMd(languageCode).format(date);
+      _onboardingViewModel.birthday.value = date;
     }
-  }
-
-  bool _matchWeight(String weight, String decimalSeparator) {
-    var matches = RegExp(
-      r"^\d*\" + decimalSeparator + r"?\d*$",
-    ).allMatches(weight);
-    if (matches.length != 1) {
-      return false;
-    }
-
-    List<String> parts = weight.split(decimalSeparator);
-
-    if (parts.length > 3) {
-      return false;
-    }
-
-    if (parts[0].length > 3) {
-      return false;
-    }
-
-    if (parts.length > 1) {
-      if (parts[1].length > 1) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  @override
-  void dispose() {
-    _birthDayController.dispose();
-    super.dispose();
   }
 }

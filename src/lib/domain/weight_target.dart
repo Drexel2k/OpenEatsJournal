@@ -7,4 +7,8 @@ enum WeightTarget {
   final int value;
 
   const WeightTarget(this.value);
+
+  static WeightTarget getByValue(num i){
+    return WeightTarget.values.firstWhere((x) => x.value == i);
+  }
 }

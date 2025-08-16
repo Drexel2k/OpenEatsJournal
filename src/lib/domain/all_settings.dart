@@ -1,9 +1,10 @@
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 
-class Settings {
-  Settings({
+class AllSettings {
+  AllSettings({
     required this.darkMode,
+    required this.languageCode,
     required this.gender,
     required this.birthday,
     required this.height,
@@ -16,23 +17,22 @@ class Settings {
     required this.kCalsThursday,
     required this.kCalsFriday,
     required this.kCalsSaturday,
-    required this.kCalsSunday,
-    required this.languageCode
+    required this.kCalsSunday
   });
 
   final bool darkMode;
+  final String languageCode;
   final Gender gender;
   final DateTime birthday;
   final int height;
   final double weight;
   final double activityFactor;
   final WeightTarget weightTarget;
-  final double kCalsMonday;
-  final double kCalsTuesday;
-  final double kCalsWednesday;
-  final double kCalsThursday;
-  final double kCalsFriday;
-  final double kCalsSaturday;
-  final double kCalsSunday;
-  final String languageCode;
+  final int kCalsMonday;
+  final int kCalsTuesday;
+  final int kCalsWednesday;
+  final int kCalsThursday;
+  final int kCalsFriday;
+  final int kCalsSaturday;
+  final int kCalsSunday;
 }

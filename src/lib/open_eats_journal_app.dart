@@ -9,7 +9,6 @@ import "package:openeatsjournal/ui/screens/home.dart";
 import "package:openeatsjournal/ui/screens/home_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/settings.dart";
 import "package:openeatsjournal/ui/screens/statistics.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
@@ -36,37 +35,34 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeMode themeMode = ThemeMode.light;
-    if (widget._openEatsJournalAppViewModel.initialized.value) {
-      if(widget._openEatsJournalAppViewModel.darkMode.value) {
-        themeMode = ThemeMode.dark;
+    if (widget._openEatsJournalAppViewModel.initialized) {
+      if(widget._openEatsJournalAppViewModel.darkMode) {
       }
     }
     else {
       Brightness brightness = MediaQuery.of(context).platformBrightness;
       if (brightness == Brightness.dark) {
-        widget._openEatsJournalAppViewModel.darkMode.value = true;
-        themeMode = ThemeMode.dark;
+        widget._openEatsJournalAppViewModel.darkMode = true;
       }
       
       String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
       if(AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
-         widget._openEatsJournalAppViewModel.languageCode.value = platformLanguageCode;
+         widget._openEatsJournalAppViewModel.languageCode = platformLanguageCode;
       }
     }
 
     String initialRoute = NavigatorRoutes.home;
-    if (!widget._openEatsJournalAppViewModel.initialized.value) {
+    if (!widget._openEatsJournalAppViewModel.initialized) {
       initialRoute = NavigatorRoutes.onboarding;
     }
 
-    return ValueListenableBuilder(
-      valueListenable: widget._openEatsJournalAppViewModel.darkMode,
-      builder: (_, _, _) {
+    return ListenableBuilder(
+      listenable: widget._openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
+      builder: (contextBuilder, _) {
         return MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(widget._openEatsJournalAppViewModel.languageCode.value),
+          locale: Locale(widget._openEatsJournalAppViewModel.languageCode),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
             pageTransitionsTheme: PageTransitionsTheme(
@@ -85,18 +81,18 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
             }
             )
           ),
-          themeMode: themeMode,
+          themeMode: widget._openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
           initialRoute: initialRoute,
           routes: {
-            NavigatorRoutes.home: (context) => HomeScreen(
+            NavigatorRoutes.home: (contextBuilder) => HomeScreen(
             homeViewModel: HomeViewModel(
               settingsRepository: widget._repositories.settingsRepository
-            )
+            ),
+            settingsRepository: widget._repositories.settingsRepository,
           ),
-          NavigatorRoutes.statistics: (context) => const StatisticsScreen(),
-          NavigatorRoutes.food: (context) => const FoodScreen(),
-          NavigatorRoutes.settings: (context) => const SettingsScreen(),
-          NavigatorRoutes.onboarding: (context) => OnboardingScreen(
+          NavigatorRoutes.statistics: (contextBuilder) => const StatisticsScreen(),
+          NavigatorRoutes.food: (contextBuilder) => const FoodScreen(),
+          NavigatorRoutes.onboarding: (contextBuilder) => OnboardingScreen(
             onboardingViewModel: OnboardingViewModel(
               settingsRepository: widget._repositories.settingsRepository,
               weightRepository: widget._repositories.weightRepository))

@@ -365,19 +365,19 @@ abstract class AppLocalizations {
   /// No description provided for @lose025.
   ///
   /// In en, this message translates to:
-  /// **'Lose 0,25kg per week'**
+  /// **'-0,25kg per week'**
   String get lose025;
 
   /// No description provided for @lose05.
   ///
   /// In en, this message translates to:
-  /// **'Lose 0,5kg per week'**
+  /// **'-0,5kg per week'**
   String get lose05;
 
   /// No description provided for @lose075.
   ///
   /// In en, this message translates to:
-  /// **'Lose 0,75kg per week'**
+  /// **'-0,75kg per week'**
   String get lose075;
 
   /// No description provided for @proposed_values.
@@ -410,11 +410,215 @@ abstract class AppLocalizations {
   /// **'Daily kCalories:'**
   String get daily_calories;
 
-  /// No description provided for @daily_weightloss_calories.
+  /// No description provided for @daily_target_calories.
   ///
   /// In en, this message translates to:
-  /// **'Daily weightloss kCalories:'**
-  String get daily_weightloss_calories;
+  /// **'Daily target kCals (⌀):'**
+  String get daily_target_calories;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @kcal.
+  ///
+  /// In en, this message translates to:
+  /// **'kCal'**
+  String get kcal;
+
+  /// No description provided for @fat.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat'**
+  String get fat;
+
+  /// No description provided for @carb.
+  ///
+  /// In en, this message translates to:
+  /// **'Carb'**
+  String get carb;
+
+  /// No description provided for @prot.
+  ///
+  /// In en, this message translates to:
+  /// **'Prot'**
+  String get prot;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @weeks.
+  ///
+  /// In en, this message translates to:
+  /// **'weeks'**
+  String get weeks;
+
+  /// No description provided for @months.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get months;
+
+  /// No description provided for @last_amount_timeinfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {ammount} {timeInfo}'**
+  String last_amount_timeinfo(Object ammount, Object timeInfo);
+
+  /// No description provided for @average_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Average: {average}'**
+  String average_number(Object average);
+
+  /// No description provided for @app_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get app_settings;
+
+  /// No description provided for @personal_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Settings'**
+  String get personal_settings;
+
+  /// No description provided for @app_settings_linebreak.
+  ///
+  /// In en, this message translates to:
+  /// **'App\nSettings'**
+  String get app_settings_linebreak;
+
+  /// No description provided for @personal_settings_linebreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal\nSettings'**
+  String get personal_settings_linebreak;
+
+  /// No description provided for @dark_mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark mode'**
+  String get dark_mode;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language:'**
+  String get language;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @german.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get german;
+
+  /// No description provided for @recalculate_calories_target.
+  ///
+  /// In en, this message translates to:
+  /// **'Recalc. Calories Targets'**
+  String get recalculate_calories_target;
+
+  /// No description provided for @recalculate_calories_target_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Recalculating calories targets will overwrite all currently set daily calories target values.'**
+  String get recalculate_calories_target_hint;
+
+  /// No description provided for @are_you_sure.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get are_you_sure;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @edit_calories_target.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Calories Targets'**
+  String get edit_calories_target;
+
+  /// No description provided for @daily_target_new.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily tgt. (⌀) new:'**
+  String get daily_target_new;
+
+  /// No description provided for @daily_target_original.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily target (⌀) original:'**
+  String get daily_target_original;
+
+  /// No description provided for @monday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday kCals:'**
+  String get monday_kcals;
+
+  /// No description provided for @tuesday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday kCals:'**
+  String get tuesday_kcals;
+
+  /// No description provided for @wednesday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday kCals:'**
+  String get wednesday_kcals;
+
+  /// No description provided for @thursday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday kCals:'**
+  String get thursday_kcals;
+
+  /// No description provided for @friday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday kCals:'**
+  String get friday_kcals;
+
+  /// No description provided for @saturday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday kCals:'**
+  String get saturday_kcals;
+
+  /// No description provided for @sunday_kcals.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday kCals:'**
+  String get sunday_kcals;
+
+  /// No description provided for @amount_kcal.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} kcal'**
+  String amount_kcal(Object amount);
 }
 
 class _AppLocalizationsDelegate

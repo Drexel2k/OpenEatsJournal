@@ -6,46 +6,40 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
       required SettingsRepository settingsRepository
     }) :
     _settingsRepository = settingsRepository,
-    _initialized = ValueNotifier(settingsRepository.initialized.value),
-    _darkMode = ValueNotifier(settingsRepository.darkMode.value),
-    _languageCode = ValueNotifier(settingsRepository.languageCode.value) {
-      _settingsRepository.initialized.addListener(_initializedChanged);
-
-      _settingsRepository.darkMode.addListener(_settinbsDarkModeChanged);
+    _darkModeOrLanguageCodeChanged = DarkModeOrLanguageCodeChangedNotifier() {
+      _settingsRepository.darkMode.addListener(_settingsDarkModeChanged);
       _settingsRepository.languageCode.addListener(_settingsLanguageCodeChanged);
-      _languageCode.addListener(_languageCodeChanged);
   }
 
   final SettingsRepository _settingsRepository;
-  final ValueNotifier<bool> _initialized;
-  final ValueNotifier<bool> _darkMode;
-  final ValueNotifier<String> _languageCode;
+  final DarkModeOrLanguageCodeChangedNotifier _darkModeOrLanguageCodeChanged;
 
-  ValueNotifier<bool> get initialized => _initialized;
-  ValueNotifier<bool> get darkMode => _darkMode;
-  ValueNotifier<String> get languageCode => _languageCode;
+  set darkMode(bool value) => _settingsRepository.darkMode.value = value;
+  set languageCode(String value) => _settingsRepository.languageCode.value = value;
 
+  bool get initialized => _settingsRepository.initialized.value;
+  bool get darkMode => _settingsRepository.darkMode.value;
+  String get languageCode => _settingsRepository.languageCode.value;
+  DarkModeOrLanguageCodeChangedNotifier get darkModeOrLanguageCodeChanged => _darkModeOrLanguageCodeChanged;
 
-  void _initializedChanged() {
-    _initialized.value = _settingsRepository.initialized.value;
-  }
-
-  _settinbsDarkModeChanged() {
-    _darkMode.value = _settingsRepository.darkMode.value;
+  _settingsDarkModeChanged() {
+    _darkModeOrLanguageCodeChanged.notify();
   }
 
   _settingsLanguageCodeChanged() {
-    _languageCode.value = _settingsRepository.languageCode.value;
-  }
-
-  _languageCodeChanged() {
-    _settingsRepository.languageCode.value = _languageCode.value;
+    _darkModeOrLanguageCodeChanged.notify();
   }
 
   @override
   void dispose() {
-    _darkMode.dispose();
+    _darkModeOrLanguageCodeChanged.dispose();
 
     super.dispose();
+  }
+}
+
+class DarkModeOrLanguageCodeChangedNotifier extends ChangeNotifier {
+  void notify() {
+    notifyListeners();
   }
 }

@@ -2,21 +2,34 @@ import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/home_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
+import "package:openeatsjournal/ui/screens/settings.dart";
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required HomeViewModel homeViewModel})
-    : _homeViewModel = homeViewModel;
+  const HomeScreen({
+    super.key,
+    required HomeViewModel homeViewModel,
+      required SettingsRepository settingsRepository
+      }
+    ): 
+      _homeViewModel = homeViewModel,
+      _settingsRepository = settingsRepository;
 
   final HomeViewModel _homeViewModel;
+  final SettingsRepository _settingsRepository;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
+    final NumberFormat formatter = NumberFormat(
+      null,
+      Localizations.localeOf(context).languageCode,
+    );
 
     int value = 1250;
     int maxValue = 2500;
@@ -67,7 +80,26 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Icon(Icons.settings, size: 36),
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    iconSize: 36,
+                    onPressed: () => {
+                      showDialog<void>(
+                        useSafeArea: true,
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext contextBuilder) {
+                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height *0.03;
+
+                          return Dialog(
+                            insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                            child: Settings(settingsViewModel: SettingsViewModel(settingsRepository: _settingsRepository)) 
+                          );
+                        }
+                      )
+                    }
+                  ),
                 ),
               ),
             ],
@@ -79,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: 50),
                     Text(
-                      "kCal",
+                      AppLocalizations.of(context)!.kcal,
                       style: textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -101,9 +133,9 @@ class HomeScreen extends StatelessWidget {
                       width: dimension,
                       child: Chart(
                         data: [
-                          {'type': '100_percent', 'percent': 100},
+                          {'type': '100Percent', 'percent': 100},
                           {
-                            'type': 'current_prcent',
+                            'type': 'actualPercent',
                             'percent': percentageFilled,
                           },
                         ],
@@ -126,7 +158,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                             color: ColorEncode(
-                              variable: 'type',
+                              variable: "type",
                               values: colors,
                             ),
                           ),
@@ -152,27 +184,27 @@ class HomeScreen extends StatelessWidget {
                       Expanded(
                         child: Center(
                           child: GaugeNutritionFactSmall(
-                            factName: "Fat",
+                            factName: AppLocalizations.of(context)!.fat,
                             value: 256,
-                            maxValue: 596
+                            maxValue: 596,
                           ),
                         ),
                       ),
                       Expanded(
                         child: Center(
                           child: GaugeNutritionFactSmall(
-                            factName: "Carb",
+                            factName: AppLocalizations.of(context)!.carb,
                             value: 33,
-                            maxValue: 88
+                            maxValue: 88,
                           ),
                         ),
                       ),
                       Expanded(
                         child: Center(
                           child: GaugeNutritionFactSmall(
-                            factName: "Prot",
+                            factName: AppLocalizations.of(context)!.prot,
                             value: 33,
-                            maxValue: 88
+                            maxValue: 88,
                           ),
                         ),
                       ),

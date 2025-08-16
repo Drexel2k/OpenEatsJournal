@@ -8,9 +8,4 @@ class HomeViewModel extends ChangeNotifier {
   final SettingsRepository _settingsRepository;
 
   String get languageCode  => _settingsRepository.languageCode.value;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
