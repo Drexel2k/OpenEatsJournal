@@ -13,7 +13,7 @@ import "package:openeatsjournal/ui/screens/statistics.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 
-class OpenEatsJournalApp extends StatefulWidget {
+class OpenEatsJournalApp extends StatelessWidget {
   const OpenEatsJournalApp({
       super.key,
       required OpenEatsJournalAppViewModel openEatsJournalAppViewModel,
@@ -27,42 +27,35 @@ class OpenEatsJournalApp extends StatefulWidget {
   final Repositories _repositories;
 
   @override
-  State<OpenEatsJournalApp> createState() => _OpenEatsJournalAppState();
-}
-
-class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
-  int currentPageIndex = 1;
-
-  @override
   Widget build(BuildContext context) {
-    if (widget._openEatsJournalAppViewModel.initialized) {
-      if(widget._openEatsJournalAppViewModel.darkMode) {
+    if (_openEatsJournalAppViewModel.initialized) {
+      if(_openEatsJournalAppViewModel.darkMode) {
       }
     }
     else {
       Brightness brightness = MediaQuery.of(context).platformBrightness;
       if (brightness == Brightness.dark) {
-        widget._openEatsJournalAppViewModel.darkMode = true;
+        _openEatsJournalAppViewModel.darkMode = true;
       }
       
       String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
       if(AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
-         widget._openEatsJournalAppViewModel.languageCode = platformLanguageCode;
+         _openEatsJournalAppViewModel.languageCode = platformLanguageCode;
       }
     }
 
     String initialRoute = NavigatorRoutes.home;
-    if (!widget._openEatsJournalAppViewModel.initialized) {
+    if (!_openEatsJournalAppViewModel.initialized) {
       initialRoute = NavigatorRoutes.onboarding;
     }
 
     return ListenableBuilder(
-      listenable: widget._openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
+      listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
       builder: (contextBuilder, _) {
         return MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(widget._openEatsJournalAppViewModel.languageCode),
+          locale: Locale(_openEatsJournalAppViewModel.languageCode),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
             pageTransitionsTheme: PageTransitionsTheme(
@@ -81,21 +74,21 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
             }
             )
           ),
-          themeMode: widget._openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
           initialRoute: initialRoute,
           routes: {
             NavigatorRoutes.home: (contextBuilder) => HomeScreen(
             homeViewModel: HomeViewModel(
-              settingsRepository: widget._repositories.settingsRepository
+              settingsRepository: _repositories.settingsRepository
             ),
-            settingsRepository: widget._repositories.settingsRepository,
+            settingsRepository: _repositories.settingsRepository,
           ),
           NavigatorRoutes.statistics: (contextBuilder) => const StatisticsScreen(),
           NavigatorRoutes.food: (contextBuilder) => const FoodScreen(),
           NavigatorRoutes.onboarding: (contextBuilder) => OnboardingScreen(
             onboardingViewModel: OnboardingViewModel(
-              settingsRepository: widget._repositories.settingsRepository,
-              weightRepository: widget._repositories.weightRepository))
+              settingsRepository: _repositories.settingsRepository,
+              weightRepository: _repositories.weightRepository))
           },
         );
       },

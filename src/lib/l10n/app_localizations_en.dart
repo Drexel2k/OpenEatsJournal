@@ -159,7 +159,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proposed_values =>
-      'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings (even per weekday).';
+      'Calories need is based on the Mifflin-St Jeor formula and the Physical Activity Level Factor of the Food and Agriculture Organization of the United Nations. The target is calculated based on the assumption that 1 kg of body fat has approximately 7,000 kcal. These values can be adjusted in the settings (target values also per weekday).';
 
   @override
   String get in_doubt_consult_doctor =>
@@ -169,13 +169,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get select_target => 'Please select a target.';
 
   @override
-  String get your_calories_values => 'Your calories values:';
+  String your_daily_calories_need(Object amount) {
+    return 'Your daily calories need: $amount kCals';
+  }
 
   @override
-  String get daily_calories => 'Daily kCalories:';
+  String your_daily_calories_target(Object amount) {
+    return 'Your daily calories target: $amount kCals';
+  }
 
   @override
-  String get daily_target_calories => 'Daily target kCals (⌀):';
+  String get daily_need_calories => 'Daily need kCals:';
+
+  @override
+  String get daily_target_calories => 'Daily target (⌀) kCals:';
 
   @override
   String get statistics => 'Statistics';
@@ -255,10 +262,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit_calories_target => 'Edit Calories Targets';
 
   @override
-  String get daily_target_new => 'Daily tgt. (⌀) new:';
+  String get daily_target_new => 'Daily target (⌀) kCals new:';
 
   @override
-  String get daily_target_original => 'Daily target (⌀) original:';
+  String get daily_target_original => 'Daily target (⌀) kCals original:';
 
   @override
   String get monday_kcals => 'Monday kCals:';

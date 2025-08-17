@@ -63,24 +63,27 @@ class SettingsPageApp extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Text(AppLocalizations.of(context)!.dark_mode, style: textTheme.titleMedium),
+                    child: Text(
+                      AppLocalizations.of(context)!.dark_mode,
+                      style: textTheme.titleMedium,
+                    ),
                   ),
                   Expanded(
                     flex: 1,
-                    child: ValueListenableBuilder(
-                      valueListenable: _settingsViewModel.darkMode,
-                      builder: (_, _, _) {
-                        return Align(
-                          alignment: Alignment.topLeft,
-                          child: Switch(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.darkMode,
+                        builder: (_, _, _) {
+                          return Switch(
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                             value: _settingsViewModel.darkMode.value,
                             onChanged: (value) =>
                                 _settingsViewModel.darkMode.value = value,
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -91,45 +94,44 @@ class SettingsPageApp extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Text(AppLocalizations.of(context)!.language, style: textTheme.titleMedium),
+                    child: Text(
+                      AppLocalizations.of(context)!.language,
+                      style: textTheme.titleMedium,
+                    ),
                   ),
                   Expanded(
                     flex: 1,
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Column(
-                        children: [
-                          ValueListenableBuilder(
-                            valueListenable: _settingsViewModel.gender,
-                            builder: (_, _, _) {
-                              return TransparentChoiceChip(
-                                label: AppLocalizations.of(context)!.english,
-                                selected:
-                                    _settingsViewModel.languageCode.value ==
-                                    "en",
-                                onSelected: (bool selected) {
-                                  _settingsViewModel.languageCode.value = "en";
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 8),
-                          ValueListenableBuilder(
-                            valueListenable: _settingsViewModel.gender,
-                            builder: (_, _, _) {
-                              return TransparentChoiceChip(
-                                label: AppLocalizations.of(context)!.german,
-                                selected:
-                                    _settingsViewModel.languageCode.value ==
-                                    "de",
-                                onSelected: (bool selected) {
-                                  _settingsViewModel.languageCode.value = "de";
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ValueListenableBuilder(
+                          valueListenable: _settingsViewModel.languageCode,
+                          builder: (_, _, _) {
+                            return TransparentChoiceChip(
+                              label: AppLocalizations.of(context)!.english,
+                              selected:
+                                  _settingsViewModel.languageCode.value == "en",
+                              onSelected: (bool selected) {
+                                _settingsViewModel.languageCode.value = "en";
+                              },
+                            );
+                          },
+                        ),
+                        SizedBox(height: 8),
+                        ValueListenableBuilder(
+                          valueListenable: _settingsViewModel.languageCode,
+                          builder: (_, _, _) {
+                            return TransparentChoiceChip(
+                              label: AppLocalizations.of(context)!.german,
+                              selected:
+                                  _settingsViewModel.languageCode.value == "de",
+                              onSelected: (bool selected) {
+                                _settingsViewModel.languageCode.value = "de";
+                              },
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ],

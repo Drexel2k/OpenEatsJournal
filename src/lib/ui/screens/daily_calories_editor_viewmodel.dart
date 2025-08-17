@@ -3,7 +3,7 @@ import "package:openeatsjournal/domain/kcal_settings.dart";
 
 class DailyCaloriesEditorViewModel extends ChangeNotifier {
   DailyCaloriesEditorViewModel(KCalSettings kCalSettings)
-    : _kCalsWeightLossDaily = ValueNotifier(
+    : _kCalsTargetDaily = ValueNotifier(
         ((kCalSettings.kCalsMonday +
                     kCalSettings.kCalsTuesday +
                     kCalSettings.kCalsWednesday +
@@ -30,7 +30,7 @@ class DailyCaloriesEditorViewModel extends ChangeNotifier {
     _kCalsSunday.addListener(_dayKCalsChanged);
   }
 
-  final ValueNotifier<int> _kCalsWeightLossDaily;
+  final ValueNotifier<int> _kCalsTargetDaily;
   final ValueNotifier<int> _kCalsMonday;
   final ValueNotifier<int> _kCalsTuesday;
   final ValueNotifier<int> _kCalsWednesday;
@@ -39,7 +39,7 @@ class DailyCaloriesEditorViewModel extends ChangeNotifier {
   final ValueNotifier<int> _kCalsSaturday;
   final ValueNotifier<int> _kCalsSunday;
 
-  ValueNotifier<int> get kCalsWeightLossDaily => _kCalsWeightLossDaily;
+  ValueNotifier<int> get kCalsTargetDaily => _kCalsTargetDaily;
   ValueNotifier<int> get kCalsMonday => _kCalsMonday;
   ValueNotifier<int> get kCalsTuesday => _kCalsTuesday;
   ValueNotifier<int> get kCalsWednesday => _kCalsWednesday;
@@ -49,7 +49,7 @@ class DailyCaloriesEditorViewModel extends ChangeNotifier {
   ValueNotifier<int> get kCalsSunday => _kCalsSunday;
 
   void _dayKCalsChanged() {
-    _kCalsWeightLossDaily.value =
+    _kCalsTargetDaily.value =
         ((_kCalsMonday.value +
                     _kCalsTuesday.value +
                     _kCalsWednesday.value +
@@ -63,7 +63,7 @@ class DailyCaloriesEditorViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _kCalsWeightLossDaily.dispose();
+    _kCalsTargetDaily.dispose();
     _kCalsMonday.dispose();
     _kCalsTuesday.dispose();
     _kCalsWednesday.dispose();

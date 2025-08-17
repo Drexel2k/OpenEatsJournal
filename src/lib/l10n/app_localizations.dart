@@ -383,7 +383,7 @@ abstract class AppLocalizations {
   /// No description provided for @proposed_values.
   ///
   /// In en, this message translates to:
-  /// **'These are proposed target values based on Mifflin-St Jeor Equation and the physical activity level factor by the Food and Agriculture Organization of the United Nations. These values can still be adjusted in the settings (even per weekday).'**
+  /// **'Calories need is based on the Mifflin-St Jeor formula and the Physical Activity Level Factor of the Food and Agriculture Organization of the United Nations. The target is calculated based on the assumption that 1 kg of body fat has approximately 7,000 kcal. These values can be adjusted in the settings (target values also per weekday).'**
   String get proposed_values;
 
   /// No description provided for @in_doubt_consult_doctor.
@@ -398,22 +398,28 @@ abstract class AppLocalizations {
   /// **'Please select a target.'**
   String get select_target;
 
-  /// No description provided for @your_calories_values.
+  /// No description provided for @your_daily_calories_need.
   ///
   /// In en, this message translates to:
-  /// **'Your calories values:'**
-  String get your_calories_values;
+  /// **'Your daily calories need: {amount} kCals'**
+  String your_daily_calories_need(Object amount);
 
-  /// No description provided for @daily_calories.
+  /// No description provided for @your_daily_calories_target.
   ///
   /// In en, this message translates to:
-  /// **'Daily kCalories:'**
-  String get daily_calories;
+  /// **'Your daily calories target: {amount} kCals'**
+  String your_daily_calories_target(Object amount);
+
+  /// No description provided for @daily_need_calories.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily need kCals:'**
+  String get daily_need_calories;
 
   /// No description provided for @daily_target_calories.
   ///
   /// In en, this message translates to:
-  /// **'Daily target kCals (⌀):'**
+  /// **'Daily target (⌀) kCals:'**
   String get daily_target_calories;
 
   /// No description provided for @statistics.
@@ -563,13 +569,13 @@ abstract class AppLocalizations {
   /// No description provided for @daily_target_new.
   ///
   /// In en, this message translates to:
-  /// **'Daily tgt. (⌀) new:'**
+  /// **'Daily target (⌀) kCals new:'**
   String get daily_target_new;
 
   /// No description provided for @daily_target_original.
   ///
   /// In en, this message translates to:
-  /// **'Daily target (⌀) original:'**
+  /// **'Daily target (⌀) kCals original:'**
   String get daily_target_original;
 
   /// No description provided for @monday_kcals.

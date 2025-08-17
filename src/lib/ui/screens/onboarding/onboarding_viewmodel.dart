@@ -16,8 +16,13 @@ class OnboardingViewModel extends ChangeNotifier {
       _height = ValueNotifier(null),
       _weight = ValueNotifier(null),
       _activityFactor = ValueNotifier(null),
-      _weightTarget = ValueNotifier(WeightTarget.keep);
+      _weightTarget = ValueNotifier(null),
+      _dailyNeedKCalories = ValueNotifier(0),
+      _dailyTargetCalories = ValueNotifier(0) {
+        _weightTarget.addListener(_calculateKCalories);
+      }
 
+  final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final WeightRepository _weightRepository;
   final SettingsRepository _settingsRepository;
 
@@ -26,15 +31,20 @@ class OnboardingViewModel extends ChangeNotifier {
   final ValueNotifier<int?> _height;
   final ValueNotifier<double?> _weight;
   final ValueNotifier<double?> _activityFactor;
-  final ValueNotifier<WeightTarget> _weightTarget;
+  final ValueNotifier<WeightTarget?> _weightTarget;
+  final ValueNotifier<int> _dailyNeedKCalories;
+  final ValueNotifier<int> _dailyTargetCalories;
 
+  ValueNotifier<int> get currentPageIndex => _currentPageIndex;
   bool get darkMode => _settingsRepository.darkMode.value;
   ValueNotifier<Gender?> get gender => _gender;
   ValueNotifier<DateTime?> get birthday => _birthday;
   ValueNotifier<int?> get height => _height;
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<double?> get activityFactor => _activityFactor;
-  ValueNotifier<WeightTarget> get weightTarget => _weightTarget;
+  ValueNotifier<WeightTarget?> get weightTarget => _weightTarget;
+  ValueNotifier<int> get dailyNeedKCalories => _dailyNeedKCalories;
+  ValueNotifier<int> get dailyTargetCalories => _dailyTargetCalories;
 
   Future<void> saveOnboardingData() async {
     int age = 0;
@@ -60,19 +70,20 @@ class OnboardingViewModel extends ChangeNotifier {
     }
 
     double dailyKCaloriesD = NutritionCalculator.calculateTotalKCaloriesPerDay(
+      kCaloriesPerDay: 
       NutritionCalculator.calculateBasalMetabolicRate(
-        _weight.value!,
-        _height.value!,
-        age,
-        _gender.value!,
+        weightKg: _weight.value!,
+        heightCm: _height.value!,
+        ageYear: age,
+        gender: _gender.value!,
       ),
-      _activityFactor.value!,
+      activityFactor:  _activityFactor.value!,
     );
     
-    int dailyWeightLossCalories =
-        NutritionCalculator.calculateTotalWithWeightLoss(
-          dailyKCaloriesD,
-          weightLossKg,
+    int dailyTargetCalories =
+        NutritionCalculator.calculateTargetCaloriesPerDay(
+          kCaloriesPerDay: dailyKCaloriesD,
+          weightLossPerWeekKg: weightLossKg,
         ).round();
 
     await _settingsRepository.saveAllSettings(
@@ -83,19 +94,64 @@ class OnboardingViewModel extends ChangeNotifier {
         height: _height.value!,
         weight: _weight.value!,
         activityFactor: _activityFactor.value!,
-        weightTarget: _weightTarget.value,
-        kCalsMonday: dailyWeightLossCalories,
-        kCalsTuesday: dailyWeightLossCalories,
-        kCalsWednesday: dailyWeightLossCalories,
-        kCalsThursday: dailyWeightLossCalories,
-        kCalsFriday: dailyWeightLossCalories,
-        kCalsSaturday: dailyWeightLossCalories,
-        kCalsSunday: dailyWeightLossCalories,
+        weightTarget: _weightTarget.value!,
+        kCalsMonday: dailyTargetCalories,
+        kCalsTuesday: dailyTargetCalories,
+        kCalsWednesday: dailyTargetCalories,
+        kCalsThursday: dailyTargetCalories,
+        kCalsFriday: dailyTargetCalories,
+        kCalsSaturday: dailyTargetCalories,
+        kCalsSunday: dailyTargetCalories,
         languageCode: _settingsRepository.languageCode.value
       ),
     );
 
     await _weightRepository.insertWeight(DateTime.now(), _weight.value!);
+  }
+
+void _calculateKCalories() {
+    int age = 0;
+    final DateTime today = DateTime.now();
+    age = today.year - _birthday.value!.year;
+    final month =
+        today.month - _birthday.value!.month;
+
+    if (month < 0) {
+      age = age - 1;
+    }
+
+    double weightLossKg = 0;
+    if (_weightTarget.value ==
+        WeightTarget.lose025) {
+      weightLossKg = 0.25;
+    }
+
+    if (_weightTarget.value == WeightTarget.lose05) {
+      weightLossKg = 0.5;
+    }
+
+    if (_weightTarget.value ==
+        WeightTarget.lose075) {
+      weightLossKg = 0.75;
+    }
+
+    double dailyKCaloriesD = NutritionCalculator.calculateTotalKCaloriesPerDay(
+      kCaloriesPerDay: NutritionCalculator.calculateBasalMetabolicRate(
+        weightKg: _weight.value!,
+        heightCm: _height.value!,
+        ageYear: age,
+        gender: _gender.value!,
+      ),
+      activityFactor: _activityFactor.value!,
+    );
+    double dailyTargetCaloriesD =
+        NutritionCalculator.calculateTargetCaloriesPerDay(
+          kCaloriesPerDay: dailyKCaloriesD,
+          weightLossPerWeekKg: weightLossKg,
+        );
+
+    _dailyNeedKCalories.value = dailyKCaloriesD.round();
+    _dailyTargetCalories.value = dailyTargetCaloriesD.round();
   }
 
   @override

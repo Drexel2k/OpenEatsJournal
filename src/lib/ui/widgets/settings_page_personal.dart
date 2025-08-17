@@ -96,48 +96,55 @@ class SettingsPagePersonal extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        flex: 1,
+                        flex: 11,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.daily_target_calories,
-                              style: textTheme.titleMedium,
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.daily_calories,
-                              style: textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ValueListenableBuilder(
-                                    valueListenable: _settingsViewModel
-                                        .dailyWeightLossCalories,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 8,
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.daily_target_calories,
+                                    style: textTheme.titleMedium,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: ValueListenableBuilder(
+                                    valueListenable:
+                                        _settingsViewModel.dailyTargetCalories,
                                     builder: (_, _, _) {
                                       return Text(
                                         formatter.format(
                                           _settingsViewModel
-                                              .dailyWeightLossCalories
+                                              .dailyTargetCalories
                                               .value,
                                         ),
                                         style: textTheme.titleMedium,
                                       );
                                     },
                                   ),
-                                  ValueListenableBuilder(
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 8,
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.daily_need_calories,
+                                    style: textTheme.bodySmall,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: ValueListenableBuilder(
                                     valueListenable:
                                         _settingsViewModel.dailyCalories,
                                     builder: (_, _, _) {
@@ -151,72 +158,78 @@ class SettingsPagePersonal extends StatelessWidget {
                                       );
                                     },
                                   ),
-                                ],
-                              ),
-                              SizedBox(width: 5),
-                              OutlinedButton(
-                                onPressed: () async {
-                                  if ((await _showRecalulateCaloriesCOnfirmDialog(
-                                    context: context,
-                                  ))!) {
-                                    await _settingsViewModel
-                                        .recalculateDailyCalTargetsAndSave();
-                                  }
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  minimumSize: Size(45, 40),
-                                  padding: EdgeInsets.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                child: Icon(Icons.calculate),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            OutlinedButton(
+                              onPressed: () async {
+                                if ((await _showRecalulateCaloriesCOnfirmDialog(
+                                  context: context,
+                                ))!) {
+                                  await _settingsViewModel
+                                      .recalculateDailykCalTargetsAndSave();
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                shape: CircleBorder(),
+                                minimumSize: Size(40, 40),
+                                padding: EdgeInsets.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              OutlinedButton(
-                                onPressed: () async {
-                                  KCalSettings? kCalSettings =
-                                      await _showDailyCaloriesEditDialog(
-                                        context: context,
-                                        dailyCalories: _settingsViewModel
-                                            .dailyCalories
-                                            .value,
-                                        originalDailyWeightLossCalories:
-                                            _settingsViewModel
-                                                .dailyWeightLossCalories
-                                                .value,
-                                        initialKCalSettings: KCalSettings(
-                                          kCalsMonday:
-                                              _settingsViewModel.kCalsMonday,
-                                          kCalsTuesday:
-                                              _settingsViewModel.kCalsTuesday,
-                                          kCalsWednesday:
-                                              _settingsViewModel.kCalsWednesday,
-                                          kCalsThursday:
-                                              _settingsViewModel.kCalsThursday,
-                                          kCalsFriday:
-                                              _settingsViewModel.kCalsFriday,
-                                          kCalsSaturday:
-                                              _settingsViewModel.kCalsSaturday,
-                                          kCalsSunday:
-                                              _settingsViewModel.kCalsSunday,
-                                        ),
-                                      );
-                                  if (kCalSettings != null) {
-                                    await _settingsViewModel
-                                        .setDailyCaloriesAndSave(kCalSettings);
-                                  }
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  minimumSize: Size(45, 40),
-                                  padding: EdgeInsets.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: Icon(Icons.edit),
+                              child: Icon(Icons.calculate),
+                            ),
+                            SizedBox(width: 5),
+                            OutlinedButton(
+                              onPressed: () async {
+                                KCalSettings? kCalSettings =
+                                    await _showDailyCaloriesEditDialog(
+                                      context: context,
+                                      dailyCalories: _settingsViewModel
+                                          .dailyCalories
+                                          .value,
+                                      originalDailyTargetCalories:
+                                          _settingsViewModel
+                                              .dailyTargetCalories
+                                              .value,
+                                      initialKCalSettings: KCalSettings(
+                                        kCalsMonday:
+                                            _settingsViewModel.kCalsMonday,
+                                        kCalsTuesday:
+                                            _settingsViewModel.kCalsTuesday,
+                                        kCalsWednesday:
+                                            _settingsViewModel.kCalsWednesday,
+                                        kCalsThursday:
+                                            _settingsViewModel.kCalsThursday,
+                                        kCalsFriday:
+                                            _settingsViewModel.kCalsFriday,
+                                        kCalsSaturday:
+                                            _settingsViewModel.kCalsSaturday,
+                                        kCalsSunday:
+                                            _settingsViewModel.kCalsSunday,
+                                      ),
+                                    );
+                                if (kCalSettings != null) {
+                                  await _settingsViewModel
+                                      .setDailyCaloriesAndSave(kCalSettings);
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                shape: CircleBorder(),
+                                minimumSize: Size(40, 40),
+                                padding: EdgeInsets.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                            ],
-                          ),
+                              child: Icon(Icons.edit),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -234,50 +247,47 @@ class SettingsPagePersonal extends StatelessWidget {
                       ),
                       Expanded(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ValueListenableBuilder(
-                                valueListenable: _settingsViewModel.gender,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    icon: Icons.male,
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.male,
-                                    selected:
-                                        _settingsViewModel.gender.value ==
-                                        Gender.male,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.gender.value =
-                                          Gender.male;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable: _settingsViewModel.gender,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    icon: Icons.female,
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.female,
-                                    selected:
-                                        _settingsViewModel.gender.value ==
-                                        Gender.femail,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.gender.value =
-                                          Gender.femail;
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ValueListenableBuilder(
+                              valueListenable: _settingsViewModel.gender,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  icon: Icons.male,
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.male,
+                                  selected:
+                                      _settingsViewModel.gender.value ==
+                                      Gender.male,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.gender.value =
+                                        Gender.male;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable: _settingsViewModel.gender,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  icon: Icons.female,
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.female,
+                                  selected:
+                                      _settingsViewModel.gender.value ==
+                                      Gender.femail,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.gender.value =
+                                        Gender.femail;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -459,138 +469,123 @@ class SettingsPagePersonal extends StatelessWidget {
                       ),
                       Expanded(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.activityFactor,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.very_low,
-                                    selected:
-                                        _settingsViewModel
-                                            .activityFactor
-                                            .value ==
-                                        1.2,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.activityFactor.value =
-                                          1.2;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.activityFactor,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.low,
-                                    selected:
-                                        _settingsViewModel
-                                            .activityFactor
-                                            .value ==
-                                        1.4,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.activityFactor.value =
-                                          1.4;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.activityFactor,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.medium,
-                                    selected:
-                                        _settingsViewModel
-                                            .activityFactor
-                                            .value ==
-                                        1.6,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.activityFactor.value =
-                                          1.6;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.activityFactor,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.high,
-                                    selected:
-                                        _settingsViewModel
-                                            .activityFactor
-                                            .value ==
-                                        1.8,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.activityFactor.value =
-                                          1.8;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.activityFactor,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.very_high,
-                                    selected:
-                                        _settingsViewModel
-                                            .activityFactor
-                                            .value ==
-                                        2.1,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.activityFactor.value =
-                                          2.1;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.activityFactor,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.professional_athlete,
-                                    selected:
-                                        _settingsViewModel
-                                            .activityFactor
-                                            .value ==
-                                        2.4,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.activityFactor.value =
-                                          2.4;
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  _settingsViewModel.activityFactor,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.very_low,
+                                  selected:
+                                      _settingsViewModel.activityFactor.value ==
+                                      1.2,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.activityFactor.value =
+                                        1.2;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  _settingsViewModel.activityFactor,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.low,
+                                  selected:
+                                      _settingsViewModel.activityFactor.value ==
+                                      1.4,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.activityFactor.value =
+                                        1.4;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  _settingsViewModel.activityFactor,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.medium,
+                                  selected:
+                                      _settingsViewModel.activityFactor.value ==
+                                      1.6,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.activityFactor.value =
+                                        1.6;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  _settingsViewModel.activityFactor,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.high,
+                                  selected:
+                                      _settingsViewModel.activityFactor.value ==
+                                      1.8,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.activityFactor.value =
+                                        1.8;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  _settingsViewModel.activityFactor,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.very_high,
+                                  selected:
+                                      _settingsViewModel.activityFactor.value ==
+                                      2.1,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.activityFactor.value =
+                                        2.1;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  _settingsViewModel.activityFactor,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.professional_athlete,
+                                  selected:
+                                      _settingsViewModel.activityFactor.value ==
+                                      2.4,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.activityFactor.value =
+                                        2.4;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -608,88 +603,81 @@ class SettingsPagePersonal extends StatelessWidget {
                       ),
                       Expanded(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.weightTarget,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.keep_weight,
-                                    selected:
-                                        _settingsViewModel.weightTarget.value ==
-                                        WeightTarget.keep,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.weightTarget.value =
-                                          WeightTarget.keep;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.weightTarget,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.lose025,
-                                    selected:
-                                        _settingsViewModel.weightTarget.value ==
-                                        WeightTarget.lose025,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.weightTarget.value =
-                                          WeightTarget.lose025;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.weightTarget,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.lose05,
-                                    selected:
-                                        _settingsViewModel.weightTarget.value ==
-                                        WeightTarget.lose05,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.weightTarget.value =
-                                          WeightTarget.lose05;
-                                    },
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
-                              ValueListenableBuilder(
-                                valueListenable:
-                                    _settingsViewModel.weightTarget,
-                                builder: (contextBuilder, _, _) {
-                                  return TransparentChoiceChip(
-                                    label: AppLocalizations.of(
-                                      contextBuilder,
-                                    )!.lose075,
-                                    selected:
-                                        _settingsViewModel.weightTarget.value ==
-                                        WeightTarget.lose075,
-                                    onSelected: (bool selected) {
-                                      _settingsViewModel.weightTarget.value =
-                                          WeightTarget.lose075;
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ValueListenableBuilder(
+                              valueListenable: _settingsViewModel.weightTarget,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.keep_weight,
+                                  selected:
+                                      _settingsViewModel.weightTarget.value ==
+                                      WeightTarget.keep,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.weightTarget.value =
+                                        WeightTarget.keep;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable: _settingsViewModel.weightTarget,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.lose025,
+                                  selected:
+                                      _settingsViewModel.weightTarget.value ==
+                                      WeightTarget.lose025,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.weightTarget.value =
+                                        WeightTarget.lose025;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable: _settingsViewModel.weightTarget,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.lose05,
+                                  selected:
+                                      _settingsViewModel.weightTarget.value ==
+                                      WeightTarget.lose05,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.weightTarget.value =
+                                        WeightTarget.lose05;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable: _settingsViewModel.weightTarget,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(
+                                    contextBuilder,
+                                  )!.lose075,
+                                  selected:
+                                      _settingsViewModel.weightTarget.value ==
+                                      WeightTarget.lose075,
+                                  onSelected: (bool selected) {
+                                    _settingsViewModel.weightTarget.value =
+                                        WeightTarget.lose075;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -714,7 +702,7 @@ class SettingsPagePersonal extends StatelessWidget {
           title: Text(
             AppLocalizations.of(context)!.recalculate_calories_target,
           ),
-           content: Column(
+          content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -738,7 +726,7 @@ class SettingsPagePersonal extends StatelessWidget {
                 Navigator.pop(contextBuilder, true);
               },
             ),
-          ], 
+          ],
         );
       },
     );
@@ -747,7 +735,7 @@ class SettingsPagePersonal extends StatelessWidget {
   Future<KCalSettings?> _showDailyCaloriesEditDialog({
     required BuildContext context,
     required int dailyCalories,
-    required int originalDailyWeightLossCalories,
+    required int originalDailyTargetCalories,
     required KCalSettings initialKCalSettings,
   }) async {
     return showDialog<KCalSettings>(
@@ -767,8 +755,8 @@ class SettingsPagePersonal extends StatelessWidget {
             ),
           ),
           dailyCalories: _settingsViewModel.dailyCalories.value,
-          originalDailyWeightLossCalories:
-              _settingsViewModel.dailyWeightLossCalories.value,
+          originalDailyTargetCalories:
+              _settingsViewModel.dailyTargetCalories.value,
         );
       },
     );

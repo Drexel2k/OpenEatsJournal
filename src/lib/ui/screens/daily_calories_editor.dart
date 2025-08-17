@@ -13,10 +13,10 @@ class DailyCaloriesEditor extends StatelessWidget {
     super.key,
     required DailyCaloriesEditorViewModel dailyCaloriesEditorViewModel,
     required int dailyCalories,
-    required int originalDailyWeightLossCalories,
+    required int originalDailyTargetCalories,
   }) : _dailyCaloriesEditorViewModel = dailyCaloriesEditorViewModel,
        _dailyCalories = dailyCalories,
-       _originalDailyWeightLossCalories = originalDailyWeightLossCalories,
+       _originalDailyTargetCalories = originalDailyTargetCalories,
        _kCalMondayController = TextEditingController(),
        _kCalTuesdayController = TextEditingController(),
        _kCalWednesdayController = TextEditingController(),
@@ -27,7 +27,7 @@ class DailyCaloriesEditor extends StatelessWidget {
 
   final DailyCaloriesEditorViewModel _dailyCaloriesEditorViewModel;
   final int _dailyCalories;
-  final int _originalDailyWeightLossCalories;
+  final int _originalDailyTargetCalories;
   final TextEditingController _kCalMondayController;
   final TextEditingController _kCalTuesdayController;
   final TextEditingController _kCalWednesdayController;
@@ -78,483 +78,445 @@ class DailyCaloriesEditor extends StatelessWidget {
 
     return AlertDialog(
       title: Text(AppLocalizations.of(context)!.edit_calories_target),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.daily_target_new,
-                        style: textTheme.titleMedium,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.daily_target_original,
-                        style: textTheme.bodySmall,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.daily_calories,
-                        style: textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.daily_target_new,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorViewModel
-                                  .kCalsWeightLossDaily,
-                              builder: (_, _, _) {
-                                return Text(
-                                  AppLocalizations.of(context)!.amount_kcal(
-                                    formatter.format(
-                                      _dailyCaloriesEditorViewModel
-                                          .kCalsWeightLossDaily
-                                          .value,
-                                    ),
-                                  ),
-                                  style: textTheme.titleMedium,
-                                );
-                              },
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.amount_kcal(
-                                formatter.format(
-                                  _originalDailyWeightLossCalories,
-                                ),
-                              ),
-                              style: textTheme.bodySmall,
-                            ),
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.amount_kcal(formatter.format(_dailyCalories)),
-                              style: textTheme.bodySmall,
-                            ),
-                          ],
+              ),
+              Expanded(
+                flex: 1,
+                child: ValueListenableBuilder(
+                  valueListenable:
+                      _dailyCaloriesEditorViewModel.kCalsTargetDaily,
+                  builder: (_, _, _) {
+                    return Text(
+                      AppLocalizations.of(context)!.amount_kcal(
+                        formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsTargetDaily.value,
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.monday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalMondayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
                       ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalMondayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsMonday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalMondayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel.kCalsMonday.value,
-                            );
-                          },
+                      style: textTheme.titleMedium,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.daily_target_original,
+                  style: textTheme.bodySmall,
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.amount_kcal(
+                    formatter.format(_originalDailyTargetCalories),
+                  ),
+                  style: textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.daily_need_calories,
+                  style: textTheme.bodySmall,
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.amount_kcal(formatter.format(_dailyCalories)),
+                  style: textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.monday_kcals,
+                  style: textTheme.titleMedium,
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalMondayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalMondayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsMonday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalMondayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsMonday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.tuesday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.tuesday_kcals,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalTuesdayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
-                      ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalTuesdayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsTuesday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalTuesdayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel.kCalsTuesday.value,
-                            );
-                          },
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalTuesdayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalTuesdayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsTuesday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalTuesdayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsTuesday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.wednesday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.wednesday_kcals,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalWednesdayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
-                      ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalWednesdayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsWednesday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalWednesdayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel
-                                  .kCalsWednesday
-                                  .value,
-                            );
-                          },
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalWednesdayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalWednesdayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsWednesday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalWednesdayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsWednesday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.thursday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.thursday_kcals,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalThursdayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
-                      ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalThursdayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsThursday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalThursdayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel.kCalsThursday.value,
-                            );
-                          },
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalThursdayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalThursdayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsThursday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalThursdayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsThursday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.friday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.friday_kcals,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalFridayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
-                      ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalFridayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsFriday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalFridayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel.kCalsFriday.value,
-                            );
-                          },
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalFridayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalFridayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsFriday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalFridayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsFriday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.saturday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.saturday_kcals,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalSaturdayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
-                      ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalSaturdayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsSaturday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalSaturdayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel.kCalsSaturday.value,
-                            );
-                          },
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalSaturdayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalSaturdayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsSaturday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalSaturdayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsSaturday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    AppLocalizations.of(context)!.sunday_kcals,
-                    style: textTheme.titleMedium,
-                  ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.sunday_kcals,
+                  style: textTheme.titleMedium,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SettingsTextField(
-                      controller: _kCalSundayController,
-                      keyboardType: TextInputType.numberWithOptions(
-                        signed: false,
-                      ),
-                      inputFormatters: [
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text;
-                          return text.isEmpty
-                              ? TextEditingValue(text: "1")
-                              : ConvertValidate.validateCalories(
-                                      kCals: text,
-                                      thousandSeparator: thousandSeparator,
-                                    ) &&
-                                    ConvertValidate.convertLocalStringToDouble(
-                                          numberString: text,
-                                          languageCode: languageCode,
-                                        )! >=
-                                        1
-                              ? newValue
-                              : oldValue;
-                        }),
-                      ],
-                      onChanged: (value) {
-                        kCalSundayDebouncer.run(
-                          callback: () {
-                            _dailyCaloriesEditorViewModel.kCalsSunday.value =
-                                ConvertValidate.convertLocalStringToInt(
-                                  numberString: value,
-                                  languageCode: languageCode,
-                                )!;
-                            _kCalSundayController.text = formatter.format(
-                              _dailyCaloriesEditorViewModel.kCalsSunday.value,
-                            );
-                          },
+              ),
+              Expanded(
+                flex: 1,
+                child: SettingsTextField(
+                  controller: _kCalSundayController,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String text = newValue.text;
+                      return text.isEmpty
+                          ? TextEditingValue(text: "1")
+                          : ConvertValidate.validateCalories(
+                                  kCals: text,
+                                  thousandSeparator: thousandSeparator,
+                                ) &&
+                                ConvertValidate.convertLocalStringToDouble(
+                                      numberString: text,
+                                      languageCode: languageCode,
+                                    )! >=
+                                    1
+                          ? newValue
+                          : oldValue;
+                    }),
+                  ],
+                  onChanged: (value) {
+                    kCalSundayDebouncer.run(
+                      callback: () {
+                        _dailyCaloriesEditorViewModel.kCalsSunday.value =
+                            ConvertValidate.convertLocalStringToInt(
+                              numberString: value,
+                              languageCode: languageCode,
+                            )!;
+                        _kCalSundayController.text = formatter.format(
+                          _dailyCaloriesEditorViewModel.kCalsSunday.value,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
       actions: [
         TextButton(

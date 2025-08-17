@@ -160,7 +160,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get proposed_values =>
-      'Die vorgeschlagenen Zielwerte basieren auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. In den Einstellungen können diese Werte noch angepasst werden (auch pro Wochentag).';
+      'Der Kalorienbedarf basiert auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. Das Ziel wird unter der Annahme berechnet, dass 1 KG Körperfett ca. 7.000 kCal hat. In den Einstellungen können diese Werte noch angepasst werden (Zielwerte auch proWochentag).';
 
   @override
   String get in_doubt_consult_doctor =>
@@ -170,13 +170,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get select_target => 'Please select a target.';
 
   @override
-  String get your_calories_values => 'Deine Kalorien Werte:';
+  String your_daily_calories_need(Object amount) {
+    return 'Dein täglicher Kalorienbedarf: $amount kCal';
+  }
 
   @override
-  String get daily_calories => 'Täglicher Bedarf:';
+  String your_daily_calories_target(Object amount) {
+    return 'Deine tägliches Kalorienziel: $amount kCal';
+  }
 
   @override
-  String get daily_target_calories => 'Tägliches Ziel kCal (⌀):';
+  String get daily_need_calories => 'Tägl. Bedarf kCal:';
+
+  @override
+  String get daily_target_calories => 'Tägl. Ziel (⌀) kCal:';
 
   @override
   String get statistics => 'Statistics';
@@ -256,10 +263,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get edit_calories_target => 'Kalorien Ziele bearbeiten';
 
   @override
-  String get daily_target_new => 'Tägl. Ziel (⌀) neu:';
+  String get daily_target_new => 'Tägl. Ziel (⌀) kCal neu:';
 
   @override
-  String get daily_target_original => 'Tägl. Ziel (⌀) Original:';
+  String get daily_target_original => 'Tägl. Ziel (⌀) kCal Original:';
 
   @override
   String get monday_kcals => 'Montag kCal:';

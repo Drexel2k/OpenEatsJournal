@@ -14,11 +14,9 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({
     super.key,
     required HomeViewModel homeViewModel,
-      required SettingsRepository settingsRepository
-      }
-    ): 
-      _homeViewModel = homeViewModel,
-      _settingsRepository = settingsRepository;
+    required SettingsRepository settingsRepository,
+  }) : _homeViewModel = homeViewModel,
+       _settingsRepository = settingsRepository;
 
   final HomeViewModel _homeViewModel;
   final SettingsRepository _settingsRepository;
@@ -63,7 +61,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: SizedBox()),
+              Expanded(flex: 1, child: SizedBox()),
               Expanded(
                 flex: 4,
                 child: TextButton(
@@ -78,6 +76,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
@@ -89,16 +88,27 @@ class HomeScreen extends StatelessWidget {
                         barrierDismissible: false,
                         context: context,
                         builder: (BuildContext contextBuilder) {
-                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height *0.03;
+                          double horizontalPadding =
+                              MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                          double verticalPadding =
+                              MediaQuery.sizeOf(contextBuilder).height * 0.03;
 
                           return Dialog(
-                            insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                            child: Settings(settingsViewModel: SettingsViewModel(settingsRepository: _settingsRepository)) 
+                            insetPadding: EdgeInsets.fromLTRB(
+                              horizontalPadding,
+                              verticalPadding,
+                              horizontalPadding,
+                              verticalPadding,
+                            ),
+                            child: Settings(
+                              settingsViewModel: SettingsViewModel(
+                                settingsRepository: _settingsRepository,
+                              ),
+                            ),
                           );
-                        }
-                      )
-                    }
+                        },
+                      ),
+                    },
                   ),
                 ),
               ),

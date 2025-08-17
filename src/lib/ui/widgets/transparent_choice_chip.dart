@@ -3,8 +3,8 @@ import "package:flutter/material.dart";
 class TransparentChoiceChip extends StatelessWidget {
   const TransparentChoiceChip({
     super.key,
-    IconData? icon,
     required String label,
+    IconData? icon,
     bool selected = false,
     ValueChanged<bool>? onSelected
     }

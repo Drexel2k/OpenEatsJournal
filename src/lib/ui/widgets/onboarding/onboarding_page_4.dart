@@ -1,140 +1,188 @@
 import "package:flutter/material.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
+import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
-class OnboardingPage4 extends StatefulWidget {
+class OnboardingPage4 extends StatelessWidget {
   const OnboardingPage4({
     super.key,
     required this.onDone,
     required OnboardingViewModel onboardingViewModel,
   }) : _onboardingViewModel = onboardingViewModel;
+
   final OnboardingViewModel _onboardingViewModel;
-
   final VoidCallback onDone;
-
-  @override
-  State<OnboardingPage4> createState() => _OnboardingPage4State();
-}
-
-class _OnboardingPage4State extends State<OnboardingPage4> {
-  int? dailyKCalories;
-  int? dailyWeightLossCalories;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _calculateKCalories();
+    final String languageCode = Localizations.localeOf(context).languageCode;
+    final NumberFormat formatter = NumberFormat(null, languageCode);
 
     return ListenableBuilder(
-      listenable: widget._onboardingViewModel,
+      listenable: _onboardingViewModel,
       builder: (contextBuilder, _) {
         return Column(
           children: [
-            Text(
-              AppLocalizations.of(contextBuilder)!.your_weight_target,
-              style: textTheme.titleMedium
-            ),
-            ValueListenableBuilder(
-              valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (contextBuilder, _, _) {
-                return ChoiceChip(
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(contextBuilder)!.keep_weight),
-                  selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.keep,
-                  onSelected: (bool selected) {
-                    widget._onboardingViewModel.weightTarget.value = WeightTarget.keep;
-                    setState(() {
-                        _calculateKCalories();                     
-                      }
+            Row(
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: _onboardingViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return Text(
+                      AppLocalizations.of(
+                        contextBuilder,
+                      )!.your_daily_calories_need(
+                        formatter.format(
+                          _onboardingViewModel.dailyNeedKCalories.value,
+                        ),
+                      ),
+                      style: textTheme.titleMedium,
                     );
                   },
-                );
-              },
+                ),
+              ],
             ),
-            SizedBox(height: 10.0),
-            ValueListenableBuilder(
-              valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (contextBuilder, _, _) {
-                return ChoiceChip(
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(contextBuilder)!.lose025),
-                  selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.lose025,
-                  onSelected: (bool selected) {
-                    widget._onboardingViewModel.weightTarget.value = WeightTarget.lose025;
-                    setState(() {
-                        _calculateKCalories();                     
-                      }
-                    );
-                  },
-                );
-              },
-            ),
-            SizedBox(height: 10.0),
-            ValueListenableBuilder(
-              valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (contextBuilder, _, _) {
-                return ChoiceChip(
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(contextBuilder)!.lose05),
-                  selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.lose05,
-                  onSelected: (bool selected) {
-                    widget._onboardingViewModel.weightTarget.value = WeightTarget.lose05;
-                    setState(() {
-                        _calculateKCalories();                     
-                      }
-                    );
-                  },
-                );
-              },
-            ),
-            SizedBox(height: 10.0),
-            ValueListenableBuilder(
-              valueListenable: widget._onboardingViewModel.weightTarget,
-              builder: (contextBuilder, _, _) {
-                return ChoiceChip(
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(AppLocalizations.of(contextBuilder)!.lose075),
-                  selected: widget._onboardingViewModel.weightTarget.value == WeightTarget.lose075,
-                  onSelected: (bool selected) {
-                    widget._onboardingViewModel.weightTarget.value = WeightTarget.lose075;
-                    setState(() {
-                        _calculateKCalories();                     
-                      }
-                    );
-                  },
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            Text(AppLocalizations.of(contextBuilder)!.your_calories_values,
-              style: textTheme.titleMedium,
-              textAlign: TextAlign.center
-            ),
-            Text("${AppLocalizations.of(contextBuilder)!.daily_calories} ${dailyKCalories == null ? "" : dailyKCalories!.toString()}",
-              style: textTheme.bodyLarge),
-            Text("${AppLocalizations.of(contextBuilder)!.daily_target_calories} ${dailyWeightLossCalories == null ? "" : dailyWeightLossCalories!.toString()}",
-              style: textTheme.bodyLarge),
             SizedBox(height: 10),
-            Text(AppLocalizations.of(contextBuilder)!.proposed_values,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyLarge),
-            Text(AppLocalizations.of(contextBuilder)!.in_doubt_consult_doctor,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyLarge),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    AppLocalizations.of(contextBuilder)!.your_weight_target,
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(
+                              contextBuilder,
+                            )!.keep_weight,
+                            selected:
+                                _onboardingViewModel.weightTarget.value ==
+                                WeightTarget.keep,
+                            onSelected: (bool selected) {
+                              _onboardingViewModel.weightTarget.value =
+                                  WeightTarget.keep;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10.0),
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(contextBuilder)!.lose025,
+                            selected:
+                                _onboardingViewModel.weightTarget.value ==
+                                WeightTarget.lose025,
+                            onSelected: (bool selected) {
+                              _onboardingViewModel.weightTarget.value =
+                                  WeightTarget.lose025;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10.0),
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(contextBuilder)!.lose05,
+                            selected:
+                                _onboardingViewModel.weightTarget.value ==
+                                WeightTarget.lose05,
+                            onSelected: (bool selected) {
+                              _onboardingViewModel.weightTarget.value =
+                                  WeightTarget.lose05;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10.0),
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(contextBuilder)!.lose075,
+                            selected:
+                                _onboardingViewModel.weightTarget.value ==
+                                WeightTarget.lose075,
+                            onSelected: (bool selected) {
+                              _onboardingViewModel.weightTarget.value =
+                                  WeightTarget.lose075;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: _onboardingViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return Text(
+                      AppLocalizations.of(
+                        contextBuilder,
+                      )!.your_daily_calories_target(
+                        formatter.format(
+                          _onboardingViewModel.dailyTargetCalories.value,
+                        ),
+                      ),
+                      style: textTheme.titleMedium,
+                    );
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(contextBuilder)!.proposed_values,
+                    style: textTheme.bodyLarge,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(
+                      contextBuilder,
+                    )!.in_doubt_consult_doctor,
+                    style: textTheme.bodyLarge,
+                  ),
+                ),
+              ],
+            ),
             Spacer(),
             FilledButton(
               onPressed: () async {
-                await widget._onboardingViewModel.saveOnboardingData();
-                if(contextBuilder.mounted) {
+                await _onboardingViewModel.saveOnboardingData();
+                if (contextBuilder.mounted) {
                   //home (route "/") is always on top of the MaterialApp's navigations stack.
                   Navigator.pop(contextBuilder);
-                }    
+                }
               },
               child: Text(AppLocalizations.of(contextBuilder)!.finish),
             ),
@@ -142,48 +190,5 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
         );
       },
     );
-  }
-
-  void _calculateKCalories() {
-    int age = 0;
-    final DateTime today = DateTime.now();
-    age = today.year - widget._onboardingViewModel.birthday.value!.year;
-    final month = today.month - widget._onboardingViewModel.birthday.value!.month;
-
-    if (month < 0) {
-      age = age - 1;
-    }
-
-    double weightLossKg = 0;
-    if (widget._onboardingViewModel.weightTarget.value == WeightTarget.lose025) {
-      weightLossKg = 0.25;
-    }
-
-    if (widget._onboardingViewModel.weightTarget.value == WeightTarget.lose05) {
-      weightLossKg = 0.5;
-    }
-
-    if (widget._onboardingViewModel.weightTarget.value == WeightTarget.lose075) {
-      weightLossKg = 0.75;
-    }
-
-    double dailyKCaloriesD =
-        NutritionCalculator.calculateTotalKCaloriesPerDay(
-          NutritionCalculator.calculateBasalMetabolicRate(
-            widget._onboardingViewModel.weight.value!,
-            widget._onboardingViewModel.height.value!,
-            age,
-            widget._onboardingViewModel.gender.value!,
-          ),
-          widget._onboardingViewModel.activityFactor.value!,
-        );
-    double dailyWeightLossCaloriesD =
-        NutritionCalculator.calculateTotalWithWeightLoss(
-          dailyKCaloriesD,
-          weightLossKg,
-        );
-
-    dailyKCalories = dailyKCaloriesD.round();
-    dailyWeightLossCalories = dailyWeightLossCaloriesD.round(); 
   }
 }

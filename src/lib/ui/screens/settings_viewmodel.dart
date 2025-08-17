@@ -11,7 +11,7 @@ class SettingsViewModel extends ChangeNotifier {
       _darkMode = ValueNotifier(settingsRepository.darkMode.value),
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
       _dailyCalories = ValueNotifier(1),
-      _dailyWeightLossCalories = ValueNotifier(1),
+      _dailyTargetCalories = ValueNotifier(1),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
       _height = ValueNotifier(settingsRepository.height),
@@ -19,7 +19,7 @@ class SettingsViewModel extends ChangeNotifier {
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
       _weightTarget = ValueNotifier(settingsRepository.weightTarget) {
     _setDailyCalories();
-    _setDailyWeightlossKCalories();
+    _setDailyTargetKCalories();
     _darkMode.addListener(_darkModeChanged);
     _languageCode.addListener(_languageCodeChanged);
     _gender.addListener(_genderChanged);
@@ -32,10 +32,11 @@ class SettingsViewModel extends ChangeNotifier {
 
   final SettingsRepository _settingsRepository;
 
+  int _currentPageIndex = 0;
   final ValueNotifier<bool> _darkMode;
   final ValueNotifier<String> _languageCode;
   final ValueNotifier<int> _dailyCalories;
-  final ValueNotifier<int> _dailyWeightLossCalories;
+  final ValueNotifier<int> _dailyTargetCalories;
   final ValueNotifier<Gender> _gender;
   final ValueNotifier<DateTime> _birthday;
   final ValueNotifier<int> _height;
@@ -43,10 +44,13 @@ class SettingsViewModel extends ChangeNotifier {
   final ValueNotifier<double> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
 
+  set currentPageIndex(int value) => _currentPageIndex = value;
+
+  int get currentPageIndex => _currentPageIndex;
   ValueNotifier<bool> get darkMode => _darkMode;
   ValueNotifier<String> get languageCode => _languageCode;
   ValueNotifier<int> get dailyCalories => _dailyCalories;
-  ValueNotifier<int> get dailyWeightLossCalories => _dailyWeightLossCalories;
+  ValueNotifier<int> get dailyTargetCalories => _dailyTargetCalories;
   ValueNotifier<Gender> get gender => _gender;
   ValueNotifier<DateTime> get birthday => _birthday;
   ValueNotifier<int> get height => _height;
@@ -62,8 +66,8 @@ class SettingsViewModel extends ChangeNotifier {
   int get kCalsSaturday => _settingsRepository.kCalsSaturday;
   int get kCalsSunday => _settingsRepository.kCalsSunday;
 
-  void _setDailyWeightlossKCalories() {
-    _dailyWeightLossCalories.value =
+  void _setDailyTargetKCalories() {
+    _dailyTargetCalories.value =
         ((_settingsRepository.kCalsMonday +
                     _settingsRepository.kCalsTuesday +
                     _settingsRepository.kCalsWednesday +
@@ -86,13 +90,13 @@ class SettingsViewModel extends ChangeNotifier {
     }
 
     return NutritionCalculator.calculateTotalKCaloriesPerDay(
-      NutritionCalculator.calculateBasalMetabolicRate(
-        _weight.value,
-        _height.value,
-        age,
-        _gender.value,
+      kCaloriesPerDay: NutritionCalculator.calculateBasalMetabolicRate(
+        weightKg: _weight.value,
+        heightCm: _height.value,
+        ageYear: age,
+       gender : _gender.value,
       ),
-      _activityFactor.value,
+      activityFactor: _activityFactor.value,
     );
   }
 
@@ -137,7 +141,7 @@ class SettingsViewModel extends ChangeNotifier {
     _settingsRepository.weightTarget = _weightTarget.value;
   }
 
-  Future<void> recalculateDailyCalTargetsAndSave() async {
+  Future<void> recalculateDailykCalTargetsAndSave() async {
     double weightLossKg = 0;
     if (_settingsRepository.weightTarget == WeightTarget.lose025) {
       weightLossKg = 0.25;
@@ -151,23 +155,23 @@ class SettingsViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyWeightLossCalories =
-        NutritionCalculator.calculateTotalWithWeightLoss(
-          _getDailyCalories(),
-          weightLossKg,
+    int dailyTargetCalories =
+        NutritionCalculator.calculateTargetCaloriesPerDay(
+          kCaloriesPerDay: _getDailyCalories(),
+          weightLossPerWeekKg: weightLossKg,
         ).round();
 
     await _settingsRepository.saveDailyCaloriesTargetsSame(
-      dailyWeightLossCalories,
+      dailyTargetCalories,
     );
 
-    _dailyWeightLossCalories.value = dailyWeightLossCalories;
+    _dailyTargetCalories.value = dailyTargetCalories;
   }
 
   Future<void> setDailyCaloriesAndSave(KCalSettings kCalSettings) async {
     _settingsRepository.saveDailyCaloriesTargetsSameIndividual(kCalSettings);
 
-    _dailyWeightLossCalories.value =
+    _dailyTargetCalories.value =
         ((kCalSettings.kCalsMonday +
                     kCalSettings.kCalsTuesday +
                     kCalSettings.kCalsWednesday +
@@ -184,7 +188,7 @@ class SettingsViewModel extends ChangeNotifier {
     _darkMode.dispose();
     _languageCode.dispose();
     _dailyCalories.dispose();
-    _dailyWeightLossCalories.dispose();
+    _dailyTargetCalories.dispose();
     _gender.dispose();
     _birthday.dispose();
     _height.dispose();

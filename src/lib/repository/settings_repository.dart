@@ -222,14 +222,14 @@ class SettingsRepository extends ChangeNotifier {
     await _oejDatabase.setStringSetting("language_code", _languageCode.value);
   }
 
-  Future<void> saveDailyCaloriesTargetsSame(int dailyWeightLossCalories) async {
-    await _saveKCalsMonday(dailyWeightLossCalories);
-    await _saveKCalsTuesday(dailyWeightLossCalories);
-    await _saveKCalsWednesday(dailyWeightLossCalories);
-    await _saveKCalsThursday(dailyWeightLossCalories);
-    await _saveKCalsFriday(dailyWeightLossCalories);
-    await _saveKCalsSaturday(dailyWeightLossCalories);
-    await _saveKCalsSunday(dailyWeightLossCalories);
+  Future<void> saveDailyCaloriesTargetsSame(int dailyTargetCalories) async {
+    await _saveKCalsMonday(dailyTargetCalories);
+    await _saveKCalsTuesday(dailyTargetCalories);
+    await _saveKCalsWednesday(dailyTargetCalories);
+    await _saveKCalsThursday(dailyTargetCalories);
+    await _saveKCalsFriday(dailyTargetCalories);
+    await _saveKCalsSaturday(dailyTargetCalories);
+    await _saveKCalsSunday(dailyTargetCalories);
   }
 
   Future<void> saveDailyCaloriesTargetsSameIndividual(KCalSettings kCalSettings) async {
