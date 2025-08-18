@@ -7,9 +7,8 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
 
 class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel({required SettingsRepository settingsRepository,
-    required WeightRepository weightRepository}) :
-      _settingsRepository = settingsRepository,
+  OnboardingViewModel({required SettingsRepository settingsRepository, required WeightRepository weightRepository})
+    : _settingsRepository = settingsRepository,
       _weightRepository = weightRepository,
       _gender = ValueNotifier(null),
       _birthday = ValueNotifier(null),
@@ -19,8 +18,8 @@ class OnboardingViewModel extends ChangeNotifier {
       _weightTarget = ValueNotifier(null),
       _dailyNeedKCalories = ValueNotifier(0),
       _dailyTargetCalories = ValueNotifier(0) {
-        _weightTarget.addListener(_calculateKCalories);
-      }
+    _weightTarget.addListener(_calculateKCalories);
+  }
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final WeightRepository _weightRepository;
@@ -70,21 +69,19 @@ class OnboardingViewModel extends ChangeNotifier {
     }
 
     double dailyKCaloriesD = NutritionCalculator.calculateTotalKCaloriesPerDay(
-      kCaloriesPerDay: 
-      NutritionCalculator.calculateBasalMetabolicRate(
+      kCaloriesPerDay: NutritionCalculator.calculateBasalMetabolicRate(
         weightKg: _weight.value!,
         heightCm: _height.value!,
         ageYear: age,
         gender: _gender.value!,
       ),
-      activityFactor:  _activityFactor.value!,
+      activityFactor: _activityFactor.value!,
     );
-    
-    int dailyTargetCalories =
-        NutritionCalculator.calculateTargetCaloriesPerDay(
-          kCaloriesPerDay: dailyKCaloriesD,
-          weightLossPerWeekKg: weightLossKg,
-        ).round();
+
+    int dailyTargetCalories = NutritionCalculator.calculateTargetCaloriesPerDay(
+      kCaloriesPerDay: dailyKCaloriesD,
+      weightLossPerWeekKg: weightLossKg,
+    ).round();
 
     await _settingsRepository.saveAllSettings(
       AllSettings(
@@ -102,27 +99,25 @@ class OnboardingViewModel extends ChangeNotifier {
         kCalsFriday: dailyTargetCalories,
         kCalsSaturday: dailyTargetCalories,
         kCalsSunday: dailyTargetCalories,
-        languageCode: _settingsRepository.languageCode.value
+        languageCode: _settingsRepository.languageCode.value,
       ),
     );
 
     await _weightRepository.insertWeight(DateTime.now(), _weight.value!);
   }
 
-void _calculateKCalories() {
+  void _calculateKCalories() {
     int age = 0;
     final DateTime today = DateTime.now();
     age = today.year - _birthday.value!.year;
-    final month =
-        today.month - _birthday.value!.month;
+    final month = today.month - _birthday.value!.month;
 
     if (month < 0) {
       age = age - 1;
     }
 
     double weightLossKg = 0;
-    if (_weightTarget.value ==
-        WeightTarget.lose025) {
+    if (_weightTarget.value == WeightTarget.lose025) {
       weightLossKg = 0.25;
     }
 
@@ -130,8 +125,7 @@ void _calculateKCalories() {
       weightLossKg = 0.5;
     }
 
-    if (_weightTarget.value ==
-        WeightTarget.lose075) {
+    if (_weightTarget.value == WeightTarget.lose075) {
       weightLossKg = 0.75;
     }
 
@@ -144,11 +138,10 @@ void _calculateKCalories() {
       ),
       activityFactor: _activityFactor.value!,
     );
-    double dailyTargetCaloriesD =
-        NutritionCalculator.calculateTargetCaloriesPerDay(
-          kCaloriesPerDay: dailyKCaloriesD,
-          weightLossPerWeekKg: weightLossKg,
-        );
+    double dailyTargetCaloriesD = NutritionCalculator.calculateTargetCaloriesPerDay(
+      kCaloriesPerDay: dailyKCaloriesD,
+      weightLossPerWeekKg: weightLossKg,
+    );
 
     _dailyNeedKCalories.value = dailyKCaloriesD.round();
     _dailyTargetCalories.value = dailyTargetCaloriesD.round();

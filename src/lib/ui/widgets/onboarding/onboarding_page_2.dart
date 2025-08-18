@@ -16,28 +16,18 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    
+
     return Column(
       children: [
-        Text(AppLocalizations.of(context)!.welcome_message_2,
-          style: textTheme.bodyLarge, textAlign: TextAlign.center
-        ),
+        Text(AppLocalizations.of(context)!.welcome_message_2, style: textTheme.bodyLarge, textAlign: TextAlign.center),
         SizedBox(height: 10.0),
-        Text(AppLocalizations.of(context)!.welcome_message_3,
-          style: textTheme.bodyLarge, textAlign: TextAlign.center
-        ),
+        Text(AppLocalizations.of(context)!.welcome_message_3, style: textTheme.bodyLarge, textAlign: TextAlign.center),
         SizedBox(height: 10.0),
-        Text(AppLocalizations.of(context)!.welcome_message_4,
-          style: textTheme.bodyLarge, textAlign: TextAlign.center
-        ),
+        Text(AppLocalizations.of(context)!.welcome_message_4, style: textTheme.bodyLarge, textAlign: TextAlign.center),
         SizedBox(height: 10.0),
-        Text(AppLocalizations.of(context)!.welcome_message_5,
-          style: textTheme.bodyLarge, textAlign: TextAlign.center
-        ),
+        Text(AppLocalizations.of(context)!.welcome_message_5, style: textTheme.bodyLarge, textAlign: TextAlign.center),
         SizedBox(height: 10.0),
-        Text(AppLocalizations.of(context)!.welcome_message_6,
-          style: textTheme.bodyLarge, textAlign: TextAlign.center
-          ),
+        Text(AppLocalizations.of(context)!.welcome_message_6, style: textTheme.bodyLarge, textAlign: TextAlign.center),
         Spacer(),
         CheckboxListTile(
           controlAffinity: ListTileControlAffinity.leading,
@@ -45,15 +35,17 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
             AppLocalizations.of(context)!.understood,
             style: textTheme.labelLarge,
             textAlign: TextAlign.center,
-            ),
-          value: _understood, onChanged:  (value) { setState(() {
-                _understood = value ?? false;
-              }
-            ); 
-          }
+          ),
+          value: _understood,
+          onChanged: (value) {
+            setState(() {
+              _understood = value ?? false;
+            });
+          },
         ),
-        FilledButton (onPressed: () {
-            if(!_understood) {
+        FilledButton(
+          onPressed: () {
+            if (!_understood) {
               SnackBar snackBar = SnackBar(
                 content: Text(AppLocalizations.of(context)!.must_understood),
                 action: SnackBarAction(
@@ -61,8 +53,8 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
                   onPressed: () {
                     //Click on SnackbarAction closes the SnackBar,
                     //nothing else to do here...
-                  },            
-                )
+                  },
+                ),
               );
 
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -71,8 +63,9 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
 
             widget.onDone();
           },
-          child: Text(AppLocalizations.of(context)!.agree_proceed))
-      ]
+          child: Text(AppLocalizations.of(context)!.agree_proceed),
+        ),
+      ],
     );
   }
 }

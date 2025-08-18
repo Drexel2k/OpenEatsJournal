@@ -17,7 +17,7 @@ class AllSettings {
     required this.kCalsThursday,
     required this.kCalsFriday,
     required this.kCalsSaturday,
-    required this.kCalsSunday
+    required this.kCalsSunday,
   });
 
   final bool darkMode;

@@ -13,7 +13,8 @@ Future<void> main() async {
   final OejDatabaseService oejDatabase = OejDatabaseService.instance;
   final Repositories repositories = Repositories(
     settingsRepository: SettingsRepository.instance,
-    weightRepository: WeightRepository.instance);
+    weightRepository: WeightRepository.instance,
+  );
 
   repositories.settingsRepository.setOejDatabase(oejDatabase);
   repositories.weightRepository.setOejDatabase(oejDatabase);

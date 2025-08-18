@@ -5,12 +5,9 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/domain/statistic_type.dart";
 
 class BarchartTargetActual extends StatelessWidget {
-  const BarchartTargetActual({
-    super.key,
-    required data,
-    required statisticsType,
-  }) : _data = data,
-       _statisticsType = statisticsType;
+  const BarchartTargetActual({super.key, required data, required statisticsType})
+    : _data = data,
+      _statisticsType = statisticsType;
 
   final List<Tuple> _data;
   final StatisticsType _statisticsType;
@@ -18,30 +15,19 @@ class BarchartTargetActual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final NumberFormat formatter = NumberFormat(
-      null,
-      Localizations.localeOf(context).languageCode,
-    );
+    final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
     double barSize = _statisticsType == StatisticsType.daily ? 4 : 18;
 
     int maxkCalIntakeEntry = _data.reduce(
-      (currentEntry, nextEntry) =>
-          currentEntry["kCalIntake"] > nextEntry["kCalIntake"]
-          ? currentEntry
-          : nextEntry,
+      (currentEntry, nextEntry) => currentEntry["kCalIntake"] > nextEntry["kCalIntake"] ? currentEntry : nextEntry,
     )["kCalIntake"];
 
     int maxkCalTargetEntry = _data.reduce(
-      (currentEntry, nextEntry) =>
-          currentEntry["kCalTarget"] > nextEntry["kCalTarget"]
-          ? currentEntry
-          : nextEntry,
+      (currentEntry, nextEntry) => currentEntry["kCalTarget"] > nextEntry["kCalTarget"] ? currentEntry : nextEntry,
     )["kCalTarget"];
 
-    int maxValue = maxkCalIntakeEntry > maxkCalTargetEntry
-        ? maxkCalIntakeEntry
-        : maxkCalTargetEntry;
+    int maxValue = maxkCalIntakeEntry > maxkCalTargetEntry ? maxkCalIntakeEntry : maxkCalTargetEntry;
 
     double markOffset = -15;
     int yAxisScaleMaxValue = (maxValue * 1.3).toInt();
@@ -69,10 +55,7 @@ class BarchartTargetActual extends StatelessWidget {
       xAxisLabelYOffset = 11;
     }
 
-    num totalkCalIntake = _data.fold(
-      0,
-      (sum, item) => sum + item["kCalIntake"],
-    );
+    num totalkCalIntake = _data.fold(0, (sum, item) => sum + item["kCalIntake"]);
     int average = (totalkCalIntake / _data.length).toInt();
 
     String timeInfo = AppLocalizations.of(context)!.days;
@@ -88,7 +71,8 @@ class BarchartTargetActual extends StatelessWidget {
       children: [
         Center(child: Text(header, style: textTheme.titleMedium)),
         Center(
-          child: Text(AppLocalizations.of(context)!.average_number(formatter.format(average)),
+          child: Text(
+            AppLocalizations.of(context)!.average_number(formatter.format(average)),
             style: textTheme.titleSmall,
           ),
         ),
@@ -99,9 +83,7 @@ class BarchartTargetActual extends StatelessWidget {
           child: Chart(
             data: _data,
             variables: {
-              "date_information": Variable(
-                accessor: (Map map) => map["dateInformation"] as String,
-              ),
+              "date_information": Variable(accessor: (Map map) => map["dateInformation"] as String),
               "kCalIntake": Variable(
                 accessor: (Map map) => map["kCalIntake"] as num,
                 scale: LinearScale(
@@ -124,39 +106,26 @@ class BarchartTargetActual extends StatelessWidget {
                   encoder: (tuple) => Label(
                     formatter.format(tuple["kCalIntake"]),
                     LabelStyle(
-                      textStyle: TextStyle(
-                        fontSize: 10,
-                        color: const Color(0xff808080),
-                      ),
+                      textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                       offset: Offset(6, markOffset),
                       rotation: 4.72,
                     ),
                   ),
                 ),
-                color: ColorEncode(
-                  value: Theme.of(context).colorScheme.primary,
-                ),
+                color: ColorEncode(value: Theme.of(context).colorScheme.primary),
               ),
               LineMark(
                 position: Varset("date_information") * Varset("kCalTarget"),
                 size: SizeEncode(value: 1.5),
-                color: ColorEncode(
-                  value: Theme.of(context).colorScheme.tertiary,
-                ),
+                color: ColorEncode(value: Theme.of(context).colorScheme.tertiary),
               ),
             ],
             axes: [
               AxisGuide(
                 dim: Dim.x,
-                line: PaintStyle(
-                  strokeColor: Color(0xffe8e8e8),
-                  strokeWidth: 1,
-                ),
+                line: PaintStyle(strokeColor: Color(0xffe8e8e8), strokeWidth: 1),
                 label: LabelStyle(
-                  textStyle: TextStyle(
-                    fontSize: 10,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                  textStyle: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.secondary),
                   offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
                   rotation: 1,
                 ),
@@ -164,16 +133,10 @@ class BarchartTargetActual extends StatelessWidget {
               AxisGuide(
                 dim: Dim.y,
                 label: LabelStyle(
-                  textStyle: TextStyle(
-                    fontSize: 10,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                  textStyle: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.secondary),
                   offset: const Offset(-7.5, 0),
                 ),
-                grid: PaintStyle(
-                  strokeColor: Theme.of(context).colorScheme.surfaceDim,
-                  strokeWidth: 1,
-                ),
+                grid: PaintStyle(strokeColor: Theme.of(context).colorScheme.surfaceDim, strokeWidth: 1),
               ),
             ],
           ),

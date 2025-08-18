@@ -1,10 +1,14 @@
 import "package:openeatsjournal/domain/gender.dart";
 
 class NutritionCalculator {
-
   //calculation according to Mifflin St Jeor equation
-  static double calculateBasalMetabolicRate({required double weightKg, required int heightCm, required int ageYear, required Gender gender}) {
-    final int genderFactor = gender == Gender.male? 5 : -161;
+  static double calculateBasalMetabolicRate({
+    required double weightKg,
+    required int heightCm,
+    required int ageYear,
+    required Gender gender,
+  }) {
+    final int genderFactor = gender == Gender.male ? 5 : -161;
     return 10 * weightKg + 6.25 * heightCm - 5 * ageYear + genderFactor;
   }
 

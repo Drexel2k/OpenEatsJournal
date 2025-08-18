@@ -1,6 +1,6 @@
 //FutureBuilder doesn't support a null result from the future argument method,
 //so nullable results can be wrapped with thid class.
-//usage: 
+//usage:
 
 // FutureBuilderNullableResult<DateTime?> birthdayFuture = FutureBuilderNullableResult<DateTime?>(computation: () => _settingsRepository.getBirthday());
 

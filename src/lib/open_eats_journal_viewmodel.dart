@@ -2,13 +2,11 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 
 class OpenEatsJournalAppViewModel extends ChangeNotifier {
-  OpenEatsJournalAppViewModel({
-      required SettingsRepository settingsRepository
-    }) :
-    _settingsRepository = settingsRepository,
-    _darkModeOrLanguageCodeChanged = DarkModeOrLanguageCodeChangedNotifier() {
-      _settingsRepository.darkMode.addListener(_settingsDarkModeChanged);
-      _settingsRepository.languageCode.addListener(_settingsLanguageCodeChanged);
+  OpenEatsJournalAppViewModel({required SettingsRepository settingsRepository})
+    : _settingsRepository = settingsRepository,
+      _darkModeOrLanguageCodeChanged = DarkModeOrLanguageCodeChangedNotifier() {
+    _settingsRepository.darkMode.addListener(_settingsDarkModeChanged);
+    _settingsRepository.languageCode.addListener(_settingsLanguageCodeChanged);
   }
 
   final SettingsRepository _settingsRepository;

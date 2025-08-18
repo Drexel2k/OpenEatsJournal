@@ -1,5 +1,1 @@
-enum StatisticsType {
-  daily,
-  weekly,
-  monthly
-}
+enum StatisticsType { daily, weekly, monthly }

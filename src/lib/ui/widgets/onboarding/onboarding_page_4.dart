@@ -6,11 +6,8 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart"
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class OnboardingPage4 extends StatelessWidget {
-  const OnboardingPage4({
-    super.key,
-    required this.onDone,
-    required OnboardingViewModel onboardingViewModel,
-  }) : _onboardingViewModel = onboardingViewModel;
+  const OnboardingPage4({super.key, required this.onDone, required OnboardingViewModel onboardingViewModel})
+    : _onboardingViewModel = onboardingViewModel;
 
   final OnboardingViewModel _onboardingViewModel;
   final VoidCallback onDone;
@@ -25,25 +22,18 @@ class OnboardingPage4 extends StatelessWidget {
       listenable: _onboardingViewModel,
       builder: (contextBuilder, _) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                ValueListenableBuilder(
-                  valueListenable: _onboardingViewModel.weightTarget,
-                  builder: (contextBuilder, _, _) {
-                    return Text(
-                      AppLocalizations.of(
-                        contextBuilder,
-                      )!.your_daily_calories_need(
-                        formatter.format(
-                          _onboardingViewModel.dailyNeedKCalories.value,
-                        ),
-                      ),
-                      style: textTheme.titleMedium,
-                    );
-                  },
-                ),
-              ],
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.weightTarget,
+              builder: (contextBuilder, _, _) {
+                return Text(
+                  AppLocalizations.of(
+                    contextBuilder,
+                  )!.your_daily_calories_need(formatter.format(_onboardingViewModel.dailyNeedKCalories.value)),
+                  style: textTheme.titleMedium,
+                );
+              },
             ),
             SizedBox(height: 10),
             Row(
@@ -51,12 +41,9 @@ class OnboardingPage4 extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 1,
-                  child: Text(
-                    AppLocalizations.of(contextBuilder)!.your_weight_target,
-                    style: textTheme.titleMedium,
-                  ),
+                  child: Text(AppLocalizations.of(contextBuilder)!.your_weight_target, style: textTheme.titleMedium),
                 ),
-                Expanded(
+                Flexible(
                   flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,15 +52,10 @@ class OnboardingPage4 extends StatelessWidget {
                         valueListenable: _onboardingViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: AppLocalizations.of(
-                              contextBuilder,
-                            )!.keep_weight,
-                            selected:
-                                _onboardingViewModel.weightTarget.value ==
-                                WeightTarget.keep,
+                            label: AppLocalizations.of(contextBuilder)!.keep_weight,
+                            selected: _onboardingViewModel.weightTarget.value == WeightTarget.keep,
                             onSelected: (bool selected) {
-                              _onboardingViewModel.weightTarget.value =
-                                  WeightTarget.keep;
+                              _onboardingViewModel.weightTarget.value = WeightTarget.keep;
                             },
                           );
                         },
@@ -84,12 +66,9 @@ class OnboardingPage4 extends StatelessWidget {
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.lose025,
-                            selected:
-                                _onboardingViewModel.weightTarget.value ==
-                                WeightTarget.lose025,
+                            selected: _onboardingViewModel.weightTarget.value == WeightTarget.lose025,
                             onSelected: (bool selected) {
-                              _onboardingViewModel.weightTarget.value =
-                                  WeightTarget.lose025;
+                              _onboardingViewModel.weightTarget.value = WeightTarget.lose025;
                             },
                           );
                         },
@@ -100,12 +79,9 @@ class OnboardingPage4 extends StatelessWidget {
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.lose05,
-                            selected:
-                                _onboardingViewModel.weightTarget.value ==
-                                WeightTarget.lose05,
+                            selected: _onboardingViewModel.weightTarget.value == WeightTarget.lose05,
                             onSelected: (bool selected) {
-                              _onboardingViewModel.weightTarget.value =
-                                  WeightTarget.lose05;
+                              _onboardingViewModel.weightTarget.value = WeightTarget.lose05;
                             },
                           );
                         },
@@ -116,12 +92,9 @@ class OnboardingPage4 extends StatelessWidget {
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.lose075,
-                            selected:
-                                _onboardingViewModel.weightTarget.value ==
-                                WeightTarget.lose075,
+                            selected: _onboardingViewModel.weightTarget.value == WeightTarget.lose075,
                             onSelected: (bool selected) {
-                              _onboardingViewModel.weightTarget.value =
-                                  WeightTarget.lose075;
+                              _onboardingViewModel.weightTarget.value = WeightTarget.lose075;
                             },
                           );
                         },
@@ -132,59 +105,33 @@ class OnboardingPage4 extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
-            Row(
-              children: [
-                ValueListenableBuilder(
-                  valueListenable: _onboardingViewModel.weightTarget,
-                  builder: (contextBuilder, _, _) {
-                    return Text(
-                      AppLocalizations.of(
-                        contextBuilder,
-                      )!.your_daily_calories_target(
-                        formatter.format(
-                          _onboardingViewModel.dailyTargetCalories.value,
-                        ),
-                      ),
-                      style: textTheme.titleMedium,
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(contextBuilder)!.proposed_values,
-                    style: textTheme.bodyLarge,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(
-                      contextBuilder,
-                    )!.in_doubt_consult_doctor,
-                    style: textTheme.bodyLarge,
-                  ),
-                ),
-              ],
-            ),
-            Spacer(),
-            FilledButton(
-              onPressed: () async {
-                await _onboardingViewModel.saveOnboardingData();
-                if (contextBuilder.mounted) {
-                  //home (route "/") is always on top of the MaterialApp's navigations stack.
-                  Navigator.pop(contextBuilder);
-                }
+            ValueListenableBuilder(
+              valueListenable: _onboardingViewModel.weightTarget,
+              builder: (contextBuilder, _, _) {
+                return Text(
+                  AppLocalizations.of(
+                    contextBuilder,
+                  )!.your_daily_calories_target(formatter.format(_onboardingViewModel.dailyTargetCalories.value)),
+                  style: textTheme.titleMedium,
+                );
               },
-              child: Text(AppLocalizations.of(contextBuilder)!.finish),
+            ),
+            SizedBox(height: 10),
+            Text(AppLocalizations.of(contextBuilder)!.proposed_values, style: textTheme.bodyLarge),
+            SizedBox(height: 10),
+            Text(AppLocalizations.of(contextBuilder)!.in_doubt_consult_doctor, style: textTheme.bodyLarge),
+            Spacer(),
+            Center(
+              child: FilledButton(
+                onPressed: () async {
+                  await _onboardingViewModel.saveOnboardingData();
+                  if (contextBuilder.mounted) {
+                    //home (route "/") is always on top of the MaterialApp's navigations stack.
+                    Navigator.pop(contextBuilder);
+                  }
+                },
+                child: Text(AppLocalizations.of(contextBuilder)!.finish),
+              ),
             ),
           ],
         );

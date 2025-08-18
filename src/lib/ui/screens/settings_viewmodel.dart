@@ -94,7 +94,7 @@ class SettingsViewModel extends ChangeNotifier {
         weightKg: _weight.value,
         heightCm: _height.value,
         ageYear: age,
-       gender : _gender.value,
+        gender: _gender.value,
       ),
       activityFactor: _activityFactor.value,
     );
@@ -155,15 +155,12 @@ class SettingsViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyTargetCalories =
-        NutritionCalculator.calculateTargetCaloriesPerDay(
-          kCaloriesPerDay: _getDailyCalories(),
-          weightLossPerWeekKg: weightLossKg,
-        ).round();
+    int dailyTargetCalories = NutritionCalculator.calculateTargetCaloriesPerDay(
+      kCaloriesPerDay: _getDailyCalories(),
+      weightLossPerWeekKg: weightLossKg,
+    ).round();
 
-    await _settingsRepository.saveDailyCaloriesTargetsSame(
-      dailyTargetCalories,
-    );
+    await _settingsRepository.saveDailyCaloriesTargetsSame(dailyTargetCalories);
 
     _dailyTargetCalories.value = dailyTargetCalories;
   }

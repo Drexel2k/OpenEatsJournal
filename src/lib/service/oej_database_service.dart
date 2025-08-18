@@ -12,7 +12,7 @@ class OejDatabaseService {
     2: """CREATE TABLE users (
               id INTEGER PRIMARY KEY,
               first_name TEXT)
-              """
+              """,
   };
 
   Future<Database> get db async {
@@ -33,22 +33,18 @@ class OejDatabaseService {
 
   Future _onCreate(Database db, int version) async {
     Batch batch = db.batch();
-    batch.execute(
-      """CREATE TABLE t_setting (
+    batch.execute("""CREATE TABLE t_setting (
         id INTEGER PRIMARY KEY,
         setting TEXT,
         dart_type TEXT,
         value TEXT
-      );"""
-    );
-    batch.execute(
-      """CREATE TABLE t_weight_journal (
+      );""");
+    batch.execute("""CREATE TABLE t_weight_journal (
         id INTEGER PRIMARY KEY,
         entry_date DATE,
         weight REAL
-      );"""
-    );
-    
+      );""");
+
     await batch.commit();
   }
 
@@ -62,21 +58,20 @@ class OejDatabaseService {
     Database db = await instance.db;
     final result = await db.query("t_setting", columns: ["setting"], where: "setting = ?", whereArgs: [setting]);
 
-    if(result.length > 1) {
+    if (result.length > 1) {
       throw StateError("A setting must exist only once, mutiple instances of $setting found.");
     }
 
-    if(result.isEmpty) {
+    if (result.isEmpty) {
       return false;
-    }
-    else {
+    } else {
       return true;
     }
   }
 
   Future<void> _insertSetting(Map<String, String> setting) async {
     Database db = await instance.db;
-    await db.insert("t_setting",  setting);
+    await db.insert("t_setting", setting);
   }
 
   Future<void> _updateSetting(Map<String, String> setting) async {
@@ -87,36 +82,32 @@ class OejDatabaseService {
   Future<void> setStringSetting(String setting, String value) async {
     if (await _settingExists(setting)) {
       _updateSetting({"setting": setting, "value": value});
-    }
-    else {
-      await _insertSetting({"setting":setting, "dart_type":"String", "value":value });
+    } else {
+      await _insertSetting({"setting": setting, "dart_type": "String", "value": value});
     }
   }
 
   Future<void> setIntSetting(String setting, int value) async {
     if (await _settingExists(setting)) {
       _updateSetting({"setting": setting, "value": value.toString()});
-    }
-    else {
-      await _insertSetting({"setting":setting, "dart_type":"String", "value":value.toString() });
+    } else {
+      await _insertSetting({"setting": setting, "dart_type": "String", "value": value.toString()});
     }
   }
 
   Future<void> setDoubleSetting(String setting, double value) async {
     if (await _settingExists(setting)) {
       _updateSetting({"setting": setting, "value": value.toString()});
-    }
-    else {
-      await _insertSetting({"setting":setting, "dart_type":"String", "value":value.toString() });
+    } else {
+      await _insertSetting({"setting": setting, "dart_type": "String", "value": value.toString()});
     }
   }
 
   Future<void> setBoolSetting(String setting, bool value) async {
     if (await _settingExists(setting)) {
       _updateSetting({"setting": setting, "value": value.toString()});
-    }
-    else {
-      await _insertSetting({"setting":setting, "dart_type":"bool", "value":value.toString() });
+    } else {
+      await _insertSetting({"setting": setting, "dart_type": "bool", "value": value.toString()});
     }
   }
 
@@ -126,21 +117,25 @@ class OejDatabaseService {
 
     if (await _settingExists(setting)) {
       _updateSetting({"setting": setting, "value": formatted});
-    }
-    else {
-      await _insertSetting({"setting":setting, "dart_type":"DateTime", "value":formatted });
+    } else {
+      await _insertSetting({"setting": setting, "dart_type": "DateTime", "value": formatted});
     }
   }
 
   Future<Object?> _getSetting(String setting) async {
     Database db = await instance.db;
-    final List<Map<String, Object?>> result = await db.query("t_setting", columns: ["value"], where: "setting = ?", whereArgs: [setting]);
+    final List<Map<String, Object?>> result = await db.query(
+      "t_setting",
+      columns: ["value"],
+      where: "setting = ?",
+      whereArgs: [setting],
+    );
 
-    if(result.length > 1) {
+    if (result.length > 1) {
       throw StateError("A setting must exist only once, mutiple instances of $setting found.");
     }
 
-    if(result.isEmpty) {
+    if (result.isEmpty) {
       return null;
     }
 
@@ -169,7 +164,7 @@ class OejDatabaseService {
 
   Future<DateTime?> getDateTimeSetting(String setting) async {
     Object? result = await _getSetting(setting);
-    if(result == null) {
+    if (result == null) {
       return null;
     }
 
@@ -184,6 +179,6 @@ class OejDatabaseService {
     final String formatted = formatter.format(date);
 
     Database db = await instance.db;
-    await db.insert("t_weight_journal",  {"entry_date":formatted, "weight":weight});
+    await db.insert("t_weight_journal", {"entry_date": formatted, "weight": weight});
   }
 }

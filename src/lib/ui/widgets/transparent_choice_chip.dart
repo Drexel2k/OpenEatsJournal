@@ -6,13 +6,11 @@ class TransparentChoiceChip extends StatelessWidget {
     required String label,
     IconData? icon,
     bool selected = false,
-    ValueChanged<bool>? onSelected
-    }
-  ) : 
-  _icon = icon,
-  _label = label,
-  _selected = selected,
-  _onSelected = onSelected;
+    ValueChanged<bool>? onSelected,
+  }) : _icon = icon,
+       _label = label,
+       _selected = selected,
+       _onSelected = onSelected;
 
   final IconData? _icon;
   final String _label;
@@ -22,9 +20,7 @@ class TransparentChoiceChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(
-        context,
-      ).copyWith(canvasColor: Colors.transparent),
+      data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: ChoiceChip(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         avatar: _icon != null ? Icon(_icon) : null,

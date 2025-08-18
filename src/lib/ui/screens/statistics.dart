@@ -11,7 +11,6 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     List<Tuple> dayData = [
       {'dateInformation': '10.Aug', 'kCalIntake': 2300, 'kCalTarget': 2400},
       {'dateInformation': '9.Aug', 'kCalIntake': 2700, 'kCalTarget': 2400},
@@ -58,7 +57,7 @@ class StatisticsScreen extends StatelessWidget {
       {'dateInformation': '23', 'kCalIntake': 17700, 'kCalTarget': 17500},
       {'dateInformation': '22', 'kCalIntake': 17700, 'kCalTarget': 17500},
       {'dateInformation': '21', 'kCalIntake': 17400, 'kCalTarget': 17500},
-      {'dateInformation': '20', 'kCalIntake': 17500, 'kCalTarget': 17500}
+      {'dateInformation': '20', 'kCalIntake': 17500, 'kCalTarget': 17500},
     ];
 
     List<Tuple> monthData = [
@@ -81,9 +80,9 @@ class StatisticsScreen extends StatelessWidget {
       body: Column(
         children: [
           BarchartTargetActual(data: dayData, statisticsType: StatisticsType.daily),
-          SizedBox(height:30),
+          SizedBox(height: 30),
           BarchartTargetActual(data: weekData, statisticsType: StatisticsType.weekly),
-          SizedBox(height:20),
+          SizedBox(height: 20),
           BarchartTargetActual(data: monthData, statisticsType: StatisticsType.monthly),
         ],
       ),

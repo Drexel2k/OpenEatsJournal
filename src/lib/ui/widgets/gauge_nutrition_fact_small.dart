@@ -3,14 +3,10 @@ import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
 
 class GaugeNutritionFactSmall extends StatelessWidget {
-  const GaugeNutritionFactSmall({
-    super.key,
-    required String factName,
-    required int value,
-    required int maxValue,
-  }) : _maxValue = maxValue,
-       _value = value,
-       _factName = factName;
+  const GaugeNutritionFactSmall({super.key, required String factName, required int value, required int maxValue})
+    : _maxValue = maxValue,
+      _value = value,
+      _factName = factName;
 
   final String _factName;
   final int _value;
@@ -55,19 +51,12 @@ class GaugeNutritionFactSmall extends StatelessWidget {
             ],
             variables: {
               'type': Variable(accessor: (Map map) => map['type'] as String),
-              'percent': Variable(
-                accessor: (Map map) => map['percent'] as num,
-                scale: LinearScale(min: 0, max: 100),
-              ),
+              'percent': Variable(accessor: (Map map) => map['percent'] as num, scale: LinearScale(min: 0, max: 100)),
             },
             marks: [
               IntervalMark(
                 size: SizeEncode(value: 8),
-                shape: ShapeEncode(
-                  value: RectShape(
-                    borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  ),
-                ),
+                shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(4)))),
                 color: ColorEncode(variable: 'type', values: colors),
               ),
             ],
@@ -86,13 +75,9 @@ class GaugeNutritionFactSmall extends StatelessWidget {
           child: Column(
             children: [
               Spacer(),
+              Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
               Text(
-                _factName,
-                style: textTheme.labelMedium,
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                 "${formatter.format(_value)}/\n${formatter.format(_maxValue)}",
+                "${formatter.format(_value)}/\n${formatter.format(_maxValue)}",
                 style: textTheme.labelSmall,
                 textAlign: TextAlign.center,
               ),

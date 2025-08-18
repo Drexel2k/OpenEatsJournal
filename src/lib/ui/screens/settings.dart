@@ -4,11 +4,10 @@ import "package:openeatsjournal/ui/widgets/settings_page_personal.dart";
 import "package:openeatsjournal/ui/widgets/settings_page_app.dart";
 
 class Settings extends StatelessWidget {
-  Settings({super.key, required SettingsViewModel settingsViewModel})
-    : _settingsViewModel = settingsViewModel;
+  Settings({super.key, required SettingsViewModel settingsViewModel}) : _settingsViewModel = settingsViewModel;
 
   final SettingsViewModel _settingsViewModel;
-  final _pageViewController  = PageController();
+  final _pageViewController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +15,19 @@ class Settings extends StatelessWidget {
       controller: _pageViewController,
       physics: NeverScrollableScrollPhysics(),
       children: <Widget>[
-        SettingsPagePersonal(settingsViewModel:  _settingsViewModel, onDone: () { _movePageIndex(1); }),
-        SettingsPageApp(settingsViewModel: _settingsViewModel, onDone: () { _movePageIndex(-1); }),
-      ]
+        SettingsPagePersonal(
+          settingsViewModel: _settingsViewModel,
+          onDone: () {
+            _movePageIndex(1);
+          },
+        ),
+        SettingsPageApp(
+          settingsViewModel: _settingsViewModel,
+          onDone: () {
+            _movePageIndex(-1);
+          },
+        ),
+      ],
     );
   }
 

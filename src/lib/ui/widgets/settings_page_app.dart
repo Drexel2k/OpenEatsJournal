@@ -4,12 +4,9 @@ import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsPageApp extends StatelessWidget {
-  const SettingsPageApp({
-    super.key,
-    required SettingsViewModel settingsViewModel,
-    required VoidCallback onDone,
-  }) : _settingsViewModel = settingsViewModel,
-       _onDone = onDone;
+  const SettingsPageApp({super.key, required SettingsViewModel settingsViewModel, required VoidCallback onDone})
+    : _settingsViewModel = settingsViewModel,
+      _onDone = onDone;
 
   final SettingsViewModel _settingsViewModel;
   final VoidCallback _onDone;
@@ -35,11 +32,7 @@ class SettingsPageApp extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(Icons.arrow_back_ios_new),
-                        Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.personal_settings_linebreak,
-                        ),
+                        Text(AppLocalizations.of(context)!.personal_settings_linebreak),
                       ],
                     ),
                   ),
@@ -48,9 +41,7 @@ class SettingsPageApp extends StatelessWidget {
                     onPressed: null,
                     child: Row(
                       children: [
-                        Text(
-                          AppLocalizations.of(context)!.app_settings_linebreak,
-                        ),
+                        Text(AppLocalizations.of(context)!.app_settings_linebreak),
                         Icon(Icons.arrow_forward_ios),
                       ],
                     ),
@@ -61,29 +52,18 @@ class SettingsPageApp extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.dark_mode, style: textTheme.titleMedium)),
+                  Flexible(
                     flex: 1,
-                    child: Text(
-                      AppLocalizations.of(context)!.dark_mode,
-                      style: textTheme.titleMedium,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.darkMode,
-                        builder: (_, _, _) {
-                          return Switch(
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            value: _settingsViewModel.darkMode.value,
-                            onChanged: (value) =>
-                                _settingsViewModel.darkMode.value = value,
-                          );
-                        },
-                      ),
+                    child: ValueListenableBuilder(
+                      valueListenable: _settingsViewModel.darkMode,
+                      builder: (_, _, _) {
+                        return Switch(
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          value: _settingsViewModel.darkMode.value,
+                          onChanged: (value) => _settingsViewModel.darkMode.value = value,
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -92,14 +72,8 @@ class SettingsPageApp extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      AppLocalizations.of(context)!.language,
-                      style: textTheme.titleMedium,
-                    ),
-                  ),
-                  Expanded(
+                  Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.language, style: textTheme.titleMedium)),
+                  Flexible(
                     flex: 1,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,8 +83,7 @@ class SettingsPageApp extends StatelessWidget {
                           builder: (_, _, _) {
                             return TransparentChoiceChip(
                               label: AppLocalizations.of(context)!.english,
-                              selected:
-                                  _settingsViewModel.languageCode.value == "en",
+                              selected: _settingsViewModel.languageCode.value == "en",
                               onSelected: (bool selected) {
                                 _settingsViewModel.languageCode.value = "en";
                               },
@@ -123,8 +96,7 @@ class SettingsPageApp extends StatelessWidget {
                           builder: (_, _, _) {
                             return TransparentChoiceChip(
                               label: AppLocalizations.of(context)!.german,
-                              selected:
-                                  _settingsViewModel.languageCode.value == "de",
+                              selected: _settingsViewModel.languageCode.value == "de",
                               onSelected: (bool selected) {
                                 _settingsViewModel.languageCode.value = "de";
                               },

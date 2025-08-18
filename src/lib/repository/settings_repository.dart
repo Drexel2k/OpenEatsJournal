@@ -40,22 +40,22 @@ class SettingsRepository extends ChangeNotifier {
     _saveBirthday(value);
   }
 
-  set height(value)  {
+  set height(value) {
     _height = value;
     _saveHeight(value);
   }
 
-  set weight(value)  {
+  set weight(value) {
     _weight = value;
     _saveWeight(value);
   }
 
-  set activityFactor(value)  {
+  set activityFactor(value) {
     _activityFactor = value;
     _saveActivityFactor(value);
   }
 
-  set weightTarget(value)  {
+  set weightTarget(value) {
     _weightTarget = value;
     _saveWeightTarget(value);
   }
@@ -80,7 +80,6 @@ class SettingsRepository extends ChangeNotifier {
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
 
   ValueNotifier<bool> get initialized => _initialized;
-
 
   //must be called once before the singleton is used
   void setOejDatabase(OejDatabaseService oejDataBase) {

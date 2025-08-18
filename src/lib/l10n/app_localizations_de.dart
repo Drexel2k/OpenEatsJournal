@@ -160,7 +160,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get proposed_values =>
-      'Der Kalorienbedarf basiert auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. Das Ziel wird unter der Annahme berechnet, dass 1 KG Körperfett ca. 7.000 kCal hat. In den Einstellungen können diese Werte noch angepasst werden (Zielwerte auch proWochentag).';
+      'Der Kalorienbedarf basiert auf der Mifflin-St Jeor Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. Das Ziel wird unter der Annahme berechnet, dass 1 KG Körperfett ca. 7.000 kCal hat. In den Einstellungen können diese Werte noch angepasst werden (Zielwerte auch pro Wochentag).';
 
   @override
   String get in_doubt_consult_doctor =>

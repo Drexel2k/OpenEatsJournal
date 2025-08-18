@@ -14,15 +14,12 @@ import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsPagePersonal extends StatelessWidget {
-  SettingsPagePersonal({
-    super.key,
-    required SettingsViewModel settingsViewModel,
-    required VoidCallback onDone,
-  }) : _settingsViewModel = settingsViewModel,
-       _onDone = onDone,
-       _birthDayController = TextEditingController(),
-       _heightController = TextEditingController(),
-       _weightController = TextEditingController();
+  SettingsPagePersonal({super.key, required SettingsViewModel settingsViewModel, required VoidCallback onDone})
+    : _settingsViewModel = settingsViewModel,
+      _onDone = onDone,
+      _birthDayController = TextEditingController(),
+      _heightController = TextEditingController(),
+      _weightController = TextEditingController();
 
   final SettingsViewModel _settingsViewModel;
   final VoidCallback _onDone;
@@ -34,31 +31,24 @@ class SettingsPagePersonal extends StatelessWidget {
   Widget build(BuildContext context) {
     final String languageCode = Localizations.localeOf(context).toString();
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final String decimalSeparator = NumberFormat.decimalPattern(
-      languageCode,
-    ).symbols.DECIMAL_SEP;
+    final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
-    final NumberFormat formatter = NumberFormat(
-      null,
-      Localizations.localeOf(context).languageCode,
-    );
+    final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
     final Debouncer heightDebouncer = Debouncer();
     final Debouncer weightDebouncer = Debouncer();
 
-    _birthDayController.text = DateFormat.yMMMMd(
-      languageCode,
-    ).format(_settingsViewModel.birthday.value);
+    _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsViewModel.birthday.value);
 
     _heightController.text = formatter.format(_settingsViewModel.height.value);
     _weightController.text = formatter.format(_settingsViewModel.weight.value);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Column(
         children: [
           AppBar(
-            backgroundColor: Color.fromARGB(0, 0, 0, 123),
+            backgroundColor: Color.fromARGB(0, 0, 0, 0),
             title: Text(AppLocalizations.of(context)!.personal_settings),
           ),
           Row(
@@ -69,9 +59,7 @@ class SettingsPagePersonal extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(Icons.arrow_back_ios_new),
-                    Text(
-                      AppLocalizations.of(context)!.personal_settings_linebreak,
-                    ),
+                    Text(AppLocalizations.of(context)!.personal_settings_linebreak),
                   ],
                 ),
               ),
@@ -79,10 +67,7 @@ class SettingsPagePersonal extends StatelessWidget {
               FilledButton(
                 onPressed: _onDone,
                 child: Row(
-                  children: [
-                    Text(AppLocalizations.of(context)!.app_settings_linebreak),
-                    Icon(Icons.arrow_forward_ios),
-                  ],
+                  children: [Text(AppLocalizations.of(context)!.app_settings_linebreak), Icon(Icons.arrow_forward_ios)],
                 ),
               ),
             ],
@@ -105,24 +90,17 @@ class SettingsPagePersonal extends StatelessWidget {
                                 Expanded(
                                   flex: 8,
                                   child: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.daily_target_calories,
+                                    AppLocalizations.of(context)!.daily_target_calories,
                                     style: textTheme.titleMedium,
                                   ),
                                 ),
                                 Expanded(
                                   flex: 3,
                                   child: ValueListenableBuilder(
-                                    valueListenable:
-                                        _settingsViewModel.dailyTargetCalories,
+                                    valueListenable: _settingsViewModel.dailyTargetCalories,
                                     builder: (_, _, _) {
                                       return Text(
-                                        formatter.format(
-                                          _settingsViewModel
-                                              .dailyTargetCalories
-                                              .value,
-                                        ),
+                                        formatter.format(_settingsViewModel.dailyTargetCalories.value),
                                         style: textTheme.titleMedium,
                                       );
                                     },
@@ -136,24 +114,17 @@ class SettingsPagePersonal extends StatelessWidget {
                                 Expanded(
                                   flex: 8,
                                   child: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.daily_need_calories,
+                                    AppLocalizations.of(context)!.daily_need_calories,
                                     style: textTheme.bodySmall,
                                   ),
                                 ),
                                 Expanded(
                                   flex: 3,
                                   child: ValueListenableBuilder(
-                                    valueListenable:
-                                        _settingsViewModel.dailyCalories,
+                                    valueListenable: _settingsViewModel.dailyCalories,
                                     builder: (_, _, _) {
                                       return Text(
-                                        formatter.format(
-                                          _settingsViewModel
-                                              .dailyCalories
-                                              .value,
-                                        ),
+                                        formatter.format(_settingsViewModel.dailyCalories.value),
                                         style: textTheme.bodySmall,
                                       );
                                     },
@@ -164,18 +135,15 @@ class SettingsPagePersonal extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 5,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             OutlinedButton(
                               onPressed: () async {
-                                if ((await _showRecalulateCaloriesCOnfirmDialog(
-                                  context: context,
-                                ))!) {
-                                  await _settingsViewModel
-                                      .recalculateDailykCalTargetsAndSave();
+                                if ((await _showRecalulateCaloriesCOnfirmDialog(context: context))!) {
+                                  await _settingsViewModel.recalculateDailykCalTargetsAndSave();
                                 }
                               },
                               style: OutlinedButton.styleFrom(
@@ -189,36 +157,22 @@ class SettingsPagePersonal extends StatelessWidget {
                             SizedBox(width: 5),
                             OutlinedButton(
                               onPressed: () async {
-                                KCalSettings? kCalSettings =
-                                    await _showDailyCaloriesEditDialog(
-                                      context: context,
-                                      dailyCalories: _settingsViewModel
-                                          .dailyCalories
-                                          .value,
-                                      originalDailyTargetCalories:
-                                          _settingsViewModel
-                                              .dailyTargetCalories
-                                              .value,
-                                      initialKCalSettings: KCalSettings(
-                                        kCalsMonday:
-                                            _settingsViewModel.kCalsMonday,
-                                        kCalsTuesday:
-                                            _settingsViewModel.kCalsTuesday,
-                                        kCalsWednesday:
-                                            _settingsViewModel.kCalsWednesday,
-                                        kCalsThursday:
-                                            _settingsViewModel.kCalsThursday,
-                                        kCalsFriday:
-                                            _settingsViewModel.kCalsFriday,
-                                        kCalsSaturday:
-                                            _settingsViewModel.kCalsSaturday,
-                                        kCalsSunday:
-                                            _settingsViewModel.kCalsSunday,
-                                      ),
-                                    );
+                                KCalSettings? kCalSettings = await _showDailyCaloriesEditDialog(
+                                  context: context,
+                                  dailyCalories: _settingsViewModel.dailyCalories.value,
+                                  originalDailyTargetCalories: _settingsViewModel.dailyTargetCalories.value,
+                                  initialKCalSettings: KCalSettings(
+                                    kCalsMonday: _settingsViewModel.kCalsMonday,
+                                    kCalsTuesday: _settingsViewModel.kCalsTuesday,
+                                    kCalsWednesday: _settingsViewModel.kCalsWednesday,
+                                    kCalsThursday: _settingsViewModel.kCalsThursday,
+                                    kCalsFriday: _settingsViewModel.kCalsFriday,
+                                    kCalsSaturday: _settingsViewModel.kCalsSaturday,
+                                    kCalsSunday: _settingsViewModel.kCalsSunday,
+                                  ),
+                                );
                                 if (kCalSettings != null) {
-                                  await _settingsViewModel
-                                      .setDailyCaloriesAndSave(kCalSettings);
+                                  await _settingsViewModel.setDailyCaloriesAndSave(kCalSettings);
                                 }
                               },
                               style: OutlinedButton.styleFrom(
@@ -240,12 +194,9 @@ class SettingsPagePersonal extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.your_gender,
-                          style: textTheme.titleMedium,
-                        ),
+                        child: Text(AppLocalizations.of(context)!.your_gender, style: textTheme.titleMedium),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 1,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,15 +206,10 @@ class SettingsPagePersonal extends StatelessWidget {
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
                                   icon: Icons.male,
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.male,
-                                  selected:
-                                      _settingsViewModel.gender.value ==
-                                      Gender.male,
+                                  label: AppLocalizations.of(contextBuilder)!.male,
+                                  selected: _settingsViewModel.gender.value == Gender.male,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.gender.value =
-                                        Gender.male;
+                                    _settingsViewModel.gender.value = Gender.male;
                                   },
                                 );
                               },
@@ -274,15 +220,10 @@ class SettingsPagePersonal extends StatelessWidget {
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
                                   icon: Icons.female,
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.female,
-                                  selected:
-                                      _settingsViewModel.gender.value ==
-                                      Gender.femail,
+                                  label: AppLocalizations.of(contextBuilder)!.female,
+                                  selected: _settingsViewModel.gender.value == Gender.femail,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.gender.value =
-                                        Gender.femail;
+                                    _settingsViewModel.gender.value = Gender.femail;
                                   },
                                 );
                               },
@@ -298,26 +239,20 @@ class SettingsPagePersonal extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.your_birthday,
-                          style: textTheme.titleMedium,
-                        ),
+                        child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleMedium),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: SettingsTextField(
-                            controller: _birthDayController,
-                            onTap: () {
-                              _selectDate(
-                                initialDate: _settingsViewModel.birthday.value,
-                                context: context,
-                                languageCode: languageCode,
-                              );
-                            },
-                            readOnly: true,
-                          ),
+                        child: SettingsTextField(
+                          controller: _birthDayController,
+                          onTap: () {
+                            _selectDate(
+                              initialDate: _settingsViewModel.birthday.value,
+                              context: context,
+                              languageCode: languageCode,
+                            );
+                          },
+                          readOnly: true,
                         ),
                       ),
                     ],
@@ -328,49 +263,36 @@ class SettingsPagePersonal extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.your_height,
-                          style: textTheme.titleMedium,
-                        ),
+                        child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleMedium),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: ValueListenableBuilder(
-                            valueListenable: _settingsViewModel.height,
-                            builder: (_, _, _) {
-                              return SettingsTextField(
-                                controller: _heightController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  signed: false,
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  TextInputFormatter.withFunction((
-                                    oldValue,
-                                    newValue,
-                                  ) {
-                                    final String text = newValue.text.trim();
-                                    return text.isEmpty
-                                        ? TextEditingValue(text: "1")
-                                        : text.length <= 3 &&
-                                              int.parse(text) >= 1
-                                        ? newValue
-                                        : oldValue;
-                                  }),
-                                ],
-                                onChanged: (value) {
-                                  heightDebouncer.run(
-                                    callback: () {
-                                      _settingsViewModel.height.value =
-                                          int.parse(value);
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                        child: ValueListenableBuilder(
+                          valueListenable: _settingsViewModel.height,
+                          builder: (_, _, _) {
+                            return SettingsTextField(
+                              controller: _heightController,
+                              keyboardType: TextInputType.numberWithOptions(signed: false),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                TextInputFormatter.withFunction((oldValue, newValue) {
+                                  final String text = newValue.text.trim();
+                                  return text.isEmpty
+                                      ? TextEditingValue(text: "1")
+                                      : text.length <= 3 && int.parse(text) >= 1
+                                      ? newValue
+                                      : oldValue;
+                                }),
+                              ],
+                              onChanged: (value) {
+                                heightDebouncer.run(
+                                  callback: () {
+                                    _settingsViewModel.height.value = int.parse(value);
+                                  },
+                                );
+                              },
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -381,64 +303,48 @@ class SettingsPagePersonal extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.your_weight,
-                          style: textTheme.titleMedium,
-                        ),
+                        child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleMedium),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 1,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: ValueListenableBuilder(
-                            valueListenable: _settingsViewModel.weight,
-                            builder: (_, _, _) {
-                              return SettingsTextField(
-                                controller: _weightController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true,
-                                  signed: false,
-                                ),
-                                inputFormatters: [
-                                  //if filter is not matched, the value is set to empty string
-                                  //which feels strange in the ui
-                                  //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
-                                  TextInputFormatter.withFunction((
-                                    oldValue,
-                                    newValue,
-                                  ) {
-                                    final String text = newValue.text.trim();
-                                    return text.isEmpty
-                                        ? TextEditingValue(text: "1")
-                                        : ConvertValidate.validateWeight(
-                                                weight: text,
-                                                decimalSeparator:
-                                                    decimalSeparator,
-                                              ) &&
-                                              ConvertValidate.convertLocalStringToDouble(
-                                                    numberString: text,
-                                                    languageCode: languageCode,
-                                                  )! >=
-                                                  1
-                                        ? newValue
-                                        : oldValue;
-                                  }),
-                                ],
-                                onChanged: (value) {
-                                  weightDebouncer.run(
-                                    callback: () {
-                                      num weightNum = NumberFormat(
-                                        null,
-                                        languageCode,
-                                      ).parse(value);
-                                      _settingsViewModel.weight.value =
-                                          weightNum as double;
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          ),
+
+                        child: ValueListenableBuilder(
+                          valueListenable: _settingsViewModel.weight,
+                          builder: (_, _, _) {
+                            return SettingsTextField(
+                              controller: _weightController,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                              inputFormatters: [
+                                //if filter is not matched, the value is set to empty string
+                                //which feels strange in the ui
+                                //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
+                                TextInputFormatter.withFunction((oldValue, newValue) {
+                                  final String text = newValue.text.trim();
+                                  return text.isEmpty
+                                      ? TextEditingValue(text: "1")
+                                      : ConvertValidate.validateWeight(
+                                              weight: text,
+                                              decimalSeparator: decimalSeparator,
+                                            ) &&
+                                            ConvertValidate.convertLocalStringToDouble(
+                                                  numberString: text,
+                                                  languageCode: languageCode,
+                                                )! >=
+                                                1
+                                      ? newValue
+                                      : oldValue;
+                                }),
+                              ],
+                              onChanged: (value) {
+                                weightDebouncer.run(
+                                  callback: () {
+                                    num weightNum = NumberFormat(null, languageCode).parse(value);
+                                    _settingsViewModel.weight.value = weightNum as double;
+                                  },
+                                );
+                              },
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -452,135 +358,94 @@ class SettingsPagePersonal extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              AppLocalizations.of(context)!.your_acitivty_level,
-                              style: textTheme.titleMedium,
-                            ),
+                            Text(AppLocalizations.of(context)!.your_acitivty_level, style: textTheme.titleMedium),
                             Tooltip(
                               triggerMode: TooltipTriggerMode.tap,
                               showDuration: Duration(seconds: 60),
-                              message: AppLocalizations.of(
-                                context,
-                              )!.acitivity_level_explanation,
+                              message: AppLocalizations.of(context)!.acitivity_level_explanation,
                               child: Icon(Icons.help_outline),
                             ),
                           ],
                         ),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 1,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ValueListenableBuilder(
-                              valueListenable:
-                                  _settingsViewModel.activityFactor,
+                              valueListenable: _settingsViewModel.activityFactor,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.very_low,
-                                  selected:
-                                      _settingsViewModel.activityFactor.value ==
-                                      1.2,
+                                  label: AppLocalizations.of(contextBuilder)!.very_low,
+                                  selected: _settingsViewModel.activityFactor.value == 1.2,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.activityFactor.value =
-                                        1.2;
+                                    _settingsViewModel.activityFactor.value = 1.2;
                                   },
                                 );
                               },
                             ),
                             SizedBox(height: 8),
                             ValueListenableBuilder(
-                              valueListenable:
-                                  _settingsViewModel.activityFactor,
+                              valueListenable: _settingsViewModel.activityFactor,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.low,
-                                  selected:
-                                      _settingsViewModel.activityFactor.value ==
-                                      1.4,
+                                  label: AppLocalizations.of(contextBuilder)!.low,
+                                  selected: _settingsViewModel.activityFactor.value == 1.4,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.activityFactor.value =
-                                        1.4;
+                                    _settingsViewModel.activityFactor.value = 1.4;
                                   },
                                 );
                               },
                             ),
                             SizedBox(height: 8),
                             ValueListenableBuilder(
-                              valueListenable:
-                                  _settingsViewModel.activityFactor,
+                              valueListenable: _settingsViewModel.activityFactor,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.medium,
-                                  selected:
-                                      _settingsViewModel.activityFactor.value ==
-                                      1.6,
+                                  label: AppLocalizations.of(contextBuilder)!.medium,
+                                  selected: _settingsViewModel.activityFactor.value == 1.6,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.activityFactor.value =
-                                        1.6;
+                                    _settingsViewModel.activityFactor.value = 1.6;
                                   },
                                 );
                               },
                             ),
                             SizedBox(height: 8),
                             ValueListenableBuilder(
-                              valueListenable:
-                                  _settingsViewModel.activityFactor,
+                              valueListenable: _settingsViewModel.activityFactor,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.high,
-                                  selected:
-                                      _settingsViewModel.activityFactor.value ==
-                                      1.8,
+                                  label: AppLocalizations.of(contextBuilder)!.high,
+                                  selected: _settingsViewModel.activityFactor.value == 1.8,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.activityFactor.value =
-                                        1.8;
+                                    _settingsViewModel.activityFactor.value = 1.8;
                                   },
                                 );
                               },
                             ),
                             SizedBox(height: 8),
                             ValueListenableBuilder(
-                              valueListenable:
-                                  _settingsViewModel.activityFactor,
+                              valueListenable: _settingsViewModel.activityFactor,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.very_high,
-                                  selected:
-                                      _settingsViewModel.activityFactor.value ==
-                                      2.1,
+                                  label: AppLocalizations.of(contextBuilder)!.very_high,
+                                  selected: _settingsViewModel.activityFactor.value == 2.1,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.activityFactor.value =
-                                        2.1;
+                                    _settingsViewModel.activityFactor.value = 2.1;
                                   },
                                 );
                               },
                             ),
                             SizedBox(height: 8),
                             ValueListenableBuilder(
-                              valueListenable:
-                                  _settingsViewModel.activityFactor,
+                              valueListenable: _settingsViewModel.activityFactor,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.professional_athlete,
-                                  selected:
-                                      _settingsViewModel.activityFactor.value ==
-                                      2.4,
+                                  label: AppLocalizations.of(contextBuilder)!.professional_athlete,
+                                  selected: _settingsViewModel.activityFactor.value == 2.4,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.activityFactor.value =
-                                        2.4;
+                                    _settingsViewModel.activityFactor.value = 2.4;
                                   },
                                 );
                               },
@@ -596,12 +461,9 @@ class SettingsPagePersonal extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.your_weight_target,
-                          style: textTheme.titleMedium,
-                        ),
+                        child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleMedium),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 1,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -610,15 +472,10 @@ class SettingsPagePersonal extends StatelessWidget {
                               valueListenable: _settingsViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.keep_weight,
-                                  selected:
-                                      _settingsViewModel.weightTarget.value ==
-                                      WeightTarget.keep,
+                                  label: AppLocalizations.of(contextBuilder)!.keep_weight,
+                                  selected: _settingsViewModel.weightTarget.value == WeightTarget.keep,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.weightTarget.value =
-                                        WeightTarget.keep;
+                                    _settingsViewModel.weightTarget.value = WeightTarget.keep;
                                   },
                                 );
                               },
@@ -628,15 +485,10 @@ class SettingsPagePersonal extends StatelessWidget {
                               valueListenable: _settingsViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.lose025,
-                                  selected:
-                                      _settingsViewModel.weightTarget.value ==
-                                      WeightTarget.lose025,
+                                  label: AppLocalizations.of(contextBuilder)!.lose025,
+                                  selected: _settingsViewModel.weightTarget.value == WeightTarget.lose025,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.weightTarget.value =
-                                        WeightTarget.lose025;
+                                    _settingsViewModel.weightTarget.value = WeightTarget.lose025;
                                   },
                                 );
                               },
@@ -646,15 +498,10 @@ class SettingsPagePersonal extends StatelessWidget {
                               valueListenable: _settingsViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.lose05,
-                                  selected:
-                                      _settingsViewModel.weightTarget.value ==
-                                      WeightTarget.lose05,
+                                  label: AppLocalizations.of(contextBuilder)!.lose05,
+                                  selected: _settingsViewModel.weightTarget.value == WeightTarget.lose05,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.weightTarget.value =
-                                        WeightTarget.lose05;
+                                    _settingsViewModel.weightTarget.value = WeightTarget.lose05;
                                   },
                                 );
                               },
@@ -664,15 +511,10 @@ class SettingsPagePersonal extends StatelessWidget {
                               valueListenable: _settingsViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(
-                                    contextBuilder,
-                                  )!.lose075,
-                                  selected:
-                                      _settingsViewModel.weightTarget.value ==
-                                      WeightTarget.lose075,
+                                  label: AppLocalizations.of(contextBuilder)!.lose075,
+                                  selected: _settingsViewModel.weightTarget.value == WeightTarget.lose075,
                                   onSelected: (bool selected) {
-                                    _settingsViewModel.weightTarget.value =
-                                        WeightTarget.lose075;
+                                    _settingsViewModel.weightTarget.value = WeightTarget.lose075;
                                   },
                                 );
                               },
@@ -691,24 +533,18 @@ class SettingsPagePersonal extends StatelessWidget {
     );
   }
 
-  Future<bool?> _showRecalulateCaloriesCOnfirmDialog({
-    required BuildContext context,
-  }) async {
+  Future<bool?> _showRecalulateCaloriesCOnfirmDialog({required BuildContext context}) async {
     return showDialog<bool>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext contextBuilder) {
         return AlertDialog(
-          title: Text(
-            AppLocalizations.of(context)!.recalculate_calories_target,
-          ),
+          title: Text(AppLocalizations.of(context)!.recalculate_calories_target),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                AppLocalizations.of(context)!.recalculate_calories_target_hint,
-              ),
+              Text(AppLocalizations.of(context)!.recalculate_calories_target_hint),
               Text(AppLocalizations.of(context)!.are_you_sure),
             ],
           ),
@@ -755,8 +591,7 @@ class SettingsPagePersonal extends StatelessWidget {
             ),
           ),
           dailyCalories: _settingsViewModel.dailyCalories.value,
-          originalDailyTargetCalories:
-              _settingsViewModel.dailyTargetCalories.value,
+          originalDailyTargetCalories: _settingsViewModel.dailyTargetCalories.value,
         );
       },
     );
