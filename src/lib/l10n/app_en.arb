@@ -86,5 +86,7 @@
   "friday_kcals": "Friday kCals:",
   "saturday_kcals": "Saturday kCals:",
   "sunday_kcals": "Sunday kCals:",
-  "amount_kcal": "{amount} kcal"
+  "amount_kcal": "{amount} kcal",
+  "food_management": "Food management",
+  "food": "Food"
 }

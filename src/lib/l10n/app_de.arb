@@ -53,7 +53,7 @@
   "your_daily_calories_target": "Deine tägliches Kalorienziel: {amount} kCal",
   "daily_need_calories": "Tägl. Bedarf kCal:",
   "daily_target_calories": "Tägl. Ziel (⌀) kCal:",
-  "statistics": "Statistics",
+  "statistics": "Statistiken",
   "kcal": "kCal",
   "kcal": "kCal",
   "fat": "Fett",
@@ -87,5 +87,7 @@
   "friday_kcals": "Freitag kCal:",
   "saturday_kcals": "Samstag kCal:",
   "sunday_kcals": "Sonntag kCal:",
-  "amount_kcal": "{amount} kcal"
+  "amount_kcal": "{amount} kcal",
+  "food_management": "Lebensmittelverwaltung",
+  "food": "Lebensmittel"
 }

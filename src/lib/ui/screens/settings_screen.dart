@@ -3,8 +3,8 @@ import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/settings_page_personal.dart";
 import "package:openeatsjournal/ui/widgets/settings_page_app.dart";
 
-class Settings extends StatelessWidget {
-  Settings({super.key, required SettingsViewModel settingsViewModel}) : _settingsViewModel = settingsViewModel;
+class SettingsScreen extends StatelessWidget {
+  SettingsScreen({super.key, required SettingsViewModel settingsViewModel}) : _settingsViewModel = settingsViewModel;
 
   final SettingsViewModel _settingsViewModel;
   final _pageViewController = PageController();

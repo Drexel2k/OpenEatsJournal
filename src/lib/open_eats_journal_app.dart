@@ -4,12 +4,14 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
 import "package:openeatsjournal/ui/repositories.dart";
-import "package:openeatsjournal/ui/screens/food.dart";
-import "package:openeatsjournal/ui/screens/home.dart";
-import "package:openeatsjournal/ui/screens/home_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
+import "package:openeatsjournal/ui/screens/food_screen.dart";
+import "package:openeatsjournal/ui/screens/daily_overview_screen.dart";
+import "package:openeatsjournal/ui/screens/daily_overview_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/food_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/statistics.dart";
+import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 
@@ -80,18 +82,20 @@ class OpenEatsJournalApp extends StatelessWidget {
           themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
           initialRoute: initialRoute,
           routes: {
-            NavigatorRoutes.home: (contextBuilder) => HomeScreen(
-              homeViewModel: HomeViewModel(settingsRepository: _repositories.settingsRepository),
+            NavigatorRoutes.home: (contextBuilder) => DailyOverviewScreen(
+              homeViewModel: DailyOverviewViewModel(settingsRepository: _repositories.settingsRepository),
               settingsRepository: _repositories.settingsRepository,
             ),
             NavigatorRoutes.statistics: (contextBuilder) => const StatisticsScreen(),
-            NavigatorRoutes.food: (contextBuilder) => const FoodScreen(),
+            NavigatorRoutes.food: (contextBuilder) =>
+                FoodScreen(foodViewModel: FoodViewModel(settingsRepository: _repositories.settingsRepository)),
             NavigatorRoutes.onboarding: (contextBuilder) => OnboardingScreen(
               onboardingViewModel: OnboardingViewModel(
                 settingsRepository: _repositories.settingsRepository,
                 weightRepository: _repositories.weightRepository,
               ),
             ),
+            NavigatorRoutes.barcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
           },
         );
       },

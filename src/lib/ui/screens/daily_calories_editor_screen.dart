@@ -8,8 +8,8 @@ import "package:openeatsjournal/ui/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 
-class DailyCaloriesEditor extends StatelessWidget {
-  DailyCaloriesEditor({
+class DailyCaloriesEditorScreen extends StatelessWidget {
+  DailyCaloriesEditorScreen({
     super.key,
     required DailyCaloriesEditorViewModel dailyCaloriesEditorViewModel,
     required int dailyCalories,

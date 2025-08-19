@@ -4,18 +4,18 @@ import "package:intl/intl.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
-import "package:openeatsjournal/ui/screens/home_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/daily_overview_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
-import "package:openeatsjournal/ui/screens/settings.dart";
+import "package:openeatsjournal/ui/screens/settings_screen.dart";
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required HomeViewModel homeViewModel, required SettingsRepository settingsRepository})
+class DailyOverviewScreen extends StatelessWidget {
+  const DailyOverviewScreen({super.key, required DailyOverviewViewModel homeViewModel, required SettingsRepository settingsRepository})
     : _homeViewModel = homeViewModel,
       _settingsRepository = settingsRepository;
 
-  final HomeViewModel _homeViewModel;
+  final DailyOverviewViewModel _homeViewModel;
   final SettingsRepository _settingsRepository;
 
   @override
@@ -90,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                               horizontalPadding,
                               verticalPadding,
                             ),
-                            child: Settings(
+                            child: SettingsScreen(
                               settingsViewModel: SettingsViewModel(settingsRepository: _settingsRepository),
                             ),
                           );

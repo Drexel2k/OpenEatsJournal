@@ -80,6 +80,9 @@ class SettingsRepository extends ChangeNotifier {
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
 
   ValueNotifier<bool> get initialized => _initialized;
+  String get appContactMail => "";
+  String get appName => "OpenEatsJournal";
+  String get appVersion => "0.1";
 
   //must be called once before the singleton is used
   void setOejDatabase(OejDatabaseService oejDataBase) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/utils/navigator_routes.dart';
 
 class MainLayout extends StatelessWidget {
@@ -36,10 +37,10 @@ class MainLayout extends StatelessWidget {
           }
         },
         selectedIndex: currentNavigationIndex,
-        destinations: const <Widget>[
-          NavigationDestination(icon: Icon(Icons.lunch_dining), label: "Food"),
-          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-          NavigationDestination(icon: Icon(Icons.insights), label: "Statistics"),
+        destinations: <Widget>[
+          NavigationDestination(icon: Icon(Icons.lunch_dining), label: AppLocalizations.of(context)!.food),
+          NavigationDestination(icon: Icon(Icons.home), label: AppLocalizations.of(context)!.daily_overview),
+          NavigationDestination(icon: Icon(Icons.assessment), label: AppLocalizations.of(context)!.statistics),
         ],
       ),
     );

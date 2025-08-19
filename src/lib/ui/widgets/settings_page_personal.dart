@@ -5,7 +5,7 @@ import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/kcal_settings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/daily_calories_editor.dart";
+import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/convert_validate.dart";
@@ -578,7 +578,7 @@ class SettingsPagePersonal extends StatelessWidget {
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (_) {
-        return DailyCaloriesEditor(
+        return DailyCaloriesEditorScreen(
           dailyCaloriesEditorViewModel: DailyCaloriesEditorViewModel(
             KCalSettings(
               kCalsMonday: _settingsViewModel.kCalsMonday,

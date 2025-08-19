@@ -4,4 +4,5 @@ class NavigatorRoutes {
   static const statistics = "/stats";
   static const settings = "/settings";
   static const onboarding = "/onboarding";
+  static const barcodeScanner ="/barcode";
 }
