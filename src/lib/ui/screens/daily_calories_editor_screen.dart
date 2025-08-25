@@ -2,10 +2,12 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
+import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 
 class DailyCaloriesEditorScreen extends StatelessWidget {
@@ -422,46 +424,66 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
       actions: [
         TextButton(
           child: Text(AppLocalizations.of(context)!.cancel),
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async {
+            try {
+              Navigator.pop(context);
+            } on Exception catch (exc, stack) {
+              await ErrorHandlers.showException(
+                context: navigatorKey.currentContext!,
+                exception: exc,
+                stackTrace: stack,
+              );
+            } on Error catch (error, stack) {
+              await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+            }
           },
         ),
         TextButton(
           child: Text(AppLocalizations.of(context)!.ok),
 
-          onPressed: () {
-            KCalSettings kCalSettings = KCalSettings(
-              kCalsMonday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalMondayController.text,
-                languageCode: languageCode,
-              )!,
-              kCalsTuesday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalTuesdayController.text,
-                languageCode: languageCode,
-              )!,
-              kCalsWednesday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalWednesdayController.text,
-                languageCode: languageCode,
-              )!,
-              kCalsThursday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalThursdayController.text,
-                languageCode: languageCode,
-              )!,
-              kCalsFriday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalFridayController.text,
-                languageCode: languageCode,
-              )!,
-              kCalsSaturday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalSaturdayController.text,
-                languageCode: languageCode,
-              )!,
-              kCalsSunday: ConvertValidate.convertLocalStringToInt(
-                numberString: _kCalSundayController.text,
-                languageCode: languageCode,
-              )!,
-            );
+          onPressed: () async {
+            try {
+              KCalSettings kCalSettings = KCalSettings(
+                kCalsMonday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalMondayController.text,
+                  languageCode: languageCode,
+                )!,
+                kCalsTuesday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalTuesdayController.text,
+                  languageCode: languageCode,
+                )!,
+                kCalsWednesday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalWednesdayController.text,
+                  languageCode: languageCode,
+                )!,
+                kCalsThursday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalThursdayController.text,
+                  languageCode: languageCode,
+                )!,
+                kCalsFriday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalFridayController.text,
+                  languageCode: languageCode,
+                )!,
+                kCalsSaturday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalSaturdayController.text,
+                  languageCode: languageCode,
+                )!,
+                kCalsSunday: ConvertValidate.convertLocalStringToInt(
+                  numberString: _kCalSundayController.text,
+                  languageCode: languageCode,
+                )!,
+              );
 
-            Navigator.pop(context, kCalSettings);
+              Navigator.pop(context, kCalSettings);
+            } on Exception catch (exc, stack) {
+              await ErrorHandlers.showException(
+                context: navigatorKey.currentContext!,
+                exception: exc,
+                stackTrace: stack,
+              );
+            } on Error catch (error, stack) {
+              await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+            }
           },
         ),
       ],

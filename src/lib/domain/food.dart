@@ -1,0 +1,46 @@
+import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/unit.dart";
+
+class Food {
+  Food({
+    required String name,
+    required FoodSource foodSource,
+    required String foodSourceId,
+    required MeasurementUnit measurementUnit,
+    required int energyKjPer100Units,
+    List<String>? brands,
+    double? carbohydratesPer100Units,
+    double? sugarsPer100Units,
+    double? fatPer100Units,
+    double? saturatedFatPer100Units,
+    double? proteinsPer100Units,
+    double? saltPer100Units,
+    String? quantity,
+  }) : _name = name,
+       _brands = brands,
+       _foodSource = foodSource,
+       _foodSourceId = foodSourceId,
+       _measurementUnit = measurementUnit,
+       _energyKjPer100Units = energyKjPer100Units,
+       _carbohydratesPer100Units = carbohydratesPer100Units,
+       _sugarsPer100Units = sugarsPer100Units,
+       _fatPer100Units = fatPer100Units,
+       _saturatedFatPer100Units = saturatedFatPer100Units,
+       _proteinsPer100Units = proteinsPer100Units,
+       _units = List.empty();
+
+  final String _name;
+  final List<String>? _brands;
+  final FoodSource _foodSource;
+  final String _foodSourceId;
+  final MeasurementUnit _measurementUnit;
+  final int _energyKjPer100Units;
+  final double? _carbohydratesPer100Units;
+  final double? _sugarsPer100Units;
+  final double? _fatPer100Units;
+  final double? _saturatedFatPer100Units;
+  final double? _proteinsPer100Units;
+  final List _units;
+
+  String get name => _name;
+}

@@ -1,12 +1,13 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
+import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
-class OnboardingPage4 extends StatelessWidget {
-  const OnboardingPage4({super.key, required this.onDone, required OnboardingViewModel onboardingViewModel})
+class OnboardingScreenPage4 extends StatelessWidget {
+  const OnboardingScreenPage4({super.key, required this.onDone, required OnboardingViewModel onboardingViewModel})
     : _onboardingViewModel = onboardingViewModel;
 
   final OnboardingViewModel _onboardingViewModel;
@@ -60,7 +61,7 @@ class OnboardingPage4 extends StatelessWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 10.0),
+                      SizedBox(height: 8),
                       ValueListenableBuilder(
                         valueListenable: _onboardingViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
@@ -73,7 +74,7 @@ class OnboardingPage4 extends StatelessWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 10.0),
+                      SizedBox(height: 8),
                       ValueListenableBuilder(
                         valueListenable: _onboardingViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
@@ -86,7 +87,7 @@ class OnboardingPage4 extends StatelessWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 10.0),
+                      SizedBox(height: 8),
                       ValueListenableBuilder(
                         valueListenable: _onboardingViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
@@ -125,10 +126,8 @@ class OnboardingPage4 extends StatelessWidget {
               child: FilledButton(
                 onPressed: () async {
                   await _onboardingViewModel.saveOnboardingData();
-                  if (contextBuilder.mounted) {
-                    //home (route "/") is always on top of the MaterialApp's navigations stack.
-                    Navigator.pop(contextBuilder);
-                  }
+                  //home (route "/") is always on top of the MaterialApp's navigations stack.
+                  Navigator.pop(navigatorKey.currentContext!);
                 },
                 child: Text(AppLocalizations.of(contextBuilder)!.finish),
               ),

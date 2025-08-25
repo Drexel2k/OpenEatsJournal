@@ -4,7 +4,8 @@ import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/kcal_settings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
-import "package:openeatsjournal/service/oej_database_service.dart";
+import "package:openeatsjournal/service/database/oej_database_service.dart";
+import "package:openeatsjournal/ui/utils/oej_strings.dart";
 
 class SettingsRepository extends ChangeNotifier {
   SettingsRepository._singleton();
@@ -15,7 +16,7 @@ class SettingsRepository extends ChangeNotifier {
 
   //persistant settings
   final ValueNotifier<bool> _darkMode = ValueNotifier(false);
-  final ValueNotifier<String> _languageCode = ValueNotifier("en");
+  final ValueNotifier<String> _languageCode = ValueNotifier(OejStrings.en);
   late Gender _gender;
   late DateTime _birthday;
   late int _height;
@@ -80,13 +81,14 @@ class SettingsRepository extends ChangeNotifier {
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
 
   ValueNotifier<bool> get initialized => _initialized;
-  String get appContactMail => "";
+  String? get appContactMail => null;
   String get appName => "OpenEatsJournal";
   String get appVersion => "0.1";
+  bool get useStagingServices => true;
 
   //must be called once before the singleton is used
-  void setOejDatabase(OejDatabaseService oejDataBase) {
-    _oejDatabase = oejDataBase;
+  void init({required OejDatabaseService oejDatabase}) {
+    _oejDatabase = oejDatabase;
   }
 
   Future<void> initSettings() async {

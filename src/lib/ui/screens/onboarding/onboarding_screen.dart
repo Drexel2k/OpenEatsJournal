@@ -1,10 +1,13 @@
 import "package:flutter/material.dart";
+import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/widgets/onboarding/onboarding_page_1.dart";
-import "package:openeatsjournal/ui/widgets/onboarding/onboarding_page_2.dart";
-import "package:openeatsjournal/ui/widgets/onboarding/onboarding_page_3.dart";
-import "package:openeatsjournal/ui/widgets/onboarding/onboarding_page_4.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_1.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_2.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_3.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_4.dart";
+import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/oej_strings.dart";
 
 class OnboardingScreen extends StatelessWidget {
   OnboardingScreen({super.key, required OnboardingViewModel onboardingViewModel})
@@ -17,7 +20,7 @@ class OnboardingScreen extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: _onboardingViewModel.currentPageIndex,
       builder: (_, _, _) {
-        String pageTitle = "";
+        String pageTitle = OejStrings.emptyString;
         if (_onboardingViewModel.currentPageIndex.value == 1) {
           pageTitle = AppLocalizations.of(context)!.about_this_app;
         } else if (_onboardingViewModel.currentPageIndex.value == 2) {
@@ -31,8 +34,22 @@ class OnboardingScreen extends StatelessWidget {
               ? AppBar(
                   leading: IconButton(
                     icon: BackButtonIcon(),
-                    onPressed: () {
-                      _movePageIndex(-1);
+                    onPressed: () async {
+                      try {
+                        _movePageIndex(-1);
+                      } on Exception catch (exc, stack) {
+                        await ErrorHandlers.showException(
+                          context: navigatorKey.currentContext!,
+                          exception: exc,
+                          stackTrace: stack,
+                        );
+                      } on Error catch (error, stack) {
+                        await ErrorHandlers.showException(
+                          context: navigatorKey.currentContext!,
+                          error: error,
+                          stackTrace: stack,
+                        );
+                      }
                     },
                   ),
                   title: Text(pageTitle),
@@ -45,24 +62,24 @@ class OnboardingScreen extends StatelessWidget {
                 controller: _pageViewController,
                 physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
-                  OnboardingPage1(
+                  OnboardingScreenPage1(
                     onDone: () {
                       _movePageIndex(1);
                     },
                     darkMode: _onboardingViewModel.darkMode,
                   ),
-                  OnboardingPage2(
+                  OnboardingScreenPage2(
                     onDone: () {
                       _movePageIndex(1);
                     },
                   ),
-                  OnboardingPage3(
+                  OnboardingScreenPage3(
                     onDone: () {
                       _movePageIndex(1);
                     },
                     onboardingViewModel: _onboardingViewModel,
                   ),
-                  OnboardingPage4(onDone: () {}, onboardingViewModel: _onboardingViewModel),
+                  OnboardingScreenPage4(onDone: () {}, onboardingViewModel: _onboardingViewModel),
                 ],
               ),
             ),

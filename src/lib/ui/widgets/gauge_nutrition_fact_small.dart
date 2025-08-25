@@ -15,19 +15,20 @@ class GaugeNutritionFactSmall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorTheme = Theme.of(context).colorScheme;
     final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
     List<Color> colors = [];
     int percentageFilled;
 
     if (_value <= _maxValue) {
-      colors.add(Theme.of(context).colorScheme.inversePrimary);
-      colors.add(Theme.of(context).colorScheme.primary);
+      colors.add(colorTheme.inversePrimary);
+      colors.add(colorTheme.primary);
 
       percentageFilled = (_value / _maxValue * 100).round();
     } else {
-      colors.add(Theme.of(context).colorScheme.primary);
-      colors.add(Theme.of(context).colorScheme.error);
+      colors.add(colorTheme.primary);
+      colors.add(colorTheme.error);
 
       if (_value <= 2 * _maxValue) {
         percentageFilled = ((_value - _maxValue) / _maxValue * 100).round();

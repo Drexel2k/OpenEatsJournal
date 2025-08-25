@@ -3,13 +3,14 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
+import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
 import "package:openeatsjournal/ui/screens/food_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_overview_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_overview_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/onboarding/onboarding.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
@@ -46,7 +47,6 @@ class OpenEatsJournalApp extends StatelessWidget {
     if (!_openEatsJournalAppViewModel.initialized) {
       initialRoute = NavigatorRoutes.onboarding;
     }
-
     return ListenableBuilder(
       listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
       builder: (contextBuilder, _) {
@@ -87,8 +87,11 @@ class OpenEatsJournalApp extends StatelessWidget {
               settingsRepository: _repositories.settingsRepository,
             ),
             NavigatorRoutes.statistics: (contextBuilder) => const StatisticsScreen(),
-            NavigatorRoutes.food: (contextBuilder) =>
-                FoodScreen(foodViewModel: FoodViewModel(settingsRepository: _repositories.settingsRepository)),
+            NavigatorRoutes.food: (contextBuilder) => FoodScreen(
+              foodViewModel: FoodViewModel(
+                foodRepository: _repositories.foodRepository
+              ),
+            ),
             NavigatorRoutes.onboarding: (contextBuilder) => OnboardingScreen(
               onboardingViewModel: OnboardingViewModel(
                 settingsRepository: _repositories.settingsRepository,
@@ -97,6 +100,7 @@ class OpenEatsJournalApp extends StatelessWidget {
             ),
             NavigatorRoutes.barcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
           },
+          navigatorKey: navigatorKey,
         );
       },
     );

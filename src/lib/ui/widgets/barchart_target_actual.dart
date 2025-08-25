@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/domain/statistic_type.dart";
+import "package:openeatsjournal/ui/utils/statistic_type.dart";
 
 class BarchartTargetActual extends StatelessWidget {
   const BarchartTargetActual({super.key, required data, required statisticsType})
@@ -10,14 +10,15 @@ class BarchartTargetActual extends StatelessWidget {
       _statisticsType = statisticsType;
 
   final List<Tuple> _data;
-  final StatisticsType _statisticsType;
+  final StatisticType _statisticsType;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorTheme = Theme.of(context).colorScheme;
     final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
-    double barSize = _statisticsType == StatisticsType.daily ? 4 : 18;
+    double barSize = _statisticsType == StatisticType.daily ? 4 : 18;
 
     int maxkCalIntakeEntry = _data.reduce(
       (currentEntry, nextEntry) => currentEntry["kCalIntake"] > nextEntry["kCalIntake"] ? currentEntry : nextEntry,
@@ -47,10 +48,10 @@ class BarchartTargetActual extends StatelessWidget {
 
     double xAxisLabelXOffset = 12;
     double xAxisLabelYOffset = 15;
-    if (_statisticsType == StatisticsType.weekly) {
+    if (_statisticsType == StatisticType.weekly) {
       xAxisLabelXOffset = 6;
       xAxisLabelYOffset = 10;
-    } else if (_statisticsType == StatisticsType.monthly) {
+    } else if (_statisticsType == StatisticType.monthly) {
       xAxisLabelXOffset = 8;
       xAxisLabelYOffset = 11;
     }
@@ -59,9 +60,9 @@ class BarchartTargetActual extends StatelessWidget {
     int average = (totalkCalIntake / _data.length).toInt();
 
     String timeInfo = AppLocalizations.of(context)!.days;
-    if (_statisticsType == StatisticsType.weekly) {
+    if (_statisticsType == StatisticType.weekly) {
       timeInfo = AppLocalizations.of(context)!.weeks;
-    } else if (_statisticsType == StatisticsType.monthly) {
+    } else if (_statisticsType == StatisticType.monthly) {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
@@ -112,12 +113,12 @@ class BarchartTargetActual extends StatelessWidget {
                     ),
                   ),
                 ),
-                color: ColorEncode(value: Theme.of(context).colorScheme.primary),
+                color: ColorEncode(value: colorTheme.primary),
               ),
               LineMark(
                 position: Varset("date_information") * Varset("kCalTarget"),
                 size: SizeEncode(value: 1.5),
-                color: ColorEncode(value: Theme.of(context).colorScheme.tertiary),
+                color: ColorEncode(value: colorTheme.tertiary),
               ),
             ],
             axes: [
@@ -125,7 +126,7 @@ class BarchartTargetActual extends StatelessWidget {
                 dim: Dim.x,
                 line: PaintStyle(strokeColor: Color(0xffe8e8e8), strokeWidth: 1),
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.secondary),
+                  textStyle: TextStyle(fontSize: 10, color: colorTheme.secondary),
                   offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
                   rotation: 1,
                 ),
@@ -133,10 +134,10 @@ class BarchartTargetActual extends StatelessWidget {
               AxisGuide(
                 dim: Dim.y,
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.secondary),
+                  textStyle: TextStyle(fontSize: 10, color: colorTheme.secondary),
                   offset: const Offset(-7.5, 0),
                 ),
-                grid: PaintStyle(strokeColor: Theme.of(context).colorScheme.surfaceDim, strokeWidth: 1),
+                grid: PaintStyle(strokeColor: colorTheme.surfaceDim, strokeWidth: 1),
               ),
             ],
           ),

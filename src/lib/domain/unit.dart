@@ -1,0 +1,4 @@
+enum MeasurementUnit {
+  gram,
+  milliliter
+}

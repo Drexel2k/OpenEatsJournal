@@ -1,19 +1,24 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
+import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/daily_overview_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
 
 class DailyOverviewScreen extends StatelessWidget {
-  const DailyOverviewScreen({super.key, required DailyOverviewViewModel homeViewModel, required SettingsRepository settingsRepository})
-    : _homeViewModel = homeViewModel,
-      _settingsRepository = settingsRepository;
+  const DailyOverviewScreen({
+    super.key,
+    required DailyOverviewViewModel homeViewModel,
+    required SettingsRepository settingsRepository,
+  }) : _homeViewModel = homeViewModel,
+       _settingsRepository = settingsRepository;
 
   final DailyOverviewViewModel _homeViewModel;
   final SettingsRepository _settingsRepository;
@@ -21,6 +26,7 @@ class DailyOverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorTheme = Theme.of(context).colorScheme;
     final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
     int value = 1250;
@@ -30,13 +36,13 @@ class DailyOverviewScreen extends StatelessWidget {
     int percentageFilled;
 
     if (value <= maxValue) {
-      colors.add(Theme.of(context).colorScheme.inversePrimary);
-      colors.add(Theme.of(context).colorScheme.primary);
+      colors.add(colorTheme.inversePrimary);
+      colors.add(colorTheme.primary);
 
       percentageFilled = (value / maxValue * 100).round();
     } else {
-      colors.add(Theme.of(context).colorScheme.primary);
-      colors.add(Theme.of(context).colorScheme.error);
+      colors.add(colorTheme.primary);
+      colors.add(colorTheme.error);
 
       if (value <= 2 * maxValue) {
         percentageFilled = ((value - maxValue) / maxValue * 100).round();
@@ -59,7 +65,21 @@ class DailyOverviewScreen extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    try {} on Exception catch (exc, stack) {
+                      await ErrorHandlers.showException(
+                        context: navigatorKey.currentContext!,
+                        exception: exc,
+                        stackTrace: stack,
+                      );
+                    } on Error catch (error, stack) {
+                      await ErrorHandlers.showException(
+                        context: navigatorKey.currentContext!,
+                        error: error,
+                        stackTrace: stack,
+                      );
+                    }
+                  },
                   child: Text(
                     DateFormat.yMMMMd(_homeViewModel.languageCode).format(DateTime.now()),
                     style: textTheme.titleMedium,
@@ -74,28 +94,42 @@ class DailyOverviewScreen extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.settings),
                     iconSize: 36,
-                    onPressed: () => {
-                      showDialog<void>(
-                        useSafeArea: true,
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext contextBuilder) {
-                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+                    onPressed: () async {
+                      try {
+                        await showDialog<void>(
+                          useSafeArea: true,
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext contextBuilder) {
+                            double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                            double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
 
-                          return Dialog(
-                            insetPadding: EdgeInsets.fromLTRB(
-                              horizontalPadding,
-                              verticalPadding,
-                              horizontalPadding,
-                              verticalPadding,
-                            ),
-                            child: SettingsScreen(
-                              settingsViewModel: SettingsViewModel(settingsRepository: _settingsRepository),
-                            ),
-                          );
-                        },
-                      ),
+                            return Dialog(
+                              insetPadding: EdgeInsets.fromLTRB(
+                                horizontalPadding,
+                                verticalPadding,
+                                horizontalPadding,
+                                verticalPadding,
+                              ),
+                              child: SettingsScreen(
+                                settingsViewModel: SettingsViewModel(settingsRepository: _settingsRepository),
+                              ),
+                            );
+                          },
+                        );
+                      } on Exception catch (exc, stack) {
+                        await ErrorHandlers.showException(
+                          context: navigatorKey.currentContext!,
+                          exception: exc,
+                          stackTrace: stack,
+                        );
+                      } on Error catch (error, stack) {
+                        await ErrorHandlers.showException(
+                          context: navigatorKey.currentContext!,
+                          error: error,
+                          stackTrace: stack,
+                        );
+                      }
                     },
                   ),
                 ),

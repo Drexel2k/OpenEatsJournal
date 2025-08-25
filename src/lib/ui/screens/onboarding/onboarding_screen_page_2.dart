@@ -1,16 +1,16 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 
-class OnboardingPage2 extends StatefulWidget {
-  const OnboardingPage2({super.key, required this.onDone});
+class OnboardingScreenPage2 extends StatefulWidget {
+  const OnboardingScreenPage2({super.key, required this.onDone});
 
   final VoidCallback onDone;
 
   @override
-  State<OnboardingPage2> createState() => _OnboardingPage2State();
+  State<OnboardingScreenPage2> createState() => _OnboardingScreenPage2State();
 }
 
-class _OnboardingPage2State extends State<OnboardingPage2> {
+class _OnboardingScreenPage2State extends State<OnboardingScreenPage2> {
   bool _understood = false;
 
   @override
@@ -20,13 +20,13 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
     return Column(
       children: [
         Text(AppLocalizations.of(context)!.welcome_message_2, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-        SizedBox(height: 10.0),
+        SizedBox(height: 10),
         Text(AppLocalizations.of(context)!.welcome_message_3, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-        SizedBox(height: 10.0),
+        SizedBox(height: 10),
         Text(AppLocalizations.of(context)!.welcome_message_4, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-        SizedBox(height: 10.0),
+        SizedBox(height: 10),
         Text(AppLocalizations.of(context)!.welcome_message_5, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-        SizedBox(height: 10.0),
+        SizedBox(height: 10),
         Text(AppLocalizations.of(context)!.welcome_message_6, style: textTheme.bodyLarge, textAlign: TextAlign.center),
         Spacer(),
         CheckboxListTile(

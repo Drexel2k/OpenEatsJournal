@@ -3,7 +3,7 @@ import "package:graphic/graphic.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/utils/navigator_routes.dart";
-import "package:openeatsjournal/domain/statistic_type.dart";
+import "package:openeatsjournal/ui/utils/statistic_type.dart";
 import "package:openeatsjournal/ui/widgets/barchart_target_actual.dart";
 
 class StatisticsScreen extends StatelessWidget {
@@ -79,11 +79,11 @@ class StatisticsScreen extends StatelessWidget {
       route: NavigatorRoutes.statistics,
       body: Column(
         children: [
-          BarchartTargetActual(data: dayData, statisticsType: StatisticsType.daily),
+          BarchartTargetActual(data: dayData, statisticsType: StatisticType.daily),
           SizedBox(height: 30),
-          BarchartTargetActual(data: weekData, statisticsType: StatisticsType.weekly),
+          BarchartTargetActual(data: weekData, statisticsType: StatisticType.weekly),
           SizedBox(height: 20),
-          BarchartTargetActual(data: monthData, statisticsType: StatisticsType.monthly),
+          BarchartTargetActual(data: monthData, statisticsType: StatisticType.monthly),
         ],
       ),
       title: AppLocalizations.of(context)!.statistics,

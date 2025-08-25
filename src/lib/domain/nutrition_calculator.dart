@@ -1,6 +1,7 @@
 import "package:openeatsjournal/domain/gender.dart";
 
 class NutritionCalculator {
+  static const double _kCalKJouleConversionFactor = 4.1868;
   //calculation according to Mifflin St Jeor equation
   static double calculateBasalMetabolicRate({
     required double weightKg,
@@ -30,5 +31,13 @@ class NutritionCalculator {
 
   static double calculateFatDemandByKCalories({required double kCalories}) {
     return kCalories * 0.15 * 0.24;
+  }
+
+  static int getKCalsFromKJoules(num kCals) {
+    return (kCals * _kCalKJouleConversionFactor).round();
+  }
+
+  static int getKJoulesFromKCals(num kJoules) {
+    return (kJoules / _kCalKJouleConversionFactor).round();
   }
 }

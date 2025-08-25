@@ -9,8 +9,8 @@ import "package:openeatsjournal/ui/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
-class OnboardingPage3 extends StatelessWidget {
-  OnboardingPage3({super.key, required OnboardingViewModel onboardingViewModel, required VoidCallback onDone})
+class OnboardingScreenPage3 extends StatelessWidget {
+  OnboardingScreenPage3({super.key, required OnboardingViewModel onboardingViewModel, required VoidCallback onDone})
     : _onboardingViewModel = onboardingViewModel,
       _onDone = onDone,
       _birthDayController = TextEditingController();

@@ -1,4 +1,4 @@
-import "package:openeatsjournal/service/oej_database_service.dart";
+import "package:openeatsjournal/service/database/oej_database_service.dart";
 
 class WeightRepository {
   WeightRepository._singleton();
@@ -7,8 +7,8 @@ class WeightRepository {
   late OejDatabaseService _oejDatabase;
 
   //must be called once before the singleton is used
-  void setOejDatabase(OejDatabaseService oejDataBase) {
-    _oejDatabase = oejDataBase;
+  void init({required OejDatabaseService oejDatabase}) {
+    _oejDatabase = oejDatabase;
   }
 
   Future<void> insertWeight(DateTime date, double weight) async {

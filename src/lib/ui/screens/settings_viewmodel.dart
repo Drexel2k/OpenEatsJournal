@@ -32,7 +32,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   final SettingsRepository _settingsRepository;
 
-  int _currentPageIndex = 0;
+  final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final ValueNotifier<bool> _darkMode;
   final ValueNotifier<String> _languageCode;
   final ValueNotifier<int> _dailyCalories;
@@ -44,9 +44,7 @@ class SettingsViewModel extends ChangeNotifier {
   final ValueNotifier<double> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
 
-  set currentPageIndex(int value) => _currentPageIndex = value;
-
-  int get currentPageIndex => _currentPageIndex;
+  ValueNotifier<int> get currentPageIndex => _currentPageIndex;
   ValueNotifier<bool> get darkMode => _darkMode;
   ValueNotifier<String> get languageCode => _languageCode;
   ValueNotifier<int> get dailyCalories => _dailyCalories;
