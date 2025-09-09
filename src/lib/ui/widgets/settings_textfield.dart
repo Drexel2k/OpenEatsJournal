@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:openeatsjournal/ui/widgets/oej_textfield.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 
 class SettingsTextField extends StatelessWidget {
   const SettingsTextField({
@@ -30,7 +30,7 @@ class SettingsTextField extends StatelessWidget {
 
     return SizedBox(
       width: 140.0,
-      child: OejTextField(
+      child: OpenEatsJournalTextField(
         readOnly: _readOnly,
         controller: _controller,
         onTap: _onTap,

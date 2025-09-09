@@ -3,8 +3,8 @@ import "dart:io";
 
 import "package:http/http.dart" as http;
 import "package:http/http.dart";
-import "package:openeatsjournal/service/open_food_facts/api_strings.dart";
-import "package:openeatsjournal/ui/utils/oej_strings.dart";
+import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 
 class OpenFoodFactsService {
   OpenFoodFactsService._singleton();
@@ -52,7 +52,7 @@ class OpenFoodFactsService {
     }
 
     Response resp = await http.get(
-      Uri.parse("$_barcodeSearchEndpoint$barcode?product_type=food&fields=${ApiStrings.apiV2AllFields.join(",")}"),
+      Uri.parse("$_barcodeSearchEndpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV2AllFields.join(",")}"),
       headers: headers,
     );
 
@@ -63,7 +63,11 @@ class OpenFoodFactsService {
     return null;
   }
 
-  Future<String?> getFoodBySearchText({required String searchText, required String languageCode}) async {
+  Future<String?> getFoodBySearchText({
+    required String searchText,
+    required String languageCode,
+    required int page,
+  }) async {
     Map<String, String> headers = {
       HttpHeaders.userAgentHeader: "$_appName/$_appVersion ($_appContactMail)",
       HttpHeaders.contentTypeHeader: "application/json; charset=UTF-8",
@@ -73,14 +77,14 @@ class OpenFoodFactsService {
       headers[HttpHeaders.authorizationHeader] = "Basic ${base64.encode(utf8.encode("off:off"))}";
     }
 
-    String languageCodes = OejStrings.en;
-    if(languageCode!=OejStrings.en) {
+    String languageCodes = OpenEatsJournalStrings.en;
+    if (languageCode != OpenEatsJournalStrings.en) {
       languageCodes = "$languageCode,$languageCodes";
     }
 
     Response resp = await http.get(
       Uri.parse(
-        "${_textSearchEndpoint}q=$searchText&fields=${ApiStrings.searchALiciousAllFields.join(",")}&langs=$languageCodes&page_size=15&page=1",
+        "${_textSearchEndpoint}q=$searchText&fields=${OpenFoodFactsApiStrings.searchALiciousAllFields.join(",")}&langs=$languageCodes&page_size=100&page=$page",
       ),
       headers: headers,
     );

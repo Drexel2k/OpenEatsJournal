@@ -1,8 +1,11 @@
-class ApiStrings {
+class OpenFoodFactsApiStrings {
   static const product = "product";
   static const serving = "serving";
   static const hundred = "100.";
   static const nutrimentsPrefix = "nutriments.";
+  static const page = "page";
+  static const pageCount = "page_count";
+  static const hits = "hits";
 
   static const fieldId = "id";
   static const fieldCode = "code";
@@ -16,6 +19,7 @@ class ApiStrings {
   static const fieldGenericNameEn = "generic_name_en";
   static const fieldGenericNameDe = "generic_name_de";
   static const fieldBrandsTags = "brands_tags";
+  static const fieldBrands = "brands";
   static const fieldNutritionDataPer = "nutrition_data_per";
   static const fieldProductQuantity = "product_quantity";
   static const fieldProductQuantityUnit = "product_quantity_unit";
@@ -38,8 +42,8 @@ class ApiStrings {
   static const fieldServingSize = "serving_size";
   static const fieldNutriments = "nutriments";
   static const fieldQuantity = "quantity";
-  static const fieldEnergyKcal ="energy-kcal";
-  static const fieldEnergyKcal100g ="energy-kcal_100g";
+  static const fieldEnergyKcal = "energy-kcal";
+  static const fieldEnergyKcal100g = "energy-kcal_100g";
 
   static const List<String> apiV2AllFields = [
     fieldId,
@@ -71,12 +75,12 @@ class ApiStrings {
     "$nutrimentsPrefix$fieldSaturatedFat",
     "$nutrimentsPrefix$fieldSaturatedFat100g",
     "$nutrimentsPrefix$fieldProteins",
-    "$nutrimentsPrefix$fieldProteins100g"
+    "$nutrimentsPrefix$fieldProteins100g",
     "$nutrimentsPrefix$fieldSalt",
-    "$nutrimentsPrefix$fieldSalt100g"
+    "$nutrimentsPrefix$fieldSalt100g",
   ];
 
-    static const List<String> searchALiciousAllFields = [
+  static const List<String> searchALiciousAllFields = [
     fieldCode,
     fieldProductName,
     fieldProductNameEn,
@@ -87,8 +91,8 @@ class ApiStrings {
     fieldGenericName,
     fieldGenericNameEn,
     fieldGenericNameDe,
-    fieldBrandsTags,
+    fieldBrands,
     fieldQuantity,
-    fieldNutriments
+    fieldNutriments,
   ];
 }

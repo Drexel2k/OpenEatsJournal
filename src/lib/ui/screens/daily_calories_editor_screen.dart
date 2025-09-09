@@ -82,7 +82,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                     return Text(
                       AppLocalizations.of(
                         context,
-                      )!.amount_kcal(formatter.format(_dailyCaloriesEditorViewModel.kCalsTargetDaily.value)),
+                      )!.amount_kcal(_dailyCaloriesEditorViewModel.kCalsTargetDaily.value),
                       style: textTheme.titleMedium,
                     );
                   },
@@ -100,7 +100,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: Text(
-                  AppLocalizations.of(context)!.amount_kcal(formatter.format(_originalDailyTargetCalories)),
+                  AppLocalizations.of(context)!.amount_kcal(_originalDailyTargetCalories),
                   style: textTheme.bodySmall,
                 ),
               ),
@@ -116,7 +116,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: Text(
-                  AppLocalizations.of(context)!.amount_kcal(formatter.format(_dailyCalories)),
+                  AppLocalizations.of(context)!.amount_kcal(_dailyCalories),
                   style: textTheme.bodySmall,
                 ),
               ),

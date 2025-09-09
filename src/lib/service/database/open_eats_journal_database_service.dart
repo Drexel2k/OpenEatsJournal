@@ -2,9 +2,9 @@ import "package:intl/intl.dart";
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 
-class OejDatabaseService {
-  OejDatabaseService._singleton();
-  static final OejDatabaseService instance = OejDatabaseService._singleton();
+class OpenEatsJournalDatabaseService {
+  OpenEatsJournalDatabaseService._singleton();
+  static final OpenEatsJournalDatabaseService instance = OpenEatsJournalDatabaseService._singleton();
 
   static Database? _database;
 

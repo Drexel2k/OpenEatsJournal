@@ -1,5 +1,5 @@
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/service/open_food_facts/api_strings.dart';
+import 'package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart';
 
 class NutrimentsApi {
   NutrimentsApi({
@@ -64,32 +64,32 @@ class NutrimentsApi {
 
   factory NutrimentsApi.fromJson(Map<String, dynamic> json) {
     return NutrimentsApi(
-      energyKj: json.containsKey(ApiStrings.fieldEnergy) ? json[ApiStrings.fieldEnergy] as int : json.containsKey(ApiStrings.fieldEnergyKcal) ? NutritionCalculator.getKJoulesFromKCals(json[ApiStrings.fieldEnergyKcal] as int) : null,
-      carbohydrates: json.containsKey(ApiStrings.fieldCarboHydrates)
-          ? (json[ApiStrings.fieldCarboHydrates] as num).toDouble()
+      energyKj: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy) ? json[OpenFoodFactsApiStrings.fieldEnergy] as int : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal) ? NutritionCalculator.getKJoulesFromKCals(json[OpenFoodFactsApiStrings.fieldEnergyKcal] as int) : null,
+      carbohydrates: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates)
+          ? (json[OpenFoodFactsApiStrings.fieldCarboHydrates] as num).toDouble()
           : null,
-      sugars: json.containsKey(ApiStrings.fieldSugars) ? (json[ApiStrings.fieldSugars] as num).toDouble() : null,
-      fat: json.containsKey(ApiStrings.fieldFat) ? (json[ApiStrings.fieldFat] as num).toDouble() : null,
-      saturatedFat: json.containsKey(ApiStrings.fieldSaturatedFat)
-          ? (json[ApiStrings.fieldSaturatedFat] as num).toDouble()
+      sugars: json.containsKey(OpenFoodFactsApiStrings.fieldSugars) ? (json[OpenFoodFactsApiStrings.fieldSugars] as num).toDouble() : null,
+      fat: json.containsKey(OpenFoodFactsApiStrings.fieldFat) ? (json[OpenFoodFactsApiStrings.fieldFat] as num).toDouble() : null,
+      saturatedFat: json.containsKey(OpenFoodFactsApiStrings.fieldSaturatedFat)
+          ? (json[OpenFoodFactsApiStrings.fieldSaturatedFat] as num).toDouble()
           : null,
-      proteins: json.containsKey(ApiStrings.fieldProteins) ? (json[ApiStrings.fieldProteins] as num).toDouble() : null,
-      salt: json.containsKey(ApiStrings.fieldSalt) ? (json[ApiStrings.fieldSalt] as num).toDouble() : null,
-      energyKj100g: json.containsKey(ApiStrings.fieldEnergy100g) ? (json[ApiStrings.fieldEnergy100g] as num).round() : json.containsKey(ApiStrings.fieldEnergyKcal100g) ? NutritionCalculator.getKJoulesFromKCals(json[ApiStrings.fieldEnergyKcal100g]) : null,
-      carbohydrates100g: json.containsKey(ApiStrings.fieldCarboHydrates100g)
-          ? (json[ApiStrings.fieldCarboHydrates100g] as num).toDouble()
+      proteins: json.containsKey(OpenFoodFactsApiStrings.fieldProteins) ? (json[OpenFoodFactsApiStrings.fieldProteins] as num).toDouble() : null,
+      salt: json.containsKey(OpenFoodFactsApiStrings.fieldSalt) ? (json[OpenFoodFactsApiStrings.fieldSalt] as num).toDouble() : null,
+      energyKj100g: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy100g) ? (json[OpenFoodFactsApiStrings.fieldEnergy100g] as num).round() : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal100g) ? NutritionCalculator.getKJoulesFromKCals(json[OpenFoodFactsApiStrings.fieldEnergyKcal100g]) : null,
+      carbohydrates100g: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates100g)
+          ? (json[OpenFoodFactsApiStrings.fieldCarboHydrates100g] as num).toDouble()
           : null,
-      sugars100g: json.containsKey(ApiStrings.fieldSugars100g)
-          ? (json[ApiStrings.fieldSugars100g] as num).toDouble()
+      sugars100g: json.containsKey(OpenFoodFactsApiStrings.fieldSugars100g)
+          ? (json[OpenFoodFactsApiStrings.fieldSugars100g] as num).toDouble()
           : null,
-      fat100g: json.containsKey(ApiStrings.fieldFat100g) ? (json[ApiStrings.fieldFat100g] as num).toDouble() : null,
-      saturatedFat100g: json.containsKey(ApiStrings.fieldSaturatedFat100g)
-          ? (json[ApiStrings.fieldSaturatedFat100g] as num).toDouble()
+      fat100g: json.containsKey(OpenFoodFactsApiStrings.fieldFat100g) ? (json[OpenFoodFactsApiStrings.fieldFat100g] as num).toDouble() : null,
+      saturatedFat100g: json.containsKey(OpenFoodFactsApiStrings.fieldSaturatedFat100g)
+          ? (json[OpenFoodFactsApiStrings.fieldSaturatedFat100g] as num).toDouble()
           : null,
-      proteins100g: json.containsKey(ApiStrings.fieldProteins100g)
-          ? (json[ApiStrings.fieldProteins100g] as num).toDouble()
+      proteins100g: json.containsKey(OpenFoodFactsApiStrings.fieldProteins100g)
+          ? (json[OpenFoodFactsApiStrings.fieldProteins100g] as num).toDouble()
           : null,
-      salt100g: json.containsKey(ApiStrings.fieldSalt100g) ? (json[ApiStrings.fieldSalt100g] as num).toDouble() : null,
+      salt100g: json.containsKey(OpenFoodFactsApiStrings.fieldSalt100g) ? (json[OpenFoodFactsApiStrings.fieldSalt100g] as num).toDouble() : null,
     );
   }
 }

@@ -13,8 +13,8 @@ import "package:openeatsjournal/ui/screens/food_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
-import "package:openeatsjournal/ui/utils/navigator_routes.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 
 class OpenEatsJournalApp extends StatelessWidget {
   const OpenEatsJournalApp({
@@ -43,9 +43,9 @@ class OpenEatsJournalApp extends StatelessWidget {
       }
     }
 
-    String initialRoute = NavigatorRoutes.home;
+    String initialRoute = OpenEatsJournalStrings.navigatorRouteHome;
     if (!_openEatsJournalAppViewModel.initialized) {
-      initialRoute = NavigatorRoutes.onboarding;
+      initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
     }
     return ListenableBuilder(
       listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
@@ -82,23 +82,23 @@ class OpenEatsJournalApp extends StatelessWidget {
           themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
           initialRoute: initialRoute,
           routes: {
-            NavigatorRoutes.home: (contextBuilder) => DailyOverviewScreen(
+            OpenEatsJournalStrings.navigatorRouteHome: (contextBuilder) => DailyOverviewScreen(
               homeViewModel: DailyOverviewViewModel(settingsRepository: _repositories.settingsRepository),
               settingsRepository: _repositories.settingsRepository,
             ),
-            NavigatorRoutes.statistics: (contextBuilder) => const StatisticsScreen(),
-            NavigatorRoutes.food: (contextBuilder) => FoodScreen(
+            OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) => const StatisticsScreen(),
+            OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) => FoodScreen(
               foodViewModel: FoodViewModel(
                 foodRepository: _repositories.foodRepository
               ),
             ),
-            NavigatorRoutes.onboarding: (contextBuilder) => OnboardingScreen(
+             OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) => OnboardingScreen(
               onboardingViewModel: OnboardingViewModel(
                 settingsRepository: _repositories.settingsRepository,
                 weightRepository: _repositories.weightRepository,
               ),
             ),
-            NavigatorRoutes.barcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
+            OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
           },
           navigatorKey: navigatorKey,
         );

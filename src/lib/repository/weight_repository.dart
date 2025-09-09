@@ -1,13 +1,13 @@
-import "package:openeatsjournal/service/database/oej_database_service.dart";
+import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 
 class WeightRepository {
   WeightRepository._singleton();
   static final WeightRepository instance = WeightRepository._singleton();
 
-  late OejDatabaseService _oejDatabase;
+  late OpenEatsJournalDatabaseService _oejDatabase;
 
   //must be called once before the singleton is used
-  void init({required OejDatabaseService oejDatabase}) {
+  void init({required OpenEatsJournalDatabaseService oejDatabase}) {
     _oejDatabase = oejDatabase;
   }
 

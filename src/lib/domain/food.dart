@@ -43,4 +43,15 @@ class Food {
   final List _units;
 
   String get name => _name;
+  List<String>? get brands => _brands;
+  FoodSource get foodSource => _foodSource;
+  String get foodSourceId => _foodSourceId;
+  MeasurementUnit get measurementUnit => _measurementUnit;
+  int get energyKjPer100Units => _energyKjPer100Units;
+  double? get carbohydratesPer100Units => _carbohydratesPer100Units;
+  double? get sugarsPer100Units => _sugarsPer100Units;
+  double? get fatPer100Units => _fatPer100Units;
+  double? get saturatedFatPer100Units => _saturatedFatPer100Units;
+  double? get proteinsPer100Units => _proteinsPer100Units;
+  List get units => _units;
 }

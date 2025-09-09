@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:openeatsjournal/ui/utils/oej_strings.dart';
+import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
 
 class ErrorHandlers {
   static Future<bool?> showException({
@@ -71,7 +71,7 @@ class ErrorHandlers {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    "${details.exception.toString()}\n${details.stack != null ? details.stack.toString() : OejStrings.emptyString}",
+                    "${details.exception.toString()}\n${details.stack != null ? details.stack.toString() : OpenEatsJournalStrings.emptyString}",
                     style: TextStyle(fontSize: 12, color: Colors.black),
                     textAlign: TextAlign.center,
                   ),

@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/oej_strings.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsScreenPageApp extends StatelessWidget {
@@ -51,9 +51,9 @@ class SettingsScreenPageApp extends StatelessWidget {
                       builder: (_, _, _) {
                         return TransparentChoiceChip(
                           label: AppLocalizations.of(context)!.english,
-                          selected: _settingsViewModel.languageCode.value == OejStrings.en,
+                          selected: _settingsViewModel.languageCode.value == OpenEatsJournalStrings.en,
                           onSelected: (bool selected) {
-                            _settingsViewModel.languageCode.value = OejStrings.en;
+                            _settingsViewModel.languageCode.value = OpenEatsJournalStrings.en;
                           },
                         );
                       },
@@ -64,9 +64,9 @@ class SettingsScreenPageApp extends StatelessWidget {
                       builder: (_, _, _) {
                         return TransparentChoiceChip(
                           label: AppLocalizations.of(context)!.german,
-                          selected: _settingsViewModel.languageCode.value == OejStrings.de,
+                          selected: _settingsViewModel.languageCode.value == OpenEatsJournalStrings.de,
                           onSelected: (bool selected) {
-                            _settingsViewModel.languageCode.value = OejStrings.de;
+                            _settingsViewModel.languageCode.value = OpenEatsJournalStrings.de;
                           },
                         );
                       },

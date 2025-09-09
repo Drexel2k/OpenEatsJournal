@@ -1,4 +1,4 @@
-import "package:openeatsjournal/service/open_food_facts/api_strings.dart";
+import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 import "package:openeatsjournal/service/open_food_facts/data/nutriments_api.dart";
 
 class FoodApi {
@@ -85,67 +85,67 @@ class FoodApi {
 
   factory FoodApi.fromJsonApiV2(Map<String, dynamic> json) {
     return FoodApi(
-      id: json[ApiStrings.fieldId],
-      brandsTags: json.containsKey(ApiStrings.fieldBrandsTags)
-          ? (json[ApiStrings.fieldBrandsTags] as List<dynamic>).map((brand) => brand as String).toList()
+      id: json[OpenFoodFactsApiStrings.fieldId],
+      brandsTags: json.containsKey(OpenFoodFactsApiStrings.fieldBrandsTags)
+          ? (json[OpenFoodFactsApiStrings.fieldBrandsTags] as List<dynamic>).map((brand) => brand as String).toList()
           : null,
-      productName: json.containsKey(ApiStrings.fieldProductName) ? json[ApiStrings.fieldProductName] : null,
-      productNameEn: json.containsKey(ApiStrings.fieldProductNameEn) ? json[ApiStrings.fieldProductNameEn] : null,
-      productNameDe: json.containsKey(ApiStrings.fieldProductNameDe) ? json[ApiStrings.fieldProductNameDe] : null,
-      genericName: json.containsKey(ApiStrings.fieldGenericName) ? json[ApiStrings.fieldGenericName] : null,
-      genericNameEn: json.containsKey(ApiStrings.fieldGenericNameEn) ? json[ApiStrings.fieldGenericNameEn] : null,
-      genericNameDe: json.containsKey(ApiStrings.fieldGenericNameDe) ? json[ApiStrings.fieldGenericNameDe] : null,
-      abbreviatedProductName: json.containsKey(ApiStrings.fieldAbbreviatedProductName)
-          ? json[ApiStrings.fieldAbbreviatedProductName]
+      productName: json.containsKey(OpenFoodFactsApiStrings.fieldProductName) ? json[OpenFoodFactsApiStrings.fieldProductName] : null,
+      productNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameEn) ? json[OpenFoodFactsApiStrings.fieldProductNameEn] : null,
+      productNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameDe) ? json[OpenFoodFactsApiStrings.fieldProductNameDe] : null,
+      genericName: json.containsKey(OpenFoodFactsApiStrings.fieldGenericName) ? json[OpenFoodFactsApiStrings.fieldGenericName] : null,
+      genericNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldGenericNameEn) ? json[OpenFoodFactsApiStrings.fieldGenericNameEn] : null,
+      genericNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldGenericNameDe) ? json[OpenFoodFactsApiStrings.fieldGenericNameDe] : null,
+      abbreviatedProductName: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductName)
+          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductName]
           : null,
-      abbreviatedProductNameEn: json.containsKey(ApiStrings.fieldAbbreviatedProductNameEn)
-          ? json[ApiStrings.fieldAbbreviatedProductNameEn]
+      abbreviatedProductNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductNameEn)
+          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductNameEn]
           : null,
-      abbreviatedProductNameDe: json.containsKey(ApiStrings.fieldAbbreviatedProductNameDe)
-          ? json[ApiStrings.fieldAbbreviatedProductNameDe]
+      abbreviatedProductNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductNameDe)
+          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductNameDe]
           : null,
-      productQuantity: json.containsKey(ApiStrings.fieldProductQuantity) ? json[ApiStrings.fieldProductQuantity] : null,
-      productQuantityUnit: json.containsKey(ApiStrings.fieldProductQuantityUnit)
-          ? json[ApiStrings.fieldProductQuantityUnit]
+      productQuantity: json.containsKey(OpenFoodFactsApiStrings.fieldProductQuantity) ? json[OpenFoodFactsApiStrings.fieldProductQuantity] : null,
+      productQuantityUnit: json.containsKey(OpenFoodFactsApiStrings.fieldProductQuantityUnit)
+          ? json[OpenFoodFactsApiStrings.fieldProductQuantityUnit]
           : null,
-      servingQuantity: json.containsKey(ApiStrings.fieldServingQuantity) ? json[ApiStrings.fieldServingQuantity] : null,
-      servingQuantityUnit: json.containsKey(ApiStrings.fieldServingQuantityUnit)
-          ? json[ApiStrings.fieldServingQuantityUnit]
+      servingQuantity: json.containsKey(OpenFoodFactsApiStrings.fieldServingQuantity) ? json[OpenFoodFactsApiStrings.fieldServingQuantity] : null,
+      servingQuantityUnit: json.containsKey(OpenFoodFactsApiStrings.fieldServingQuantityUnit)
+          ? json[OpenFoodFactsApiStrings.fieldServingQuantityUnit]
           : null,
-      servingSize: json.containsKey(ApiStrings.fieldServingSize) ? json[ApiStrings.fieldServingSize] : null,
-      nutritionDataPer: json.containsKey(ApiStrings.fieldNutritionDataPer)
-          ? json[ApiStrings.fieldNutritionDataPer]
+      servingSize: json.containsKey(OpenFoodFactsApiStrings.fieldServingSize) ? json[OpenFoodFactsApiStrings.fieldServingSize] : null,
+      nutritionDataPer: json.containsKey(OpenFoodFactsApiStrings.fieldNutritionDataPer)
+          ? json[OpenFoodFactsApiStrings.fieldNutritionDataPer]
           : null,
-      nutriments: json.containsKey(ApiStrings.fieldNutriments)
-          ? NutrimentsApi.fromJson(json[ApiStrings.fieldNutriments])
+      nutriments: json.containsKey(OpenFoodFactsApiStrings.fieldNutriments)
+          ? NutrimentsApi.fromJson(json[OpenFoodFactsApiStrings.fieldNutriments])
           : null,
     );
   }
 
   factory FoodApi.fromJsonSearALiciousApi(Map<String, dynamic> json) {
     return FoodApi(
-      id: json[ApiStrings.fieldCode],
-      brandsTags: json.containsKey(ApiStrings.fieldBrandsTags)
-          ? (json[ApiStrings.fieldBrandsTags] as List<dynamic>).map((brand) => brand as String).toList()
+      id: json[OpenFoodFactsApiStrings.fieldCode],
+      brandsTags: json.containsKey(OpenFoodFactsApiStrings.fieldBrands)
+          ? (json[OpenFoodFactsApiStrings.fieldBrands] as List<dynamic>).map((brand) => brand as String).toList()
           : null,
-      productName: json.containsKey(ApiStrings.fieldProductName) ? json[ApiStrings.fieldProductName] : null,
-      productNameEn: json.containsKey(ApiStrings.fieldProductNameEn) ? json[ApiStrings.fieldProductNameEn] : null,
-      productNameDe: json.containsKey(ApiStrings.fieldProductNameDe) ? json[ApiStrings.fieldProductNameDe] : null,
-      genericName: json.containsKey(ApiStrings.fieldGenericName) ? json[ApiStrings.fieldGenericName] : null,
-      genericNameEn: json.containsKey(ApiStrings.fieldGenericNameEn) ? json[ApiStrings.fieldGenericNameEn] : null,
-      genericNameDe: json.containsKey(ApiStrings.fieldGenericNameDe) ? json[ApiStrings.fieldGenericNameDe] : null,
-      abbreviatedProductName: json.containsKey(ApiStrings.fieldAbbreviatedProductName)
-          ? json[ApiStrings.fieldAbbreviatedProductName]
+      productName: json.containsKey(OpenFoodFactsApiStrings.fieldProductName) ? json[OpenFoodFactsApiStrings.fieldProductName] : null,
+      productNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameEn) ? json[OpenFoodFactsApiStrings.fieldProductNameEn] : null,
+      productNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameDe) ? json[OpenFoodFactsApiStrings.fieldProductNameDe] : null,
+      genericName: json.containsKey(OpenFoodFactsApiStrings.fieldGenericName) ? json[OpenFoodFactsApiStrings.fieldGenericName] : null,
+      genericNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldGenericNameEn) ? json[OpenFoodFactsApiStrings.fieldGenericNameEn] : null,
+      genericNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldGenericNameDe) ? json[OpenFoodFactsApiStrings.fieldGenericNameDe] : null,
+      abbreviatedProductName: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductName)
+          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductName]
           : null,
-      abbreviatedProductNameEn: json.containsKey(ApiStrings.fieldAbbreviatedProductNameEn)
-          ? json[ApiStrings.fieldAbbreviatedProductNameEn]
+      abbreviatedProductNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductNameEn)
+          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductNameEn]
           : null,
-      abbreviatedProductNameDe: json.containsKey(ApiStrings.fieldAbbreviatedProductNameDe)
-          ? json[ApiStrings.fieldAbbreviatedProductNameDe]
+      abbreviatedProductNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductNameDe)
+          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductNameDe]
           : null,
-      quantity: json.containsKey(ApiStrings.fieldQuantity) ? json[ApiStrings.fieldQuantity] : null,
-      nutriments: json.containsKey(ApiStrings.fieldNutriments)
-          ? NutrimentsApi.fromJson(json[ApiStrings.fieldNutriments])
+      quantity: json.containsKey(OpenFoodFactsApiStrings.fieldQuantity) ? json[OpenFoodFactsApiStrings.fieldQuantity] : null,
+      nutriments: json.containsKey(OpenFoodFactsApiStrings.fieldNutriments)
+          ? NutrimentsApi.fromJson(json[OpenFoodFactsApiStrings.fieldNutriments])
           : null,
     );
   }

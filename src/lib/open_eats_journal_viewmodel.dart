@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
+import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
 class OpenEatsJournalAppViewModel extends ChangeNotifier {
   OpenEatsJournalAppViewModel({required SettingsRepository settingsRepository})
@@ -9,7 +10,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   }
 
   final SettingsRepository _settingsRepository;
-  final DarkModeOrLanguageCodeChangedNotifier _darkModeOrLanguageCodeChanged =  DarkModeOrLanguageCodeChangedNotifier();
+  final ExternalTriggerChangedNotifier _darkModeOrLanguageCodeChanged =  ExternalTriggerChangedNotifier();
 
   set darkMode(bool value) => _settingsRepository.darkMode.value = value;
   set languageCode(String value) => _settingsRepository.languageCode.value = value;
@@ -17,7 +18,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   bool get initialized => _settingsRepository.initialized.value;
   bool get darkMode => _settingsRepository.darkMode.value;
   String get languageCode => _settingsRepository.languageCode.value;
-  DarkModeOrLanguageCodeChangedNotifier get darkModeOrLanguageCodeChanged => _darkModeOrLanguageCodeChanged;
+  ExternalTriggerChangedNotifier get darkModeOrLanguageCodeChanged => _darkModeOrLanguageCodeChanged;
 
   _settingsDarkModeChanged() {
     _darkModeOrLanguageCodeChanged.notify();
@@ -32,11 +33,5 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
     _darkModeOrLanguageCodeChanged.dispose();
 
     super.dispose();
-  }
-}
-
-class DarkModeOrLanguageCodeChangedNotifier extends ChangeNotifier {
-  void notify() {
-    notifyListeners();
   }
 }

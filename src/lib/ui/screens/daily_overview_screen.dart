@@ -8,7 +8,7 @@ import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/daily_overview_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
-import "package:openeatsjournal/ui/utils/navigator_routes.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
 
@@ -55,7 +55,7 @@ class DailyOverviewScreen extends StatelessWidget {
     double radius = 0.9;
 
     return MainLayout(
-      route: NavigatorRoutes.home,
+      route: OpenEatsJournalStrings.navigatorRouteHome,
       title: AppLocalizations.of(context)!.daily_overview,
       body: Column(
         children: [

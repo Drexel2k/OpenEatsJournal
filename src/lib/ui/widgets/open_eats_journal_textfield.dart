@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 
-class OejTextField extends StatelessWidget {
-  const OejTextField({
+class OpenEatsJournalTextField extends StatelessWidget {
+  const OpenEatsJournalTextField({
     super.key,
     String? hintText,
     GestureTapCallback? onTap,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/utils/navigator_routes.dart';
+import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
 
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key, required String route, required Widget body, required String title})
@@ -15,9 +15,9 @@ class MainLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int currentNavigationIndex = 1; //home
-    if (_route == NavigatorRoutes.food) {
+    if (_route == OpenEatsJournalStrings.navigatorRouteFood) {
       currentNavigationIndex = 0;
-    } else if (_route == NavigatorRoutes.statistics) {
+    } else if (_route == OpenEatsJournalStrings.navigatorRouteStatistics) {
       currentNavigationIndex = 2;
     }
 
@@ -29,11 +29,11 @@ class MainLayout extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int targetNavigationIndex) {
           if (targetNavigationIndex == 0) {
-            Navigator.pushNamed(context, NavigatorRoutes.food);
+            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
           } else if (targetNavigationIndex == 1) {
-            Navigator.pushNamed(context, NavigatorRoutes.home);
+            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteHome);
           } else if (targetNavigationIndex == 2) {
-            Navigator.pushNamed(context, NavigatorRoutes.statistics);
+            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteStatistics);
           }
         },
         selectedIndex: currentNavigationIndex,

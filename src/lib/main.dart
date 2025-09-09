@@ -6,7 +6,7 @@ import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
-import "package:openeatsjournal/service/database/oej_database_service.dart";
+import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 
 //for debugPaintSizeEnabled=true;
@@ -20,7 +20,7 @@ Future<void> main() async {
     throw error;
   };
 
-  final OejDatabaseService oejDatabase = OejDatabaseService.instance;
+  final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
   final OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
 
   final Repositories repositories = Repositories(

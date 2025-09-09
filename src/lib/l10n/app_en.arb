@@ -55,9 +55,57 @@
   "daily_target_calories": "Daily target (⌀) kCals:",
   "statistics": "Statistics",
   "kcal": "kCal",
-  "fat": "Fat",
-  "carb": "Carb",
+  "amount_kcal": "{amount} kcal",
+  "@amount_kcal": {
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "fat": "fat",
+  "amount_fat": "{amount} fat",
+  "@amount_fat": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "na_fat": "n/a fat",
+  "carb": "carb",
+  "amount_carb": "{amount} carb",
+  "@amount_carb": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "na_carb": "n/a carb",
   "prot": "Prot",
+  "amount_prot": "{amount} prot",
+  "@amount_prot": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "na_prot": "n/a prot",
   "days": "days",
   "weeks": "weeks",
   "months": "months",
@@ -86,7 +134,18 @@
   "friday_kcals": "Friday kCals:",
   "saturday_kcals": "Saturday kCals:",
   "sunday_kcals": "Sunday kCals:",
-  "amount_kcal": "{amount} kcal",
   "food_management": "Food management",
-  "food": "Food"
+  "food": "Food",
+  "open_food_facts_exception": "Open Food Fact connection error: {errorMessage}.",
+  "open_food_facts_unexpected_response": "Unexpected Open Food Facts response.",
+  "open_food_facts_unexpected_status": "Unexpected Open Food Facts status code.",
+  "open_food_facts_unexpected_error": "Unexpected Open Food Facts error.",
+  "search_food": "Search food...",
+  "popularity": "popularity",
+  "name": "name",
+  "no_name": "-no name-",
+  "no_brand": "-no brand-",
+  "per_100_measurement_unit": "per 100{measurementUnit}",
+  "too_many_results_for_sorting": "Too many results for individual sorting.",
+  "unknow_sorting_message": "Unknown sorting hint."
 }

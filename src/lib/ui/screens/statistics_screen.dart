@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
-import "package:openeatsjournal/ui/utils/navigator_routes.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/statistic_type.dart";
 import "package:openeatsjournal/ui/widgets/barchart_target_actual.dart";
 
@@ -76,7 +76,7 @@ class StatisticsScreen extends StatelessWidget {
     ];
 
     return MainLayout(
-      route: NavigatorRoutes.statistics,
+      route: OpenEatsJournalStrings.navigatorRouteStatistics,
       body: Column(
         children: [
           BarchartTargetActual(data: dayData, statisticsType: StatisticType.daily),

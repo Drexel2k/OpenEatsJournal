@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/oej_strings.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/setting_type.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_page_personal.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_page_app.dart";
@@ -19,7 +19,7 @@ class SettingsScreen extends StatelessWidget {
         ValueListenableBuilder(
           valueListenable: _settingsViewModel.currentPageIndex,
           builder: (_, _, _) {
-            String pageTitle = OejStrings.emptyString;
+            String pageTitle = OpenEatsJournalStrings.emptyString;
             if (_settingsViewModel.currentPageIndex.value == 0) {
               pageTitle = AppLocalizations.of(context)!.personal_settings;
             } else if (_settingsViewModel.currentPageIndex.value == 1) {
