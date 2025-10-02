@@ -1,6 +1,8 @@
 import "dart:async";
 
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -8,9 +10,11 @@ import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
+import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class FoodScreen extends StatelessWidget {
   FoodScreen({super.key, required FoodViewModel foodViewModel})
@@ -24,11 +28,71 @@ class FoodScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final String languageCode = Localizations.localeOf(context).languageCode;
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final InputDecorationTheme inputDecorationTheme = Theme.of(context).inputDecorationTheme;
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFood,
       body: Column(
         children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 10,
+                child: ValueListenableBuilder(
+                  valueListenable: _foodViewModel.currentJournalDate,
+                  builder: (_, _, _) {
+                    return OutlinedButton(
+                      onPressed: () async {
+                        try {
+                          _selectDate(initialDate: _foodViewModel.currentJournalDate.value, context: context);
+                        } on Exception catch (exc, stack) {
+                          await ErrorHandlers.showException(
+                            context: navigatorKey.currentContext!,
+                            exception: exc,
+                            stackTrace: stack,
+                          );
+                        } on Error catch (error, stack) {
+                          await ErrorHandlers.showException(
+                            context: navigatorKey.currentContext!,
+                            error: error,
+                            stackTrace: stack,
+                          );
+                        }
+                      },
+                      child: Text(
+                        DateFormat.yMMMMd(_foodViewModel.languageCode).format(_foodViewModel.currentJournalDate.value),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                flex: 10,
+                child: ValueListenableBuilder(
+                  valueListenable: _foodViewModel.currentMeal,
+                  builder: (_, _, _) {
+                    return DropdownMenu<int>(
+                      onSelected: (int? mealValue) {
+                        _foodViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                      },
+                      dropdownMenuEntries: LocalizedMealDropDownEntries.getMealDropDownMenuEntries(context: context),
+                      inputDecorationTheme: inputDecorationTheme.copyWith(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        constraints: BoxConstraints.tight(const Size.fromHeight(40)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
+                      ),
+                      expandedInsets: EdgeInsets.zero,
+                      initialSelection: _foodViewModel.currentMeal.value.value,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 6),
           Row(
             children: [
               Expanded(
@@ -38,7 +102,7 @@ class FoodScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 5),
-              OutlinedButton(
+              RoundOutlinedButton(
                 onPressed: () async {
                   try {
                     await _search(languageCode: languageCode);
@@ -56,16 +120,10 @@ class FoodScreen extends StatelessWidget {
                     );
                   }
                 },
-                style: OutlinedButton.styleFrom(
-                  shape: CircleBorder(),
-                  minimumSize: Size(40, 40),
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
                 child: Icon(Icons.search),
               ),
               SizedBox(width: 5),
-              OutlinedButton(
+              RoundOutlinedButton(
                 onPressed: () async {
                   try {
                     Object? barcodeScanResult = await Navigator.pushNamed(
@@ -92,12 +150,6 @@ class FoodScreen extends StatelessWidget {
                     );
                   }
                 },
-                style: OutlinedButton.styleFrom(
-                  shape: CircleBorder(),
-                  minimumSize: Size(40, 40),
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
                 child: Icon(Icons.qr_code_scanner),
               ),
             ],
@@ -366,6 +418,19 @@ class FoodScreen extends StatelessWidget {
       } else {
         await _foodViewModel.getFoodBySearchText(searchText: cleanSearchText, languageCode: languageCode);
       }
+    }
+  }
+
+  Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(9999),
+    );
+
+    if (date != null) {
+      _foodViewModel.currentJournalDate.value = date;
     }
   }
 }

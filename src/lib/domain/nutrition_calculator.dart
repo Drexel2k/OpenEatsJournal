@@ -1,7 +1,9 @@
 import "package:openeatsjournal/domain/gender.dart";
 
 class NutritionCalculator {
-  static const double _kCalKJouleConversionFactor = 4.1868;
+  //Deutsche Gesellschaft für Ernährung
+  static const double _kCalKJouleConversionFactor = 4.184;
+
   //calculation according to Mifflin St Jeor equation
   static double calculateBasalMetabolicRate({
     required double weightKg,

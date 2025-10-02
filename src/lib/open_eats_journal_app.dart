@@ -83,13 +83,14 @@ class OpenEatsJournalApp extends StatelessWidget {
           initialRoute: initialRoute,
           routes: {
             OpenEatsJournalStrings.navigatorRouteHome: (contextBuilder) => DailyOverviewScreen(
-              homeViewModel: DailyOverviewViewModel(settingsRepository: _repositories.settingsRepository),
+              dailyOverviewViewModel: DailyOverviewViewModel(settingsRepository: _repositories.settingsRepository),
               settingsRepository: _repositories.settingsRepository,
             ),
             OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) => const StatisticsScreen(),
             OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) => FoodScreen(
               foodViewModel: FoodViewModel(
-                foodRepository: _repositories.foodRepository
+                foodRepository: _repositories.foodRepository,
+                settingsRepository: _repositories.settingsRepository
               ),
             ),
              OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) => OnboardingScreen(

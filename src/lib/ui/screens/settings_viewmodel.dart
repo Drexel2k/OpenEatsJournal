@@ -180,6 +180,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _currentPageIndex.dispose();
     _darkMode.dispose();
     _languageCode.dispose();
     _dailyCalories.dispose();

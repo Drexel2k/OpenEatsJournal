@@ -1,22 +1,22 @@
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
-import "package:openeatsjournal/service/database/oej_database_service.dart";
-import "package:openeatsjournal/ui/utils/oej_strings.dart";
+import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 
 class SettingsRepository extends ChangeNotifier {
   SettingsRepository._singleton();
 
   static final SettingsRepository instance = SettingsRepository._singleton();
 
-  late OejDatabaseService _oejDatabase;
+  late OpenEatsJournalDatabaseService _oejDatabase;
 
   //persistant settings
   final ValueNotifier<bool> _darkMode = ValueNotifier(false);
-  final ValueNotifier<String> _languageCode = ValueNotifier(OejStrings.en);
+  final ValueNotifier<String> _languageCode = ValueNotifier(OpenEatsJournalStrings.en);
   late Gender _gender;
   late DateTime _birthday;
   late int _height;
@@ -79,15 +79,21 @@ class SettingsRepository extends ChangeNotifier {
 
   //non persistand app wide settings
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
+  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateUtils.dateOnly(DateTime.now()));
+  final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
 
   ValueNotifier<bool> get initialized => _initialized;
+  ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
+  ValueNotifier<Meal> get currentMeal => _currentMeal;
+
+  //Needs to be set for Open Food Facts Api, but shall not be in the repo...
   String? get appContactMail => null;
   String get appName => "OpenEatsJournal";
   String get appVersion => "0.1";
   bool get useStagingServices => true;
 
   //must be called once before the singleton is used
-  void init({required OejDatabaseService oejDatabase}) {
+  void init({required OpenEatsJournalDatabaseService oejDatabase}) {
     _oejDatabase = oejDatabase;
   }
 

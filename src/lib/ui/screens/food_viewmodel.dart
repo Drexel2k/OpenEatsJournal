@@ -1,17 +1,31 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/food_repository_get_food_by_barcode_result.dart";
 import "package:openeatsjournal/repository/food_repository_get_food_by_search_text_result.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 import "package:openeatsjournal/ui/utils/object_with_order.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 
 class FoodViewModel extends ChangeNotifier {
-  FoodViewModel({required FoodRepository foodRepository}) : _foodRepository = foodRepository;
+  FoodViewModel({required FoodRepository foodRepository, required SettingsRepository settingsRepository})
+    : _foodRepository = foodRepository,
+      _settingsRepository = settingsRepository {
+    _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
+    _currentMeal.value = _settingsRepository.currentMeal.value;
+
+    _currentJournalDate.addListener(_currentJournalDateChanged);
+    _currentMeal.addListener(_currentMealChanged);  
+  }
 
   final FoodRepository _foodRepository;
+  final SettingsRepository _settingsRepository;
+  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
+  final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
+
   final List<ObjectWithOrder<Food>> _foodSearchResult = [];
   bool _hasMore = false;
   bool _isLoading = false;
@@ -27,6 +41,10 @@ class FoodViewModel extends ChangeNotifier {
   bool _sortButtonEnabled = true;
   SortOrder _sortOrder = SortOrder.name;
 
+  ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
+  ValueNotifier<Meal> get currentMeal => _currentMeal;
+  String get languageCode => _settingsRepository.languageCode.value;
+
   List<ObjectWithOrder<Food>> get foodSearchResult => _foodSearchResult;
   bool get hasMore => _hasMore;
   bool get isLoading => _isLoading;
@@ -37,8 +55,15 @@ class FoodViewModel extends ChangeNotifier {
   ValueNotifier<int?> get searchMessageCode => _searchMessageCode;
   ExternalTriggerChangedNotifier get sortButtonChanged => _sortButtonChanged;
   bool get sortButtonEnabled => _sortButtonEnabled;
-
   SortOrder get sortOrder => _sortOrder;
+
+  _currentJournalDateChanged() {
+    _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
+  }
+
+  _currentMealChanged() {
+    _settingsRepository.currentMeal.value = _currentMeal.value;
+  }
 
   Future<void> getFoodByBarcode({required String barcode, required String languageCode}) async {
     _initSearch();
@@ -197,5 +222,16 @@ class FoodViewModel extends ChangeNotifier {
 
   ObjectWithOrder toElement(Food e, int order) {
     return ObjectWithOrder(object: e, order: order);
+  }
+
+  @override
+  void dispose() {
+    _foodSearchResultChangedNotifier.dispose();
+    _showInitialLoading.dispose();
+    _errorCode.dispose();
+    _searchMessageCode.dispose();
+    _sortButtonChanged.dispose();
+
+    super.dispose();
   }
 }

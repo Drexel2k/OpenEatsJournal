@@ -147,5 +147,9 @@
   "no_brand": "-no brand-",
   "per_100_measurement_unit": "per 100{measurementUnit}",
   "too_many_results_for_sorting": "Too many results for individual sorting.",
-  "unknow_sorting_message": "Unknown sorting hint."
+  "unknow_sorting_message": "Unknown sorting hint.",
+  "breakfast": "breakfast",
+  "lunch": "lunch",
+  "dinner": "dinner",
+  "snacks": "snacks"
 }

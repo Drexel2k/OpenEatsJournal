@@ -106,5 +106,9 @@
   "no_brand": "-keine Marke-",
   "per_100_measurement_unit": "pro 100{measurementUnit}",
   "too_many_results_for_sorting": "Zu viele Ergebnisse für individuelle Sortierung.",
-  "unknow_sorting_message": "Unbekannter Sortierhinweis."
+  "unknow_sorting_message": "Unbekannter Sortierhinweis.",
+  "breakfast": "Frühstück",
+  "lunch": "Mittagessen",
+  "dinner": "Abendessen",
+  "snacks": "Snacks"
 }

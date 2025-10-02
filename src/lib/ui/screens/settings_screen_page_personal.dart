@@ -12,6 +12,7 @@ import "package:openeatsjournal/ui/screens/daily_calories_editor_viewmodel.dart"
 import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
@@ -109,7 +110,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      OutlinedButton(
+                      RoundOutlinedButton(
                         onPressed: () async {
                           try {
                             if ((await _showRecalulateCaloriesCOnfirmDialog(context: context))!) {
@@ -129,16 +130,10 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
-                          shape: CircleBorder(),
-                          minimumSize: Size(40, 40),
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
                         child: Icon(Icons.calculate),
                       ),
                       SizedBox(width: 5),
-                      OutlinedButton(
+                      RoundOutlinedButton(
                         onPressed: () async {
                           try {
                             KCalSettings? kCalSettings = await _showDailyCaloriesEditDialog(
@@ -172,12 +167,6 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
-                          shape: CircleBorder(),
-                          minimumSize: Size(40, 40),
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
                         child: Icon(Icons.edit),
                       ),
                     ],

@@ -47,18 +47,18 @@ class GaugeNutritionFactSmall extends StatelessWidget {
           width: dimension,
           child: Chart(
             data: [
-              {'type': '100Percent', 'percent': 100},
-              {'type': 'actualPercent', 'percent': percentageFilled},
+              {"type": "100Percent", "percent": 100},
+              {"type": "currentPercent", "percent": percentageFilled},
             ],
             variables: {
-              'type': Variable(accessor: (Map map) => map['type'] as String),
-              'percent': Variable(accessor: (Map map) => map['percent'] as num, scale: LinearScale(min: 0, max: 100)),
+              "type": Variable(accessor: (Map map) => map["type"] as String),
+              "percent": Variable(accessor: (Map map) => map["percent"] as num, scale: LinearScale(min: 0, max: 100)),
             },
             marks: [
               IntervalMark(
                 size: SizeEncode(value: 8),
                 shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(4)))),
-                color: ColorEncode(variable: 'type', values: colors),
+                color: ColorEncode(variable: "type", values: colors),
               ),
             ],
             coord: PolarCoord(
