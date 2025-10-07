@@ -1,14 +1,14 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsScreenPageApp extends StatelessWidget {
-  const SettingsScreenPageApp({super.key, required SettingsViewModel settingsViewModel})
+  const SettingsScreenPageApp({super.key, required SettingsScreenViewModel settingsViewModel})
     : _settingsViewModel = settingsViewModel;
 
-  final SettingsViewModel _settingsViewModel;
+  final SettingsScreenViewModel _settingsViewModel;
 
   @override
   Widget build(BuildContext context) {

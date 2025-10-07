@@ -2,8 +2,8 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 
-class DailyOverviewViewModel extends ChangeNotifier {
-  DailyOverviewViewModel({required SettingsRepository settingsRepository}) : _settingsRepository = settingsRepository {
+class DailyOverviewScreenViewModel extends ChangeNotifier {
+  DailyOverviewScreenViewModel({required SettingsRepository settingsRepository}) : _settingsRepository = settingsRepository {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
 

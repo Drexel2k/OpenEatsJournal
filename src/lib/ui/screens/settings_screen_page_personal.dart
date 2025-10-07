@@ -8,8 +8,8 @@ import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
-import "package:openeatsjournal/ui/screens/daily_calories_editor_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -17,13 +17,13 @@ import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsScreenPagePersonal extends StatelessWidget {
-  SettingsScreenPagePersonal({super.key, required SettingsViewModel settingsViewModel})
+  SettingsScreenPagePersonal({super.key, required SettingsScreenViewModel settingsViewModel})
     : _settingsViewModel = settingsViewModel,
       _birthDayController = TextEditingController(),
       _heightController = TextEditingController(),
       _weightController = TextEditingController();
 
-  final SettingsViewModel _settingsViewModel;
+  final SettingsScreenViewModel _settingsViewModel;
   final TextEditingController _birthDayController;
   final TextEditingController _heightController;
   final TextEditingController _weightController;
@@ -578,7 +578,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
       barrierDismissible: false, // user must tap button!
       builder: (_) {
         return DailyCaloriesEditorScreen(
-          dailyCaloriesEditorViewModel: DailyCaloriesEditorViewModel(
+          dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
             KCalSettings(
               kCalsMonday: _settingsViewModel.kCalsMonday,
               kCalsTuesday: _settingsViewModel.kCalsTuesday,

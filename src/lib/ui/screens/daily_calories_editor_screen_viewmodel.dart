@@ -1,8 +1,8 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/kcal_settings.dart";
 
-class DailyCaloriesEditorViewModel extends ChangeNotifier {
-  DailyCaloriesEditorViewModel(KCalSettings kCalSettings)
+class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
+  DailyCaloriesEditorScreenViewModel(KCalSettings kCalSettings)
     : _kCalsTargetDaily = ValueNotifier(
         ((kCalSettings.kCalsMonday +
                     kCalSettings.kCalsTuesday +

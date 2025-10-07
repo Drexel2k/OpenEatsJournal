@@ -1,6 +1,6 @@
 enum MeasurementUnit {
   gram(1, "g"),
-  milliliter(2, "ml");
+  milliLiter(2, "ml");
 
   final int value;
   final String text;

@@ -60,7 +60,10 @@
     "placeholders": {
       "amount": {
         "type": "int",
-        "format": "decimalPattern"
+        "format": "decimalPattern",
+        "optionalParameters": {
+          "decimalDigits": 0
+        }
       }
     }
   },
@@ -113,8 +116,7 @@
   "average_number": "Average: {average}",
   "app_settings": "App Settings",
   "personal_settings": "Personal Settings",
-  "app_settings_linebreak": "App\nSettings",
-  "personal_settings_linebreak": "Personal\nSettings",
+  "personal_settings_abbreviated": "Personal\nSettings",
   "dark_mode": "Dark mode",
   "language": "Language:",
   "english": "English",
@@ -146,10 +148,13 @@
   "no_name": "-no name-",
   "no_brand": "-no brand-",
   "per_100_measurement_unit": "per 100{measurementUnit}",
-  "too_many_results_for_sorting": "Too many results for individual sorting.",
+  "too_many_results_for_sorting": "Too many results for individual sorting (>100).",
   "unknow_sorting_message": "Unknown sorting hint.",
   "breakfast": "breakfast",
   "lunch": "lunch",
   "dinner": "dinner",
-  "snacks": "snacks"
+  "snacks": "snacks",
+  "serving": "Serving",
+  "piece": "Piece",
+  "hundred_measurement_unit": "100{measurementUnit}"
 }

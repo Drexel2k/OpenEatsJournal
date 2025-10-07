@@ -3,14 +3,14 @@ import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/onboarding/onboarding_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class OnboardingScreenPage4 extends StatelessWidget {
-  const OnboardingScreenPage4({super.key, required this.onDone, required OnboardingViewModel onboardingViewModel})
+  const OnboardingScreenPage4({super.key, required this.onDone, required OnboardingScreenViewModel onboardingViewModel})
     : _onboardingViewModel = onboardingViewModel;
 
-  final OnboardingViewModel _onboardingViewModel;
+  final OnboardingScreenViewModel _onboardingViewModel;
   final VoidCallback onDone;
 
   @override

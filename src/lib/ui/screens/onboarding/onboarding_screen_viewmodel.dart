@@ -6,8 +6,8 @@ import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/weight_repository.dart";
 
-class OnboardingViewModel extends ChangeNotifier {
-  OnboardingViewModel({required SettingsRepository settingsRepository, required WeightRepository weightRepository})
+class OnboardingScreenViewModel extends ChangeNotifier {
+  OnboardingScreenViewModel({required SettingsRepository settingsRepository, required WeightRepository weightRepository})
     : _settingsRepository = settingsRepository,
       _weightRepository = weightRepository,
       _gender = ValueNotifier(null),

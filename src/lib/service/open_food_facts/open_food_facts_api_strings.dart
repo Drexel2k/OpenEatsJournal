@@ -1,13 +1,18 @@
 class OpenFoodFactsApiStrings {
   static const product = "product";
   static const serving = "serving";
-  static const hundred = "100.";
+  static const hundredGram = "100g";
   static const nutrimentsPrefix = "nutriments.";
   static const page = "page";
   static const pageCount = "page_count";
   static const hits = "hits";
+  static const products = "products";
+  static const gram = "g";
+  static const kiloGram = "kg";
+  static const milliGram = "mg";
+  static const liter = "l";
+  static const milliLiter = "ml";
 
-  static const fieldId = "id";
   static const fieldCode = "code";
   static const fieldProductName = "product_name";
   static const fieldProductNameEn = "product_name_en";
@@ -44,9 +49,10 @@ class OpenFoodFactsApiStrings {
   static const fieldQuantity = "quantity";
   static const fieldEnergyKcal = "energy-kcal";
   static const fieldEnergyKcal100g = "energy-kcal_100g";
+  static const fieldLang = "lang";
 
-  static const List<String> apiV2AllFields = [
-    fieldId,
+  static const List<String> apiV1V2AllFields = [
+    fieldCode,
     fieldProductName,
     fieldProductNameEn,
     fieldProductNameDe,
@@ -60,10 +66,11 @@ class OpenFoodFactsApiStrings {
     fieldQuantity,
     fieldProductQuantity,
     fieldProductQuantityUnit,
+    fieldServingSize,
     fieldServingQuantity,
     fieldServingQuantityUnit,
-    fieldServingSize,
     fieldNutritionDataPer,
+    fieldLang,
     "$nutrimentsPrefix$fieldEnergy",
     "$nutrimentsPrefix$fieldEnergy100g",
     "$nutrimentsPrefix$fieldCarboHydrates",
@@ -80,19 +87,20 @@ class OpenFoodFactsApiStrings {
     "$nutrimentsPrefix$fieldSalt100g",
   ];
 
-  static const List<String> searchALiciousAllFields = [
-    fieldCode,
-    fieldProductName,
-    fieldProductNameEn,
-    fieldProductNameDe,
-    fieldAbbreviatedProductName,
-    fieldAbbreviatedProductNameEn,
-    fieldAbbreviatedProductNameDe,
-    fieldGenericName,
-    fieldGenericNameEn,
-    fieldGenericNameDe,
-    fieldBrands,
-    fieldQuantity,
-    fieldNutriments,
-  ];
+  // static const List<String> searchALiciousAllFields = [
+  //   fieldCode,
+  //   fieldProductName,
+  //   fieldProductNameEn,
+  //   fieldProductNameDe,
+  //   fieldAbbreviatedProductName,
+  //   fieldAbbreviatedProductNameEn,
+  //   fieldAbbreviatedProductNameDe,
+  //   fieldGenericName,
+  //   fieldGenericNameEn,
+  //   fieldGenericNameDe,
+  //   fieldBrands,
+  //   fieldQuantity,
+  //   fieldNutriments,
+  //   fieldLang
+  // ];
 }

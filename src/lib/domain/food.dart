@@ -1,5 +1,6 @@
 import "package:openeatsjournal/domain/food_source.dart";
-import "package:openeatsjournal/domain/unit.dart";
+import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
 
 class Food {
   Food({
@@ -27,7 +28,8 @@ class Food {
        _fatPer100Units = fatPer100Units,
        _saturatedFatPer100Units = saturatedFatPer100Units,
        _proteinsPer100Units = proteinsPer100Units,
-       _units = List.empty();
+       _saltPer100Units = saltPer100Units,
+       _foodUnits = [];
 
   final String _name;
   final List<String>? _brands;
@@ -40,7 +42,10 @@ class Food {
   final double? _fatPer100Units;
   final double? _saturatedFatPer100Units;
   final double? _proteinsPer100Units;
-  final List _units;
+  final double? _saltPer100Units;
+  final List<FoodUnit> _foodUnits;
+  FoodUnit? _defaultFoodUnit;
+
 
   String get name => _name;
   List<String>? get brands => _brands;
@@ -53,5 +58,17 @@ class Food {
   double? get fatPer100Units => _fatPer100Units;
   double? get saturatedFatPer100Units => _saturatedFatPer100Units;
   double? get proteinsPer100Units => _proteinsPer100Units;
-  List get units => _units;
+  double? get saltPer100Units => _saltPer100Units;
+  List<FoodUnit> get foodUnits => _foodUnits.toList();
+  FoodUnit? get defaultFoodUnit => _defaultFoodUnit;
+
+  addFoodUnit({required String name, required int amount}) {
+    FoodUnit foodUnit = FoodUnit(name: name, amount: amount);
+
+    _foodUnits.add(foodUnit);
+
+    if(_foodUnits.length <= 1) {
+      _defaultFoodUnit = foodUnit;
+    }
+  }
 }

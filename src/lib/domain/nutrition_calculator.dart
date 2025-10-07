@@ -35,11 +35,11 @@ class NutritionCalculator {
     return kCalories * 0.15 * 0.24;
   }
 
-  static int getKCalsFromKJoules(num kCals) {
-    return (kCals * _kCalKJouleConversionFactor).round();
+  static int getKCalsFromKJoules(num kJoules) {
+    return (kJoules / _kCalKJouleConversionFactor).round();
   }
 
-  static int getKJoulesFromKCals(num kJoules) {
-    return (kJoules / _kCalKJouleConversionFactor).round();
+  static int getKJoulesFromKCals(num kCals) {
+    return (kCals * _kCalKJouleConversionFactor).round();
   }
 }

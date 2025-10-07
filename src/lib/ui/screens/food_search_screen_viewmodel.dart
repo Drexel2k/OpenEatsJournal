@@ -1,5 +1,6 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/food_repository_get_food_by_barcode_result.dart";
@@ -10,15 +11,15 @@ import "package:openeatsjournal/ui/utils/object_with_order.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 
-class FoodViewModel extends ChangeNotifier {
-  FoodViewModel({required FoodRepository foodRepository, required SettingsRepository settingsRepository})
+class FoodSearchScreenViewModel extends ChangeNotifier {
+  FoodSearchScreenViewModel({required FoodRepository foodRepository, required SettingsRepository settingsRepository})
     : _foodRepository = foodRepository,
       _settingsRepository = settingsRepository {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
 
     _currentJournalDate.addListener(_currentJournalDateChanged);
-    _currentMeal.addListener(_currentMealChanged);  
+    _currentMeal.addListener(_currentMealChanged);
   }
 
   final FoodRepository _foodRepository;
@@ -65,14 +66,20 @@ class FoodViewModel extends ChangeNotifier {
     _settingsRepository.currentMeal.value = _currentMeal.value;
   }
 
-  Future<void> getFoodByBarcode({required String barcode, required String languageCode}) async {
+  Future<void> getFoodByBarcode({required String barcode, required String languageCode, required Map<String, String> localizations}) async {
     _initSearch();
-    _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((
-      FoodRepositoryGetFoodByBarcodeResult result,
-    ) {
+    _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryGetFoodByBarcodeResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
+        if (result.food != null && result.food!.foodUnits.isNotEmpty) {
+          for (FoodUnit unit in result.food!.foodUnits) {
+            if (localizations.containsKey(unit.name)) {
+              unit.name = localizations[unit.name]!;
+            }
+          }
+        }
+
         _setNewSearchResult(result.food != null ? [ObjectWithOrder(object: result.food!, order: 0)] : null);
       } else {
         _errorCode.value = result.errorCode;
@@ -80,12 +87,12 @@ class FoodViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> getFoodBySearchText({required String searchText, required String languageCode}) async {
+  Future<void> getFoodBySearchText({required String searchText, required String languageCode, required Map<String, String> localizations}) async {
     _initSearch();
     _currentPage = 1;
     _currentSearchText = searchText;
     _currentLanguageCode = languageCode;
-    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode, page: _currentPage).then((
+    _foodRepository.getFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: _currentPage).then((
       FoodRepositoryGetFoodBySearchTextResult result,
     ) {
       _searchFinished();
@@ -97,6 +104,14 @@ class FoodViewModel extends ChangeNotifier {
           foodsWithOrder = [];
 
           for (Food food in result.foods!) {
+            if (food.foodUnits.isNotEmpty) {
+              for (FoodUnit unit in food.foodUnits) {
+                if (localizations.containsKey(unit.name)) {
+                  unit.name = localizations[unit.name]!;
+                }
+              }
+            }
+
             foodsWithOrder.add(ObjectWithOrder(object: food, order: order++));
           }
 
@@ -128,40 +143,40 @@ class FoodViewModel extends ChangeNotifier {
   void getFoodBySearchTextLoadMore() {
     _isLoading = true;
     _currentPage = _currentPage + 1;
-    _foodRepository
-        .getFoodBySearchText(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage + 1)
-        .then((FoodRepositoryGetFoodBySearchTextResult result) {
-          if (result.errorCode == null) {
-            int order = 0;
-            for (ObjectWithOrder<Food> food in _foodSearchResult) {
-              if (food.order > order) {
-                order = food.order;
-              }
-            }
-
-            order++;
-
-            List<ObjectWithOrder<Food>> foodsWithOrder = [];
-            for (Food food in result.foods!) {
-              foodsWithOrder.add(ObjectWithOrder(object: food, order: order++));
-            }
-
-            _addToSearchResult(foodsWithOrder);
-
-            if (result.page! <= result.pageCount!) {
-              _hasMore = true;
-            } else {
-              _hasMore = false;
-            }
-
-            _isLoading = false;
-          } else {
-            _isLoading = false;
-            _hasMore = false;
-            _clearSearchResult();
-            _errorCode.value = result.errorCode;
+    _foodRepository.getFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage + 1).then((
+      FoodRepositoryGetFoodBySearchTextResult result,
+    ) {
+      if (result.errorCode == null) {
+        int order = 0;
+        for (ObjectWithOrder<Food> food in _foodSearchResult) {
+          if (food.order > order) {
+            order = food.order;
           }
-        });
+        }
+
+        order++;
+
+        List<ObjectWithOrder<Food>> foodsWithOrder = [];
+        for (Food food in result.foods!) {
+          foodsWithOrder.add(ObjectWithOrder(object: food, order: order++));
+        }
+
+        _addToSearchResult(foodsWithOrder);
+
+        if (result.page! <= result.pageCount!) {
+          _hasMore = true;
+        } else {
+          _hasMore = false;
+        }
+
+        _isLoading = false;
+      } else {
+        _isLoading = false;
+        _hasMore = false;
+        _clearSearchResult();
+        _errorCode.value = result.errorCode;
+      }
+    });
   }
 
   void _initSearch() {

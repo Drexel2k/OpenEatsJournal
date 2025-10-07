@@ -3,7 +3,7 @@ import "dart:convert";
 import "package:http/http.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
-import "package:openeatsjournal/domain/unit.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/repository/food_repository_get_food_by_barcode_result.dart";
 import "package:openeatsjournal/repository/food_repository_get_food_by_search_text_result.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
@@ -33,50 +33,13 @@ class FoodRepository {
     if (jsonString != null) {
       Map<String, dynamic> json = jsonDecode(jsonString);
       if (json.containsKey(OpenFoodFactsApiStrings.product)) {
-        FoodApi foodApi = FoodApi.fromJsonApiV2(json[OpenFoodFactsApiStrings.product]);
+        Food? food = _getFoodFromFoodApiV1V2(json: json[OpenFoodFactsApiStrings.product], languageCode: languageCode);
 
-        if (foodApi.nutriments == null) {
-          return FoodRepositoryGetFoodByBarcodeResult();
+        if (food != null) {
+          return FoodRepositoryGetFoodByBarcodeResult(food: food);
         }
 
-        double? adjustFactor;
-
-        if (foodApi.nutritionDataPer != null && foodApi.nutritionDataPer == OpenFoodFactsApiStrings.serving) {
-          if (foodApi.servingQuantity != null) {
-            int servingQuantity = int.parse(foodApi.servingQuantity!);
-            adjustFactor = 100 / servingQuantity;
-          }
-        }
-
-        int? energyKjPer100Units = _getEnergyPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-
-        if (energyKjPer100Units == null) {
-          return FoodRepositoryGetFoodByBarcodeResult();
-        }
-
-        double? carbohydratesPer100Units = _getCarbohydratesPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-        double? sugarsPer100Units = _getSugarsPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-        double? fatPer100Units = _getFatPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-        double? saturatedFatPer100Units = _getSaturatedFatPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-        double? proteinsPer100Units = _getProteinsPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-        double? saltPer100Units = _getSaltPer100Units(foodApi: foodApi, adjustFactor: adjustFactor);
-
-        return FoodRepositoryGetFoodByBarcodeResult(
-          food: Food(
-            name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
-            brands: _getCleanBrands(foodApi.brandsTags),
-            foodSource: FoodSource.openFoodFacts,
-            foodSourceId: foodApi.id,
-            measurementUnit: MeasurementUnit.gram,
-            energyKjPer100Units: energyKjPer100Units,
-            carbohydratesPer100Units: carbohydratesPer100Units,
-            sugarsPer100Units: sugarsPer100Units,
-            fatPer100Units: fatPer100Units,
-            saturatedFatPer100Units: saturatedFatPer100Units,
-            proteinsPer100Units: proteinsPer100Units,
-            saltPer100Units: saltPer100Units,
-          ),
-        );
+        return FoodRepositoryGetFoodByBarcodeResult();
       } else {
         return FoodRepositoryGetFoodByBarcodeResult(errorCode: 2);
       }
@@ -85,44 +48,25 @@ class FoodRepository {
     return FoodRepositoryGetFoodByBarcodeResult(errorCode: 3);
   }
 
-  Future<FoodRepositoryGetFoodBySearchTextResult> getFoodBySearchText({
+  Future<FoodRepositoryGetFoodBySearchTextResult> getFoodBySearchTextApiV1({
     required String searchText,
     required String languageCode,
     required int page,
   }) async {
     String? jsonString;
     try {
-      jsonString = await _openFoodFactsService.getFoodBySearchText(
-        searchText: searchText,
-        languageCode: languageCode,
-        page: page,
-      );
+      jsonString = await _openFoodFactsService.getFoodBySearchTextApiV1(searchText: searchText, page: page);
     } on ClientException catch (clientException) {
       return FoodRepositoryGetFoodBySearchTextResult(errorCode: 1, errorMessage: clientException.message);
     }
-
+    List<Food> foods = [];
     if (jsonString != null) {
-      //server responed with status 200
-      List<Food> foods = [];
       Map<String, dynamic> json = jsonDecode(jsonString);
-      if (json.containsKey(OpenFoodFactsApiStrings.hits)) {
-        for (Map<String, dynamic> hit in json[OpenFoodFactsApiStrings.hits]) {
-          FoodApi foodApi = FoodApi.fromJsonSearALiciousApi(hit);
-          if (foodApi.nutriments != null && foodApi.nutriments!.energyKj100g != null) {
-            Food food = Food(
-              name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
-              brands: _getCleanBrands(foodApi.brandsTags),
-              foodSource: FoodSource.openFoodFacts,
-              foodSourceId: foodApi.id,
-              measurementUnit: MeasurementUnit.gram,
-              energyKjPer100Units: foodApi.nutriments!.energyKj100g!,
-              carbohydratesPer100Units: foodApi.nutriments!.carbohydrates100g,
-              sugarsPer100Units: foodApi.nutriments!.sugars100g,
-              fatPer100Units: foodApi.nutriments!.fat100g,
-              saturatedFatPer100Units: foodApi.nutriments!.saturatedFat100g,
-              proteinsPer100Units: foodApi.nutriments!.proteins100g,
-              saltPer100Units: foodApi.nutriments!.salt100g,
-            );
+      if (json.containsKey(OpenFoodFactsApiStrings.products)) {
+        for (Map<String, dynamic> product in json[OpenFoodFactsApiStrings.products]) {
+          Food? food = _getFoodFromFoodApiV1V2(json: product, languageCode: languageCode);
+
+          if (food != null) {
             foods.add(food);
           }
         }
@@ -137,9 +81,176 @@ class FoodRepository {
       }
     }
 
-    //server responded, but not status 200
     return FoodRepositoryGetFoodBySearchTextResult(errorCode: 3);
   }
+
+  Food? _getFoodFromFoodApiV1V2({required Map<String, dynamic> json, required String languageCode}) {
+    FoodApi foodApi = FoodApi.fromJsonApiV1V2(json);
+
+    if (foodApi.nutriments != null) {
+      double? servingAdjustFactor;
+
+      if (foodApi.nutritionDataPer != null && foodApi.nutritionDataPer == OpenFoodFactsApiStrings.serving) {
+        if (foodApi.servingQuantity != null) {
+          num servingQuantity = num.parse(foodApi.servingQuantity!);
+          servingAdjustFactor = 100 / servingQuantity;
+        }
+      }
+
+      int? energyKjPer100Units = _getEnergyPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+
+      if (energyKjPer100Units != null && foodApi.productQuantityUnit != null) {
+        double? carbohydratesPer100Units = _getCarbohydratesPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+        double? sugarsPer100Units = _getSugarsPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+        double? fatPer100Units = _getFatPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+        double? saturatedFatPer100Units = _getSaturatedFatPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+        double? proteinsPer100Units = _getProteinsPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+        double? saltPer100Units = _getSaltPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+
+        Food food = Food(
+          name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
+          brands: _getCleanBrands(foodApi.brandsTags),
+          foodSource: FoodSource.openFoodFacts,
+          foodSourceId: foodApi.code,
+          measurementUnit: foodApi.productQuantityUnit!.trim().toLowerCase() == OpenFoodFactsApiStrings.gram
+              ? MeasurementUnit.gram
+              : MeasurementUnit.milliLiter,
+          energyKjPer100Units: energyKjPer100Units,
+          carbohydratesPer100Units: carbohydratesPer100Units,
+          sugarsPer100Units: sugarsPer100Units,
+          fatPer100Units: fatPer100Units,
+          saturatedFatPer100Units: saturatedFatPer100Units,
+          proteinsPer100Units: proteinsPer100Units,
+          saltPer100Units: saltPer100Units,
+        );
+
+        if (foodApi.servingQuantity != null) {
+          food.addFoodUnit(name: OpenEatsJournalStrings.serving, amount: double.parse(foodApi.servingQuantity!).round());
+        }
+
+        if (foodApi.productQuantity != null) {
+          food.addFoodUnit(name: OpenEatsJournalStrings.piece, amount: double.parse(foodApi.productQuantity!).round());
+        }
+
+        return food;
+      }
+    }
+
+    return null;
+  }
+
+  // Future<FoodRepositoryGetFoodBySearchTextResult> getFoodBySearchTextSearchALicous({
+  //   required String searchText,
+  //   required String languageCode,
+  //   required int page,
+  // }) async {
+  //   String? jsonString;
+  //   try {
+  //     jsonString = await _openFoodFactsService.getFoodBySearchTextSearchALicous(searchText: searchText, languageCode: languageCode, page: page);
+  //   } on ClientException catch (clientException) {
+  //     return FoodRepositoryGetFoodBySearchTextResult(errorCode: 1, errorMessage: clientException.message);
+  //   }
+
+  //   if (jsonString != null) {
+  //     //server responed with status 200
+  //     List<Food> foods = [];
+  //     Map<String, dynamic> json = jsonDecode(jsonString);
+  //     if (json.containsKey(OpenFoodFactsApiStrings.hits)) {
+  //       int amount = 0;
+  //       num parsedNumber = 0;
+  //       Match? match;
+  //       String? numberPart;
+  //       String? alphabetPart;
+
+  //       RegExp regex = RegExp(r'^([\d., ]+)([a-zA-Z]+)$');
+
+  //       for (Map<String, dynamic> hit in json[OpenFoodFactsApiStrings.hits]) {
+  //         FoodApi foodApi = FoodApi.fromJsonSearALiciousApi(hit);
+
+  //         MeasurementUnit measurementUnit = MeasurementUnit.gram;
+  //         if (foodApi.quantity != null) {
+  //           List<String> parts = foodApi.quantity!.split(" ");
+  //           if (parts.length > 1) {
+  //             if (parts[1].trim().toLowerCase() == OpenFoodFactsApiStrings.liter || parts[1].trim().toLowerCase() == OpenFoodFactsApiStrings.milliLiter) {
+  //               measurementUnit = MeasurementUnit.milliLiter;
+  //             }
+  //           }
+  //         }
+
+  //         if (foodApi.nutriments != null && foodApi.nutriments!.energyKj100g != null) {
+  //           Food food = Food(
+  //             name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
+  //             brands: _getCleanBrands(foodApi.brandsTags),
+  //             foodSource: FoodSource.openFoodFacts,
+  //             foodSourceId: foodApi.code,
+  //             measurementUnit: measurementUnit,
+  //             energyKjPer100Units: foodApi.nutriments!.energyKj100g!,
+  //             carbohydratesPer100Units: foodApi.nutriments!.carbohydrates100g,
+  //             sugarsPer100Units: foodApi.nutriments!.sugars100g,
+  //             fatPer100Units: foodApi.nutriments!.fat100g,
+  //             saturatedFatPer100Units: foodApi.nutriments!.saturatedFat100g,
+  //             proteinsPer100Units: foodApi.nutriments!.proteins100g,
+  //             saltPer100Units: foodApi.nutriments!.salt100g,
+  //           );
+
+  //           if (foodApi.quantity != null) {
+  //             amount = 0;
+  //             parsedNumber = 0;
+  //             numberPart = null;
+  //             alphabetPart = null;
+
+  //             match = regex.firstMatch(foodApi.quantity!) as Match?;
+
+  //             if (match != null) {
+  //               numberPart = match.group(1)!.trim();
+  //               alphabetPart = match.group(2)!;
+  //             }
+
+  //             if (alphabetPart != null && numberPart != null) {
+  //               parsedNumber = NumberFormat(null, foodApi.lang).parse(numberPart);
+  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.gram) {
+  //                 amount = parsedNumber.round();
+  //               }
+
+  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.milliGram) {
+  //                 amount = (parsedNumber / 1000).round();
+  //               }
+
+  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.kiloGram) {
+  //                 amount = (parsedNumber * 1000).round();
+  //               }
+
+  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.milliLiter) {
+  //                 amount = parsedNumber.round();
+  //               }
+
+  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.liter) {
+  //                 amount = (parsedNumber * 1000).round();
+  //               }
+
+  //               if (amount > 0) {
+  //                 food.addFoodUnit(name: OpenEatsJournalStrings.piece, amount: amount);
+  //               }
+  //             }
+  //           }
+
+  //           foods.add(food);
+  //         }
+  //       }
+
+  //       return FoodRepositoryGetFoodBySearchTextResult(
+  //         page: json[OpenFoodFactsApiStrings.page],
+  //         pageCount: json[OpenFoodFactsApiStrings.pageCount],
+  //         foods: foods,
+  //       );
+  //     } else {
+  //       return FoodRepositoryGetFoodBySearchTextResult(errorCode: 2);
+  //     }
+  //   }
+
+  //   //server responded, but not status 200
+  //   return FoodRepositoryGetFoodBySearchTextResult(errorCode: 3);
+  // }
 
   String _getFoodName({required FoodApi foodApi, required String languageCode}) {
     String name = OpenEatsJournalStrings.emptyString;
@@ -201,135 +312,92 @@ class FoodRepository {
     return name;
   }
 
-  int? _getEnergyPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  int? _getEnergyPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     int? energyKjPer100Units = foodApi.nutriments!.energyKj100g;
 
-    if (energyKjPer100Units == null && foodApi.nutriments!.energyKj != null && foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        energyKjPer100Units = foodApi.nutriments!.energyKj;
-      }
-
-      if (adjustFactor != null) {
-        energyKjPer100Units = (foodApi.nutriments!.energyKj! * adjustFactor).round();
-      }
+    if (energyKjPer100Units == null && foodApi.nutriments!.energyKj != null && servingAdjustFactor != null) {
+      energyKjPer100Units = (foodApi.nutriments!.energyKj! * servingAdjustFactor).round();
     }
 
     return energyKjPer100Units;
   }
 
-  double? _getCarbohydratesPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  double? _getCarbohydratesPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     double? carbohydratesPer100Units = foodApi.nutriments!.carbohydrates100g;
 
-    if (carbohydratesPer100Units == null &&
-        foodApi.nutriments!.carbohydrates != null &&
-        foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        carbohydratesPer100Units = foodApi.nutriments!.carbohydrates;
-      }
-
-      if (adjustFactor != null) {
-        carbohydratesPer100Units = foodApi.nutriments!.carbohydrates! * adjustFactor;
-      }
+    if (carbohydratesPer100Units == null && foodApi.nutriments!.carbohydrates != null && servingAdjustFactor != null) {
+      carbohydratesPer100Units = foodApi.nutriments!.carbohydrates! * servingAdjustFactor;
     }
 
     return carbohydratesPer100Units;
   }
 
-  double? _getSugarsPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  double? _getSugarsPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     double? sugarsPer100Units = foodApi.nutriments!.sugars100g;
 
-    if (sugarsPer100Units == null && foodApi.nutriments!.sugars != null && foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        sugarsPer100Units = foodApi.nutriments!.sugars;
-      }
-
-      if (adjustFactor != null) {
-        sugarsPer100Units = foodApi.nutriments!.sugars! * adjustFactor;
-      }
+    if (sugarsPer100Units == null && foodApi.nutriments!.sugars != null && servingAdjustFactor != null) {
+      sugarsPer100Units = foodApi.nutriments!.sugars! * servingAdjustFactor;
     }
 
     return sugarsPer100Units;
   }
 
-  double? _getFatPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  double? _getFatPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     double? fatPer100Units = foodApi.nutriments!.fat100g;
 
-    if (fatPer100Units == null && foodApi.nutriments!.fat != null && foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        fatPer100Units = foodApi.nutriments!.fat;
-      }
-
-      if (adjustFactor != null) {
-        fatPer100Units = foodApi.nutriments!.fat! * adjustFactor;
-      }
+    if (fatPer100Units == null && foodApi.nutriments!.fat != null && servingAdjustFactor != null) {
+      fatPer100Units = foodApi.nutriments!.fat! * servingAdjustFactor;
     }
 
     return fatPer100Units;
   }
 
-  double? _getSaturatedFatPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  double? _getSaturatedFatPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     double? saturatedFatPer100Units = foodApi.nutriments!.saturatedFat100g;
 
-    if (saturatedFatPer100Units == null &&
-        foodApi.nutriments!.saturatedFat != null &&
-        foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        saturatedFatPer100Units = foodApi.nutriments!.saturatedFat;
-      }
-
-      if (adjustFactor != null) {
-        saturatedFatPer100Units = foodApi.nutriments!.saturatedFat! * adjustFactor;
-      }
+    if (saturatedFatPer100Units == null && foodApi.nutriments!.saturatedFat != null && servingAdjustFactor != null) {
+      saturatedFatPer100Units = foodApi.nutriments!.saturatedFat! * servingAdjustFactor;
     }
 
     return saturatedFatPer100Units;
   }
 
-  double? _getProteinsPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  double? _getProteinsPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     double? proteinsPer100Units = foodApi.nutriments!.proteins100g;
 
-    if (proteinsPer100Units == null && foodApi.nutriments!.proteins != null && foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        proteinsPer100Units = foodApi.nutriments!.proteins;
-      }
-
-      if (adjustFactor != null) {
-        proteinsPer100Units = foodApi.nutriments!.proteins! * adjustFactor;
-      }
+    if (proteinsPer100Units == null && foodApi.nutriments!.proteins != null && servingAdjustFactor != null) {
+      proteinsPer100Units = foodApi.nutriments!.proteins! * servingAdjustFactor;
     }
 
     return proteinsPer100Units;
   }
 
-  double? _getSaltPer100Units({required FoodApi foodApi, double? adjustFactor}) {
+  double? _getSaltPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
     double? saltPer100Units = foodApi.nutriments!.salt100g;
 
-    if (saltPer100Units == null && foodApi.nutriments!.salt != null && foodApi.nutritionDataPer != null) {
-      if (foodApi.nutritionDataPer == OpenFoodFactsApiStrings.hundred) {
-        saltPer100Units = foodApi.nutriments!.salt;
-      }
-
-      if (adjustFactor != null) {
-        saltPer100Units = foodApi.nutriments!.salt! * adjustFactor;
-      }
+    if (saltPer100Units == null && foodApi.nutriments!.salt != null && servingAdjustFactor != null) {
+      saltPer100Units = foodApi.nutriments!.salt! * servingAdjustFactor;
     }
 
     return saltPer100Units;
   }
-  
+
   _getCleanBrands(List<String>? brands) {
-    if(brands == null) {
+    if (brands == null) {
       return null;
     }
 
     List<String> result = [];
+    String start = OpenEatsJournalStrings.emptyString;
     for (String brand in brands) {
-      
-      String start = brand.substring(0, 3).toLowerCase();
-      if(start == "xx:") {
-        result.add(brand.substring(3));
-      }
-      else {
+      if (brand.length > 2) {
+        start = brand.substring(0, 3).toLowerCase();
+        if (start == "xx:") {
+          result.add(brand.substring(3));
+        } else {
+          result.add(brand);
+        }
+      } else {
         result.add(brand);
       }
     }

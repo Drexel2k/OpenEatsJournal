@@ -5,8 +5,8 @@ import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 
-class SettingsViewModel extends ChangeNotifier {
-  SettingsViewModel({required SettingsRepository settingsRepository})
+class SettingsScreenViewModel extends ChangeNotifier {
+  SettingsScreenViewModel({required SettingsRepository settingsRepository})
     : _settingsRepository = settingsRepository,
       _darkMode = ValueNotifier(settingsRepository.darkMode.value),
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),

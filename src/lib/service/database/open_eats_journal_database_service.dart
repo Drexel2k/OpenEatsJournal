@@ -44,6 +44,98 @@ class OpenEatsJournalDatabaseService {
         entry_date DATE,
         weight REAL
       );""");
+    batch.execute("""CREATE TABLE t_food_cache (
+        id INTEGER PRIMARY KEY,
+        food_source_ref INT,
+        food_source_id_ref INT
+        name TEXT,
+        kilo_joule_per100 INT,
+        carbohydrates_per100 REAL,
+        sugar_per100 REAL,
+        fat_per100 REAL,
+        saturated_fat_per100 REAL,
+        protein_per100 REAL,
+        unit_ref INT,
+      );""");
+    batch.execute("""CREATE TABLE t_food_user (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        kilo_joule_per100 INT,
+        carbohydrates_per100 REAL,
+        sugar_per100 REAL,
+        fat_per100 REAL,
+        saturated_fat_per100 REAL,
+        protein_per100 REAL,
+        unit_ref INT
+      );""");
+    batch.execute("""CREATE TABLE t_food_standard (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        kilo_joule_per100 INT,
+        carbohydrates_per100 REAL,
+        sugar_per100 REAL,
+        fat_per100 REAL,
+        saturated_fat_per100 REAL,
+        protein_per100 REAL,
+        unit_ref INT
+      );""");
+    batch.execute("""CREATE TABLE t_food_unit (
+        id INTEGER PRIMARY KEY,
+        food_source_ref INT,
+        food_source_id_ref INT,
+        name TEXT,
+        amount INT,
+      );""");
+    batch.execute("""CREATE TABLE t_eats_journal (
+        id INTEGER PRIMARY KEY,
+        food_source_ref INT,
+        food_source_id_ref INT,
+        entry_date DATE,
+        name TEXT,
+        kilo_joule INT,
+        carbohydrates REAL,
+        sugar REAL,
+        fat REAL,
+        saturated_fat REAL,
+        protein REAL,
+        meal_ref INT
+      );""");
+    batch.execute("""CREATE TABLE t_food_source (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        description TEXT,
+        url Text
+      );""");
+    batch.execute("""CREATE TABLE t_meal (
+        id INTEGER PRIMARY KEY,
+        name TEXT
+      );""");
+    batch.execute("""CREATE TABLE t_unit (
+        id INTEGER PRIMARY KEY,
+        name TEXT
+      );""");
+
+    batch.insert("t_food_source", {
+      "id": 1,
+      "name": "Open Eats Journal Food Data",
+      "description": "Food data that comes with this app.",
+    });
+    batch.insert("t_food_source", {"id": 2, "name": "User Food Data", "description": "Food data created by the user."});
+    batch.insert("t_food_source", {
+      "id": 3,
+      "name": "Open Food Facts",
+      "description":
+          "Open Food Facts is a food products database made by everyone, for everyone. You can use it to make better food choices, and as it is open data, anyone can re-use it for any purpose. Open Food Facts is a non-profit project developed by thousands of volunteers from around the world. You can start contributing by adding a product from your kitchen with our app for iPhone or Android, and we have lots of exciting projects you can contribute to in many different ways.",
+      "url": "https://world.openfoodfacts.org/",
+    });
+
+    batch.insert("t_meal", {"id": 1, "name": "breakfast"});
+    batch.insert("t_meal", {"id": 2, "name": "lunch"});
+    batch.insert("t_meal", {"id": 3, "name": "dinner"});
+    batch.insert("t_meal", {"id": 4, "name": "snacks"});
+
+    batch.insert("t_unit", {"id": 1, "name": "g"});
+    batch.insert("t_unit", {"id": 2, "name": "ml"});
 
     await batch.commit();
   }

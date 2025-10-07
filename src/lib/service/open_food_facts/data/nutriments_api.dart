@@ -64,7 +64,7 @@ class NutrimentsApi {
 
   factory NutrimentsApi.fromJson(Map<String, dynamic> json) {
     return NutrimentsApi(
-      energyKj: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy) ? json[OpenFoodFactsApiStrings.fieldEnergy] as int : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal) ? NutritionCalculator.getKJoulesFromKCals(json[OpenFoodFactsApiStrings.fieldEnergyKcal] as int) : null,
+      energyKj: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy) ? (json[OpenFoodFactsApiStrings.fieldEnergy] as num).round() : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal) ? NutritionCalculator.getKJoulesFromKCals(json[OpenFoodFactsApiStrings.fieldEnergyKcal] as num).round() : null,
       carbohydrates: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates)
           ? (json[OpenFoodFactsApiStrings.fieldCarboHydrates] as num).toDouble()
           : null,

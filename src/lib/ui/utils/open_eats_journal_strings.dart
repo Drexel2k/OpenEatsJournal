@@ -4,6 +4,8 @@ class OpenEatsJournalStrings {
   static const en = "en";
   static const code = "code";
   static const doublepoint = ":";
+  static const serving = "serving";
+  static const piece = "piece";
 
   static const navigatorRouteHome = "/";
   static const navigatorRouteFood = "/food";

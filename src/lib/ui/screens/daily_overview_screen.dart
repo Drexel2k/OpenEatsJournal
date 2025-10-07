@@ -6,25 +6,26 @@ import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
-import "package:openeatsjournal/ui/screens/daily_overview_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/daily_overview_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
-import "package:openeatsjournal/ui/screens/settings_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/round_transparent_choice_chip.dart";
 
 class DailyOverviewScreen extends StatelessWidget {
   const DailyOverviewScreen({
     super.key,
-    required DailyOverviewViewModel dailyOverviewViewModel,
+    required DailyOverviewScreenViewModel dailyOverviewScreenViewModel,
     required SettingsRepository settingsRepository,
-  }) : _dailyOverviewViewModel = dailyOverviewViewModel,
+  }) : _dailyOverviewScreenViewModel = dailyOverviewScreenViewModel,
        _settingsRepository = settingsRepository;
 
-  final DailyOverviewViewModel _dailyOverviewViewModel;
+  final DailyOverviewScreenViewModel _dailyOverviewScreenViewModel;
   final SettingsRepository _settingsRepository;
 
   @override
@@ -32,7 +33,6 @@ class DailyOverviewScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorTheme = Theme.of(context).colorScheme;
     final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
-    final InputDecorationTheme inputDecorationTheme = Theme.of(context).inputDecorationTheme;
 
     int value = 1250;
     int maxValue = 2500;
@@ -74,12 +74,12 @@ class DailyOverviewScreen extends StatelessWidget {
               Expanded(
                 flex: 10,
                 child: ValueListenableBuilder(
-                  valueListenable: _dailyOverviewViewModel.currentJournalDate,
+                  valueListenable: _dailyOverviewScreenViewModel.currentJournalDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
                         try {
-                          _selectDate(initialDate: _dailyOverviewViewModel.currentJournalDate.value, context: context);
+                          _selectDate(initialDate: _dailyOverviewScreenViewModel.currentJournalDate.value, context: context);
                         } on Exception catch (exc, stack) {
                           await ErrorHandlers.showException(
                             context: navigatorKey.currentContext!,
@@ -96,8 +96,8 @@ class DailyOverviewScreen extends StatelessWidget {
                       },
                       child: Text(
                         DateFormat.yMMMMd(
-                          _dailyOverviewViewModel.languageCode,
-                        ).format(_dailyOverviewViewModel.currentJournalDate.value),
+                          _dailyOverviewScreenViewModel.languageCode,
+                        ).format(_dailyOverviewScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -108,21 +108,14 @@ class DailyOverviewScreen extends StatelessWidget {
               Expanded(
                 flex: 10,
                 child: ValueListenableBuilder(
-                  valueListenable: _dailyOverviewViewModel.currentMeal,
+                  valueListenable: _dailyOverviewScreenViewModel.currentMeal,
                   builder: (_, _, _) {
-                    return DropdownMenu<int>(
+                    return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
-                        _dailyOverviewViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                        _dailyOverviewScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedMealDropDownEntries.getMealDropDownMenuEntries(context: context),
-                      inputDecorationTheme: inputDecorationTheme.copyWith(
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                        constraints: BoxConstraints.tight(const Size.fromHeight(40)),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
-                      ),
-                      expandedInsets: EdgeInsets.zero,
-                      initialSelection: _dailyOverviewViewModel.currentMeal.value.value,
+                      initialSelection: _dailyOverviewScreenViewModel.currentMeal.value.value,
                     );
                   },
                 ),
@@ -219,14 +212,14 @@ class DailyOverviewScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   ValueListenableBuilder(
-                    valueListenable: _dailyOverviewViewModel.currentJournalDate,
+                    valueListenable: _dailyOverviewScreenViewModel.currentJournalDate,
                     builder: (_, _, _) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: _getLast8DaysIncludingToday().map((DateTime date) {
                           return RoundTransparentChoiceChip(
-                            selected: _dailyOverviewViewModel.currentJournalDate.value == date,
-                            onSelected: (bool selected) => {_dailyOverviewViewModel.currentJournalDate.value = date},
+                            selected: _dailyOverviewScreenViewModel.currentJournalDate.value == date,
+                            onSelected: (bool selected) => {_dailyOverviewScreenViewModel.currentJournalDate.value = date},
                             label: Text(DateFormat("EEEE").format(date).substring(0, 1)),
                           );
                         }).toList(),
@@ -370,14 +363,14 @@ class DailyOverviewScreen extends StatelessWidget {
                                 children: [
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.breakfast;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.breakfast;
                                     },
                                     icon: Icon(Icons.check),
                                   ),
 
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.breakfast;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.breakfast;
                                       Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                     },
                                     icon: Icon(Icons.add),
@@ -405,14 +398,14 @@ class DailyOverviewScreen extends StatelessWidget {
                                 children: [
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.lunch;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.lunch;
                                     },
                                     icon: Icon(Icons.check),
                                   ),
 
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.lunch;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.lunch;
                                       Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                     },
                                     icon: Icon(Icons.add),
@@ -440,14 +433,14 @@ class DailyOverviewScreen extends StatelessWidget {
                                 children: [
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.dinner;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.dinner;
                                     },
                                     icon: Icon(Icons.check),
                                   ),
 
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.dinner;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.dinner;
                                       Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                     },
                                     icon: Icon(Icons.add),
@@ -475,14 +468,14 @@ class DailyOverviewScreen extends StatelessWidget {
                                 children: [
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.snacks;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.snacks;
                                     },
                                     icon: Icon(Icons.check),
                                   ),
 
                                   IconButton.outlined(
                                     onPressed: () {
-                                      _dailyOverviewViewModel.currentMeal.value = Meal.snacks;
+                                      _dailyOverviewScreenViewModel.currentMeal.value = Meal.snacks;
                                       Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                     },
                                     icon: Icon(Icons.add),
@@ -545,7 +538,7 @@ class DailyOverviewScreen extends StatelessWidget {
                                         verticalPadding,
                                       ),
                                       child: SettingsScreen(
-                                        settingsViewModel: SettingsViewModel(settingsRepository: _settingsRepository),
+                                        settingsScreenViewModel: SettingsScreenViewModel(settingsRepository: _settingsRepository),
                                       ),
                                     );
                                   },
@@ -589,7 +582,7 @@ class DailyOverviewScreen extends StatelessWidget {
     );
 
     if (date != null) {
-      _dailyOverviewViewModel.currentJournalDate.value = date;
+      _dailyOverviewScreenViewModel.currentJournalDate.value = date;
     }
   }
 
