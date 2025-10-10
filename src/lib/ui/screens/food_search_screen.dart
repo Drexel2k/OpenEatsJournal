@@ -2,7 +2,10 @@ import "dart:async";
 
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
 
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
@@ -221,7 +224,6 @@ class FoodSearchScreen extends StatelessWidget {
               return SizedBox();
             },
           ),
-
           ListenableBuilder(
             listenable: _foodSearchScreenViewModel.foodSearchResultChangedNotifier,
             builder: (contextBuilder, _) {
@@ -238,7 +240,22 @@ class FoodSearchScreen extends StatelessWidget {
                       return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                     }
 
-                    return FoodCard(food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object, textTheme: textTheme, onTap: () {});
+                    return FoodCard(
+                      food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object,
+                      textTheme: textTheme,
+                      onCardTap: () {},
+                      onAddJournalEntryPressed: (Food cardFood, int amount, MeasurementUnit measurementUnit) {
+                        _foodSearchScreenViewModel.addJournalEntry(
+                          EatsJournalEntry.fromFood(
+                            food: cardFood,
+                            entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                            amount: amount,
+                            amountMeasurementUnit: measurementUnit,
+                            meal: _foodSearchScreenViewModel.currentMeal.value,
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               );

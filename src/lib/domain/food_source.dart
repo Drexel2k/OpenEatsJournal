@@ -1,5 +1,5 @@
 enum FoodSource {
-  selfMaintained(1),
+  user(1),
   standard(2),
   openFoodFacts(3);
 

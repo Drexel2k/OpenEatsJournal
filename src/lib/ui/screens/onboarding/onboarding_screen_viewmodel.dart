@@ -4,10 +4,10 @@ import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/repository/weight_repository.dart";
+import "package:openeatsjournal/repository/journal_repository.dart";
 
 class OnboardingScreenViewModel extends ChangeNotifier {
-  OnboardingScreenViewModel({required SettingsRepository settingsRepository, required WeightRepository weightRepository})
+  OnboardingScreenViewModel({required SettingsRepository settingsRepository, required JournalRepository weightRepository})
     : _settingsRepository = settingsRepository,
       _weightRepository = weightRepository,
       _gender = ValueNotifier(null),
@@ -22,7 +22,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   }
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
-  final WeightRepository _weightRepository;
+  final JournalRepository _weightRepository;
   final SettingsRepository _settingsRepository;
 
   final ValueNotifier<Gender?> _gender;
@@ -103,7 +103,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       ),
     );
 
-    await _weightRepository.insertWeight(DateTime.now(), _weight.value!);
+    await _weightRepository.insertWeightJournalEntry(DateTime.now(), _weight.value!);
   }
 
   void _calculateKCalories() {

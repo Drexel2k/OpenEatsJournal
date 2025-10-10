@@ -1,6 +1,7 @@
 enum MeasurementUnit {
+  //Values must be the same as the database ids.
   gram(1, "g"),
-  milliLiter(2, "ml");
+  milliliter(2, "ml");
 
   final int value;
   final String text;

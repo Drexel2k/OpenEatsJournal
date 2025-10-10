@@ -17,7 +17,6 @@ class OpenFoodFactsService {
   late String _appVersion;
   late String _appContactMail;
   late bool _useStaging;
-  final int _pageSize = 100;
 
   void init({required String appName, required String appVersion, required String appContactMail, bool useStaging = false}) {
     _appName = appName;
@@ -67,7 +66,7 @@ class OpenFoodFactsService {
     return null;
   }
 
-  Future<String?> getFoodBySearchTextApiV1({required String searchText, required int page}) async {
+  Future<String?> getFoodBySearchTextApiV1({required String searchText, required int page, required int pageSize}) async {
     Map<String, String> headers = {HttpHeaders.userAgentHeader: "$_appName/$_appVersion ($_appContactMail)"};
 
     if (_useStaging) {
@@ -76,8 +75,9 @@ class OpenFoodFactsService {
 
     searchText = OpenFoodFactsService._encodeSearchText(searchText);
     Uri uri = Uri.parse(
-      "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}&page=$page&page_size=$_pageSize",
+      "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}&page=$page&page_size=$pageSize",
     );
+
     Response resp = await http.get(uri, headers: headers);
 
     if (resp.statusCode == 200) {
@@ -115,8 +115,11 @@ class OpenFoodFactsService {
   // }
 
   static String _encodeSearchText(String searchText) {
+    List<String> searchWords = searchText.split(" ");
+    searchWords = searchWords.map((word) => "'$word'").toList();
+    searchText = searchWords.join(",");
     searchText = Uri.encodeComponent(searchText);
-    searchText = searchText.replaceAll("-", " ");
+
     return searchText;
   }
 }

@@ -90,6 +90,7 @@ class OpenEatsJournalApp extends StatelessWidget {
             OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) => FoodSearchScreen(
               foodSearchScreenViewModel: FoodSearchScreenViewModel(
                 foodRepository: _repositories.foodRepository,
+                journalRepository: _repositories.journalRepository,
                 settingsRepository: _repositories.settingsRepository
               ),
             ),

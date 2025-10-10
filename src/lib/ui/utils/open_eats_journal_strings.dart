@@ -1,4 +1,11 @@
 class OpenEatsJournalStrings {
+  static const navigatorRouteHome = "/";
+  static const navigatorRouteFood = "/food";
+  static const navigatorRouteStatistics = "/stats";
+  static const navigatorRouteSettings = "/settings";
+  static const navigatorRouteOnboarding = "/onboarding";
+  static const navigatorRouteBarcodeScanner = "/barcode";
+
   static const emptyString = "";
   static const de = "de";
   static const en = "en";
@@ -7,10 +14,63 @@ class OpenEatsJournalStrings {
   static const serving = "serving";
   static const piece = "piece";
 
-  static const navigatorRouteHome = "/";
-  static const navigatorRouteFood = "/food";
-  static const navigatorRouteStatistics = "/stats";
-  static const navigatorRouteSettings = "/settings";
-  static const navigatorRouteOnboarding = "/onboarding";
-  static const navigatorRouteBarcodeScanner ="/barcode";
+  static const settingDarkmode = "darkmode";
+  static const settingGender = "gender";
+  static const settingBirthday = "birthday";
+  static const settingHeight = "height";
+  static const settingWeight = "weight";
+  static const settingActivityFactor = "activity_factor";
+  static const settingWeightTarget = "weight_target";
+  static const settingKCalsMonday = "kcals_monday";
+  static const settingKCalsTuesday = "kcals_tuesday";
+  static const settingKCalsWednesday = "kcals_wednesday";
+  static const settingKCalsThursday = "kcals_thursday";
+  static const settingKCalsFriday = "kcals_friday";
+  static const settingKCalsSaturday = "kcals_saturday";
+  static const settingKCalsSunday = "kcals_sunday";
+  static const settingLanguageCode = "language_code";
+
+  static const dbTableSetting = "t_setting";
+  static const dbTableWeightJournal = "t_weight_journal";
+  static const dbTableFoodCache = "t_food_cache";
+  static const dbTableFoodUser = "t_food_user";
+  static const dbTableFoodStandard = "t_food_standard";
+  static const dbTableFoodUnit = "t_food_unit";
+  static const dbTableEatsJournal = "t_eats_journal";
+  static const dbTableFoodSource = "t_food_source";
+  static const dbTableMeal = "t_meal";
+  static const dbTableMeasurementUnit = "t_measurement_unit";
+  static const dbTableFoodUnitType = "t_food_unit_type";
+
+  static const dbColumnId = "id";
+  static const dbColumnSetting = "setting";
+  static const dbColumnDartType = "dart_type";
+  static const dbColumnvalue = "value";
+  static const dbColumnEntryDate = "entry_date";
+  static const dbColumnWeight = "weight";
+  static const dbColumnFoodSourceIdRef = "food_source_id_ref";
+  static const dbColumndbColumnFoodSourceIdExternalRef = "food_source_id_external_ref";
+  static const dbColumnName = "name";
+  static const dbColumnNutritionPerGramAmount = "nutrition_per_gram_mount";
+  static const dbColumnNutritionPerMilliliterAmount = "nutrition_per_milliliter_mount";
+  static const dbColumnKiloJoule = "kilo_joule";
+  static const dbColumnCarbohydrates = "carbohydrates";
+  static const dbColumnSugar = "sugar";
+  static const dbColumnFat = "fat";
+  static const dbColumnSaturatedFat = "saturated_fat";
+  static const dbColumnProtein = "protein";
+  static const dbColumnSalt = "salt";
+  static const dbColumnFoodSourceTableIdRef = "food_source_table_id_ref";
+  static const dbColumnAmount = "amount";
+  static const dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
+  static const dbColumnOrderNumber = "order_number";
+  static const dbColumnAmountUnitIdRef = "amount_unit_id_ref";
+  static const dbColumnDescription = "description";
+  static const dbColumnMealIdRef = "meal_id_ref";
+  static const dbColumnUrl = "url";
+  static const dbColumnBrands = "brands";
+  static const dbColumnSearchText = "search_text";
+
+  static const dbDateFormatDateAndTime = "y-M-d H:m:s:S";
+  static const dbDateFormatDateOnly = "y-M-d";
 }

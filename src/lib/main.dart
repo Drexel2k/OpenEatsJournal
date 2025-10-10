@@ -5,7 +5,7 @@ import "package:openeatsjournal/open_eats_journal_app.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/repository/weight_repository.dart";
+import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 
@@ -25,8 +25,9 @@ Future<void> main() async {
 
   final Repositories repositories = Repositories(
     settingsRepository: SettingsRepository.instance,
-    weightRepository: WeightRepository.instance,
+    weightRepository: JournalRepository.instance,
     foodRepository: FoodRepository.instance,
+    journalRepository: JournalRepository.instance
   );
 
   repositories.settingsRepository.init(oejDatabase: oejDatabase);
@@ -39,7 +40,7 @@ Future<void> main() async {
   );
 
   repositories.weightRepository.init(oejDatabase: oejDatabase);
-  repositories.foodRepository.init(openFoodFactsService: openFoodFactsService);
+  repositories.foodRepository.init(openFoodFactsService: openFoodFactsService, oejDatabase: oejDatabase);
 
   WidgetsFlutterBinding.ensureInitialized();
   await repositories.settingsRepository.initSettings();

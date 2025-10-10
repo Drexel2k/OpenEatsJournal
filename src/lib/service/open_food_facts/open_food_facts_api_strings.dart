@@ -11,7 +11,7 @@ class OpenFoodFactsApiStrings {
   static const kiloGram = "kg";
   static const milliGram = "mg";
   static const liter = "l";
-  static const milliLiter = "ml";
+  static const milliliter = "ml";
 
   static const fieldCode = "code";
   static const fieldProductName = "product_name";
