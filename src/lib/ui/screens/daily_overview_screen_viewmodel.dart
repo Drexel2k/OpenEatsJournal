@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 
@@ -14,11 +14,14 @@ class DailyOverviewScreenViewModel extends ChangeNotifier {
   final SettingsRepository _settingsRepository;
   final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
+  final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get languageCode => _settingsRepository.languageCode.value;
+
+  ValueListenable<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
 
   _currentJournalDateChanged() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
@@ -34,5 +37,9 @@ class DailyOverviewScreenViewModel extends ChangeNotifier {
     _currentMeal.dispose();
 
     super.dispose();
+  }
+
+  void toggleFloatingActionButtons() {
+    _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
   }
 }

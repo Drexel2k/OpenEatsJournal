@@ -33,6 +33,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final SettingsRepository _settingsRepository;
   final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
+  final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
 
   final List<ObjectWithOrder<Food>> _foodSearchResult = [];
   bool _hasMore = false;
@@ -52,6 +53,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
   String get languageCode => _settingsRepository.languageCode.value;
+  ValueListenable<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
 
   List<ObjectWithOrder<Food>> get foodSearchResult => _foodSearchResult;
   bool get hasMore => _hasMore;
@@ -249,5 +251,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       await _foodRepository.setFoodCache(eatsJournalEntry.food!);
     }
     await _journalRepository.insertFoodJournalEntry(eatsJournalEntry);
+  }
+
+  void toggleFloatingActionButtons() {
+    _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
   }
 }

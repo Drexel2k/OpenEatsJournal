@@ -3,7 +3,7 @@ import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
 
 class MainLayout extends StatelessWidget {
-  const MainLayout({super.key, required String route, required Widget body, required String title, FloatingActionButton? floatingActionButton})
+  const MainLayout({super.key, required String route, required Widget body, required String title, Widget? floatingActionButton})
     : _route = route,
       _body = body,
       _title = title,
@@ -12,7 +12,7 @@ class MainLayout extends StatelessWidget {
   final Widget _body;
   final String _title;
   final String _route;
-  final FloatingActionButton? _floatingActionButton;
+  final Widget? _floatingActionButton;
 
   @override
   Widget build(BuildContext context) {

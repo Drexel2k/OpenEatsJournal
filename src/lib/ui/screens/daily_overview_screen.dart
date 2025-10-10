@@ -18,12 +18,9 @@ import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart"
 import "package:openeatsjournal/ui/widgets/round_transparent_choice_chip.dart";
 
 class DailyOverviewScreen extends StatelessWidget {
-  const DailyOverviewScreen({
-    super.key,
-    required DailyOverviewScreenViewModel dailyOverviewScreenViewModel,
-    required SettingsRepository settingsRepository,
-  }) : _dailyOverviewScreenViewModel = dailyOverviewScreenViewModel,
-       _settingsRepository = settingsRepository;
+  const DailyOverviewScreen({super.key, required DailyOverviewScreenViewModel dailyOverviewScreenViewModel, required SettingsRepository settingsRepository})
+    : _dailyOverviewScreenViewModel = dailyOverviewScreenViewModel,
+      _settingsRepository = settingsRepository;
 
   final DailyOverviewScreenViewModel _dailyOverviewScreenViewModel;
   final SettingsRepository _settingsRepository;
@@ -33,6 +30,7 @@ class DailyOverviewScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorTheme = Theme.of(context).colorScheme;
     final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
+    final double fabMenuWidth = 150;
 
     int value = 1250;
     int maxValue = 2500;
@@ -65,6 +63,63 @@ class DailyOverviewScreen extends StatelessWidget {
     double snacksPercent = 4.8;
 
     return MainLayout(
+      floatingActionButton: SizedBox(
+        width: fabMenuWidth,
+        height: 310,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _dailyOverviewScreenViewModel.floatingActionMenuElapsed,
+              builder: (_, _, _) {
+                if (_dailyOverviewScreenViewModel.floatingActionMenuElapsed.value) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(
+                          heroTag: "5",
+                          onPressed: () {
+                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                          },
+                          label: Text("Eats Journal Entry"),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text("Weight Journal Entry")),
+                      ),
+                      SizedBox(height: 5),
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(heroTag: "3", onPressed: () {}, label: Text("Food")),
+                      ),
+                      SizedBox(height: 5),
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text("Quick Entry")),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              },
+            ),
+            const SizedBox(height: 10, width: 0),
+            FloatingActionButton(
+              heroTag: "1",
+              onPressed: () {
+                _dailyOverviewScreenViewModel.toggleFloatingActionButtons();
+              },
+              child: Icon(Icons.add),
+            ),
+          ],
+        ),
+      ),
       route: OpenEatsJournalStrings.navigatorRouteHome,
       title: AppLocalizations.of(context)!.daily_overview,
       body: Column(
@@ -81,23 +136,13 @@ class DailyOverviewScreen extends StatelessWidget {
                         try {
                           _selectDate(initialDate: _dailyOverviewScreenViewModel.currentJournalDate.value, context: context);
                         } on Exception catch (exc, stack) {
-                          await ErrorHandlers.showException(
-                            context: navigatorKey.currentContext!,
-                            exception: exc,
-                            stackTrace: stack,
-                          );
+                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                         } on Error catch (error, stack) {
-                          await ErrorHandlers.showException(
-                            context: navigatorKey.currentContext!,
-                            error: error,
-                            stackTrace: stack,
-                          );
+                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                         }
                       },
                       child: Text(
-                        DateFormat.yMMMMd(
-                          _dailyOverviewScreenViewModel.languageCode,
-                        ).format(_dailyOverviewScreenViewModel.currentJournalDate.value),
+                        DateFormat.yMMMMd(_dailyOverviewScreenViewModel.languageCode).format(_dailyOverviewScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -133,11 +178,7 @@ class DailyOverviewScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: 50),
                     Text(AppLocalizations.of(context)!.kcal, style: textTheme.titleLarge, textAlign: TextAlign.center),
-                    Text(
-                      "${formatter.format(value)}/\n${formatter.format(maxValue)}",
-                      style: textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
+                    Text("${formatter.format(value)}/\n${formatter.format(maxValue)}", style: textTheme.titleMedium, textAlign: TextAlign.center),
                   ],
                 ),
               ),
@@ -147,15 +188,12 @@ class DailyOverviewScreen extends StatelessWidget {
                   width: dimension,
                   child: Chart(
                     data: [
-                      {'type': '100Percent', 'percent': 100},
-                      {'type': 'currentPercent', 'percent': percentageFilled},
+                      {"type": "100Percent", "percent": 100},
+                      {"type": "currentPercent", "percent": percentageFilled},
                     ],
                     variables: {
-                      'type': Variable(accessor: (Map map) => map['type'] as String),
-                      'percent': Variable(
-                        accessor: (Map map) => map['percent'] as num,
-                        scale: LinearScale(min: 0, max: 100),
-                      ),
+                      "type": Variable(accessor: (Map map) => map["type"] as String),
+                      "percent": Variable(accessor: (Map map) => map["percent"] as num, scale: LinearScale(min: 0, max: 100)),
                     },
                     marks: [
                       IntervalMark(
@@ -163,13 +201,7 @@ class DailyOverviewScreen extends StatelessWidget {
                         color: ColorEncode(variable: "type", values: colors),
                       ),
                     ],
-                    coord: PolarCoord(
-                      transposed: true,
-                      startAngle: 2.5,
-                      endAngle: 6.93,
-                      startRadius: radius,
-                      endRadius: radius,
-                    ),
+                    coord: PolarCoord(transposed: true, startAngle: 2.5, endAngle: 6.93, startRadius: radius, endRadius: radius),
                   ),
                 ),
               ),
@@ -180,33 +212,15 @@ class DailyOverviewScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Center(
-                          child: GaugeNutritionFactSmall(
-                            factName: AppLocalizations.of(context)!.fat,
-                            value: 256,
-                            maxValue: 596,
-                          ),
-                        ),
+                        child: Center(child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.fat, value: 256, maxValue: 596)),
                       ),
                       Expanded(
                         flex: 1,
-                        child: Center(
-                          child: GaugeNutritionFactSmall(
-                            factName: AppLocalizations.of(context)!.carb,
-                            value: 80,
-                            maxValue: 88,
-                          ),
-                        ),
+                        child: Center(child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.carb, value: 80, maxValue: 88)),
                       ),
                       Expanded(
                         flex: 1,
-                        child: Center(
-                          child: GaugeNutritionFactSmall(
-                            factName: AppLocalizations.of(context)!.prot,
-                            value: 33,
-                            maxValue: 88,
-                          ),
-                        ),
+                        child: Center(child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.prot, value: 33, maxValue: 88)),
                       ),
                     ],
                   ),
@@ -292,10 +306,7 @@ class DailyOverviewScreen extends StatelessWidget {
                                 flex: 1,
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: GaugeDistribution(
-                                    value: dinnerPercent,
-                                    startValue: breakfastPercent + lunchPercent,
-                                  ),
+                                  child: GaugeDistribution(value: dinnerPercent, startValue: breakfastPercent + lunchPercent),
                                 ),
                               ),
                               Expanded(
@@ -324,10 +335,7 @@ class DailyOverviewScreen extends StatelessWidget {
                                     flex: 1,
                                     child: Align(
                                       alignment: Alignment.centerRight,
-                                      child: GaugeDistribution(
-                                        value: snacksPercent,
-                                        startValue: breakfastPercent + lunchPercent + dinnerPercent,
-                                      ),
+                                      child: GaugeDistribution(value: snacksPercent, startValue: breakfastPercent + lunchPercent + dinnerPercent),
                                     ),
                                   ),
                                   Expanded(
@@ -499,9 +507,7 @@ class DailyOverviewScreen extends StatelessWidget {
                         child: SizedBox(
                           height: 220,
                           child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0)),
-                            ),
+                            style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
                             onPressed: () {},
                             child: null,
                           ),
@@ -531,30 +537,15 @@ class DailyOverviewScreen extends StatelessWidget {
                                     double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
 
                                     return Dialog(
-                                      insetPadding: EdgeInsets.fromLTRB(
-                                        horizontalPadding,
-                                        verticalPadding,
-                                        horizontalPadding,
-                                        verticalPadding,
-                                      ),
-                                      child: SettingsScreen(
-                                        settingsScreenViewModel: SettingsScreenViewModel(settingsRepository: _settingsRepository),
-                                      ),
+                                      insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                                      child: SettingsScreen(settingsScreenViewModel: SettingsScreenViewModel(settingsRepository: _settingsRepository)),
                                     );
                                   },
                                 );
                               } on Exception catch (exc, stack) {
-                                await ErrorHandlers.showException(
-                                  context: navigatorKey.currentContext!,
-                                  exception: exc,
-                                  stackTrace: stack,
-                                );
+                                await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                               } on Error catch (error, stack) {
-                                await ErrorHandlers.showException(
-                                  context: navigatorKey.currentContext!,
-                                  error: error,
-                                  stackTrace: stack,
-                                );
+                                await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                               }
                             },
                             icon: Icon(Icons.settings),
@@ -574,12 +565,7 @@ class DailyOverviewScreen extends StatelessWidget {
   }
 
   Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(9999),
-    );
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
       _dailyOverviewScreenViewModel.currentJournalDate.value = date;
