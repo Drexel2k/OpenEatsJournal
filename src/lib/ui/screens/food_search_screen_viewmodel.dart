@@ -223,7 +223,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     if (_sortOrder == SortOrder.name) {
       _foodSearchResult.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
     } else if (_sortOrder == SortOrder.kcal) {
-      _foodSearchResult.sort((food1, food2) => food2.object.energyKj - food1.object.energyKj);
+      _foodSearchResult.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
     } else if (_sortOrder == SortOrder.popularity) {
       _foodSearchResult.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
     }
@@ -235,8 +235,27 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     return ObjectWithOrder(object: e, order: order);
   }
 
+  void addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
+    if (eatsJournalEntry.food != null) {
+      await _foodRepository.setFoodCache(eatsJournalEntry.food!);
+    }
+
+    await _journalRepository.saveOnceDailyNutritionTarget(
+      entryDate: eatsJournalEntry.entryDate,
+      dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
+    );
+    await _journalRepository.addEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+  }
+
+  void toggleFloatingActionButtons() {
+    _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
+  }
+
   @override
   void dispose() {
+    _currentJournalDate.dispose();
+    _currentMeal.dispose();
+    _floatincActionMenuElapsed.dispose();
     _foodSearchResultChangedNotifier.dispose();
     _showInitialLoading.dispose();
     _errorCode.dispose();
@@ -244,16 +263,5 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortButtonChanged.dispose();
 
     super.dispose();
-  }
-
-  void addJournalEntry(EatsJournalEntry eatsJournalEntry) async {
-    if (eatsJournalEntry.food != null) {
-      await _foodRepository.setFoodCache(eatsJournalEntry.food!);
-    }
-    await _journalRepository.insertFoodJournalEntry(eatsJournalEntry);
-  }
-
-  void toggleFloatingActionButtons() {
-    _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
   }
 }

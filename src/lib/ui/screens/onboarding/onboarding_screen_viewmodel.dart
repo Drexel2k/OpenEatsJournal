@@ -78,10 +78,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       activityFactor: _activityFactor.value!,
     );
 
-    int dailyTargetCalories = NutritionCalculator.calculateTargetCaloriesPerDay(
-      kCaloriesPerDay: dailyKCaloriesD,
-      weightLossPerWeekKg: weightLossKg,
-    ).round();
+    int dailyTargetCalories = NutritionCalculator.calculateTargetCaloriesPerDay(kCaloriesPerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg).round();
 
     await _settingsRepository.saveAllSettings(
       AllSettings(
@@ -103,7 +100,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       ),
     );
 
-    await _weightRepository.insertWeightJournalEntry(DateTime.now(), _weight.value!);
+    await _weightRepository.addWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
   }
 
   void _calculateKCalories() {
@@ -138,10 +135,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       ),
       activityFactor: _activityFactor.value!,
     );
-    double dailyTargetCaloriesD = NutritionCalculator.calculateTargetCaloriesPerDay(
-      kCaloriesPerDay: dailyKCaloriesD,
-      weightLossPerWeekKg: weightLossKg,
-    );
+    double dailyTargetCaloriesD = NutritionCalculator.calculateTargetCaloriesPerDay(kCaloriesPerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg);
 
     _dailyNeedKCalories.value = dailyKCaloriesD.round();
     _dailyTargetCalories.value = dailyTargetCaloriesD.round();

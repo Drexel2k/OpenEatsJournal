@@ -98,24 +98,39 @@ class SettingsRepository extends ChangeNotifier {
   }
 
   Future<void> initSettings() async {
-    bool? darkModeSetting = await _oejDatabase.getBoolSetting("darkmode");
-    if (darkModeSetting != null) {
+    AllSettings allSettings = await _oejDatabase.getAllSettings();
+
+    if (allSettings.darkMode != null &&
+        allSettings.languageCode != null &&
+        allSettings.gender != null &&
+        allSettings.birthday != null &&
+        allSettings.height != null &&
+        allSettings.weight != null &&
+        allSettings.activityFactor != null &&
+        allSettings.weightTarget != null &&
+        allSettings.kCalsMonday != null &&
+        allSettings.kCalsTuesday != null &&
+        allSettings.kCalsWednesday != null &&
+        allSettings.kCalsThursday != null &&
+        allSettings.kCalsFriday != null &&
+        allSettings.kCalsSaturday != null &&
+        allSettings.kCalsSunday != null) {
       _initialized.value = true;
-      _darkMode.value = darkModeSetting;
-      _languageCode.value = (await _oejDatabase.getStringSetting("language_code"))!;
-      _gender = Gender.getByValue((await _oejDatabase.getIntSetting("gender"))!);
-      _birthday = (await _oejDatabase.getDateTimeSetting("birthday"))!;
-      _height = (await _oejDatabase.getIntSetting("height"))!;
-      _weight = (await _oejDatabase.getDoubleSetting("weight"))!;
-      _activityFactor = (await _oejDatabase.getDoubleSetting("activity_factor"))!;
-      _weightTarget = WeightTarget.getByValue((await _oejDatabase.getIntSetting("weight_target"))!);
-      _kCalsMonday = (await _oejDatabase.getIntSetting("kcals_monday"))!;
-      _kCalsTuesday = (await _oejDatabase.getIntSetting("kcals_tuesday"))!;
-      _kCalsWednesday = (await _oejDatabase.getIntSetting("kcals_wednesday"))!;
-      _kCalsThursday = (await _oejDatabase.getIntSetting("kcals_thursday"))!;
-      _kCalsFriday = (await _oejDatabase.getIntSetting("kcals_friday"))!;
-      _kCalsSaturday = (await _oejDatabase.getIntSetting("kcals_saturday"))!;
-      _kCalsSunday = (await _oejDatabase.getIntSetting("kcals_sunday"))!;
+      _darkMode.value = allSettings.darkMode!;
+      _languageCode.value = allSettings.languageCode!;
+      _gender = allSettings.gender!;
+      _birthday = allSettings.birthday!;
+      _height = allSettings.height!;
+      _weight = allSettings.weight!;
+      _activityFactor = allSettings.activityFactor!;
+      _weightTarget = allSettings.weightTarget!;
+      _kCalsMonday = allSettings.kCalsMonday!;
+      _kCalsTuesday = allSettings.kCalsTuesday!;
+      _kCalsWednesday = allSettings.kCalsWednesday!;
+      _kCalsThursday = allSettings.kCalsThursday!;
+      _kCalsFriday = allSettings.kCalsFriday!;
+      _kCalsSaturday = allSettings.kCalsSaturday!;
+      _kCalsSunday = allSettings.kCalsSunday!;
     }
 
     _darkMode.addListener(_darkModeChanged);
@@ -123,46 +138,32 @@ class SettingsRepository extends ChangeNotifier {
   }
 
   Future<void> saveAllSettings(AllSettings settings) async {
-    await _saveDarkmode(settings.darkMode);
-    await _saveLanguageCode(settings.languageCode);
-    await _saveGender(settings.gender);
-    await _saveBirthday(settings.birthday);
-    await _saveHeight(settings.height);
-    await _saveWeight(settings.weight);
-    await _saveActivityFactor(settings.activityFactor);
-    await _saveWeightTarget(settings.weightTarget);
-    await _saveKCalsMonday(settings.kCalsMonday);
-    await _saveKCalsTuesday(settings.kCalsTuesday);
-    await _saveKCalsWednesday(settings.kCalsWednesday);
-    await _saveKCalsThursday(settings.kCalsThursday);
-    await _saveKCalsFriday(settings.kCalsFriday);
-    await _saveKCalsSaturday(settings.kCalsSaturday);
-    await _saveKCalsSunday(settings.kCalsSunday);
+    await _oejDatabase.setAllSettings(settings);
 
     _initialized.value = true;
-    _darkMode.value = settings.darkMode;
-    _gender = settings.gender;
-    _birthday = settings.birthday;
-    _height = settings.height;
-    _weight = settings.weight;
-    _activityFactor = settings.activityFactor;
-    _weightTarget = settings.weightTarget;
-    _kCalsMonday = settings.kCalsMonday;
-    _kCalsTuesday = settings.kCalsTuesday;
-    _kCalsWednesday = settings.kCalsWednesday;
-    _kCalsThursday = settings.kCalsThursday;
-    _kCalsFriday = settings.kCalsFriday;
-    _kCalsSaturday = settings.kCalsSaturday;
-    _kCalsSunday = settings.kCalsSunday;
-    _languageCode.value = settings.languageCode;
+    _darkMode.value = settings.darkMode!;
+    _gender = settings.gender!;
+    _birthday = settings.birthday!;
+    _height = settings.height!;
+    _weight = settings.weight!;
+    _activityFactor = settings.activityFactor!;
+    _weightTarget = settings.weightTarget!;
+    _kCalsMonday = settings.kCalsMonday!;
+    _kCalsTuesday = settings.kCalsTuesday!;
+    _kCalsWednesday = settings.kCalsWednesday!;
+    _kCalsThursday = settings.kCalsThursday!;
+    _kCalsFriday = settings.kCalsFriday!;
+    _kCalsSaturday = settings.kCalsSaturday!;
+    _kCalsSunday = settings.kCalsSunday!;
+    _languageCode.value = settings.languageCode!;
   }
 
-  Future<void> _saveDarkmode(bool darkMode) async {
-    await _oejDatabase.setBoolSetting("darkmode", darkMode);
+  Future<void> _darkModeChanged() async {
+    await _oejDatabase.setBoolSetting("darkmode", _darkMode.value);
   }
 
-  Future<void> _saveLanguageCode(String languageCode) async {
-    await _oejDatabase.setStringSetting("language_code", languageCode);
+  Future<void> _languageCodeChanged() async {
+    await _oejDatabase.setStringSetting("language_code", _languageCode.value);
   }
 
   Future<void> _saveGender(Gender gender) async {
@@ -224,14 +225,6 @@ class SettingsRepository extends ChangeNotifier {
     _kCalsSunday = kCals;
   }
 
-  Future<void> _darkModeChanged() async {
-    await _oejDatabase.setBoolSetting("darkmode", _darkMode.value);
-  }
-
-  Future<void> _languageCodeChanged() async {
-    await _oejDatabase.setStringSetting("language_code", _languageCode.value);
-  }
-
   Future<void> saveDailyCaloriesTargetsSame(int dailyTargetCalories) async {
     await _saveKCalsMonday(dailyTargetCalories);
     await _saveKCalsTuesday(dailyTargetCalories);
@@ -250,6 +243,30 @@ class SettingsRepository extends ChangeNotifier {
     await _saveKCalsFriday(kCalSettings.kCalsFriday);
     await _saveKCalsSaturday(kCalSettings.kCalsSaturday);
     await _saveKCalsSunday(kCalSettings.kCalsSunday);
+  }
+
+  int getCurrentJournalDayTargetKJoule() {
+    int dayTargetKJoule = 0;
+    switch (currentJournalDate.value.weekday) {
+      case 1:
+        dayTargetKJoule = kCalsMonday;
+      case 2:
+        dayTargetKJoule = kCalsTuesday;
+      case 3:
+        dayTargetKJoule = kCalsWednesday;
+      case 4:
+        dayTargetKJoule = kCalsThursday;
+      case 5:
+        dayTargetKJoule = kCalsFriday;
+      case 6:
+        dayTargetKJoule = kCalsSaturday;
+      case 7:
+        dayTargetKJoule = kCalsSunday;
+      default:
+        throw StateError("Unknown weekday ${currentJournalDate.value.weekday}.");
+    }
+
+    return dayTargetKJoule;
   }
 
   @override

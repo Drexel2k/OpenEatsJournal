@@ -7,44 +7,36 @@ import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
 
 class FoodCard extends StatelessWidget {
-  FoodCard({
+  const FoodCard({
     super.key,
     required Food food,
     required TextTheme textTheme,
-    required GestureTapCallback onCardTap,
+    required void Function(Food) onCardTap,
     required void Function(Food, int, MeasurementUnit) onAddJournalEntryPressed,
   }) : _textTheme = textTheme,
        _food = food,
        _onCardTap = onCardTap,
-       _onAddJournalEntryPressed = onAddJournalEntryPressed,
-       _measurementUnit = food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
-       _kJoulesAdd = food.defaultFoodUnit != null ? (food.energyKj * ((food.defaultFoodUnit!.amount / 100))).round() : food.energyKj;
-      
+       _onAddJournalEntryPressed = onAddJournalEntryPressed;
+
   final TextTheme _textTheme;
   final Food _food;
-  final GestureTapCallback _onCardTap;
+  final void Function(Food) _onCardTap;
   final void Function(Food, int, MeasurementUnit) _onAddJournalEntryPressed;
-  
-  final int _kJoulesAdd;
-  final MeasurementUnit _measurementUnit;
 
   @override
   Widget build(BuildContext context) {
     final String languageCode = Localizations.localeOf(context).languageCode;
-    final NumberFormat formatter = NumberFormat(null, languageCode);
+    final NumberFormat numberFormatter = NumberFormat(null, languageCode);
     final borderRadius = BorderRadius.circular(8);
 
-    String kJoulsAddName = AppLocalizations.of(context)!.hundred_measurement_unit(_measurementUnit.text);
-
-    if (_food.defaultFoodUnit != null) {
-      kJoulsAddName = "${_food.defaultFoodUnit!.name} (${formatter.format(_food.defaultFoodUnit!.amount)}${_measurementUnit.text})";
-    }
-
+    MeasurementUnit measurementUnit = _getMeasurementUnit();
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
         borderRadius: borderRadius,
-        onTap: _onCardTap,
+        onTap: () {
+          _onCardTap(_food);
+        },
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
           child: Column(
@@ -79,12 +71,12 @@ class FoodCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(style: _textTheme.titleLarge, AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_food.energyKj))),
+                        Text(style: _textTheme.titleMedium, AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_food.kJoule))),
                         Text(
                           style: _textTheme.labelSmall,
                           AppLocalizations.of(
                             context,
-                          )!.per_100_measurement_unit(_food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter),
+                          )!.per_100_measurement_unit(_food.nutritionPerGramAmount != null ? MeasurementUnit.gram.text : MeasurementUnit.milliliter.text),
                         ),
                       ],
                     ),
@@ -107,19 +99,17 @@ class FoodCard extends StatelessWidget {
                     width: 145,
                     child: OutlinedButton(
                       onPressed: () {
-                        _onAddJournalEntryPressed(_food, _kJoulesAdd, _measurementUnit);
+                        _onAddJournalEntryPressed(_food, _food.defaultFoodUnit != null ? _food.defaultFoodUnit!.amount : 100, _getMeasurementUnit());
                       },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Column(
                         children: [
-                          Column(
-                            children: [
-                              Text(
-                                style: _textTheme.titleSmall,
-                                "+${AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_kJoulesAdd))}",
-                              ),
-                              Text(style: _textTheme.labelSmall, kJoulsAddName),
-                            ],
+                          Text(
+                            style: _textTheme.titleSmall,
+                            "+${AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_getKJoulesToAdd()))}",
+                          ),
+                          Text(
+                            style: _textTheme.labelSmall,
+                            _getKJoulesToAddText(measurementUnit: measurementUnit, context: context, formatter: numberFormatter),
                           ),
                         ],
                       ),
@@ -132,5 +122,42 @@ class FoodCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getKJoulesToAddText({required MeasurementUnit measurementUnit, required BuildContext context, required NumberFormat formatter}) {
+    String kJoulsAddName = AppLocalizations.of(context)!.hundred_measurement_unit(measurementUnit.text);
+
+    if (_food.defaultFoodUnit != null) {
+      kJoulsAddName = "${_food.defaultFoodUnit!.name} (${formatter.format(_food.defaultFoodUnit!.amount)}${measurementUnit.text})";
+    }
+    return kJoulsAddName;
+  }
+
+  MeasurementUnit _getMeasurementUnit() {
+    if (_food.defaultFoodUnit != null) {
+      return _food.defaultFoodUnit!.amountMeasurementUnit;
+    } else {
+      if (_food.nutritionPerGramAmount != null) {
+        return MeasurementUnit.gram;
+      } else {
+        return MeasurementUnit.milliliter;
+      }
+    }
+  }
+
+  int _getKJoulesToAdd() {
+    if (_food.defaultFoodUnit != null) {
+      if (_food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
+        return (_food.kJoule * (_food.defaultFoodUnit!.amount / _food.nutritionPerGramAmount!)).round();
+      } else {
+        return (_food.kJoule * (_food.defaultFoodUnit!.amount / _food.nutritionPerMilliliterAmount!)).round();
+      }
+    } else {
+      if (_food.nutritionPerGramAmount != null) {
+        return (_food.kJoule * (100 / _food.nutritionPerGramAmount!)).round();
+      } else {
+        return (_food.kJoule * (100 / _food.nutritionPerMilliliterAmount!)).round();
+      }
+    }
   }
 }

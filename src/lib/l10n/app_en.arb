@@ -80,8 +80,22 @@
       }
     }
   },
+  "amount_saturated_fat": "{amount} saturated fat",
+  "@amount_saturated_fat": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
   "na_fat": "n/a fat",
+  "na_saturated_fat": "n/a saturated fat",
   "carb": "carb",
+  "carbohydrates": "carbohydrates",
   "amount_carb": "{amount} carb",
   "@amount_carb": {
     "placeholders": {
@@ -94,8 +108,22 @@
       }
     }
   },
+  "amount_sugar": "{amount} sugar",
+  "@amount_sugar": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
   "na_carb": "n/a carb",
-  "prot": "Prot",
+  "na_sugar": "n/a sugar",
+  "prot": "prot",
+  "protein": "protein",
   "amount_prot": "{amount} prot",
   "@amount_prot": {
     "placeholders": {
@@ -109,6 +137,19 @@
     }
   },
   "na_prot": "n/a prot",
+  "amount_salt": "{amount} salt",
+  "@amount_salt": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "na_salt": "n/a salt",
   "days": "days",
   "weeks": "weeks",
   "months": "months",
@@ -156,5 +197,13 @@
   "snacks": "snacks",
   "serving": "Serving",
   "piece": "Piece",
-  "hundred_measurement_unit": "100{measurementUnit}"
+  "hundred_measurement_unit": "100{measurementUnit}",
+  "edit_food": "Edit food",
+  "saturated_fat": "saturated fat",
+  "sugar": "sugar",
+  "salt": "salt",
+  "add_eats_journal_entry": "Add eats journal entry",
+  "enter_valid_amount" : "Please enter a valid amount.",
+  "enter_valid_eats_amount" : "Please enter a valid eats amount.",
+  "na_kcal": "n/a kCal"
 }

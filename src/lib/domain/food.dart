@@ -1,13 +1,14 @@
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/food_unit_type.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 
 class Food {
   Food({
     required String name,
     required FoodSource foodSource,
-    required int energyKj,
+    required int kJoule,
     int? id,
     String? foodSourceIdExternal,
     List<String>? brands,
@@ -27,7 +28,7 @@ class Food {
        _foodSourceIdExternal = foodSourceIdExternal,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
-       _energyKj = energyKj,
+       _kJoule = kJoule,
        _carbohydrates = carbohydrates,
        _sugar = sugar,
        _fat = fat,
@@ -41,7 +42,7 @@ class Food {
   final FoodSource _foodSource;
   int? _id;
   final String? _foodSourceIdExternal;
-  final int _energyKj;
+  final int _kJoule;
   final int? _nutritionPerGramAmount;
   final int? _nutritionPerMilliliterAmount;
   final double? _carbohydrates;
@@ -76,7 +77,7 @@ class Food {
   String? get foodSourceIdExternal => _foodSourceIdExternal;
   int? get nutritionPerGramAmount => _nutritionPerGramAmount;
   int? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
-  int get energyKj => _energyKj;
+  int get kJoule => _kJoule;
   double? get carbohydrates => _carbohydrates;
   double? get sugar => _sugar;
   double? get fat => _fat;
@@ -86,14 +87,24 @@ class Food {
   List<ObjectWithOrder<FoodUnit>> get foodUnits => _foodUnits.toList();
   FoodUnit? get defaultFoodUnit => _defaultFoodUnit;
 
-  addFoodUnit({required String name, required int amount, FoodUnitType? foodUnitType}) {
-    FoodUnit foodUnit = FoodUnit(name: name, amount: amount, foodUnitType: foodUnitType);
+  bool addFoodUnit({required String name, required int amount, required MeasurementUnit amountMeasurementUnit, FoodUnitType? foodUnitType}) {
+    if (amountMeasurementUnit == MeasurementUnit.gram) {
+      if (_nutritionPerGramAmount == null) {
+        return false;
+      }
+    } else {
+      if (_nutritionPerMilliliterAmount == null) {
+        return false;
+      }
+    }
+
+    FoodUnit foodUnit = FoodUnit(name: name, amount: amount, amountMeasurementUnit: amountMeasurementUnit, foodUnitType: foodUnitType);
 
     //ensure list ist sorted by sort order to generate the new order value.
     int order = 1;
     if (_foodUnits.isNotEmpty) {
       _foodUnits.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
-      order =_foodUnits.last.order + 1;
+      order = _foodUnits.last.order + 1;
     }
 
     _foodUnits.add(ObjectWithOrder(object: foodUnit, order: order));
@@ -101,5 +112,7 @@ class Food {
     if (_foodUnits.length <= 1) {
       _defaultFoodUnit = foodUnit;
     }
+
+    return true;
   }
 }

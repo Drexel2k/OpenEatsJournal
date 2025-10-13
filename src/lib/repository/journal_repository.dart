@@ -12,11 +12,15 @@ class JournalRepository {
     _oejDatabase = oejDatabase;
   }
 
-  Future<void> insertFoodJournalEntry(EatsJournalEntry eatsJournalEntry) async {
+  Future<void> saveOnceDailyNutritionTarget({required DateTime entryDate, required int dayTargetKJoule}) async {
+    await _oejDatabase.insertOnceDailyNutritionTarget(entryDate, dayTargetKJoule);
+  }
+
+  Future<void> addEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _oejDatabase.insertEatsJournalEntry(eatsJournalEntry);
   }
 
-  Future<void> insertWeightJournalEntry(DateTime date, double weight) async {
+  Future<void> addWeightJournalEntry({required DateTime date, required double weight}) async {
     await _oejDatabase.insertWeightJournalEntry(date, weight);
   }
 }

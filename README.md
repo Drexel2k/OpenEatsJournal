@@ -52,4 +52,4 @@ Connect to shell to browse the file system e.g.:
 Exit:  
 `exit`  
  &nbsp;   
- Alternativeley you can access files via Android Studio, therefore open a new project in Android Studio and open the "Device Explorer", while the virtual device is running. If the Device Explorer isn't on the right bar, click the 3 dots on the left bar and select "Device Explorer". In the Device Explorer right click the file and select "Save As...".
+ Alternatively you can access files via Android Studio, therefore open a new project in Android Studio and open the "Device Explorer", while the virtual device is running. If the Device Explorer isn't on the right bar, click the 3 dots on the left bar and select "Device Explorer". In the Device Explorer right click the file and select "Save As...".

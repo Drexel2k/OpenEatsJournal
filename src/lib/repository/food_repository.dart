@@ -88,21 +88,34 @@ class FoodRepository {
 
   Food? _getFoodFromFoodApiV1V2({required Map<String, dynamic> json, required String languageCode}) {
     FoodApi foodApi = FoodApi.fromJsonApiV1V2(json);
-    MeasurementUnit? foodUnit;
 
-    if (foodApi.nutriments != null) {
+    if (foodApi.nutriments != null && (foodApi.productQuantityUnit != null || foodApi.servingQuantityUnit != null)) {
       double? servingAdjustFactor;
+      int? energyKjPer100Units;
+      MeasurementUnit? nutrimentsMeasurementUnit;
 
       if (foodApi.nutritionDataPer != null && foodApi.nutritionDataPer == OpenFoodFactsApiStrings.serving) {
         if (foodApi.servingQuantity != null) {
           num servingQuantity = num.parse(foodApi.servingQuantity!);
           servingAdjustFactor = 100 / servingQuantity;
+          energyKjPer100Units = _getEnergyPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+        }
+
+        //If energyKjPer100Units is not null here we assume the unit is from serving, because nutritionDataPer was not null and per serving.
+        //So even the energyKj100g from the api should be in the serving unit.
+        if (energyKjPer100Units != null) {
+          nutrimentsMeasurementUnit = _getMeasurementUnitFromApiString(foodApi.servingQuantityUnit);
         }
       }
 
-      int? energyKjPer100Units = _getEnergyPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+      if (energyKjPer100Units == null || nutrimentsMeasurementUnit == null) {
+        //We don't have valid infos from the serving here, so we check the product data.
+        //nutritionDataPer can only be 100g or serving, so if it is not serving, energyKj100g and energyKj should be the same.
+        energyKjPer100Units = foodApi.nutriments!.energyKj100g ?? foodApi.nutriments!.energyKj;
+        nutrimentsMeasurementUnit = _getMeasurementUnitFromApiString(foodApi.productQuantityUnit);
+      }
 
-      if (energyKjPer100Units != null && (foodApi.productQuantityUnit != null || foodApi.servingQuantityUnit != null)) {
+      if (energyKjPer100Units != null && nutrimentsMeasurementUnit != null) {
         double? carbohydratesPer100Units = _getCarbohydratesPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         double? sugarPer100Units = _getSugarsPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         double? fatPer100Units = _getFatPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
@@ -110,28 +123,14 @@ class FoodRepository {
         double? proteinsPer100Units = _getProteinsPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         double? saltPer100Units = _getSaltPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
 
-        if (foodApi.productQuantityUnit != null) {
-          if (foodApi.productQuantityUnit!.trim().toLowerCase() == OpenFoodFactsApiStrings.gram) {
-            foodUnit = MeasurementUnit.gram;
-          } else {
-            foodUnit = MeasurementUnit.milliliter;
-          }
-        } else {
-          if (foodApi.servingQuantityUnit!.trim().toLowerCase() == OpenFoodFactsApiStrings.gram) {
-            foodUnit = MeasurementUnit.gram;
-          } else {
-            foodUnit = MeasurementUnit.milliliter;
-          }
-        }
-
         Food food = Food(
           name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
           foodSourceIdExternal: foodApi.code,
-          nutritionPerGramAmount: foodUnit == MeasurementUnit.gram ? 100 : null,
-          nutritionPerMilliliterAmount: foodUnit == MeasurementUnit.gram ? null : 100,
-          energyKj: energyKjPer100Units,
+          nutritionPerGramAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? 100 : null,
+          nutritionPerMilliliterAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? null : 100,
+          kJoule: energyKjPer100Units,
           carbohydrates: carbohydratesPer100Units,
           sugar: sugarPer100Units,
           fat: fatPer100Units,
@@ -140,16 +139,44 @@ class FoodRepository {
           salt: saltPer100Units,
         );
 
-        if (foodApi.servingQuantity != null) {
-          food.addFoodUnit(name: OpenEatsJournalStrings.serving, amount: double.parse(foodApi.servingQuantity!).round(), foodUnitType: FoodUnitType.serving);
+        if (_getMeasurementUnitFromApiString(foodApi.servingQuantityUnit) == nutrimentsMeasurementUnit) {
+          if (foodApi.servingQuantity != null) {
+            food.addFoodUnit(
+              name: OpenEatsJournalStrings.serving,
+              amount: double.parse(foodApi.servingQuantity!).round(),
+              amountMeasurementUnit: nutrimentsMeasurementUnit,
+              foodUnitType: FoodUnitType.serving,
+            );
+          }
         }
 
-        if (foodApi.productQuantity != null) {
-          food.addFoodUnit(name: OpenEatsJournalStrings.piece, amount: double.parse(foodApi.productQuantity!).round(), foodUnitType: FoodUnitType.piece);
+        if (_getMeasurementUnitFromApiString(foodApi.productQuantityUnit) == nutrimentsMeasurementUnit) {
+          if (foodApi.productQuantity != null) {
+            food.addFoodUnit(
+              name: OpenEatsJournalStrings.piece,
+              amount: double.parse(foodApi.productQuantity!).round(),
+              amountMeasurementUnit: nutrimentsMeasurementUnit,
+              foodUnitType: FoodUnitType.piece,
+            );
+          }
         }
 
         return food;
       }
+    }
+
+    return null;
+  }
+
+  MeasurementUnit? _getMeasurementUnitFromApiString(String? value) {
+    if (value == null) {
+      return null;
+    }
+    if (value.trim().toLowerCase() == OpenFoodFactsApiStrings.gram) {
+      return MeasurementUnit.gram;
+    }
+    if (value.trim().toLowerCase() == OpenFoodFactsApiStrings.milliliter) {
+      return MeasurementUnit.milliliter;
     }
 
     return null;

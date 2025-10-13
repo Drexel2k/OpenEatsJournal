@@ -1,11 +1,14 @@
 import "dart:ui";
 
 import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_overview_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_overview_screen_viewmodel.dart";
@@ -17,12 +20,9 @@ import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 
 class OpenEatsJournalApp extends StatelessWidget {
-  const OpenEatsJournalApp({
-    super.key,
-    required OpenEatsJournalAppViewModel openEatsJournalAppViewModel,
-    required Repositories repositories,
-  }) : _repositories = repositories,
-       _openEatsJournalAppViewModel = openEatsJournalAppViewModel;
+  const OpenEatsJournalApp({super.key, required OpenEatsJournalAppViewModel openEatsJournalAppViewModel, required Repositories repositories})
+    : _repositories = repositories,
+      _openEatsJournalAppViewModel = openEatsJournalAppViewModel;
 
   final OpenEatsJournalAppViewModel _openEatsJournalAppViewModel;
   final Repositories _repositories;
@@ -55,15 +55,9 @@ class OpenEatsJournalApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale(_openEatsJournalAppViewModel.languageCode),
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.indigoAccent.shade700,
-              dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
-            ),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
             pageTransitionsTheme: PageTransitionsTheme(
-              builders: {
-                TargetPlatform.android: NoPageTransitionsBuilder(),
-                TargetPlatform.iOS: NoPageTransitionsBuilder(),
-              },
+              builders: {TargetPlatform.android: NoPageTransitionsBuilder(), TargetPlatform.iOS: NoPageTransitionsBuilder()},
             ),
           ),
           darkTheme: ThemeData(
@@ -73,10 +67,7 @@ class OpenEatsJournalApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
             pageTransitionsTheme: PageTransitionsTheme(
-              builders: {
-                TargetPlatform.android: NoPageTransitionsBuilder(),
-                TargetPlatform.iOS: NoPageTransitionsBuilder(),
-              },
+              builders: {TargetPlatform.android: NoPageTransitionsBuilder(), TargetPlatform.iOS: NoPageTransitionsBuilder()},
             ),
           ),
           themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
@@ -91,16 +82,24 @@ class OpenEatsJournalApp extends StatelessWidget {
               foodSearchScreenViewModel: FoodSearchScreenViewModel(
                 foodRepository: _repositories.foodRepository,
                 journalRepository: _repositories.journalRepository,
-                settingsRepository: _repositories.settingsRepository
+                settingsRepository: _repositories.settingsRepository,
               ),
             ),
-             OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) => OnboardingScreen(
+            OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) => OnboardingScreen(
               onboardingScreenViewModel: OnboardingScreenViewModel(
                 settingsRepository: _repositories.settingsRepository,
                 weightRepository: _repositories.weightRepository,
               ),
             ),
             OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
+            OpenEatsJournalStrings.navigatorRouteEatsAdd: (contextBuilder) => EatsJournalFoodAddScreen(
+              eatsJournalFoodAddScreenViewModel: EatsJournalFoodAddScreenViewModel(
+                food: (ModalRoute.of(contextBuilder)!.settings.arguments as Food),
+                journalRepository: _repositories.journalRepository,
+                foodRepository: _repositories.foodRepository,
+                settingsRepository: _repositories.settingsRepository
+              ),
+            ),
           },
           navigatorKey: navigatorKey,
         );

@@ -5,6 +5,8 @@ class OpenEatsJournalStrings {
   static const navigatorRouteSettings = "/settings";
   static const navigatorRouteOnboarding = "/onboarding";
   static const navigatorRouteBarcodeScanner = "/barcode";
+  static const navigatorRouteEatsAdd = "/eatsadd";
+  static const navigatorRouteFoodEdit = "/foodedit";
 
   static const emptyString = "";
   static const de = "de";
@@ -41,6 +43,7 @@ class OpenEatsJournalStrings {
   static const dbTableMeal = "t_meal";
   static const dbTableMeasurementUnit = "t_measurement_unit";
   static const dbTableFoodUnitType = "t_food_unit_type";
+  static const dbTableDailyNutritionTarget = "t_daily_nutrition_target";
 
   static const dbColumnId = "id";
   static const dbColumnSetting = "setting";
@@ -64,7 +67,7 @@ class OpenEatsJournalStrings {
   static const dbColumnAmount = "amount";
   static const dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
   static const dbColumnOrderNumber = "order_number";
-  static const dbColumnAmountUnitIdRef = "amount_unit_id_ref";
+  static const dbColumnamountMeasurementUnitIdRef = "amount_unit_id_ref";
   static const dbColumnDescription = "description";
   static const dbColumnMealIdRef = "meal_id_ref";
   static const dbColumnUrl = "url";

@@ -27,10 +27,10 @@ class EatsJournalEntry {
   EatsJournalEntry.quick({
     required DateTime entryDate,
     required String name,
-    required int amount,
-    required MeasurementUnit amountMeasurementUnit,
     required int kJoule,
     required Meal meal,
+    int? amount,
+    MeasurementUnit? amountMeasurementUnit,
     double? carbohydrates,
     double? sugar,
     double? fat,
@@ -52,10 +52,10 @@ class EatsJournalEntry {
        _salt = salt;
 
   final DateTime _entryDate;
-  final int _amount;
-  final MeasurementUnit _amountMeasurementUnit;
   final Meal _meal;
 
+  final int? _amount;
+  final MeasurementUnit? _amountMeasurementUnit;
   final Food? _food;
   final String? _name;
   final int? _kJoule;
@@ -71,15 +71,122 @@ class EatsJournalEntry {
   String? get foodSourceIdExternal => food != null ? _food!.foodSourceIdExternal : null;
   DateTime get entryDate => _entryDate;
   String get name => food != null ? _food!.name : _name!;
-  int get amount => _amount;
-  MeasurementUnit get amountMeasurementUnit => _amountMeasurementUnit;
-  int get kJoule => food != null ? (_food!.energyKj * (_amount / 100)).round() : _kJoule!;
-  double? get carbohydrates =>
-      food != null ? (_food!.carbohydrates != null ? _food.carbohydrates! * (_amount / 100) : null) : _carbohydrates;
-  double? get sugar => food != null ? (_food!.sugar != null ? _food.sugar! * (_amount / 100) : null) : _sugar;
-  double? get fat => food != null ? (_food!.fat != null ? _food.fat! * (_amount / 100) : null) : _fat;
-  double? get saturatedFat => food != null ? (_food!.saturatedFat != null ? _food.saturatedFat! * (_amount / 100) : null) : _saturatedFat;
-  double? get protein => food != null ? (_food!.protein != null ? _food.protein! * (_amount / 100) : null) : _protein;
-  double? get salt => food != null ? (_food!.salt != null ? _food.salt! * (_amount / 100) : null) : _salt;
+  int? get amount => _amount;
+  MeasurementUnit? get amountMeasurementUnit => _amountMeasurementUnit;
+  int get kJoule => _getKJoule();
+  double? get carbohydrates => _getCarbohydrates();
+  double? get sugar => _getSugar();
+  double? get fat => _getFat();
+  double? get saturatedFat => _getSaturatedFat();
+  double? get protein => _getProtein();
+  double? get salt => _getSalt();
   Meal get meal => _meal;
+
+  int _getKJoule() {
+    if (food != null) {
+      if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+        return (_food!.kJoule * (_amount! / _food.nutritionPerGramAmount!)).round();
+      } else {
+        return (_food!.kJoule * (_amount! / _food.nutritionPerMilliliterAmount!)).round();
+      }
+    } else {
+      return _kJoule!;
+    }
+  }
+
+  double? _getCarbohydrates() {
+    if (food != null) {
+      if (food!.carbohydrates != null) {
+        if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+          return (_food!.carbohydrates! * (_amount! / _food.nutritionPerGramAmount!));
+        } else {
+          return (_food!.carbohydrates! * (_amount! / _food.nutritionPerMilliliterAmount!));
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return _carbohydrates;
+    }
+  }
+
+  double? _getSugar() {
+    if (food != null) {
+      if (food!.sugar != null) {
+        if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+          return (_food!.sugar! * (_amount! / _food.nutritionPerGramAmount!));
+        } else {
+          return (_food!.sugar! * (_amount! / _food.nutritionPerMilliliterAmount!));
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return _sugar;
+    }
+  }
+
+  double? _getFat() {
+    if (food != null) {
+      if (food!.fat != null) {
+        if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+          return (_food!.fat! * (_amount! / _food.nutritionPerGramAmount!));
+        } else {
+          return (_food!.fat! * (_amount! / _food.nutritionPerMilliliterAmount!));
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return _fat;
+    }
+  }
+
+  double? _getSaturatedFat() {
+    if (food != null) {
+      if (food!.saturatedFat != null) {
+        if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+          return (_food!.saturatedFat! * (_amount! / _food.nutritionPerGramAmount!));
+        } else {
+          return (_food!.saturatedFat! * (_amount! / _food.nutritionPerMilliliterAmount!));
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return _saturatedFat;
+    }
+  }
+
+  double? _getProtein() {
+    if (food != null) {
+      if (food!.protein != null) {
+        if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+          return (_food!.protein! * (_amount! / _food.nutritionPerGramAmount!));
+        } else {
+          return (_food!.protein! * (_amount! / _food.nutritionPerMilliliterAmount!));
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return _protein;
+    }
+  }
+
+  double? _getSalt() {
+    if (food != null) {
+      if (food!.salt != null) {
+        if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+          return (_food!.salt! * (_amount! / _food.nutritionPerGramAmount!));
+        } else {
+          return (_food!.salt! * (_amount! / _food.nutritionPerMilliliterAmount!));
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return _salt;
+    }
+  }
 }

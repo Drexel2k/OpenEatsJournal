@@ -35,6 +35,7 @@ class DailyOverviewScreenViewModel extends ChangeNotifier {
   void dispose() {
     _currentJournalDate.dispose();
     _currentMeal.dispose();
+    _floatincActionMenuElapsed.dispose();
 
     super.dispose();
   }

@@ -58,13 +58,32 @@
   "amount_kcal": "{amount} kCal",
   "fat": "Fett",
   "amount_fat": "{amount} Fett",
+  "amount_saturated_fat": "{amount} gesättigte Fettsäuren",
   "na_fat": "n/a Fett",
+  "na_saturated_fat": "n/a gesättigte Fettsäuren",
   "carb": "KH",
+  "carbohydrates": "Kohlenhydrate",
   "amount_carb": "{amount} KH",
+  "amount_sugar": "{amount} Zucker",  
   "na_carb": "n/a KH",
-  "prot": "Proteine",
+  "na_sugar": "n/a Zucker",
+  "prot": "Prot",
+  "protein": "Protein",
   "amount_prot": "{amount} Prot",
   "na_prot": "n/a Prot",
+  "amount_salt": "{amount} Salz",
+  "@amount_salt": {
+    "placeholders": {
+      "amount": {
+        "type": "double",
+        "format": "decimalPatternDigits",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "na_salt": "n/a Salz",
   "days": "Tage",
   "weeks": "Wochen",
   "months": "Monate",
@@ -112,5 +131,13 @@
   "snacks": "Snacks",
   "serving": "Portion",
   "piece": "Stück",
-  "hundred_measurement_unit": "100{measurementUnit}"
+  "hundred_measurement_unit": "100{measurementUnit}",
+  "edit_food": "Lebensmittel editieren",
+  "saturated_fat": "gesätigte Fettsäuren",
+  "sugar": "Zucker",
+  "salt": "Salz",
+  "add_eats_journal_entry": "Ernährungseintrag hinzufügen",
+  "enter_valid_amount" : "Bitte eine gültige Menge eingeben",
+  "enter_valid_eats_amount" : "Bitte eine gültige Essensmenge eingeben",
+  "na_kcal": "n/a kCal"
 }

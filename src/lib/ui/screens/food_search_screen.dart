@@ -35,53 +35,8 @@ class FoodSearchScreen extends StatelessWidget {
     final double fabMenuWidth = 150;
 
     return MainLayout(
-      floatingActionButton: SizedBox(
-        width: fabMenuWidth,
-        height: 310,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ValueListenableBuilder(
-              valueListenable: _foodSearchScreenViewModel.floatingActionMenuElapsed,
-              builder: (_, _, _) {
-                if (_foodSearchScreenViewModel.floatingActionMenuElapsed.value) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(
-                        width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text("Weight Journal Entry")),
-                      ),
-                      SizedBox(height: 5),
-                      SizedBox(
-                        width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "3", onPressed: () {}, label: Text("Food")),
-                      ),
-                      SizedBox(height: 5),
-                      SizedBox(
-                        width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text("Quick Entry")),
-                      ),
-                    ],
-                  );
-                } else {
-                  return SizedBox();
-                }
-              },
-            ),
-            const SizedBox(height: 10, width: 0),
-            FloatingActionButton(
-              heroTag: "1",
-              onPressed: () {
-                _foodSearchScreenViewModel.toggleFloatingActionButtons();
-              },
-              child: Icon(Icons.add),
-            ),
-          ],
-        ),
-      ),
       route: OpenEatsJournalStrings.navigatorRouteFood,
+      title: AppLocalizations.of(context)!.food_management,
       body: Column(
         children: [
           Row(
@@ -290,9 +245,11 @@ class FoodSearchScreen extends StatelessWidget {
                     return FoodCard(
                       food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object,
                       textTheme: textTheme,
-                      onCardTap: () {},
+                      onCardTap: (Food cardFood) {
+                        Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsAdd, arguments: cardFood);
+                      },
                       onAddJournalEntryPressed: (Food cardFood, int amount, MeasurementUnit measurementUnit) {
-                        _foodSearchScreenViewModel.addJournalEntry(
+                        _foodSearchScreenViewModel.addEatsJournalEntry(
                           EatsJournalEntry.fromFood(
                             food: cardFood,
                             entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
@@ -310,7 +267,52 @@ class FoodSearchScreen extends StatelessWidget {
           ),
         ],
       ),
-      title: AppLocalizations.of(context)!.food_management,
+      floatingActionButton: SizedBox(
+        width: fabMenuWidth,
+        height: 310,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _foodSearchScreenViewModel.floatingActionMenuElapsed,
+              builder: (_, _, _) {
+                if (_foodSearchScreenViewModel.floatingActionMenuElapsed.value) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text("Weight Journal Entry")),
+                      ),
+                      SizedBox(height: 5),
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(heroTag: "3", onPressed: () {}, label: Text("Food")),
+                      ),
+                      SizedBox(height: 5),
+                      SizedBox(
+                        width: fabMenuWidth,
+                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text("Quick Entry")),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              },
+            ),
+            const SizedBox(height: 10, width: 0),
+            FloatingActionButton(
+              heroTag: "1",
+              onPressed: () {
+                _foodSearchScreenViewModel.toggleFloatingActionButtons();
+              },
+              child: Icon(Icons.add),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

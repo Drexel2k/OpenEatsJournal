@@ -34,22 +34,22 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
-    final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
+    final NumberFormat numberFormatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
     final Debouncer heightDebouncer = Debouncer();
     final Debouncer weightDebouncer = Debouncer();
 
     _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsViewModel.birthday.value);
 
-    _heightController.text = formatter.format(_settingsViewModel.height.value);
-    _weightController.text = formatter.format(_settingsViewModel.weight.value);
+    _heightController.text = numberFormatter.format(_settingsViewModel.height.value);
+    _weightController.text = numberFormatter.format(_settingsViewModel.weight.value);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
 
       child: SingleChildScrollView(
         child: Column(
-          children: [
+          children: <Widget>[
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,7 +73,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               valueListenable: _settingsViewModel.dailyTargetCalories,
                               builder: (_, _, _) {
                                 return Text(
-                                  formatter.format(_settingsViewModel.dailyTargetCalories.value),
+                                  numberFormatter.format(_settingsViewModel.dailyTargetCalories.value),
                                   style: textTheme.titleMedium,
                                 );
                               },
@@ -94,7 +94,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               valueListenable: _settingsViewModel.dailyCalories,
                               builder: (_, _, _) {
                                 return Text(
-                                  formatter.format(_settingsViewModel.dailyCalories.value),
+                                  numberFormatter.format(_settingsViewModel.dailyCalories.value),
                                   style: textTheme.bodySmall,
                                 );
                               },
@@ -241,6 +241,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
+            //TODO: for height and weight allow enter of null value (aka emptying the input Textfield), but showing a hint under the box, that the value is
+            //invalid and what the current stored value is.
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
