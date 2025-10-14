@@ -3,10 +3,10 @@ import "package:flutter_svg/svg.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class OnboardingScreenPage1 extends StatefulWidget {
-  const OnboardingScreenPage1({super.key, required this.onDone, required this.darkMode});
+  const OnboardingScreenPage1({super.key, required onDone, required darkMode}) : _onDone = onDone, _darkMode = darkMode;
 
-  final VoidCallback onDone;
-  final bool darkMode;
+  final VoidCallback _onDone;
+  final bool _darkMode;
 
   @override
   State<OnboardingScreenPage1> createState() => _OnboardingScreenPage1State();
@@ -20,7 +20,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     String logoPath = "assets/openeatsjournal_logo_lightmode.svg";
-    if (widget.darkMode) {
+    if (widget._darkMode) {
       logoPath = "assets/openeatsjournal_logo_darkmode.svg";
     }
 
@@ -43,11 +43,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
         SizedBox(height: 12),
         CheckboxListTile(
           controlAffinity: ListTileControlAffinity.leading,
-          title: Text(
-            AppLocalizations.of(context)!.license_agree,
-            style: textTheme.labelLarge,
-            textAlign: TextAlign.center,
-          ),
+          title: Text(AppLocalizations.of(context)!.license_agree, style: textTheme.labelLarge, textAlign: TextAlign.center),
           value: _licenseAgreed,
           onChanged: (value) {
             setState(() {
@@ -73,7 +69,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
               return;
             }
 
-            widget.onDone();
+            widget._onDone();
           },
           child: Text(AppLocalizations.of(context)!.agree_proceed),
         ),

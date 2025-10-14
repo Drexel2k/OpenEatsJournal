@@ -1,41 +1,20 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
+import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 
 class GaugeNutritionFactSmall extends StatelessWidget {
-  const GaugeNutritionFactSmall({super.key, required String factName, required int value, required int maxValue})
-    : _maxValue = maxValue,
-      _value = value,
+  const GaugeNutritionFactSmall({super.key, required String factName, required GaugeData gaugeData})
+    : _gaugeData = gaugeData,
       _factName = factName;
 
   final String _factName;
-  final int _value;
-  final int _maxValue;
+  final GaugeData _gaugeData;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorTheme = Theme.of(context).colorScheme;
-    final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
-
-    List<Color> colors = [];
-    int percentageFilled;
-
-    if (_value <= _maxValue) {
-      colors.add(colorTheme.inversePrimary);
-      colors.add(colorTheme.primary);
-
-      percentageFilled = (_value / _maxValue * 100).round();
-    } else {
-      colors.add(colorTheme.primary);
-      colors.add(colorTheme.error);
-
-      if (_value <= 2 * _maxValue) {
-        percentageFilled = ((_value - _maxValue) / _maxValue * 100).round();
-      } else {
-        percentageFilled = 100;
-      }
-    }
+    final NumberFormat formatter = NumberFormat("0.0", Localizations.localeOf(context).languageCode);
 
     double dimension = 75;
     double radius = 0.85;
@@ -48,7 +27,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
           child: Chart(
             data: [
               {"type": "100Percent", "percent": 100},
-              {"type": "currentPercent", "percent": percentageFilled},
+              {"type": "currentPercent", "percent": _gaugeData.percentageFilled},
             ],
             variables: {
               "type": Variable(accessor: (Map map) => map["type"] as String),
@@ -58,7 +37,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
               IntervalMark(
                 size: SizeEncode(value: 8),
                 shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(4)))),
-                color: ColorEncode(variable: "type", values: colors),
+                color: ColorEncode(variable: "type", values: _gaugeData.colors),
               ),
             ],
             coord: PolarCoord(
@@ -78,7 +57,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
               Spacer(),
               Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
               Text(
-                "${formatter.format(_value)}/\n${formatter.format(_maxValue)}",
+                "${formatter.format(_gaugeData.currentValue)}/\n${formatter.format(_gaugeData.maxValue)}",
                 style: textTheme.labelSmall,
                 textAlign: TextAlign.center,
               ),

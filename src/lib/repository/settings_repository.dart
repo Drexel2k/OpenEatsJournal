@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
-import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
@@ -23,13 +23,13 @@ class SettingsRepository extends ChangeNotifier {
   late double _weight;
   late double _activityFactor;
   late WeightTarget _weightTarget;
-  late int _kCalsMonday;
-  late int _kCalsTuesday;
-  late int _kCalsWednesday;
-  late int _kCalsThursday;
-  late int _kCalsFriday;
-  late int _kCalsSaturday;
-  late int _kCalsSunday;
+  late int _kJouleMonday;
+  late int _kJouleTuesday;
+  late int _kJouleWednesday;
+  late int _kJouleThursday;
+  late int _kJouleFriday;
+  late int _kJouleSaturday;
+  late int _kJouleSunday;
 
   set gender(Gender value) {
     _gender = value;
@@ -69,13 +69,13 @@ class SettingsRepository extends ChangeNotifier {
   double get weight => _weight;
   double get activityFactor => _activityFactor;
   WeightTarget get weightTarget => _weightTarget;
-  int get kCalsMonday => _kCalsMonday;
-  int get kCalsTuesday => _kCalsTuesday;
-  int get kCalsWednesday => _kCalsWednesday;
-  int get kCalsThursday => _kCalsThursday;
-  int get kCalsFriday => _kCalsFriday;
-  int get kCalsSaturday => _kCalsSaturday;
-  int get kCalsSunday => _kCalsSunday;
+  int get kJouleMonday => _kJouleMonday;
+  int get kJouleTuesday => _kJouleTuesday;
+  int get kJouleWednesday => _kJouleWednesday;
+  int get kJouleThursday => _kJouleThursday;
+  int get kJouleFriday => _kJouleFriday;
+  int get kJouleSaturday => _kJouleSaturday;
+  int get kJouleSunday => _kJouleSunday;
 
   //non persistand app wide settings
   final ValueNotifier<bool> _initialized = ValueNotifier(false);
@@ -108,13 +108,13 @@ class SettingsRepository extends ChangeNotifier {
         allSettings.weight != null &&
         allSettings.activityFactor != null &&
         allSettings.weightTarget != null &&
-        allSettings.kCalsMonday != null &&
-        allSettings.kCalsTuesday != null &&
-        allSettings.kCalsWednesday != null &&
-        allSettings.kCalsThursday != null &&
-        allSettings.kCalsFriday != null &&
-        allSettings.kCalsSaturday != null &&
-        allSettings.kCalsSunday != null) {
+        allSettings.kJouleMonday != null &&
+        allSettings.kJouleTuesday != null &&
+        allSettings.kJouleWednesday != null &&
+        allSettings.kJouleThursday != null &&
+        allSettings.kJouleFriday != null &&
+        allSettings.kJouleSaturday != null &&
+        allSettings.kJouleSunday != null) {
       _initialized.value = true;
       _darkMode.value = allSettings.darkMode!;
       _languageCode.value = allSettings.languageCode!;
@@ -124,13 +124,13 @@ class SettingsRepository extends ChangeNotifier {
       _weight = allSettings.weight!;
       _activityFactor = allSettings.activityFactor!;
       _weightTarget = allSettings.weightTarget!;
-      _kCalsMonday = allSettings.kCalsMonday!;
-      _kCalsTuesday = allSettings.kCalsTuesday!;
-      _kCalsWednesday = allSettings.kCalsWednesday!;
-      _kCalsThursday = allSettings.kCalsThursday!;
-      _kCalsFriday = allSettings.kCalsFriday!;
-      _kCalsSaturday = allSettings.kCalsSaturday!;
-      _kCalsSunday = allSettings.kCalsSunday!;
+      _kJouleMonday = allSettings.kJouleMonday!;
+      _kJouleTuesday = allSettings.kJouleTuesday!;
+      _kJouleWednesday = allSettings.kJouleWednesday!;
+      _kJouleThursday = allSettings.kJouleThursday!;
+      _kJouleFriday = allSettings.kJouleFriday!;
+      _kJouleSaturday = allSettings.kJouleSaturday!;
+      _kJouleSunday = allSettings.kJouleSunday!;
     }
 
     _darkMode.addListener(_darkModeChanged);
@@ -148,13 +148,13 @@ class SettingsRepository extends ChangeNotifier {
     _weight = settings.weight!;
     _activityFactor = settings.activityFactor!;
     _weightTarget = settings.weightTarget!;
-    _kCalsMonday = settings.kCalsMonday!;
-    _kCalsTuesday = settings.kCalsTuesday!;
-    _kCalsWednesday = settings.kCalsWednesday!;
-    _kCalsThursday = settings.kCalsThursday!;
-    _kCalsFriday = settings.kCalsFriday!;
-    _kCalsSaturday = settings.kCalsSaturday!;
-    _kCalsSunday = settings.kCalsSunday!;
+    _kJouleMonday = settings.kJouleMonday!;
+    _kJouleTuesday = settings.kJouleTuesday!;
+    _kJouleWednesday = settings.kJouleWednesday!;
+    _kJouleThursday = settings.kJouleThursday!;
+    _kJouleFriday = settings.kJouleFriday!;
+    _kJouleSaturday = settings.kJouleSaturday!;
+    _kJouleSunday = settings.kJouleSunday!;
     _languageCode.value = settings.languageCode!;
   }
 
@@ -190,78 +190,78 @@ class SettingsRepository extends ChangeNotifier {
     await _oejDatabase.setIntSetting("weight_target", weightTarget.value);
   }
 
-  Future<void> _saveKCalsMonday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_monday", kCals);
-    _kCalsMonday = kCals;
+  Future<void> _saveKJouleMonday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleMonday, kJoule);
+    _kJouleMonday = kJoule;
   }
 
-  Future<void> _saveKCalsTuesday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_tuesday", kCals);
-    _kCalsTuesday = kCals;
+  Future<void> _saveKJouleTuesday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleTuesday, kJoule);
+    _kJouleTuesday = kJoule;
   }
 
-  Future<void> _saveKCalsWednesday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_wednesday", kCals);
-    _kCalsWednesday = kCals;
+  Future<void> _saveKJouleWednesday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleWednesday, kJoule);
+    _kJouleWednesday = kJoule;
   }
 
-  Future<void> _saveKCalsThursday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_thursday", kCals);
-    _kCalsThursday = kCals;
+  Future<void> _saveKJouleThursday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleThursday, kJoule);
+    _kJouleThursday = kJoule;
   }
 
-  Future<void> _saveKCalsFriday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_friday", kCals);
-    _kCalsFriday = kCals;
+  Future<void> _saveKJouleFriday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleFriday, kJoule);
+    _kJouleFriday = kJoule;
   }
 
-  Future<void> _saveKCalsSaturday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_saturday", kCals);
-    _kCalsSaturday = kCals;
+  Future<void> _saveKJouleSaturday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleSaturday, kJoule);
+    _kJouleSaturday = kJoule;
   }
 
-  Future<void> _saveKCalsSunday(int kCals) async {
-    await _oejDatabase.setIntSetting("kcals_sunday", kCals);
-    _kCalsSunday = kCals;
+  Future<void> _saveKJouleSunday(int kJoule) async {
+    await _oejDatabase.setIntSetting(OpenEatsJournalStrings.settingKJouleSunday, kJoule);
+    _kJouleSunday = kJoule;
   }
 
-  Future<void> saveDailyCaloriesTargetsSame(int dailyTargetCalories) async {
-    await _saveKCalsMonday(dailyTargetCalories);
-    await _saveKCalsTuesday(dailyTargetCalories);
-    await _saveKCalsWednesday(dailyTargetCalories);
-    await _saveKCalsThursday(dailyTargetCalories);
-    await _saveKCalsFriday(dailyTargetCalories);
-    await _saveKCalsSaturday(dailyTargetCalories);
-    await _saveKCalsSunday(dailyTargetCalories);
+  Future<void> saveDailyKJouleTargetsSame(int dailyTargetKJoule) async {
+    await _saveKJouleMonday(dailyTargetKJoule);
+    await _saveKJouleTuesday(dailyTargetKJoule);
+    await _saveKJouleWednesday(dailyTargetKJoule);
+    await _saveKJouleThursday(dailyTargetKJoule);
+    await _saveKJouleFriday(dailyTargetKJoule);
+    await _saveKJouleSaturday(dailyTargetKJoule);
+    await _saveKJouleSunday(dailyTargetKJoule);
   }
 
-  Future<void> saveDailyCaloriesTargetsSameIndividual(KCalSettings kCalSettings) async {
-    await _saveKCalsMonday(kCalSettings.kCalsMonday);
-    await _saveKCalsTuesday(kCalSettings.kCalsTuesday);
-    await _saveKCalsWednesday(kCalSettings.kCalsWednesday);
-    await _saveKCalsThursday(kCalSettings.kCalsThursday);
-    await _saveKCalsFriday(kCalSettings.kCalsFriday);
-    await _saveKCalsSaturday(kCalSettings.kCalsSaturday);
-    await _saveKCalsSunday(kCalSettings.kCalsSunday);
+  Future<void> saveDailyKJouleTargetsSameIndividual(KJoulePerDay kJouleSettings) async {
+    await _saveKJouleMonday(kJouleSettings.kJouleMonday);
+    await _saveKJouleTuesday(kJouleSettings.kJouleTuesday);
+    await _saveKJouleWednesday(kJouleSettings.kJouleWednesday);
+    await _saveKJouleThursday(kJouleSettings.kJouleThursday);
+    await _saveKJouleFriday(kJouleSettings.kJouleFriday);
+    await _saveKJouleSaturday(kJouleSettings.kJouleSaturday);
+    await _saveKJouleSunday(kJouleSettings.kJouleSunday);
   }
 
   int getCurrentJournalDayTargetKJoule() {
     int dayTargetKJoule = 0;
     switch (currentJournalDate.value.weekday) {
       case 1:
-        dayTargetKJoule = kCalsMonday;
+        dayTargetKJoule = _kJouleMonday;
       case 2:
-        dayTargetKJoule = kCalsTuesday;
+        dayTargetKJoule = _kJouleTuesday;
       case 3:
-        dayTargetKJoule = kCalsWednesday;
+        dayTargetKJoule = _kJouleWednesday;
       case 4:
-        dayTargetKJoule = kCalsThursday;
+        dayTargetKJoule = _kJouleThursday;
       case 5:
-        dayTargetKJoule = kCalsFriday;
+        dayTargetKJoule = _kJouleFriday;
       case 6:
-        dayTargetKJoule = kCalsSaturday;
+        dayTargetKJoule = _kJouleSaturday;
       case 7:
-        dayTargetKJoule = kCalsSunday;
+        dayTargetKJoule = _kJouleSunday;
       default:
         throw StateError("Unknown weekday ${currentJournalDate.value.weekday}.");
     }

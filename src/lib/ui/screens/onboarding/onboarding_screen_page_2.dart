@@ -2,9 +2,9 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class OnboardingScreenPage2 extends StatefulWidget {
-  const OnboardingScreenPage2({super.key, required this.onDone});
+  const OnboardingScreenPage2({super.key, required onDone}) : _onDone = onDone;
 
-  final VoidCallback onDone;
+  final VoidCallback _onDone;
 
   @override
   State<OnboardingScreenPage2> createState() => _OnboardingScreenPage2State();
@@ -31,11 +31,7 @@ class _OnboardingScreenPage2State extends State<OnboardingScreenPage2> {
         Spacer(),
         CheckboxListTile(
           controlAffinity: ListTileControlAffinity.leading,
-          title: Text(
-            AppLocalizations.of(context)!.understood,
-            style: textTheme.labelLarge,
-            textAlign: TextAlign.center,
-          ),
+          title: Text(AppLocalizations.of(context)!.understood, style: textTheme.labelLarge, textAlign: TextAlign.center),
           value: _understood,
           onChanged: (value) {
             setState(() {
@@ -61,7 +57,7 @@ class _OnboardingScreenPage2State extends State<OnboardingScreenPage2> {
               return;
             }
 
-            widget.onDone();
+            widget._onDone();
           },
           child: Text(AppLocalizations.of(context)!.agree_proceed),
         ),

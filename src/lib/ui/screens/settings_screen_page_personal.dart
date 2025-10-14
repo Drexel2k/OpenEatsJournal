@@ -2,7 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/gender.dart";
-import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/domain/kjoule_per_day.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
@@ -18,12 +19,12 @@ import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsScreenPagePersonal extends StatelessWidget {
   SettingsScreenPagePersonal({super.key, required SettingsScreenViewModel settingsViewModel})
-    : _settingsViewModel = settingsViewModel,
+    : _settingsScreenViewModel = settingsViewModel,
       _birthDayController = TextEditingController(),
       _heightController = TextEditingController(),
       _weightController = TextEditingController();
 
-  final SettingsScreenViewModel _settingsViewModel;
+  final SettingsScreenViewModel _settingsScreenViewModel;
   final TextEditingController _birthDayController;
   final TextEditingController _heightController;
   final TextEditingController _weightController;
@@ -39,10 +40,10 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     final Debouncer heightDebouncer = Debouncer();
     final Debouncer weightDebouncer = Debouncer();
 
-    _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsViewModel.birthday.value);
+    _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsScreenViewModel.birthday.value);
 
-    _heightController.text = numberFormatter.format(_settingsViewModel.height.value);
-    _weightController.text = numberFormatter.format(_settingsViewModel.weight.value);
+    _heightController.text = numberFormatter.format(_settingsScreenViewModel.height.value);
+    _weightController.text = numberFormatter.format(_settingsScreenViewModel.weight.value);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -70,10 +71,10 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
-                              valueListenable: _settingsViewModel.dailyTargetCalories,
+                              valueListenable: _settingsScreenViewModel.dailyTargetKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  numberFormatter.format(_settingsViewModel.dailyTargetCalories.value),
+                                  numberFormatter.format(NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyTargetKJoule.value)),
                                   style: textTheme.titleMedium,
                                 );
                               },
@@ -91,10 +92,10 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
-                              valueListenable: _settingsViewModel.dailyCalories,
+                              valueListenable: _settingsScreenViewModel.dailyKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  numberFormatter.format(_settingsViewModel.dailyCalories.value),
+                                  numberFormatter.format(NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyKJoule.value)),
                                   style: textTheme.bodySmall,
                                 );
                               },
@@ -113,8 +114,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       RoundOutlinedButton(
                         onPressed: () async {
                           try {
-                            if ((await _showRecalulateCaloriesCOnfirmDialog(context: context))!) {
-                              await _settingsViewModel.recalculateDailykCalTargetsAndSave();
+                            if ((await _showRecalulateKJouleConfirmDialog(context: context))!) {
+                              await _settingsScreenViewModel.recalculateDailykJouleTargetsAndSave();
                             }
                           } on Exception catch (exc, stack) {
                             await ErrorHandlers.showException(
@@ -136,22 +137,22 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       RoundOutlinedButton(
                         onPressed: () async {
                           try {
-                            KCalSettings? kCalSettings = await _showDailyCaloriesEditDialog(
+                            KJoulePerDay? kJouleSettings = await _showDailyCaloriesEditDialog(
                               context: context,
-                              dailyCalories: _settingsViewModel.dailyCalories.value,
-                              originalDailyTargetCalories: _settingsViewModel.dailyTargetCalories.value,
-                              initialKCalSettings: KCalSettings(
-                                kCalsMonday: _settingsViewModel.kCalsMonday,
-                                kCalsTuesday: _settingsViewModel.kCalsTuesday,
-                                kCalsWednesday: _settingsViewModel.kCalsWednesday,
-                                kCalsThursday: _settingsViewModel.kCalsThursday,
-                                kCalsFriday: _settingsViewModel.kCalsFriday,
-                                kCalsSaturday: _settingsViewModel.kCalsSaturday,
-                                kCalsSunday: _settingsViewModel.kCalsSunday,
+                              dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
+                              originalDailyTargetKJoule: _settingsScreenViewModel.dailyTargetKJoule.value,
+                              initialkJouleSettings: KJoulePerDay(
+                                kJouleMonday: _settingsScreenViewModel.kJouleMonday,
+                                kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
+                                kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
+                                kJouleThursday: _settingsScreenViewModel.kJouleThursday,
+                                kJouleFriday: _settingsScreenViewModel.kJouleFriday,
+                                kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
+                                kJouleSunday: _settingsScreenViewModel.kJouleSunday,
                               ),
                             );
-                            if (kCalSettings != null) {
-                              await _settingsViewModel.setDailyCaloriesAndSave(kCalSettings);
+                            if (kJouleSettings != null) {
+                              await _settingsScreenViewModel.setDailyKJouleAndSave(kJouleSettings);
                             }
                           } on Exception catch (exc, stack) {
                             await ErrorHandlers.showException(
@@ -185,28 +186,28 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.gender,
+                        valueListenable: _settingsScreenViewModel.gender,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             icon: Icons.male,
                             label: AppLocalizations.of(contextBuilder)!.male,
-                            selected: _settingsViewModel.gender.value == Gender.male,
+                            selected: _settingsScreenViewModel.gender.value == Gender.male,
                             onSelected: (bool selected) {
-                              _settingsViewModel.gender.value = Gender.male;
+                              _settingsScreenViewModel.gender.value = Gender.male;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.gender,
+                        valueListenable: _settingsScreenViewModel.gender,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             icon: Icons.female,
                             label: AppLocalizations.of(contextBuilder)!.female,
-                            selected: _settingsViewModel.gender.value == Gender.femail,
+                            selected: _settingsScreenViewModel.gender.value == Gender.femail,
                             onSelected: (bool selected) {
-                              _settingsViewModel.gender.value = Gender.femail;
+                              _settingsScreenViewModel.gender.value = Gender.femail;
                             },
                           );
                         },
@@ -230,7 +231,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                     controller: _birthDayController,
                     onTap: () {
                       _selectDate(
-                        initialDate: _settingsViewModel.birthday.value,
+                        initialDate: _settingsScreenViewModel.birthday.value,
                         context: context,
                         languageCode: languageCode,
                       );
@@ -242,7 +243,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             ),
             SizedBox(height: 10),
             //TODO: for height and weight allow enter of null value (aka emptying the input Textfield), but showing a hint under the box, that the value is
-            //invalid and what the current stored value is.
+            //invalid and what the currently stored value is.
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -250,7 +251,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                 Flexible(
                   flex: 1,
                   child: ValueListenableBuilder(
-                    valueListenable: _settingsViewModel.height,
+                    valueListenable: _settingsScreenViewModel.height,
                     builder: (_, _, _) {
                       return SettingsTextField(
                         controller: _heightController,
@@ -269,7 +270,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                         onChanged: (value) {
                           heightDebouncer.run(
                             callback: () {
-                              _settingsViewModel.height.value = int.parse(value);
+                              _settingsScreenViewModel.height.value = int.parse(value);
                             },
                           );
                         },
@@ -288,7 +289,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                   flex: 1,
 
                   child: ValueListenableBuilder(
-                    valueListenable: _settingsViewModel.weight,
+                    valueListenable: _settingsScreenViewModel.weight,
                     builder: (_, _, _) {
                       return SettingsTextField(
                         controller: _weightController,
@@ -315,7 +316,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                           weightDebouncer.run(
                             callback: () {
                               num weightNum = NumberFormat(null, languageCode).parse(value);
-                              _settingsViewModel.weight.value = weightNum as double;
+                              _settingsScreenViewModel.weight.value = weightNum as double;
                             },
                           );
                         },
@@ -350,78 +351,78 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.activityFactor,
+                        valueListenable: _settingsScreenViewModel.activityFactor,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.very_low,
-                            selected: _settingsViewModel.activityFactor.value == 1.2,
+                            selected: _settingsScreenViewModel.activityFactor.value == 1.2,
                             onSelected: (bool selected) {
-                              _settingsViewModel.activityFactor.value = 1.2;
+                              _settingsScreenViewModel.activityFactor.value = 1.2;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.activityFactor,
+                        valueListenable: _settingsScreenViewModel.activityFactor,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.low,
-                            selected: _settingsViewModel.activityFactor.value == 1.4,
+                            selected: _settingsScreenViewModel.activityFactor.value == 1.4,
                             onSelected: (bool selected) {
-                              _settingsViewModel.activityFactor.value = 1.4;
+                              _settingsScreenViewModel.activityFactor.value = 1.4;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.activityFactor,
+                        valueListenable: _settingsScreenViewModel.activityFactor,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.medium,
-                            selected: _settingsViewModel.activityFactor.value == 1.6,
+                            selected: _settingsScreenViewModel.activityFactor.value == 1.6,
                             onSelected: (bool selected) {
-                              _settingsViewModel.activityFactor.value = 1.6;
+                              _settingsScreenViewModel.activityFactor.value = 1.6;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.activityFactor,
+                        valueListenable: _settingsScreenViewModel.activityFactor,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.high,
-                            selected: _settingsViewModel.activityFactor.value == 1.8,
+                            selected: _settingsScreenViewModel.activityFactor.value == 1.8,
                             onSelected: (bool selected) {
-                              _settingsViewModel.activityFactor.value = 1.8;
+                              _settingsScreenViewModel.activityFactor.value = 1.8;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.activityFactor,
+                        valueListenable: _settingsScreenViewModel.activityFactor,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.very_high,
-                            selected: _settingsViewModel.activityFactor.value == 2.1,
+                            selected: _settingsScreenViewModel.activityFactor.value == 2.1,
                             onSelected: (bool selected) {
-                              _settingsViewModel.activityFactor.value = 2.1;
+                              _settingsScreenViewModel.activityFactor.value = 2.1;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.activityFactor,
+                        valueListenable: _settingsScreenViewModel.activityFactor,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.professional_athlete,
-                            selected: _settingsViewModel.activityFactor.value == 2.4,
+                            selected: _settingsScreenViewModel.activityFactor.value == 2.4,
                             onSelected: (bool selected) {
-                              _settingsViewModel.activityFactor.value = 2.4;
+                              _settingsScreenViewModel.activityFactor.value = 2.4;
                             },
                           );
                         },
@@ -445,52 +446,52 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.weightTarget,
+                        valueListenable: _settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.keep_weight,
-                            selected: _settingsViewModel.weightTarget.value == WeightTarget.keep,
+                            selected: _settingsScreenViewModel.weightTarget.value == WeightTarget.keep,
                             onSelected: (bool selected) {
-                              _settingsViewModel.weightTarget.value = WeightTarget.keep;
+                              _settingsScreenViewModel.weightTarget.value = WeightTarget.keep;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.weightTarget,
+                        valueListenable: _settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.lose025,
-                            selected: _settingsViewModel.weightTarget.value == WeightTarget.lose025,
+                            selected: _settingsScreenViewModel.weightTarget.value == WeightTarget.lose025,
                             onSelected: (bool selected) {
-                              _settingsViewModel.weightTarget.value = WeightTarget.lose025;
+                              _settingsScreenViewModel.weightTarget.value = WeightTarget.lose025;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.weightTarget,
+                        valueListenable: _settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.lose05,
-                            selected: _settingsViewModel.weightTarget.value == WeightTarget.lose05,
+                            selected: _settingsScreenViewModel.weightTarget.value == WeightTarget.lose05,
                             onSelected: (bool selected) {
-                              _settingsViewModel.weightTarget.value = WeightTarget.lose05;
+                              _settingsScreenViewModel.weightTarget.value = WeightTarget.lose05;
                             },
                           );
                         },
                       ),
                       SizedBox(height: 8),
                       ValueListenableBuilder(
-                        valueListenable: _settingsViewModel.weightTarget,
+                        valueListenable: _settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label: AppLocalizations.of(contextBuilder)!.lose075,
-                            selected: _settingsViewModel.weightTarget.value == WeightTarget.lose075,
+                            selected: _settingsScreenViewModel.weightTarget.value == WeightTarget.lose075,
                             onSelected: (bool selected) {
-                              _settingsViewModel.weightTarget.value = WeightTarget.lose075;
+                              _settingsScreenViewModel.weightTarget.value = WeightTarget.lose075;
                             },
                           );
                         },
@@ -506,7 +507,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     );
   }
 
-  Future<bool?> _showRecalulateCaloriesCOnfirmDialog({required BuildContext context}) async {
+  Future<bool?> _showRecalulateKJouleConfirmDialog({required BuildContext context}) async {
     return showDialog<bool>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -569,30 +570,30 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     );
   }
 
-  Future<KCalSettings?> _showDailyCaloriesEditDialog({
+  Future<KJoulePerDay?> _showDailyCaloriesEditDialog({
     required BuildContext context,
-    required int dailyCalories,
-    required int originalDailyTargetCalories,
-    required KCalSettings initialKCalSettings,
+    required int dailyKJoule,
+    required int originalDailyTargetKJoule,
+    required KJoulePerDay initialkJouleSettings,
   }) async {
-    return showDialog<KCalSettings>(
+    return showDialog<KJoulePerDay>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (_) {
         return DailyCaloriesEditorScreen(
           dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
-            KCalSettings(
-              kCalsMonday: _settingsViewModel.kCalsMonday,
-              kCalsTuesday: _settingsViewModel.kCalsTuesday,
-              kCalsWednesday: _settingsViewModel.kCalsWednesday,
-              kCalsThursday: _settingsViewModel.kCalsThursday,
-              kCalsFriday: _settingsViewModel.kCalsFriday,
-              kCalsSaturday: _settingsViewModel.kCalsSaturday,
-              kCalsSunday: _settingsViewModel.kCalsSunday,
+            KJoulePerDay(
+              kJouleMonday: _settingsScreenViewModel.kJouleMonday,
+              kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
+              kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
+              kJouleThursday: _settingsScreenViewModel.kJouleThursday,
+              kJouleFriday: _settingsScreenViewModel.kJouleFriday,
+              kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
+              kJouleSunday: _settingsScreenViewModel.kJouleSunday,
             ),
           ),
-          dailyCalories: _settingsViewModel.dailyCalories.value,
-          originalDailyTargetCalories: _settingsViewModel.dailyTargetCalories.value,
+          dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
+          originalDailyTargetKjoule: _settingsScreenViewModel.dailyTargetKJoule.value,
         );
       },
     );
@@ -612,7 +613,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
 
     if (date != null) {
       _birthDayController.text = DateFormat.yMMMMd(languageCode).format(date);
-      _settingsViewModel.birthday.value = date;
+      _settingsScreenViewModel.birthday.value = date;
     }
   }
 }

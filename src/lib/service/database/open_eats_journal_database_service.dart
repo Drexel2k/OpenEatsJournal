@@ -5,6 +5,9 @@ import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/gender.dart";
+import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
@@ -314,13 +317,13 @@ class OpenEatsJournalDatabaseService {
     await setDoubleSetting(OpenEatsJournalStrings.settingWeight, allSettings.weight!);
     await setDoubleSetting(OpenEatsJournalStrings.settingActivityFactor, allSettings.activityFactor!);
     await setIntSetting(OpenEatsJournalStrings.settingWeightTarget, allSettings.weightTarget!.value);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsMonday, allSettings.kCalsMonday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsTuesday, allSettings.kCalsTuesday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsWednesday, allSettings.kCalsWednesday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsThursday, allSettings.kCalsThursday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsFriday, allSettings.kCalsFriday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsSaturday, allSettings.kCalsSaturday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKCalsSunday, allSettings.kCalsSunday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleMonday, allSettings.kJouleMonday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleTuesday, allSettings.kJouleTuesday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleWednesday, allSettings.kJouleWednesday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleThursday, allSettings.kJouleThursday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleFriday, allSettings.kJouleFriday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleSaturday, allSettings.kJouleSaturday!);
+    await setIntSetting(OpenEatsJournalStrings.settingKJouleSunday, allSettings.kJouleSunday!);
     await setStringSetting(OpenEatsJournalStrings.settingLanguageCode, allSettings.languageCode!);
   }
 
@@ -369,13 +372,13 @@ class OpenEatsJournalDatabaseService {
       weight: await getDoubleSetting(OpenEatsJournalStrings.settingWeight),
       activityFactor: await getDoubleSetting(OpenEatsJournalStrings.settingActivityFactor),
       weightTarget: weightTarget != null ? WeightTarget.getByValue(weightTarget) : null,
-      kCalsMonday: await getIntSetting(OpenEatsJournalStrings.settingKCalsMonday),
-      kCalsTuesday: await getIntSetting(OpenEatsJournalStrings.settingKCalsTuesday),
-      kCalsWednesday: await getIntSetting(OpenEatsJournalStrings.settingKCalsWednesday),
-      kCalsThursday: await getIntSetting(OpenEatsJournalStrings.settingKCalsThursday),
-      kCalsFriday: await getIntSetting(OpenEatsJournalStrings.settingKCalsFriday),
-      kCalsSaturday: await getIntSetting(OpenEatsJournalStrings.settingKCalsSaturday),
-      kCalsSunday: await getIntSetting(OpenEatsJournalStrings.settingKCalsSunday),
+      kJouleMonday: await getIntSetting(OpenEatsJournalStrings.settingKJouleMonday),
+      kJouleTuesday: await getIntSetting(OpenEatsJournalStrings.settingKJouleTuesday),
+      kJouleWednesday: await getIntSetting(OpenEatsJournalStrings.settingKJouleWednesday),
+      kJouleThursday: await getIntSetting(OpenEatsJournalStrings.settingKJouleThursday),
+      kJouleFriday: await getIntSetting(OpenEatsJournalStrings.settingKJouleFriday),
+      kJouleSaturday: await getIntSetting(OpenEatsJournalStrings.settingKJouleSaturday),
+      kJouleSunday: await getIntSetting(OpenEatsJournalStrings.settingKJouleSunday),
     );
   }
 
@@ -564,7 +567,7 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<void> insertOnceDailyNutritionTarget(DateTime day, int dayTargetKJoule) async {
+  Future<void> insertOnceDayNutritionTarget(DateTime day, int dayTargetKJoule) async {
     Database db = await instance.db;
 
     final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
@@ -586,6 +589,69 @@ class OpenEatsJournalDatabaseService {
         OpenEatsJournalStrings.dbColumnEntryDate: formattedDate,
         OpenEatsJournalStrings.dbColumnKiloJoule: dayTargetKJoule,
       });
+    }
+  }
+
+  Future<Map<Meal, Nutritions>?> getDaySumsPerMeal(DateTime entryDate) async {
+    Database db = await instance.db;
+
+    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
+    final String formattedDate = formatter.format(entryDate);
+
+    final kJouleSum = "kilo_joule_sum";
+    final carbohydratesSum = "carbohydrates_sum";
+    final sugarSum = "sugar_sum";
+    final fatSum = "fat_sum";
+    final saturatedFatSum = "saturated_fat_sum";
+    final proteinSum = "protein_sum";
+    final saltSum = "salt_sum";
+
+    final List<Map<String, Object?>> dbResult = await db.rawQuery(
+      "SELECT ${OpenEatsJournalStrings.dbColumnMealIdRef}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS $kJouleSum, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS $carbohydratesSum, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS $sugarSum, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS $fatSum, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS $saturatedFatSum, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS $proteinSum, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS $saltSum FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ? GROUP BY ${OpenEatsJournalStrings.dbColumnEntryDate}, ${OpenEatsJournalStrings.dbColumnMealIdRef}",
+      [formattedDate],
+    );
+
+    if (dbResult.isNotEmpty) {
+      Map<Meal, Nutritions> result = <Meal, Nutritions>{};
+      for (Map<String, Object?> row in dbResult) {
+        result[Meal.getByValue((row[OpenEatsJournalStrings.dbColumnMealIdRef] as int))] = Nutritions(
+          kJoule: (row[kJouleSum] as int),
+          carbohydrates: (row[carbohydratesSum] as double),
+          sugar: (row[sugarSum] as double),
+          fat: (row[fatSum] as double),
+          saturatedFat: (row[saturatedFatSum] as double),
+          protein: (row[proteinSum] as double),
+          salt: (row[saltSum] as double),
+        );
+      }
+
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  Future<int?> getDayNutritionTargets(DateTime day) async {
+    Database db = await instance.db;
+
+    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
+    final String formattedDate = formatter.format(day);
+
+    final List<Map<String, Object?>> result = await db.query(
+      OpenEatsJournalStrings.dbTableDailyNutritionTarget,
+      columns: [OpenEatsJournalStrings.dbColumnKiloJoule],
+      where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
+      whereArgs: [formattedDate],
+    );
+
+    if (result.length > 1) {
+      throw StateError("An entry for ate must exist only once in daily nutrition targets, mutiple instances on date $formattedDate found.");
+    }
+
+    if (result.isNotEmpty) {
+      return (result[0][OpenEatsJournalStrings.dbColumnKiloJoule] as int);
+    } else {
+      return null;
     }
   }
 }

@@ -1,6 +1,6 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/gender.dart";
-import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
@@ -10,16 +10,16 @@ class SettingsScreenViewModel extends ChangeNotifier {
     : _settingsRepository = settingsRepository,
       _darkMode = ValueNotifier(settingsRepository.darkMode.value),
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
-      _dailyCalories = ValueNotifier(1),
-      _dailyTargetCalories = ValueNotifier(1),
+      _dailyKJoule = ValueNotifier(1),
+      _dailyTargetKJoule = ValueNotifier(1),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
       _height = ValueNotifier(settingsRepository.height),
       _weight = ValueNotifier(settingsRepository.weight),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
       _weightTarget = ValueNotifier(settingsRepository.weightTarget) {
-    _setDailyCalories();
-    _setDailyTargetKCalories();
+    _setDailyKJoule();
+    _setDailyTargetKJoule();
     _darkMode.addListener(_darkModeChanged);
     _languageCode.addListener(_languageCodeChanged);
     _gender.addListener(_genderChanged);
@@ -35,8 +35,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final ValueNotifier<bool> _darkMode;
   final ValueNotifier<String> _languageCode;
-  final ValueNotifier<int> _dailyCalories;
-  final ValueNotifier<int> _dailyTargetCalories;
+  final ValueNotifier<int> _dailyKJoule;
+  final ValueNotifier<int> _dailyTargetKJoule;
   final ValueNotifier<Gender> _gender;
   final ValueNotifier<DateTime> _birthday;
   final ValueNotifier<int> _height;
@@ -47,8 +47,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<int> get currentPageIndex => _currentPageIndex;
   ValueNotifier<bool> get darkMode => _darkMode;
   ValueNotifier<String> get languageCode => _languageCode;
-  ValueNotifier<int> get dailyCalories => _dailyCalories;
-  ValueNotifier<int> get dailyTargetCalories => _dailyTargetCalories;
+  ValueNotifier<int> get dailyKJoule => _dailyKJoule;
+  ValueNotifier<int> get dailyTargetKJoule => _dailyTargetKJoule;
   ValueNotifier<Gender> get gender => _gender;
   ValueNotifier<DateTime> get birthday => _birthday;
   ValueNotifier<int> get height => _height;
@@ -56,28 +56,28 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<double> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget> get weightTarget => _weightTarget;
 
-  int get kCalsMonday => _settingsRepository.kCalsMonday;
-  int get kCalsTuesday => _settingsRepository.kCalsTuesday;
-  int get kCalsWednesday => _settingsRepository.kCalsWednesday;
-  int get kCalsThursday => _settingsRepository.kCalsThursday;
-  int get kCalsFriday => _settingsRepository.kCalsFriday;
-  int get kCalsSaturday => _settingsRepository.kCalsSaturday;
-  int get kCalsSunday => _settingsRepository.kCalsSunday;
+  int get kJouleMonday => _settingsRepository.kJouleMonday;
+  int get kJouleTuesday => _settingsRepository.kJouleTuesday;
+  int get kJouleWednesday => _settingsRepository.kJouleWednesday;
+  int get kJouleThursday => _settingsRepository.kJouleThursday;
+  int get kJouleFriday => _settingsRepository.kJouleFriday;
+  int get kJouleSaturday => _settingsRepository.kJouleSaturday;
+  int get kJouleSunday => _settingsRepository.kJouleSunday;
 
-  void _setDailyTargetKCalories() {
-    _dailyTargetCalories.value =
-        ((_settingsRepository.kCalsMonday +
-                    _settingsRepository.kCalsTuesday +
-                    _settingsRepository.kCalsWednesday +
-                    _settingsRepository.kCalsThursday +
-                    _settingsRepository.kCalsFriday +
-                    _settingsRepository.kCalsSaturday +
-                    _settingsRepository.kCalsSunday) /
+  void _setDailyTargetKJoule() {
+    _dailyTargetKJoule.value =
+        ((_settingsRepository.kJouleMonday +
+                    _settingsRepository.kJouleTuesday +
+                    _settingsRepository.kJouleWednesday +
+                    _settingsRepository.kJouleThursday +
+                    _settingsRepository.kJouleFriday +
+                    _settingsRepository.kJouleSaturday +
+                    _settingsRepository.kJouleSunday) /
                 7)
             .round();
   }
 
-  double _getDailyCalories() {
+  double _getDailyKJoule() {
     int age = 0;
     final DateTime today = DateTime.now();
     age = today.year - _birthday.value.year;
@@ -87,8 +87,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
       age = age - 1;
     }
 
-    return NutritionCalculator.calculateTotalKCaloriesPerDay(
-      kCaloriesPerDay: NutritionCalculator.calculateBasalMetabolicRate(
+    return NutritionCalculator.calculateTotalKJoulePerDay(
+      kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _weight.value,
         heightCm: _height.value,
         ageYear: age,
@@ -98,8 +98,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
     );
   }
 
-  _setDailyCalories() {
-    _dailyCalories.value = _getDailyCalories().round();
+  _setDailyKJoule() {
+    _dailyKJoule.value = _getDailyKJoule().round();
   }
 
   void _darkModeChanged() {
@@ -112,34 +112,34 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   void _genderChanged() {
     _settingsRepository.gender = _gender.value;
-    _setDailyCalories();
+    _setDailyKJoule();
   }
 
   void _birthdayChanged() {
     _settingsRepository.birthday = _birthday.value;
-    _setDailyCalories();
+    _setDailyKJoule();
   }
 
   void _heightChanged() {
     _settingsRepository.height = _height.value;
-    _setDailyCalories();
+    _setDailyKJoule();
   }
 
   void _weightChanged() {
     _settingsRepository.weight = _weight.value;
-    _setDailyCalories();
+    _setDailyKJoule();
   }
 
   void _activityFactorChanged() {
     _settingsRepository.activityFactor = _activityFactor.value;
-    _setDailyCalories();
+    _setDailyKJoule();
   }
 
   void _weightTargetChanged() {
     _settingsRepository.weightTarget = _weightTarget.value;
   }
 
-  Future<void> recalculateDailykCalTargetsAndSave() async {
+  Future<void> recalculateDailykJouleTargetsAndSave() async {
     double weightLossKg = 0;
     if (_settingsRepository.weightTarget == WeightTarget.lose025) {
       weightLossKg = 0.25;
@@ -153,27 +153,27 @@ class SettingsScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyTargetCalories = NutritionCalculator.calculateTargetCaloriesPerDay(
-      kCaloriesPerDay: _getDailyCalories(),
+    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(
+      kJoulePerDay: _getDailyKJoule(),
       weightLossPerWeekKg: weightLossKg,
     ).round();
 
-    await _settingsRepository.saveDailyCaloriesTargetsSame(dailyTargetCalories);
+    await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule);
 
-    _dailyTargetCalories.value = dailyTargetCalories;
+    _dailyTargetKJoule.value = dailyTargetKJoule;
   }
 
-  Future<void> setDailyCaloriesAndSave(KCalSettings kCalSettings) async {
-    _settingsRepository.saveDailyCaloriesTargetsSameIndividual(kCalSettings);
+  Future<void> setDailyKJouleAndSave(KJoulePerDay kJouleSettings) async {
+    _settingsRepository.saveDailyKJouleTargetsSameIndividual(kJouleSettings);
 
-    _dailyTargetCalories.value =
-        ((kCalSettings.kCalsMonday +
-                    kCalSettings.kCalsTuesday +
-                    kCalSettings.kCalsWednesday +
-                    kCalSettings.kCalsThursday +
-                    kCalSettings.kCalsFriday +
-                    kCalSettings.kCalsSaturday +
-                    kCalSettings.kCalsSunday) /
+    _dailyTargetKJoule.value =
+        ((kJouleSettings.kJouleMonday +
+                    kJouleSettings.kJouleTuesday +
+                    kJouleSettings.kJouleWednesday +
+                    kJouleSettings.kJouleThursday +
+                    kJouleSettings.kJouleFriday +
+                    kJouleSettings.kJouleSaturday +
+                    kJouleSettings.kJouleSunday) /
                 7)
             .round();
   }
@@ -183,8 +183,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _currentPageIndex.dispose();
     _darkMode.dispose();
     _languageCode.dispose();
-    _dailyCalories.dispose();
-    _dailyTargetCalories.dispose();
+    _dailyKJoule.dispose();
+    _dailyTargetKJoule.dispose();
     _gender.dispose();
     _birthday.dispose();
     _height.dispose();

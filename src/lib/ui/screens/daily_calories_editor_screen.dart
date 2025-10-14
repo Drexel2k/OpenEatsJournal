@@ -1,7 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:intl/intl.dart";
-import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/domain/kjoule_per_day.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
@@ -14,29 +15,29 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
   DailyCaloriesEditorScreen({
     super.key,
     required DailyCaloriesEditorScreenViewModel dailyCaloriesEditorScreenViewModel,
-    required int dailyCalories,
-    required int originalDailyTargetCalories,
+    required int dailyKJoule,
+    required int originalDailyTargetKjoule,
   }) : _dailyCaloriesEditorScreenViewModel = dailyCaloriesEditorScreenViewModel,
-       _dailyCalories = dailyCalories,
-       _originalDailyTargetCalories = originalDailyTargetCalories,
-       _kCalMondayController = TextEditingController(),
-       _kCalTuesdayController = TextEditingController(),
-       _kCalWednesdayController = TextEditingController(),
-       _kCalThursdayController = TextEditingController(),
-       _kCalFridayController = TextEditingController(),
-       _kCalSaturdayController = TextEditingController(),
-       _kCalSundayController = TextEditingController();
+       _dailyKJoule = dailyKJoule,
+       _originalDailyTargetKJoule = originalDailyTargetKjoule,
+       _kJouleMondayController = TextEditingController(),
+       _kJouleTuesdayController = TextEditingController(),
+       _kJouleWednesdayController = TextEditingController(),
+       _kJouleThursdayController = TextEditingController(),
+       _kJouleFridayController = TextEditingController(),
+       _kJouleSaturdayController = TextEditingController(),
+       _kJouleSundayController = TextEditingController();
 
   final DailyCaloriesEditorScreenViewModel _dailyCaloriesEditorScreenViewModel;
-  final int _dailyCalories;
-  final int _originalDailyTargetCalories;
-  final TextEditingController _kCalMondayController;
-  final TextEditingController _kCalTuesdayController;
-  final TextEditingController _kCalWednesdayController;
-  final TextEditingController _kCalThursdayController;
-  final TextEditingController _kCalFridayController;
-  final TextEditingController _kCalSaturdayController;
-  final TextEditingController _kCalSundayController;
+  final int _dailyKJoule;
+  final int _originalDailyTargetKJoule;
+  final TextEditingController _kJouleMondayController;
+  final TextEditingController _kJouleTuesdayController;
+  final TextEditingController _kJouleWednesdayController;
+  final TextEditingController _kJouleThursdayController;
+  final TextEditingController _kJouleFridayController;
+  final TextEditingController _kJouleSaturdayController;
+  final TextEditingController _kJouleSundayController;
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +47,13 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
 
     final NumberFormat formatter = NumberFormat(null, languageCode);
 
-    _kCalMondayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsMonday.value);
-    _kCalTuesdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsTuesday.value);
-    _kCalWednesdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsWednesday.value);
-    _kCalThursdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsThursday.value);
-    _kCalFridayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsFriday.value);
-    _kCalSaturdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsSaturday.value);
-    _kCalSundayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsSunday.value);
+    _kJouleMondayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value));
+    _kJouleTuesdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value));
+    _kJouleWednesdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value));
+    _kJouleThursdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value));
+    _kJouleFridayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value));
+    _kJouleSaturdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value));
+    _kJouleSundayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value));
 
     final Debouncer kCalMondayDebouncer = Debouncer();
     final Debouncer kCalTuesdayDebouncer = Debouncer();
@@ -70,19 +71,16 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 1,
-                child: Text(AppLocalizations.of(context)!.daily_target_new, style: textTheme.titleMedium),
-              ),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.daily_target_new, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
                 child: ValueListenableBuilder(
-                  valueListenable: _dailyCaloriesEditorScreenViewModel.kCalsTargetDaily,
+                  valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleTargetDaily,
                   builder: (_, _, _) {
                     return Text(
                       AppLocalizations.of(
                         context,
-                      )!.amount_kcal(_dailyCaloriesEditorScreenViewModel.kCalsTargetDaily.value),
+                      )!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value)),
                       style: textTheme.titleMedium,
                     );
                   },
@@ -93,14 +91,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 1,
-                child: Text(AppLocalizations.of(context)!.daily_target_original, style: textTheme.bodySmall),
-              ),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.daily_target_original, style: textTheme.bodySmall)),
               Flexible(
                 flex: 1,
                 child: Text(
-                  AppLocalizations.of(context)!.amount_kcal(_originalDailyTargetCalories),
+                  AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_originalDailyTargetKJoule)),
                   style: textTheme.bodySmall,
                 ),
               ),
@@ -109,20 +104,16 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 1,
-                child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall),
-              ),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall)),
               Flexible(
                 flex: 1,
-                child: Text(
-                  AppLocalizations.of(context)!.amount_kcal(_dailyCalories),
-                  style: textTheme.bodySmall,
-                ),
+                child: Text(AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_dailyKJoule)), style: textTheme.bodySmall),
               ),
             ],
           ),
           SizedBox(height: 10),
+          //TODO: for daily kJoule entries allow enter of null value (aka emptying the input Textfield), but showing a hint under the box, that the value is
+          //invalid and what the currently stored value is.
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -130,19 +121,15 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalMondayController,
+                  controller: _kJouleMondayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -150,11 +137,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalMondayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsMonday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleMonday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalMondayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsMonday.value);
+                        _kJouleMondayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value);
                       },
                     );
                   },
@@ -170,19 +157,15 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalTuesdayController,
+                  controller: _kJouleTuesdayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -190,13 +173,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalTuesdayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsTuesday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalTuesdayController.text = formatter.format(
-                          _dailyCaloriesEditorScreenViewModel.kCalsTuesday.value,
-                        );
+                        _kJouleTuesdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value);
                       },
                     );
                   },
@@ -208,26 +189,19 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 1,
-                child: Text(AppLocalizations.of(context)!.wednesday_kcals, style: textTheme.titleMedium),
-              ),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.wednesday_kcals, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalWednesdayController,
+                  controller: _kJouleWednesdayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -235,13 +209,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalWednesdayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsWednesday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalWednesdayController.text = formatter.format(
-                          _dailyCaloriesEditorScreenViewModel.kCalsWednesday.value,
-                        );
+                        _kJouleWednesdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value);
                       },
                     );
                   },
@@ -253,26 +225,19 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 1,
-                child: Text(AppLocalizations.of(context)!.thursday_kcals, style: textTheme.titleMedium),
-              ),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.thursday_kcals, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalThursdayController,
+                  controller: _kJouleThursdayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -280,13 +245,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalThursdayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsThursday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleThursday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalThursdayController.text = formatter.format(
-                          _dailyCaloriesEditorScreenViewModel.kCalsThursday.value,
-                        );
+                        _kJouleThursdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value);
                       },
                     );
                   },
@@ -302,19 +265,15 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalFridayController,
+                  controller: _kJouleFridayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -322,11 +281,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalFridayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsFriday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleFriday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalFridayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsFriday.value);
+                        _kJouleFridayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value);
                       },
                     );
                   },
@@ -338,26 +297,19 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 1,
-                child: Text(AppLocalizations.of(context)!.saturday_kcals, style: textTheme.titleMedium),
-              ),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.saturday_kcals, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalSaturdayController,
+                  controller: _kJouleSaturdayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -365,13 +317,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalSaturdayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsSaturday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalSaturdayController.text = formatter.format(
-                          _dailyCaloriesEditorScreenViewModel.kCalsSaturday.value,
-                        );
+                        _kJouleSaturdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value);
                       },
                     );
                   },
@@ -387,19 +337,15 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: SettingsTextField(
-                  controller: _kCalSundayController,
+                  controller: _kJouleSundayController,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
                       final String text = newValue.text;
                       return text.isEmpty
                           ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateCalories(kCals: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(
-                                      numberString: text,
-                                      languageCode: languageCode,
-                                    )! >=
-                                    1
+                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
                           ? newValue
                           : oldValue;
                     }),
@@ -407,11 +353,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   onChanged: (value) {
                     kCalSundayDebouncer.run(
                       callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kCalsSunday.value = ConvertValidate.convertLocalStringToInt(
+                        _dailyCaloriesEditorScreenViewModel.kJouleSunday.value = ConvertValidate.convertLocalStringToInt(
                           numberString: value,
                           languageCode: languageCode,
                         )!;
-                        _kCalSundayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kCalsSunday.value);
+                        _kJouleSundayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value);
                       },
                     );
                   },
@@ -428,11 +374,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
             try {
               Navigator.pop(context);
             } on Exception catch (exc, stack) {
-              await ErrorHandlers.showException(
-                context: navigatorKey.currentContext!,
-                exception: exc,
-                stackTrace: stack,
-              );
+              await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
             } on Error catch (error, stack) {
               await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
             }
@@ -443,44 +385,33 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
 
           onPressed: () async {
             try {
-              KCalSettings kCalSettings = KCalSettings(
-                kCalsMonday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalMondayController.text,
-                  languageCode: languageCode,
-                )!,
-                kCalsTuesday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalTuesdayController.text,
-                  languageCode: languageCode,
-                )!,
-                kCalsWednesday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalWednesdayController.text,
-                  languageCode: languageCode,
-                )!,
-                kCalsThursday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalThursdayController.text,
-                  languageCode: languageCode,
-                )!,
-                kCalsFriday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalFridayController.text,
-                  languageCode: languageCode,
-                )!,
-                kCalsSaturday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalSaturdayController.text,
-                  languageCode: languageCode,
-                )!,
-                kCalsSunday: ConvertValidate.convertLocalStringToInt(
-                  numberString: _kCalSundayController.text,
-                  languageCode: languageCode,
-                )!,
+              KJoulePerDay kJouleSettings = KJoulePerDay(
+                kJouleMonday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleMondayController.text, languageCode: languageCode)!,
+                ),
+                kJouleTuesday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleTuesdayController.text, languageCode: languageCode)!,
+                ),
+                kJouleWednesday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleWednesdayController.text, languageCode: languageCode)!,
+                ),
+                kJouleThursday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleThursdayController.text, languageCode: languageCode)!,
+                ),
+                kJouleFriday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleFridayController.text, languageCode: languageCode)!,
+                ),
+                kJouleSaturday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleSaturdayController.text, languageCode: languageCode)!,
+                ),
+                kJouleSunday: NutritionCalculator.getKJoulesFromKCals(
+                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleSundayController.text, languageCode: languageCode)!,
+                ),
               );
 
-              Navigator.pop(context, kCalSettings);
+              Navigator.pop(context, kJouleSettings);
             } on Exception catch (exc, stack) {
-              await ErrorHandlers.showException(
-                context: navigatorKey.currentContext!,
-                exception: exc,
-                stackTrace: stack,
-              );
+              await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
             } on Error catch (error, stack) {
               await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
             }

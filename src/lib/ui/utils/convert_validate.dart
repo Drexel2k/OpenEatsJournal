@@ -38,14 +38,14 @@ class ConvertValidate {
     return true;
   }
 
-  static bool validateCalories({required String kCals, required String thousandSeparator}) {
+  static bool validateKJoule({required String kJoule, required String thousandSeparator}) {
     //none or multiple digits (\d*) followed by none or one thousandSeparator (\thousandSeparator?) followed by none or multiple digits (\d*)
-    var matches = RegExp(r"^\d*\" + thousandSeparator + r"?\d*$").allMatches(kCals);
+    var matches = RegExp(r"^\d*\" + thousandSeparator + r"?\d*$").allMatches(kJoule);
     if (matches.length != 1) {
       return false;
     }
 
-    List<String> parts = kCals.split(thousandSeparator);
+    List<String> parts = kJoule.split(thousandSeparator);
 
     if (parts.length > 2) {
       return false;

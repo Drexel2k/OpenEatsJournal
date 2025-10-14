@@ -240,7 +240,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       await _foodRepository.setFoodCache(eatsJournalEntry.food!);
     }
 
-    await _journalRepository.saveOnceDailyNutritionTarget(
+    await _journalRepository.saveOnceDayNutritionTarget(
       entryDate: eatsJournalEntry.entryDate,
       dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
     );

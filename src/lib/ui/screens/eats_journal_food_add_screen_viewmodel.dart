@@ -102,7 +102,7 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
     if (_amount.value != null && eatsAmount.value != null) {
       await _foodRepository.setFoodCache(_food);
 
-      await _journalRepository.saveOnceDailyNutritionTarget(
+      await _journalRepository.saveOnceDayNutritionTarget(
         entryDate: _settingsRepository.currentJournalDate.value,
         dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
       );

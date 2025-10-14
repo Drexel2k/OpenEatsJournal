@@ -1,76 +1,76 @@
 import "package:flutter/foundation.dart";
-import "package:openeatsjournal/domain/kcal_settings.dart";
+import "package:openeatsjournal/domain/kjoule_per_day.dart";
 
 class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
-  DailyCaloriesEditorScreenViewModel(KCalSettings kCalSettings)
-    : _kCalsTargetDaily = ValueNotifier(
-        ((kCalSettings.kCalsMonday +
-                    kCalSettings.kCalsTuesday +
-                    kCalSettings.kCalsWednesday +
-                    kCalSettings.kCalsThursday +
-                    kCalSettings.kCalsFriday +
-                    kCalSettings.kCalsSaturday +
-                    kCalSettings.kCalsSunday) /
+  DailyCaloriesEditorScreenViewModel(KJoulePerDay kJouleSettings)
+    : _kJouleTargetDaily = ValueNotifier(
+        ((kJouleSettings.kJouleMonday +
+                    kJouleSettings.kJouleTuesday +
+                    kJouleSettings.kJouleWednesday +
+                    kJouleSettings.kJouleThursday +
+                    kJouleSettings.kJouleFriday +
+                    kJouleSettings.kJouleSaturday +
+                    kJouleSettings.kJouleSunday) /
                 7)
             .round(),
       ),
-      _kCalsMonday = ValueNotifier(kCalSettings.kCalsMonday),
-      _kCalsTuesday = ValueNotifier(kCalSettings.kCalsTuesday),
-      _kCalsWednesday = ValueNotifier(kCalSettings.kCalsWednesday),
-      _kCalsThursday = ValueNotifier(kCalSettings.kCalsThursday),
-      _kCalsFriday = ValueNotifier(kCalSettings.kCalsFriday),
-      _kCalsSaturday = ValueNotifier(kCalSettings.kCalsSaturday),
-      _kCalsSunday = ValueNotifier(kCalSettings.kCalsSunday) {
-    _kCalsMonday.addListener(_dayKCalsChanged);
-    _kCalsTuesday.addListener(_dayKCalsChanged);
-    _kCalsWednesday.addListener(_dayKCalsChanged);
-    _kCalsThursday.addListener(_dayKCalsChanged);
-    _kCalsFriday.addListener(_dayKCalsChanged);
-    _kCalsSaturday.addListener(_dayKCalsChanged);
-    _kCalsSunday.addListener(_dayKCalsChanged);
+      _kJouleMonday = ValueNotifier(kJouleSettings.kJouleMonday),
+      _kJouleTuesday = ValueNotifier(kJouleSettings.kJouleTuesday),
+      _kJouleWednesday = ValueNotifier(kJouleSettings.kJouleWednesday),
+      _kJouleThursday = ValueNotifier(kJouleSettings.kJouleThursday),
+      _kJouleFriday = ValueNotifier(kJouleSettings.kJouleFriday),
+      _kJouleSaturday = ValueNotifier(kJouleSettings.kJouleSaturday),
+      _kJouleSunday = ValueNotifier(kJouleSettings.kJouleSunday) {
+    _kJouleMonday.addListener(_dayKJouleChanged);
+    _kJouleTuesday.addListener(_dayKJouleChanged);
+    _kJouleWednesday.addListener(_dayKJouleChanged);
+    _kJouleThursday.addListener(_dayKJouleChanged);
+    _kJouleFriday.addListener(_dayKJouleChanged);
+    _kJouleSaturday.addListener(_dayKJouleChanged);
+    _kJouleSunday.addListener(_dayKJouleChanged);
   }
 
-  final ValueNotifier<int> _kCalsTargetDaily;
-  final ValueNotifier<int> _kCalsMonday;
-  final ValueNotifier<int> _kCalsTuesday;
-  final ValueNotifier<int> _kCalsWednesday;
-  final ValueNotifier<int> _kCalsThursday;
-  final ValueNotifier<int> _kCalsFriday;
-  final ValueNotifier<int> _kCalsSaturday;
-  final ValueNotifier<int> _kCalsSunday;
+  final ValueNotifier<int> _kJouleTargetDaily;
+  final ValueNotifier<int> _kJouleMonday;
+  final ValueNotifier<int> _kJouleTuesday;
+  final ValueNotifier<int> _kJouleWednesday;
+  final ValueNotifier<int> _kJouleThursday;
+  final ValueNotifier<int> _kJouleFriday;
+  final ValueNotifier<int> _kJouleSaturday;
+  final ValueNotifier<int> _kJouleSunday;
 
-  ValueNotifier<int> get kCalsTargetDaily => _kCalsTargetDaily;
-  ValueNotifier<int> get kCalsMonday => _kCalsMonday;
-  ValueNotifier<int> get kCalsTuesday => _kCalsTuesday;
-  ValueNotifier<int> get kCalsWednesday => _kCalsWednesday;
-  ValueNotifier<int> get kCalsThursday => _kCalsThursday;
-  ValueNotifier<int> get kCalsFriday => _kCalsFriday;
-  ValueNotifier<int> get kCalsSaturday => _kCalsSaturday;
-  ValueNotifier<int> get kCalsSunday => _kCalsSunday;
+  ValueNotifier<int> get kJouleTargetDaily => _kJouleTargetDaily;
+  ValueNotifier<int> get kJouleMonday => _kJouleMonday;
+  ValueNotifier<int> get kJouleTuesday => _kJouleTuesday;
+  ValueNotifier<int> get kJouleWednesday => _kJouleWednesday;
+  ValueNotifier<int> get kJouleThursday => _kJouleThursday;
+  ValueNotifier<int> get kJouleFriday => _kJouleFriday;
+  ValueNotifier<int> get kJouleSaturday => _kJouleSaturday;
+  ValueNotifier<int> get kJouleSunday => _kJouleSunday;
 
-  void _dayKCalsChanged() {
-    _kCalsTargetDaily.value =
-        ((_kCalsMonday.value +
-                    _kCalsTuesday.value +
-                    _kCalsWednesday.value +
-                    _kCalsThursday.value +
-                    _kCalsFriday.value +
-                    _kCalsSaturday.value +
-                    _kCalsSunday.value) /
+  void _dayKJouleChanged() {
+    _kJouleTargetDaily.value =
+        ((_kJouleMonday.value +
+                    _kJouleTuesday.value +
+                    _kJouleWednesday.value +
+                    _kJouleThursday.value +
+                    _kJouleFriday.value +
+                    _kJouleSaturday.value +
+                    _kJouleSunday.value) /
                 7)
             .round();
   }
 
   @override
   void dispose() {
-    _kCalsTargetDaily.dispose();
-    _kCalsMonday.dispose();
-    _kCalsTuesday.dispose();
-    _kCalsWednesday.dispose();
-    _kCalsThursday.dispose();
-    _kCalsFriday.dispose();
-    _kCalsSaturday.dispose();
-    _kCalsSunday.dispose();
+    _kJouleTargetDaily.dispose();
+    _kJouleMonday.dispose();
+    _kJouleTuesday.dispose();
+    _kJouleWednesday.dispose();
+    _kJouleThursday.dispose();
+    _kJouleFriday.dispose();
+    _kJouleSaturday.dispose();
+    _kJouleSunday.dispose();
 
     super.dispose();
   }

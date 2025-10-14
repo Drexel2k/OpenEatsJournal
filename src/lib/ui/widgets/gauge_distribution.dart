@@ -5,11 +5,7 @@ class GaugeDistribution extends StatelessWidget {
   GaugeDistribution({super.key, required double value, required double startValue})
     : _startValue = startValue,
       _value = value {
-    if (_value <= 0 || _value > 100) {
-      throw ArgumentError("Value must be greater 0 and max 100.");
-    }
-
-    if (_value <= 0 || _value > 100) {
+    if (_value < 0 || _value > 100) {
       throw ArgumentError("Value must be greater 0 and max 100.");
     }
 

@@ -16,9 +16,9 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       _weight = ValueNotifier(null),
       _activityFactor = ValueNotifier(null),
       _weightTarget = ValueNotifier(null),
-      _dailyNeedKCalories = ValueNotifier(0),
-      _dailyTargetCalories = ValueNotifier(0) {
-    _weightTarget.addListener(_calculateKCalories);
+      _dailyNeedKJoule = ValueNotifier(0),
+      _dailyTargetKJoule = ValueNotifier(0) {
+    _weightTarget.addListener(_calculateKJoule);
   }
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
@@ -31,8 +31,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _weight;
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget?> _weightTarget;
-  final ValueNotifier<int> _dailyNeedKCalories;
-  final ValueNotifier<int> _dailyTargetCalories;
+  final ValueNotifier<int> _dailyNeedKJoule;
+  final ValueNotifier<int> _dailyTargetKJoule;
 
   ValueNotifier<int> get currentPageIndex => _currentPageIndex;
   bool get darkMode => _settingsRepository.darkMode.value;
@@ -42,8 +42,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<double?> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget?> get weightTarget => _weightTarget;
-  ValueNotifier<int> get dailyNeedKCalories => _dailyNeedKCalories;
-  ValueNotifier<int> get dailyTargetCalories => _dailyTargetCalories;
+  ValueNotifier<int> get dailyNeedKJoule => _dailyNeedKJoule;
+  ValueNotifier<int> get dailyTargetKJoule => _dailyTargetKJoule;
 
   Future<void> saveOnboardingData() async {
     int age = 0;
@@ -68,8 +68,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    double dailyKCaloriesD = NutritionCalculator.calculateTotalKCaloriesPerDay(
-      kCaloriesPerDay: NutritionCalculator.calculateBasalMetabolicRate(
+    double dailyKCaloriesD = NutritionCalculator.calculateTotalKJoulePerDay(
+      kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _weight.value!,
         heightCm: _height.value!,
         ageYear: age,
@@ -78,7 +78,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       activityFactor: _activityFactor.value!,
     );
 
-    int dailyTargetCalories = NutritionCalculator.calculateTargetCaloriesPerDay(kCaloriesPerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg).round();
+    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg).round();
 
     await _settingsRepository.saveAllSettings(
       AllSettings(
@@ -89,13 +89,13 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         weight: _weight.value!,
         activityFactor: _activityFactor.value!,
         weightTarget: _weightTarget.value!,
-        kCalsMonday: dailyTargetCalories,
-        kCalsTuesday: dailyTargetCalories,
-        kCalsWednesday: dailyTargetCalories,
-        kCalsThursday: dailyTargetCalories,
-        kCalsFriday: dailyTargetCalories,
-        kCalsSaturday: dailyTargetCalories,
-        kCalsSunday: dailyTargetCalories,
+        kJouleMonday: dailyTargetKJoule,
+        kJouleTuesday: dailyTargetKJoule,
+        kJouleWednesday: dailyTargetKJoule,
+        kJouleThursday: dailyTargetKJoule,
+        kJouleFriday: dailyTargetKJoule,
+        kJouleSaturday: dailyTargetKJoule,
+        kJouleSunday: dailyTargetKJoule,
         languageCode: _settingsRepository.languageCode.value,
       ),
     );
@@ -103,7 +103,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
     await _weightRepository.addWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
   }
 
-  void _calculateKCalories() {
+  void _calculateKJoule() {
     int age = 0;
     final DateTime today = DateTime.now();
     age = today.year - _birthday.value!.year;
@@ -126,8 +126,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    double dailyKCaloriesD = NutritionCalculator.calculateTotalKCaloriesPerDay(
-      kCaloriesPerDay: NutritionCalculator.calculateBasalMetabolicRate(
+    double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
+      kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _weight.value!,
         heightCm: _height.value!,
         ageYear: age,
@@ -135,10 +135,11 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       ),
       activityFactor: _activityFactor.value!,
     );
-    double dailyTargetCaloriesD = NutritionCalculator.calculateTargetCaloriesPerDay(kCaloriesPerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg);
 
-    _dailyNeedKCalories.value = dailyKCaloriesD.round();
-    _dailyTargetCalories.value = dailyTargetCaloriesD.round();
+    double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg);
+
+    _dailyNeedKJoule.value = dailyNeedKJouleDouble.round();
+    _dailyTargetKJoule.value = dailyTargetKJouleDouble.round();
   }
 
   @override

@@ -33,7 +33,7 @@ class MainLayout extends StatelessWidget {
           if (targetNavigationIndex == 0) {
             Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
           } else if (targetNavigationIndex == 1) {
-            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteHome);
+            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsJournal);
           } else if (targetNavigationIndex == 2) {
             Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteStatistics);
           }
@@ -41,7 +41,7 @@ class MainLayout extends StatelessWidget {
         selectedIndex: currentNavigationIndex,
         destinations: <Widget>[
           NavigationDestination(icon: Icon(Icons.lunch_dining), label: AppLocalizations.of(context)!.food),
-          NavigationDestination(icon: Icon(Icons.home), label: AppLocalizations.of(context)!.daily_overview),
+          NavigationDestination(icon: Icon(Icons.menu_book), label: AppLocalizations.of(context)!.eats_journal),
           NavigationDestination(icon: Icon(Icons.assessment), label: AppLocalizations.of(context)!.statistics),
         ],
       ),

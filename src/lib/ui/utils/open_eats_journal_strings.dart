@@ -1,5 +1,5 @@
 class OpenEatsJournalStrings {
-  static const navigatorRouteHome = "/";
+  static const navigatorRouteEatsJournal = "/eatsjournal";
   static const navigatorRouteFood = "/food";
   static const navigatorRouteStatistics = "/stats";
   static const navigatorRouteSettings = "/settings";
@@ -23,13 +23,13 @@ class OpenEatsJournalStrings {
   static const settingWeight = "weight";
   static const settingActivityFactor = "activity_factor";
   static const settingWeightTarget = "weight_target";
-  static const settingKCalsMonday = "kcals_monday";
-  static const settingKCalsTuesday = "kcals_tuesday";
-  static const settingKCalsWednesday = "kcals_wednesday";
-  static const settingKCalsThursday = "kcals_thursday";
-  static const settingKCalsFriday = "kcals_friday";
-  static const settingKCalsSaturday = "kcals_saturday";
-  static const settingKCalsSunday = "kcals_sunday";
+  static const settingKJouleMonday = "kjoule_monday";
+  static const settingKJouleTuesday = "kjoule_tuesday";
+  static const settingKJouleWednesday = "kjoule_wednesday";
+  static const settingKJouleThursday = "kjoule_thursday";
+  static const settingKJouleFriday = "kjoule_friday";
+  static const settingKJouleSaturday = "kjoule_saturday";
+  static const settingKJouleSunday = "kjoule_sunday";
   static const settingLanguageCode = "language_code";
 
   static const dbTableSetting = "t_setting";

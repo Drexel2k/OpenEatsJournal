@@ -10,8 +10,7 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmode
 import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
 
 class OnboardingScreen extends StatelessWidget {
-  OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel})
-    : _onboardingScreenViewModel = onboardingScreenViewModel;
+  OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel}) : _onboardingScreenViewModel = onboardingScreenViewModel;
   final OnboardingScreenViewModel _onboardingScreenViewModel;
   final PageController _pageViewController = PageController();
 
@@ -38,17 +37,9 @@ class OnboardingScreen extends StatelessWidget {
                       try {
                         _movePageIndex(-1);
                       } on Exception catch (exc, stack) {
-                        await ErrorHandlers.showException(
-                          context: navigatorKey.currentContext!,
-                          exception: exc,
-                          stackTrace: stack,
-                        );
+                        await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                       } on Error catch (error, stack) {
-                        await ErrorHandlers.showException(
-                          context: navigatorKey.currentContext!,
-                          error: error,
-                          stackTrace: stack,
-                        );
+                        await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                       }
                     },
                   ),
@@ -77,9 +68,15 @@ class OnboardingScreen extends StatelessWidget {
                     onDone: () {
                       _movePageIndex(1);
                     },
-                    onboardingViewModel: _onboardingScreenViewModel,
+                    onboardingScreenViewModel: _onboardingScreenViewModel,
                   ),
-                  OnboardingScreenPage4(onDone: () {}, onboardingViewModel: _onboardingScreenViewModel),
+                  OnboardingScreenPage4(
+                    onDone: () async {
+                      await _onboardingScreenViewModel.saveOnboardingData();
+                      Navigator.pushReplacementNamed(navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
+                    },
+                    onboardingScreenViewModel: _onboardingScreenViewModel,
+                  ),
                 ],
               ),
             ),
@@ -91,10 +88,6 @@ class OnboardingScreen extends StatelessWidget {
 
   void _movePageIndex(int steps) {
     _onboardingScreenViewModel.currentPageIndex.value = _onboardingScreenViewModel.currentPageIndex.value + steps;
-    _pageViewController.animateToPage(
-      _onboardingScreenViewModel.currentPageIndex.value,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
+    _pageViewController.animateToPage(_onboardingScreenViewModel.currentPageIndex.value, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
   }
 }

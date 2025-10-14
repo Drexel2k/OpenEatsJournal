@@ -10,8 +10,8 @@ import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen.dart";
-import "package:openeatsjournal/ui/screens/daily_overview_screen.dart";
-import "package:openeatsjournal/ui/screens/daily_overview_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
@@ -29,9 +29,7 @@ class OpenEatsJournalApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_openEatsJournalAppViewModel.initialized) {
-      if (_openEatsJournalAppViewModel.darkMode) {}
-    } else {
+    if (!_openEatsJournalAppViewModel.initialized) {
       Brightness brightness = MediaQuery.of(context).platformBrightness;
       if (brightness == Brightness.dark) {
         _openEatsJournalAppViewModel.darkMode = true;
@@ -43,7 +41,7 @@ class OpenEatsJournalApp extends StatelessWidget {
       }
     }
 
-    String initialRoute = OpenEatsJournalStrings.navigatorRouteHome;
+    String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
     if (!_openEatsJournalAppViewModel.initialized) {
       initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
     }
@@ -73,9 +71,11 @@ class OpenEatsJournalApp extends StatelessWidget {
           themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
           initialRoute: initialRoute,
           routes: {
-            OpenEatsJournalStrings.navigatorRouteHome: (contextBuilder) => DailyOverviewScreen(
-              dailyOverviewScreenViewModel: DailyOverviewScreenViewModel(settingsRepository: _repositories.settingsRepository),
-              settingsRepository: _repositories.settingsRepository,
+            OpenEatsJournalStrings.navigatorRouteEatsJournal: (contextBuilder) => EatsJournalScreen(
+              eatsJournalScreenViewModel: EatsJournalScreenViewModel(
+                journalRepository: _repositories.journalRepository,
+                settingsRepository: _repositories.settingsRepository,
+              ),
             ),
             OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) => const StatisticsScreen(),
             OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) => FoodSearchScreen(
@@ -97,7 +97,7 @@ class OpenEatsJournalApp extends StatelessWidget {
                 food: (ModalRoute.of(contextBuilder)!.settings.arguments as Food),
                 journalRepository: _repositories.journalRepository,
                 foodRepository: _repositories.foodRepository,
-                settingsRepository: _repositories.settingsRepository
+                settingsRepository: _repositories.settingsRepository,
               ),
             ),
           },
