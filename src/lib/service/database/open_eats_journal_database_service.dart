@@ -1,4 +1,3 @@
-import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -6,11 +5,11 @@ import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/meal.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 
@@ -274,8 +273,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> setDateTimeSetting(String setting, DateTime value) async {
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
-    final String formattedDate = formatter.format(value);
+    final String formattedDate = ConvertValidate.dateFormatterDateAndTime.format(value);
 
     if (await _settingExists(setting)) {
       _updateSetting({OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: formattedDate});
@@ -353,10 +351,7 @@ class OpenEatsJournalDatabaseService {
       return null;
     }
 
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
-    DateTime resultDate = formatter.parse(await _getSetting(setting) as String);
-
-    return resultDate;
+    return ConvertValidate.dateFormatterDateAndTime.parse(await _getSetting(setting) as String);
   }
 
   Future<AllSettings> getAllSettings() async {
@@ -385,8 +380,7 @@ class OpenEatsJournalDatabaseService {
   Future<void> insertWeightJournalEntry(DateTime entryDate, double weight) async {
     Database db = await instance.db;
 
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
-    final String formattedDate = formatter.format(entryDate);
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(entryDate);
 
     final List<Map<String, Object?>> result = await db.query(
       OpenEatsJournalStrings.dbTableWeightJournal,
@@ -421,8 +415,7 @@ class OpenEatsJournalDatabaseService {
       throw StateError("Food for eats journal entry must have an id.");
     }
 
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
-    final String entryDateString = formatter.format(eatsJournalEntry.entryDate);
+    final String entryDateString = ConvertValidate.dateformatterDateOnly.format(eatsJournalEntry.entryDate);
     await db.insert(OpenEatsJournalStrings.dbTableEatsJournal, {
       OpenEatsJournalStrings.dbColumnFoodSourceIdRef: eatsJournalEntry.foodSource?.value,
       OpenEatsJournalStrings.dbColumnFoodSourceTableIdRef: eatsJournalEntry.food?.id,
@@ -570,8 +563,8 @@ class OpenEatsJournalDatabaseService {
   Future<void> insertOnceDayNutritionTarget(DateTime day, int dayTargetKJoule) async {
     Database db = await instance.db;
 
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
-    final String formattedDate = formatter.format(day);
+
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
     final List<Map<String, Object?>> result = await db.query(
       OpenEatsJournalStrings.dbTableDailyNutritionTarget,
@@ -595,8 +588,7 @@ class OpenEatsJournalDatabaseService {
   Future<Map<Meal, Nutritions>?> getDaySumsPerMeal(DateTime entryDate) async {
     Database db = await instance.db;
 
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
-    final String formattedDate = formatter.format(entryDate);
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(entryDate);
 
     final kJouleSum = "kilo_joule_sum";
     final carbohydratesSum = "carbohydrates_sum";
@@ -634,8 +626,7 @@ class OpenEatsJournalDatabaseService {
   Future<int?> getDayNutritionTargets(DateTime day) async {
     Database db = await instance.db;
 
-    final DateFormat formatter = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
-    final String formattedDate = formatter.format(day);
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
     final List<Map<String, Object?>> result = await db.query(
       OpenEatsJournalStrings.dbTableDailyNutritionTarget,

@@ -3,12 +3,13 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
+import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
 class EatsJournalScreenViewModel extends ChangeNotifier {
   EatsJournalScreenViewModel({required JournalRepository journalRepository, required SettingsRepository settingsRepository})
     : _journalRepository = journalRepository,
       _settingsRepository = settingsRepository,
-      _dayData = ValueNotifier<Future<FoodRepositoryGetDayDataResult>>(journalRepository.getDayData(date: settingsRepository.currentJournalDate.value)) {
+      _dayData = journalRepository.getDayData(date: settingsRepository.currentJournalDate.value) {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
 
@@ -21,19 +22,22 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
-  final ValueNotifier<Future<FoodRepositoryGetDayDataResult>> _dayData;
+  final ExternalTriggerChangedNotifier _eatsJournalDataChanged = ExternalTriggerChangedNotifier();
+  Future<FoodRepositoryGetDayDataResult> _dayData;
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get languageCode => _settingsRepository.languageCode.value;
   ValueListenable<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
-  ValueNotifier<Future<FoodRepositoryGetDayDataResult>> get dayData => _dayData;
+  ExternalTriggerChangedNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
+  Future<FoodRepositoryGetDayDataResult> get dayData => _dayData;
   SettingsRepository get settingsRepository => _settingsRepository;
 
   _currentJournalDateChanged() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
-    _dayData.value = _journalRepository.getDayData(date: settingsRepository.currentJournalDate.value);
+    _dayData = _journalRepository.getDayData(date: settingsRepository.currentJournalDate.value);
+    _eatsJournalDataChanged.notify();
   }
 
   _currentMealChanged() {
@@ -60,11 +64,16 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
   }
 
+  refreshData() {
+    _eatsJournalDataChanged.notify();
+  }
+
   @override
   void dispose() {
     _currentJournalDate.dispose();
     _currentMeal.dispose();
     _floatincActionMenuElapsed.dispose();
+    _eatsJournalDataChanged.dispose();
 
     super.dispose();
   }

@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
@@ -17,8 +17,6 @@ class OnboardingScreenPage4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final String languageCode = Localizations.localeOf(context).languageCode;
-    final NumberFormat formatter = NumberFormat(null, languageCode);
 
     return ListenableBuilder(
       listenable: _onboardingScreenViewModel,
@@ -32,7 +30,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                 return Text(
                   AppLocalizations.of(
                     contextBuilder,
-                  )!.your_daily_calories_need(formatter.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyNeedKJoule.value))),
+                  )!.your_daily_calories_need(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyNeedKJoule.value))),
                   style: textTheme.titleMedium,
                 );
               },
@@ -110,7 +108,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                 return Text(
                   AppLocalizations.of(
                     contextBuilder,
-                  )!.your_daily_calories_target(formatter.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyTargetKJoule.value))),
+                  )!.your_daily_calories_target(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyTargetKJoule.value))),
                   style: textTheme.titleMedium,
                 );
               },

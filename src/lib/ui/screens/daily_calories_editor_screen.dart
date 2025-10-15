@@ -6,7 +6,7 @@ import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
@@ -45,15 +45,27 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String thousandSeparator = NumberFormat.decimalPattern(languageCode).symbols.GROUP_SEP;
 
-    final NumberFormat formatter = NumberFormat(null, languageCode);
-
-    _kJouleMondayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value));
-    _kJouleTuesdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value));
-    _kJouleWednesdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value));
-    _kJouleThursdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value));
-    _kJouleFridayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value));
-    _kJouleSaturdayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value));
-    _kJouleSundayController.text = formatter.format(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value));
+    _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value),
+    );
+    _kJouleTuesdayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value),
+    );
+    _kJouleWednesdayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value),
+    );
+    _kJouleThursdayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value),
+    );
+    _kJouleFridayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value),
+    );
+    _kJouleSaturdayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value),
+    );
+    _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(
+      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value),
+    );
 
     final Debouncer kCalMondayDebouncer = Debouncer();
     final Debouncer kCalTuesdayDebouncer = Debouncer();
@@ -78,9 +90,11 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                   valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleTargetDaily,
                   builder: (_, _, _) {
                     return Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value)),
+                      AppLocalizations.of(context)!.amount_kcal(
+                        ConvertValidate.numberFomatterInt.format(
+                          NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value),
+                        ),
+                      ),
                       style: textTheme.titleMedium,
                     );
                   },
@@ -95,7 +109,9 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: Text(
-                  AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_originalDailyTargetKJoule)),
+                  AppLocalizations.of(
+                    context,
+                  )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_originalDailyTargetKJoule))),
                   style: textTheme.bodySmall,
                 ),
               ),
@@ -107,44 +123,9 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
               Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall)),
               Flexible(
                 flex: 1,
-                child: Text(AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_dailyKJoule)), style: textTheme.bodySmall),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          //TODO: for daily kJoule entries allow enter of null value (aka emptying the input Textfield), but showing a hint under the box, that the value is
-          //invalid and what the currently stored value is.
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.monday_kcals, style: textTheme.titleMedium)),
-              Flexible(
-                flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleMondayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalMondayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleMonday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleMondayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value);
-                      },
-                    );
-                  },
+                child: Text(
+                  AppLocalizations.of(context)!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_dailyKJoule))),
+                  style: textTheme.bodySmall,
                 ),
               ),
             ],
@@ -153,34 +134,65 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.tuesday_kcals, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.monday_kcals_label, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleTuesdayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalTuesdayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleTuesdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleMondayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleMondayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleMondayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalMondayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleMonday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleMondayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleMondayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.monday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -189,34 +201,65 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.wednesday_kcals, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.tuesday_kcals_label, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleWednesdayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalWednesdayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleWednesdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleTuesdayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleTuesdayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleTuesdayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalTuesdayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleTuesdayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleTuesdayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleTuesdayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.tuesday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -225,34 +268,65 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.thursday_kcals, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.wednesday_kcals_label, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleThursdayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalThursdayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleThursday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleThursdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleWednesdayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleWednesdayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleWednesdayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalWednesdayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleWednesdayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleWednesdayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleWednesdayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.wednesday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -261,34 +335,65 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.friday_kcals, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.thursday_kcals_label, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleFridayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalFridayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleFriday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleFridayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleThursdayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleThursdayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleThursdayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalThursdayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleThursday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleThursdayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleThursdayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleThursdayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.thursday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -297,34 +402,65 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.saturday_kcals, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.friday_kcals_label, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleSaturdayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalSaturdayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleSaturdayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleFridayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleFridayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleFridayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalFridayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleFriday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleFridayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleFridayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleFridayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.friday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -333,34 +469,132 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.sunday_kcals, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.saturday_kcals_label, style: textTheme.titleMedium)),
               Flexible(
                 flex: 1,
-                child: SettingsTextField(
-                  controller: _kJouleSundayController,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  inputFormatters: [
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      final String text = newValue.text;
-                      return text.isEmpty
-                          ? TextEditingValue(text: "1")
-                          : ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
-                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1
-                          ? newValue
-                          : oldValue;
-                    }),
-                  ],
-                  onChanged: (value) {
-                    kCalSundayDebouncer.run(
-                      callback: () {
-                        _dailyCaloriesEditorScreenViewModel.kJouleSunday.value = ConvertValidate.convertLocalStringToInt(
-                          numberString: value,
-                          languageCode: languageCode,
-                        )!;
-                        _kJouleSundayController.text = formatter.format(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleSaturdayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleSaturdayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleSaturdayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalSaturdayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleSaturdayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleSaturdayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleSaturdayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.saturday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.sunday_kcals_label, style: textTheme.titleMedium)),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SettingsTextField(
+                      controller: _kJouleSundayController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text;
+                          if (text.isEmpty) {
+                            _dailyCaloriesEditorScreenViewModel.kJouleSundayValid.value = false;
+                            return newValue;
+                          } else {
+                            if (ConvertValidate.validateKJoule(kJoule: text, thousandSeparator: thousandSeparator) &&
+                                ConvertValidate.convertLocalStringToDouble(numberString: text, languageCode: languageCode)! >= 1) {
+                              _dailyCaloriesEditorScreenViewModel.kJouleSundayValid.value = true;
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        kCalSundayDebouncer.run(
+                          callback: () {
+                            if (value.isNotEmpty && ConvertValidate.validateKJoule(kJoule: value, thousandSeparator: thousandSeparator)) {
+                              int valueInt = ConvertValidate.convertLocalStringToInt(numberString: value, languageCode: languageCode)!;
+                              if (valueInt >= 1) {
+                                _dailyCaloriesEditorScreenViewModel.kJouleSunday.value = NutritionCalculator.getKJoulesFromKCals(valueInt);
+                                _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(valueInt);
+                              }
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleSundayValid,
+                      builder: (_, _, _) {
+                        if (!_dailyCaloriesEditorScreenViewModel.kJouleSundayValid.value) {
+                          return Text(
+                            AppLocalizations.of(context)!.input_invalid(
+                              AppLocalizations.of(context)!.sunday_kcals,
+                              ConvertValidate.numberFomatterInt.format(
+                                NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value),
+                              ),
+                            ),
+                            style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -386,27 +620,13 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
           onPressed: () async {
             try {
               KJoulePerDay kJouleSettings = KJoulePerDay(
-                kJouleMonday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleMondayController.text, languageCode: languageCode)!,
-                ),
-                kJouleTuesday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleTuesdayController.text, languageCode: languageCode)!,
-                ),
-                kJouleWednesday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleWednesdayController.text, languageCode: languageCode)!,
-                ),
-                kJouleThursday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleThursdayController.text, languageCode: languageCode)!,
-                ),
-                kJouleFriday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleFridayController.text, languageCode: languageCode)!,
-                ),
-                kJouleSaturday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleSaturdayController.text, languageCode: languageCode)!,
-                ),
-                kJouleSunday: NutritionCalculator.getKJoulesFromKCals(
-                  ConvertValidate.convertLocalStringToInt(numberString: _kJouleSundayController.text, languageCode: languageCode)!,
-                ),
+                kJouleMonday: _dailyCaloriesEditorScreenViewModel.kJouleMonday.value,
+                kJouleTuesday: _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value,
+                kJouleWednesday: _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value,
+                kJouleThursday: _dailyCaloriesEditorScreenViewModel.kJouleThursday.value,
+                kJouleFriday: _dailyCaloriesEditorScreenViewModel.kJouleFriday.value,
+                kJouleSaturday: _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value,
+                kJouleSunday: _dailyCaloriesEditorScreenViewModel.kJouleSunday.value,
               );
 
               Navigator.pop(context, kJouleSettings);

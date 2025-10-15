@@ -27,7 +27,7 @@ Future<void> main() async {
     settingsRepository: SettingsRepository.instance,
     weightRepository: JournalRepository.instance,
     foodRepository: FoodRepository.instance,
-    journalRepository: JournalRepository.instance
+    journalRepository: JournalRepository.instance,
   );
 
   repositories.settingsRepository.init(oejDatabase: oejDatabase);

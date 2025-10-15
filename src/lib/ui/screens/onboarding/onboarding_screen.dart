@@ -7,7 +7,7 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_3.d
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_4.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class OnboardingScreen extends StatelessWidget {
   OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel}) : _onboardingScreenViewModel = onboardingScreenViewModel;

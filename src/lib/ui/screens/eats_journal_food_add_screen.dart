@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:openeatsjournal/domain/food.dart';
 import 'package:openeatsjournal/domain/food_unit.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/object_with_order.dart';
+import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/global_navigator_key.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart';
 import 'package:openeatsjournal/ui/utils/error_handlers.dart';
-import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
 class EatsJournalFoodAddScreen extends StatelessWidget {
@@ -27,11 +27,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final String languageCode = Localizations.localeOf(context).languageCode;
-    final NumberFormat numberFormatter = NumberFormat(null, languageCode);
 
-    _amountController.text = numberFormatter.format(_eatsJournalFoodAddScreenViewModel.amount.value);
-    _eatsAmountController.text = numberFormatter.format(_eatsJournalFoodAddScreenViewModel.eatsAmount.value);
+    _amountController.text = ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.amount.value);
+    _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.eatsAmount.value);
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteEatsAdd,
@@ -48,7 +46,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           ),
           Text(
             style: textTheme.labelLarge,
-            _eatsJournalFoodAddScreenViewModel.food.brands != null ? _eatsJournalFoodAddScreenViewModel.food.brands!.join(", ") : AppLocalizations.of(context)!.no_brand,
+            _eatsJournalFoodAddScreenViewModel.food.brands != null
+                ? _eatsJournalFoodAddScreenViewModel.food.brands!.join(", ")
+                : AppLocalizations.of(context)!.no_brand,
           ),
           SizedBox(height: 10),
           ValueListenableBuilder(
@@ -57,7 +57,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
               return _eatsJournalFoodAddScreenViewModel.kJoule.value != null
                   ? Text(
                       style: textTheme.titleMedium,
-                      AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_eatsJournalFoodAddScreenViewModel.kJoule.value!)),
+                      AppLocalizations.of(context)!.amount_kcal(
+                        ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_eatsJournalFoodAddScreenViewModel.kJoule.value!)),
+                      ),
                     )
                   : Text(AppLocalizations.of(context)!.na_kcal);
             },
@@ -70,7 +72,11 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   valueListenable: _eatsJournalFoodAddScreenViewModel.carbohydrates,
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.carbohydrates.value != null
-                        ? Text(AppLocalizations.of(context)!.amount_carb(_eatsJournalFoodAddScreenViewModel.carbohydrates.value!))
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.amount_carb(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.carbohydrates.value!)),
+                          )
                         : Text(AppLocalizations.of(context)!.na_carb);
                   },
                 ),
@@ -80,7 +86,11 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   valueListenable: _eatsJournalFoodAddScreenViewModel.sugar,
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.sugar.value != null
-                        ? Text(AppLocalizations.of(context)!.amount_sugar(_eatsJournalFoodAddScreenViewModel.sugar.value!))
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.amount_sugar(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.sugar.value!)),
+                          )
                         : Text(AppLocalizations.of(context)!.na_sugar);
                   },
                 ),
@@ -94,7 +104,11 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   valueListenable: _eatsJournalFoodAddScreenViewModel.fat,
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.fat.value != null
-                        ? Text(AppLocalizations.of(context)!.amount_fat(_eatsJournalFoodAddScreenViewModel.fat.value!))
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.amount_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.fat.value!)),
+                          )
                         : Text(AppLocalizations.of(context)!.na_fat);
                   },
                 ),
@@ -104,7 +118,11 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   valueListenable: _eatsJournalFoodAddScreenViewModel.saturatedFat,
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.saturatedFat.value != null
-                        ? Text(AppLocalizations.of(context)!.amount_saturated_fat(_eatsJournalFoodAddScreenViewModel.saturatedFat.value!))
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.amount_saturated_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.saturatedFat.value!)),
+                          )
                         : Text(AppLocalizations.of(context)!.na_saturated_fat);
                   },
                 ),
@@ -118,7 +136,11 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   valueListenable: _eatsJournalFoodAddScreenViewModel.protein,
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.protein.value != null
-                        ? Text(AppLocalizations.of(context)!.amount_prot(_eatsJournalFoodAddScreenViewModel.protein.value!))
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.amount_prot(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.protein.value!)),
+                          )
                         : Text(AppLocalizations.of(context)!.na_prot);
                   },
                 ),
@@ -128,7 +150,11 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   valueListenable: _eatsJournalFoodAddScreenViewModel.salt,
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.salt.value != null
-                        ? Text(AppLocalizations.of(context)!.amount_salt(_eatsJournalFoodAddScreenViewModel.salt.value!))
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.amount_salt(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.salt.value!)),
+                          )
                         : Text(AppLocalizations.of(context)!.na_salt);
                   },
                 ),
@@ -151,7 +177,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         _eatsJournalFoodAddScreenViewModel.amount.value = intValue;
                         if (intValue != null) {
                           {
-                            _amountController.text = numberFormatter.format(intValue);
+                            _amountController.text = ConvertValidate.numberFomatterInt.format(intValue);
                           }
                         }
                       },
@@ -175,7 +201,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         _eatsJournalFoodAddScreenViewModel.eatsAmount.value = intValue;
                         if (intValue != null) {
                           {
-                            _eatsAmountController.text = numberFormatter.format(intValue);
+                            _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(intValue);
                           }
                         }
                       },
@@ -259,7 +285,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           SizedBox(height: 10),
           Expanded(
             child: ListView(
-              children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.food, textTheme: textTheme, context: context, numberFormatter: numberFormatter),
+              children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.food, textTheme: textTheme, context: context),
             ),
           ),
           Divider(thickness: 2, height: 20),
@@ -272,18 +298,26 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           SizedBox(height: 10),
           Text(
             style: textTheme.titleMedium,
-            AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_eatsJournalFoodAddScreenViewModel.food.kJoule)),
+            AppLocalizations.of(
+              context,
+            )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_eatsJournalFoodAddScreenViewModel.food.kJoule))),
           ),
           Row(
             children: [
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.carbohydrates != null
-                    ? Text(AppLocalizations.of(context)!.amount_carb(_eatsJournalFoodAddScreenViewModel.food.carbohydrates!))
+                    ? Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.amount_carb(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.carbohydrates!)),
+                      )
                     : Text(AppLocalizations.of(context)!.na_carb),
               ),
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.sugar != null
-                    ? Text(AppLocalizations.of(context)!.amount_sugar(_eatsJournalFoodAddScreenViewModel.food.sugar!))
+                    ? Text(
+                        AppLocalizations.of(context)!.amount_sugar(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.sugar!)),
+                      )
                     : Text(AppLocalizations.of(context)!.na_sugar),
               ),
             ],
@@ -292,12 +326,16 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.fat != null
-                    ? Text(AppLocalizations.of(context)!.amount_fat(_eatsJournalFoodAddScreenViewModel.food.fat!))
+                    ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.fat!)))
                     : Text(AppLocalizations.of(context)!.na_fat),
               ),
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.saturatedFat != null
-                    ? Text(AppLocalizations.of(context)!.amount_saturated_fat(_eatsJournalFoodAddScreenViewModel.food.saturatedFat!))
+                    ? Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.amount_saturated_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.saturatedFat!)),
+                      )
                     : Text(AppLocalizations.of(context)!.na_saturated_fat),
               ),
             ],
@@ -306,12 +344,18 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.protein != null
-                    ? Text(AppLocalizations.of(context)!.amount_prot(_eatsJournalFoodAddScreenViewModel.food.protein!))
+                    ? Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.amount_prot(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.protein!)),
+                      )
                     : Text(AppLocalizations.of(context)!.na_prot),
               ),
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.salt != null
-                    ? Text(AppLocalizations.of(context)!.amount_salt(_eatsJournalFoodAddScreenViewModel.food.salt!))
+                    ? Text(
+                        AppLocalizations.of(context)!.amount_salt(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.salt!)),
+                      )
                     : Text(AppLocalizations.of(context)!.na_salt),
               ),
             ],
@@ -322,29 +366,26 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
     );
   }
 
-  List<OutlinedButton> _getFoodUnitButtons({
-    required Food food,
-    required TextTheme textTheme,
-    required BuildContext context,
-    required NumberFormat numberFormatter,
-  }) {
+  List<OutlinedButton> _getFoodUnitButtons({required Food food, required TextTheme textTheme, required BuildContext context}) {
     List<OutlinedButton> buttons = [];
     if (food.defaultFoodUnit != null) {
       buttons.add(
         OutlinedButton(
           onPressed: () {
-            _eatsAmountController.text = numberFormatter.format(food.defaultFoodUnit!.amount);
+            _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(food.defaultFoodUnit!.amount);
             _eatsJournalFoodAddScreenViewModel.eatsAmount.value = food.defaultFoodUnit!.amount;
           },
           child: Column(
             children: [
               Text(
                 style: textTheme.titleSmall,
-                AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_getKJouleFromFoodUnit(food, food.defaultFoodUnit!))),
+                AppLocalizations.of(context)!.amount_kcal(
+                  ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_getKJouleFromFoodUnit(food, food.defaultFoodUnit!))),
+                ),
               ),
               Text(
                 style: textTheme.labelSmall,
-                "${food.defaultFoodUnit!.name} (${numberFormatter.format(food.defaultFoodUnit!.amount)}${food.defaultFoodUnit!.amountMeasurementUnit.text})",
+                "${food.defaultFoodUnit!.name} (${ConvertValidate.numberFomatterInt.format(food.defaultFoodUnit!.amount)}${food.defaultFoodUnit!.amountMeasurementUnit.text})",
               ),
             ],
           ),
@@ -357,18 +398,20 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
         buttons.add(
           OutlinedButton(
             onPressed: () {
-              _eatsAmountController.text = numberFormatter.format(foodUnitWithOrder.object.amount);
+              _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(foodUnitWithOrder.object.amount);
               _eatsJournalFoodAddScreenViewModel.eatsAmount.value = foodUnitWithOrder.object.amount;
             },
             child: Column(
               children: [
                 Text(
                   style: textTheme.titleSmall,
-                  AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_getKJouleFromFoodUnit(food, foodUnitWithOrder.object))),
+                  AppLocalizations.of(context)!.amount_kcal(
+                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_getKJouleFromFoodUnit(food, foodUnitWithOrder.object))),
+                  ),
                 ),
                 Text(
                   style: textTheme.labelSmall,
-                  "${foodUnitWithOrder.object.name} (${numberFormatter.format(foodUnitWithOrder.object.amount)}${foodUnitWithOrder.object.amountMeasurementUnit.text})",
+                  "${foodUnitWithOrder.object.name} (${ConvertValidate.numberFomatterInt.format(foodUnitWithOrder.object.amount)}${foodUnitWithOrder.object.amountMeasurementUnit.text})",
                 ),
               ],
             ),
@@ -381,18 +424,20 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
       buttons.add(
         OutlinedButton(
           onPressed: () {
-            _eatsAmountController.text = numberFormatter.format(food.nutritionPerGramAmount);
+            _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(food.nutritionPerGramAmount);
             _eatsJournalFoodAddScreenViewModel.eatsAmount.value = food.nutritionPerGramAmount;
           },
           child: Column(
             children: [
               Text(
                 style: textTheme.titleSmall,
-                AppLocalizations.of(
-                  context,
-                )!.amount_kcal(NutritionCalculator.getKCalsFromKJoules((food.kJoule * (100 / food.nutritionPerGramAmount!)).round())),
+                AppLocalizations.of(context)!.amount_kcal(
+                  ConvertValidate.numberFomatterInt.format(
+                    NutritionCalculator.getKCalsFromKJoules((food.kJoule * (100 / food.nutritionPerGramAmount!)).round()),
+                  ),
+                ),
               ),
-              Text(style: textTheme.labelSmall, "${numberFormatter.format(100)}${MeasurementUnit.gram.text}"),
+              Text(style: textTheme.labelSmall, "${ConvertValidate.numberFomatterInt.format(100)}${MeasurementUnit.gram.text}"),
             ],
           ),
         ),
@@ -403,16 +448,18 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
       buttons.add(
         OutlinedButton(
           onPressed: () {
-            _eatsAmountController.text = numberFormatter.format(food.nutritionPerMilliliterAmount);
+            _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(food.nutritionPerMilliliterAmount);
             _eatsJournalFoodAddScreenViewModel.eatsAmount.value = food.nutritionPerMilliliterAmount;
           },
           child: Column(
             children: [
               Text(
                 style: textTheme.titleSmall,
-                AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules((food.kJoule * (100 / food.nutritionPerMilliliterAmount!)))),
+                AppLocalizations.of(context)!.amount_kcal(
+                  ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules((food.kJoule * (100 / food.nutritionPerMilliliterAmount!)))),
+                ),
               ),
-              Text(style: textTheme.labelSmall, "${numberFormatter.format(100)}${MeasurementUnit.milliliter.text}"),
+              Text(style: textTheme.labelSmall, "${ConvertValidate.numberFomatterInt.format(100)}${MeasurementUnit.milliliter.text}"),
             ],
           ),
         ),

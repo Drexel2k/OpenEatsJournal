@@ -3,6 +3,7 @@ import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
@@ -12,7 +13,7 @@ import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
@@ -28,8 +29,6 @@ class EatsJournalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final NumberFormat numberFormatterInt = NumberFormat(null, Localizations.localeOf(context).languageCode);
-    final NumberFormat numberFormatterDouble = NumberFormat("0.0", Localizations.localeOf(context).languageCode);
     final double fabMenuWidth = 150;
 
     double dimension = 200;
@@ -87,11 +86,11 @@ class EatsJournalScreen extends StatelessWidget {
           //even if through start and end angle not the full space is needed.
           //Through the stack widgets can be placed closer together by overlapping the free space of the
           //pie chart.
-          ValueListenableBuilder(
-            valueListenable: _eatsJournalScreenViewModel.currentJournalDate,
-            builder: (_, _, _) {
+          ListenableBuilder(
+            listenable: _eatsJournalScreenViewModel.eatsJournalDataChanged,
+            builder: (_, _) {
               return FutureBuilder<FoodRepositoryGetDayDataResult>(
-                future: _eatsJournalScreenViewModel.dayData.value,
+                future: _eatsJournalScreenViewModel.dayData,
                 builder: (BuildContext context, AsyncSnapshot<FoodRepositoryGetDayDataResult> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -105,7 +104,10 @@ class EatsJournalScreen extends StatelessWidget {
                     GaugeData proteinGaugeData = _getProteinGaugeData(foodRepositoryGetDayDataResult: snapshot.data!, colorScheme: colorScheme);
                     GaugeData fatGaugeData = _getFatGaugeData(foodRepositoryGetDayDataResult: snapshot.data!, colorScheme: colorScheme);
 
-                    double breakfastPercent = _getBreakfastKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
+                    double breakfastPercent = _getBreakfastKJoulePercent(
+                      foodRepositoryGetDayDataResult: snapshot.data!,
+                      dayKJoule: kJouleGaugeData.currentValue,
+                    );
                     double lunchPercent = _getLunchKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
                     double dinnerPercent = _getDinnerKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
                     double snacksPercent = _getSnacksKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
@@ -118,7 +120,7 @@ class EatsJournalScreen extends StatelessWidget {
                               SizedBox(height: 50),
                               Text(AppLocalizations.of(context)!.kcal, style: textTheme.titleLarge, textAlign: TextAlign.center),
                               Text(
-                                "${numberFormatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJouleGaugeData.currentValue))}/\n${numberFormatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJouleGaugeData.maxValue))}",
+                                "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJouleGaugeData.currentValue))}/\n${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJouleGaugeData.maxValue))}",
                                 style: textTheme.titleMedium,
                                 textAlign: TextAlign.center,
                               ),
@@ -212,7 +214,10 @@ class EatsJournalScreen extends StatelessWidget {
                                         margin: const EdgeInsets.only(top: 11),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [Text(AppLocalizations.of(context)!.breakfast), Text("${numberFormatterDouble.format(breakfastPercent)}%")],
+                                          children: [
+                                            Text(AppLocalizations.of(context)!.breakfast),
+                                            Text("${ConvertValidate.numberFomatterDouble.format(breakfastPercent)}%"),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -237,7 +242,10 @@ class EatsJournalScreen extends StatelessWidget {
                                             margin: const EdgeInsets.only(top: 11),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [Text(AppLocalizations.of(context)!.lunch), Text("${numberFormatterDouble.format(lunchPercent)}%")],
+                                              children: [
+                                                Text(AppLocalizations.of(context)!.lunch),
+                                                Text("${ConvertValidate.numberFomatterDouble.format(lunchPercent)}%"),
+                                              ],
                                             ),
                                           ),
                                         ),
@@ -264,7 +272,10 @@ class EatsJournalScreen extends StatelessWidget {
                                             margin: const EdgeInsets.only(top: 11),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [Text(AppLocalizations.of(context)!.dinner), Text("${numberFormatterDouble.format(dinnerPercent)}%")],
+                                              children: [
+                                                Text(AppLocalizations.of(context)!.dinner),
+                                                Text("${ConvertValidate.numberFomatterDouble.format(dinnerPercent)}%"),
+                                              ],
                                             ),
                                           ),
                                         ),
@@ -293,7 +304,10 @@ class EatsJournalScreen extends StatelessWidget {
                                                 margin: const EdgeInsets.only(top: 11),
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [Text(AppLocalizations.of(context)!.snacks), Text("${numberFormatterDouble.format(snacksPercent)}%")],
+                                                  children: [
+                                                    Text(AppLocalizations.of(context)!.snacks),
+                                                    Text("${ConvertValidate.numberFomatterDouble.format(snacksPercent)}%"),
+                                                  ],
                                                 ),
                                               ),
                                             ),
@@ -495,6 +509,8 @@ class EatsJournalScreen extends StatelessWidget {
                                               );
                                             },
                                           );
+
+                                          _eatsJournalScreenViewModel.refreshData();
                                         } on Exception catch (exc, stack) {
                                           await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                                         } on Error catch (error, stack) {

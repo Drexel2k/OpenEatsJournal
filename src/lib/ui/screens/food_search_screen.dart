@@ -13,7 +13,7 @@ import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 import "package:openeatsjournal/ui/widgets/food_card.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";

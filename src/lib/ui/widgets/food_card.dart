@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:openeatsjournal/domain/food.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
+import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
 class FoodCard extends StatelessWidget {
   const FoodCard({
@@ -25,8 +25,6 @@ class FoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String languageCode = Localizations.localeOf(context).languageCode;
-    final NumberFormat numberFormatter = NumberFormat(null, languageCode);
     final borderRadius = BorderRadius.circular(8);
 
     MeasurementUnit measurementUnit = _getMeasurementUnit();
@@ -71,7 +69,12 @@ class FoodCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(style: _textTheme.titleMedium, AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_food.kJoule))),
+                        Text(
+                          style: _textTheme.titleMedium,
+                          AppLocalizations.of(
+                            context,
+                          )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_food.kJoule))),
+                        ),
                         Text(
                           style: _textTheme.labelSmall,
                           AppLocalizations.of(
@@ -87,10 +90,14 @@ class FoodCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _food.carbohydrates != null
-                            ? Text(AppLocalizations.of(context)!.amount_carb(_food.carbohydrates!))
+                            ? Text(AppLocalizations.of(context)!.amount_carb(ConvertValidate.numberFomatterDouble.format(_food.carbohydrates!)))
                             : Text(AppLocalizations.of(context)!.na_carb),
-                        _food.fat != null ? Text(AppLocalizations.of(context)!.amount_fat(_food.fat!)) : Text(AppLocalizations.of(context)!.na_fat),
-                        _food.protein != null ? Text(AppLocalizations.of(context)!.amount_prot(_food.protein!)) : Text(AppLocalizations.of(context)!.na_prot),
+                        _food.fat != null
+                            ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.numberFomatterDouble.format(_food.fat!)))
+                            : Text(AppLocalizations.of(context)!.na_fat),
+                        _food.protein != null
+                            ? Text(AppLocalizations.of(context)!.amount_prot(ConvertValidate.numberFomatterDouble.format(_food.protein!)))
+                            : Text(AppLocalizations.of(context)!.na_prot),
                       ],
                     ),
                   ),
@@ -105,11 +112,11 @@ class FoodCard extends StatelessWidget {
                         children: [
                           Text(
                             style: _textTheme.titleSmall,
-                            "+${AppLocalizations.of(context)!.amount_kcal(NutritionCalculator.getKCalsFromKJoules(_getKJoulesToAdd()))}",
+                            "+${AppLocalizations.of(context)!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_getKJoulesToAdd())))}",
                           ),
                           Text(
                             style: _textTheme.labelSmall,
-                            _getKJoulesToAddText(measurementUnit: measurementUnit, context: context, formatter: numberFormatter),
+                            _getKJoulesToAddText(measurementUnit: measurementUnit, context: context),
                           ),
                         ],
                       ),
@@ -124,11 +131,11 @@ class FoodCard extends StatelessWidget {
     );
   }
 
-  String _getKJoulesToAddText({required MeasurementUnit measurementUnit, required BuildContext context, required NumberFormat formatter}) {
+  String _getKJoulesToAddText({required MeasurementUnit measurementUnit, required BuildContext context}) {
     String kJoulsAddName = AppLocalizations.of(context)!.hundred_measurement_unit(measurementUnit.text);
 
     if (_food.defaultFoodUnit != null) {
-      kJoulsAddName = "${_food.defaultFoodUnit!.name} (${formatter.format(_food.defaultFoodUnit!.amount)}${measurementUnit.text})";
+      kJoulsAddName = "${_food.defaultFoodUnit!.name} (${ConvertValidate.numberFomatterInt.format(_food.defaultFoodUnit!.amount)}${measurementUnit.text})";
     }
     return kJoulsAddName;
   }

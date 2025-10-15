@@ -1,6 +1,17 @@
 import 'package:intl/intl.dart';
+import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
 class ConvertValidate {
+  static void init({required String languageCode}) {
+    numberFomatterInt = NumberFormat(null, languageCode);
+    numberFomatterDouble = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);
+  }
+
+  static late NumberFormat numberFomatterInt;
+  static late NumberFormat numberFomatterDouble;
+  static DateFormat dateformatterDateOnly = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
+  static DateFormat dateFormatterDateAndTime = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
+
   static double? convertLocalStringToDouble({required String numberString, required String languageCode}) {
     num? number = NumberFormat(null, languageCode).tryParse(numberString);
     return number == null ? null : number as double;

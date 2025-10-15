@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsScreenPageApp extends StatelessWidget {

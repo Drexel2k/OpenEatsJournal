@@ -16,16 +16,16 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
        _journalRepository = journalRepository,
        _foodRepository = foodRepository,
        _settingsRepository = settingsRepository,
-       _eatsAmount = ValueNotifier<int?>(_getInitialFoodAmount(food)),
-       _currentMesaureMentUnit = ValueNotifier<MeasurementUnit>(_getInitialMeasurementUnit(food)),
+       _eatsAmount = ValueNotifier(_getInitialFoodAmount(food)),
+       _currentMesaureMentUnit = ValueNotifier(_getInitialMeasurementUnit(food)),
        _measurementSelectionEnabled = _getInitialMeasurementSelectionEnabled(food),
-       _kJoule = ValueNotifier<int?>(_getInitialKJoule(food)),
-       _carbohydrates = ValueNotifier<double?>(_getInitialCarbohydrates(food)),
-       _sugar = ValueNotifier<double?>(_getInitialSugar(food)),
-       _fat = ValueNotifier<double?>(_getInitialFat(food)),
-       _saturatedFat = ValueNotifier<double?>(_getInitialSaturatedFat(food)),
-       _protein = ValueNotifier<double?>(_getInitialProtein(food)),
-       _salt = ValueNotifier<double?>(_getInitialSalt(food)) {
+       _kJoule = ValueNotifier(_getInitialKJoule(food)),
+       _carbohydrates = ValueNotifier(_getInitialCarbohydrates(food)),
+       _sugar = ValueNotifier(_getInitialSugar(food)),
+       _fat = ValueNotifier(_getInitialFat(food)),
+       _saturatedFat = ValueNotifier(_getInitialSaturatedFat(food)),
+       _protein = ValueNotifier(_getInitialProtein(food)),
+       _salt = ValueNotifier(_getInitialSalt(food)) {
     _amount.addListener(_amountsChanged);
     _eatsAmount.addListener(_amountsChanged);
   }
@@ -34,7 +34,7 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final FoodRepository _foodRepository;
   final SettingsRepository _settingsRepository;
-  final ValueNotifier<int?> _amount = ValueNotifier<int?>(1);
+  final ValueNotifier<int?> _amount = ValueNotifier(1);
   final ValueNotifier<int?> _eatsAmount;
   final ValueNotifier<MeasurementUnit> _currentMesaureMentUnit;
   final bool _measurementSelectionEnabled;

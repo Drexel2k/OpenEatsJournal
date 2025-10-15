@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
 class ErrorHandlers {
   static Future<bool?> showException({

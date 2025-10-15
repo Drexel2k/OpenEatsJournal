@@ -10,7 +10,7 @@ import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 
 class FoodSearchScreenViewModel extends ChangeNotifier {

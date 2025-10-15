@@ -56,99 +56,22 @@
   "statistics": "Statistics",
   "kcal": "kCal",
   "amount_kcal": "{amount} kcal",
-  "@amount_kcal": {
-    "placeholders": {
-      "amount": {
-        "type": "int",
-        "format": "decimalPattern",
-        "optionalParameters": {
-          "decimalDigits": 0
-        }
-      }
-    }
-  },
   "fat": "fat",
   "amount_fat": "{amount} fat",
-  "@amount_fat": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "amount_saturated_fat": "{amount} saturated fat",
-  "@amount_saturated_fat": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "na_fat": "n/a fat",
   "na_saturated_fat": "n/a saturated fat",
   "carb": "carb",
   "carbohydrates": "carbohydrates",
   "amount_carb": "{amount} carb",
-  "@amount_carb": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "amount_sugar": "{amount} sugar",
-  "@amount_sugar": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "na_carb": "n/a carb",
   "na_sugar": "n/a sugar",
   "prot": "prot",
   "protein": "protein",
   "amount_prot": "{amount} prot",
-  "@amount_prot": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "na_prot": "n/a prot",
   "amount_salt": "{amount} salt",
-  "@amount_salt": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "na_salt": "n/a salt",
   "days": "days",
   "weeks": "weeks",
@@ -170,13 +93,20 @@
   "edit_calories_target": "Edit Calories Targets",
   "daily_target_new": "Daily target (⌀) kCals new:",
   "daily_target_original": "Daily target (⌀) kCals original:",
-  "monday_kcals": "Monday kCals:",
-  "tuesday_kcals": "Tuesday kCals:",
-  "wednesday_kcals": "Wednesday kCals:",
-  "thursday_kcals": "Thursday kCals:",
-  "friday_kcals": "Friday kCals:",
-  "saturday_kcals": "Saturday kCals:",
-  "sunday_kcals": "Sunday kCals:",
+  "monday_kcals_label": "Monday kCals:",
+  "tuesday_kcals_label": "Tuesday kCals:",
+  "wednesday_kcals_label": "Wednesday kCals:",
+  "thursday_kcals_label": "Thursday kCals:",
+  "friday_kcals_label": "Friday kCals:",
+  "saturday_kcals_label": "Saturday kCals:",
+  "sunday_kcals_label": "Sunday kCals:",
+  "monday_kcals": "Monday kCals",
+  "tuesday_kcals": "Tuesday kCals",
+  "wednesday_kcals": "Wednesday kCals",
+  "thursday_kcals": "Thursday kCals",
+  "friday_kcals": "Friday kCals",
+  "saturday_kcals": "Saturday kCals",
+  "sunday_kcals": "Sunday kCals",
   "food_management": "Food management",
   "food": "Food",
   "open_food_facts_exception": "Open Food Fact connection error: {errorMessage}.",
@@ -205,5 +135,7 @@
   "add_eats_journal_entry": "Add eats journal entry",
   "enter_valid_amount" : "Please enter a valid amount.",
   "enter_valid_eats_amount" : "Please enter a valid eats amount.",
-  "na_kcal": "n/a kCal"
+  "na_kcal": "n/a kCal",
+  "input_invalid": "{name} input invalid, current value is still {value}."
 }
+

@@ -5,7 +5,7 @@ import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 

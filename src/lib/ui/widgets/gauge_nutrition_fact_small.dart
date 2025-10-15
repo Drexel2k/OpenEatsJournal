@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
-import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 
 class GaugeNutritionFactSmall extends StatelessWidget {
@@ -14,7 +14,6 @@ class GaugeNutritionFactSmall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final NumberFormat formatter = NumberFormat("0.0", Localizations.localeOf(context).languageCode);
 
     double dimension = 75;
     double radius = 0.85;
@@ -57,7 +56,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
               Spacer(),
               Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
               Text(
-                "${formatter.format(_gaugeData.currentValue)}/\n${formatter.format(_gaugeData.maxValue)}",
+                "${ConvertValidate.numberFomatterDouble.format(_gaugeData.currentValue)}/\n${ConvertValidate.numberFomatterDouble.format(_gaugeData.maxValue)}",
                 style: textTheme.labelSmall,
                 textAlign: TextAlign.center,
               ),

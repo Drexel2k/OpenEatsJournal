@@ -11,7 +11,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
@@ -35,15 +35,13 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
-    final NumberFormat numberFormatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
-
     final Debouncer heightDebouncer = Debouncer();
     final Debouncer weightDebouncer = Debouncer();
 
     _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsScreenViewModel.birthday.value);
 
-    _heightController.text = numberFormatter.format(_settingsScreenViewModel.height.value);
-    _weightController.text = numberFormatter.format(_settingsScreenViewModel.weight.value);
+    _heightController.text = ConvertValidate.numberFomatterInt.format(_settingsScreenViewModel.height.value);
+    _weightController.text = ConvertValidate.numberFomatterInt.format(_settingsScreenViewModel.weight.value);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -61,20 +59,16 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            flex: 8,
-                            child: Text(
-                              AppLocalizations.of(context)!.daily_target_calories,
-                              style: textTheme.titleMedium,
-                            ),
-                          ),
+                          Expanded(flex: 8, child: Text(AppLocalizations.of(context)!.daily_target_calories, style: textTheme.titleMedium)),
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
                               valueListenable: _settingsScreenViewModel.dailyTargetKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  numberFormatter.format(NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyTargetKJoule.value)),
+                                  ConvertValidate.numberFomatterInt.format(
+                                    NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyTargetKJoule.value),
+                                  ),
                                   style: textTheme.titleMedium,
                                 );
                               },
@@ -85,17 +79,14 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            flex: 8,
-                            child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall),
-                          ),
+                          Expanded(flex: 8, child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall)),
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
                               valueListenable: _settingsScreenViewModel.dailyKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  numberFormatter.format(NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyKJoule.value)),
+                                  ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyKJoule.value)),
                                   style: textTheme.bodySmall,
                                 );
                               },
@@ -118,17 +109,9 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               await _settingsScreenViewModel.recalculateDailykJouleTargetsAndSave();
                             }
                           } on Exception catch (exc, stack) {
-                            await ErrorHandlers.showException(
-                              context: navigatorKey.currentContext!,
-                              exception: exc,
-                              stackTrace: stack,
-                            );
+                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                           } on Error catch (error, stack) {
-                            await ErrorHandlers.showException(
-                              context: navigatorKey.currentContext!,
-                              error: error,
-                              stackTrace: stack,
-                            );
+                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                           }
                         },
                         child: Icon(Icons.calculate),
@@ -155,17 +138,9 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               await _settingsScreenViewModel.setDailyKJouleAndSave(kJouleSettings);
                             }
                           } on Exception catch (exc, stack) {
-                            await ErrorHandlers.showException(
-                              context: navigatorKey.currentContext!,
-                              exception: exc,
-                              stackTrace: stack,
-                            );
+                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                           } on Error catch (error, stack) {
-                            await ErrorHandlers.showException(
-                              context: navigatorKey.currentContext!,
-                              error: error,
-                              stackTrace: stack,
-                            );
+                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                           }
                         },
                         child: Icon(Icons.edit),
@@ -221,20 +196,13 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleMedium),
-                ),
+                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleMedium)),
                 Flexible(
                   flex: 1,
                   child: SettingsTextField(
                     controller: _birthDayController,
                     onTap: () {
-                      _selectDate(
-                        initialDate: _settingsScreenViewModel.birthday.value,
-                        context: context,
-                        languageCode: languageCode,
-                      );
+                      _selectDate(initialDate: _settingsScreenViewModel.birthday.value, context: context, languageCode: languageCode);
                     },
                     readOnly: true,
                   ),
@@ -242,8 +210,6 @@ class SettingsScreenPagePersonal extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
-            //TODO: for height and weight allow enter of null value (aka emptying the input Textfield), but showing a hint under the box, that the value is
-            //invalid and what the currently stored value is.
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -253,27 +219,53 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                   child: ValueListenableBuilder(
                     valueListenable: _settingsScreenViewModel.height,
                     builder: (_, _, _) {
-                      return SettingsTextField(
-                        controller: _heightController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          TextInputFormatter.withFunction((oldValue, newValue) {
-                            final String text = newValue.text.trim();
-                            return text.isEmpty
-                                ? TextEditingValue(text: "1")
-                                : text.length <= 3 && int.parse(text) >= 1
-                                ? newValue
-                                : oldValue;
-                          }),
-                        ],
-                        onChanged: (value) {
-                          heightDebouncer.run(
-                            callback: () {
-                              _settingsScreenViewModel.height.value = int.parse(value);
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SettingsTextField(
+                            controller: _heightController,
+                            keyboardType: TextInputType.numberWithOptions(signed: false),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TextInputFormatter.withFunction((oldValue, newValue) {
+                                final String text = newValue.text.trim();
+                                if (text.isEmpty) {
+                                  _settingsScreenViewModel.heightValid.value = false;
+                                  return newValue;
+                                } else {
+                                  if (text.length <= 3) {
+                                    _settingsScreenViewModel.heightValid.value = true;
+                                    return newValue;
+                                  } else {
+                                    return oldValue;
+                                  }
+                                }
+                              }),
+                            ],
+                            onChanged: (value) {
+                              heightDebouncer.run(
+                                callback: () {
+                                  if (value.isNotEmpty && value.length <= 3 && int.parse(value) >= 1) {
+                                    _settingsScreenViewModel.height.value = int.parse(value);
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable: _settingsScreenViewModel.heightValid,
+                            builder: (_, _, _) {
+                              if (!_settingsScreenViewModel.heightValid.value) {
+                                return Text(
+                                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.height, _settingsScreenViewModel.height.value),
+                                  style: textTheme.labelSmall!.copyWith(color: Colors.red),
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            },
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -287,39 +279,61 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                 Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleMedium)),
                 Flexible(
                   flex: 1,
-
                   child: ValueListenableBuilder(
                     valueListenable: _settingsScreenViewModel.weight,
                     builder: (_, _, _) {
-                      return SettingsTextField(
-                        controller: _weightController,
-                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
-                        inputFormatters: [
-                          //if filter is not matched, the value is set to empty string
-                          //which feels strange in the ui
-                          //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
-                          TextInputFormatter.withFunction((oldValue, newValue) {
-                            final String text = newValue.text.trim();
-                            return text.isEmpty
-                                ? TextEditingValue(text: "1")
-                                : ConvertValidate.validateWeight(weight: text, decimalSeparator: decimalSeparator) &&
-                                      ConvertValidate.convertLocalStringToDouble(
-                                            numberString: text,
-                                            languageCode: languageCode,
-                                          )! >=
-                                          1
-                                ? newValue
-                                : oldValue;
-                          }),
-                        ],
-                        onChanged: (value) {
-                          weightDebouncer.run(
-                            callback: () {
-                              num weightNum = NumberFormat(null, languageCode).parse(value);
-                              _settingsScreenViewModel.weight.value = weightNum as double;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SettingsTextField(
+                            controller: _weightController,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                            inputFormatters: [
+                              //if filter is not matched, the value is set to empty string
+                              //which feels strange in the ui
+                              //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
+                              TextInputFormatter.withFunction((oldValue, newValue) {
+                                final String text = newValue.text.trim();
+                                if (text.isEmpty) {
+                                  _settingsScreenViewModel.weightValid.value = false;
+                                  return newValue;
+                                } else {
+                                  if (ConvertValidate.validateWeight(weight: text, decimalSeparator: decimalSeparator)) {
+                                    _settingsScreenViewModel.weightValid.value = true;
+                                    return newValue;
+                                  } else {
+                                    return oldValue;
+                                  }
+                                }
+                              }),
+                            ],
+                            onChanged: (value) {
+                              weightDebouncer.run(
+                                callback: () {
+                                  if (value.isNotEmpty && ConvertValidate.validateWeight(weight: value, decimalSeparator: decimalSeparator)) {
+                                    _settingsScreenViewModel.weight.value = (ConvertValidate.numberFomatterInt.parse(value) as double);
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable: _settingsScreenViewModel.weightValid,
+                            builder: (_, _, _) {
+                              if (!_settingsScreenViewModel.weightValid.value) {
+                                return Text(
+                                  AppLocalizations.of(context)!.input_invalid(
+                                    AppLocalizations.of(context)!.weight,
+                                    ConvertValidate.numberFomatterDouble.format(_settingsScreenViewModel.weight.value),
+                                  ),
+                                  style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            },
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -436,10 +450,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleMedium),
-                ),
+                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleMedium)),
                 Flexible(
                   flex: 1,
                   child: Column(
@@ -517,10 +528,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(AppLocalizations.of(context)!.recalculate_calories_target_hint),
-              Text(AppLocalizations.of(context)!.are_you_sure),
-            ],
+            children: [Text(AppLocalizations.of(context)!.recalculate_calories_target_hint), Text(AppLocalizations.of(context)!.are_you_sure)],
           ),
 
           actions: [
@@ -530,17 +538,9 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                 try {
                   Navigator.pop(contextBuilder, false);
                 } on Exception catch (exc, stack) {
-                  await ErrorHandlers.showException(
-                    context: navigatorKey.currentContext!,
-                    exception: exc,
-                    stackTrace: stack,
-                  );
+                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                 } on Error catch (error, stack) {
-                  await ErrorHandlers.showException(
-                    context: navigatorKey.currentContext!,
-                    error: error,
-                    stackTrace: stack,
-                  );
+                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                 }
               },
             ),
@@ -550,17 +550,9 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                 try {
                   Navigator.pop(contextBuilder, true);
                 } on Exception catch (exc, stack) {
-                  await ErrorHandlers.showException(
-                    context: navigatorKey.currentContext!,
-                    exception: exc,
-                    stackTrace: stack,
-                  );
+                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                 } on Error catch (error, stack) {
-                  await ErrorHandlers.showException(
-                    context: navigatorKey.currentContext!,
-                    error: error,
-                    stackTrace: stack,
-                  );
+                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                 }
               },
             ),
@@ -599,17 +591,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     );
   }
 
-  Future<void> _selectDate({
-    required DateTime initialDate,
-    required BuildContext context,
-    required String languageCode,
-  }) async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
+  Future<void> _selectDate({required DateTime initialDate, required BuildContext context, required String languageCode}) async {
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now());
 
     if (date != null) {
       _birthDayController.text = DateFormat.yMMMMd(languageCode).format(date);

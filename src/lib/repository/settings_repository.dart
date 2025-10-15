@@ -5,7 +5,7 @@ import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class SettingsRepository extends ChangeNotifier {
   SettingsRepository._singleton();

@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
-import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_type.dart";
 
@@ -16,7 +16,6 @@ class BarchartTargetActual extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorTheme = Theme.of(context).colorScheme;
-    final NumberFormat formatter = NumberFormat(null, Localizations.localeOf(context).languageCode);
 
     double barSize = _statisticsType == StatisticType.daily ? 4 : 18;
 
@@ -73,7 +72,7 @@ class BarchartTargetActual extends StatelessWidget {
         Center(child: Text(header, style: textTheme.titleMedium)),
         Center(
           child: Text(
-            AppLocalizations.of(context)!.average_number(formatter.format(average)),
+            AppLocalizations.of(context)!.average_number(ConvertValidate.numberFomatterInt.format(average)),
             style: textTheme.titleSmall,
           ),
         ),
@@ -91,7 +90,7 @@ class BarchartTargetActual extends StatelessWidget {
                   max: yAxisScaleMaxValue,
                   min: 0,
                   //value is num/double, this removes the decimal separator on y axis label.
-                  formatter: (value) => formatter.format(value.toInt()),
+                  formatter: (value) => ConvertValidate.numberFomatterInt.format(value.toInt()),
                   //ticks: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
                 ),
               ),
@@ -105,7 +104,7 @@ class BarchartTargetActual extends StatelessWidget {
                 size: SizeEncode(value: barSize),
                 label: LabelEncode(
                   encoder: (tuple) => Label(
-                    formatter.format(tuple["kCalIntake"]),
+                    ConvertValidate.numberFomatterInt.format(tuple["kCalIntake"]),
                     LabelStyle(
                       textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                       offset: Offset(6, markOffset),

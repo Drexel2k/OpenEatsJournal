@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key, required String route, required Widget body, required String title, Widget? floatingActionButton})

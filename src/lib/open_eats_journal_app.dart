@@ -2,6 +2,7 @@ import "dart:ui";
 
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
@@ -17,7 +18,7 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class OpenEatsJournalApp extends StatelessWidget {
   const OpenEatsJournalApp({super.key, required OpenEatsJournalAppViewModel openEatsJournalAppViewModel, required Repositories repositories})
@@ -48,6 +49,7 @@ class OpenEatsJournalApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
       builder: (contextBuilder, _) {
+        ConvertValidate.init(languageCode: _openEatsJournalAppViewModel.languageCode);
         return MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

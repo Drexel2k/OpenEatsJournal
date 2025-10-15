@@ -11,7 +11,7 @@ import "package:openeatsjournal/service/database/open_eats_journal_database_serv
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 import "package:openeatsjournal/service/open_food_facts/data/food_api.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class FoodRepository {
   FoodRepository._singleton();

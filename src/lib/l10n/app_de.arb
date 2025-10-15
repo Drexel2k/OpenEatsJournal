@@ -72,17 +72,6 @@
   "amount_prot": "{amount} Prot",
   "na_prot": "n/a Prot",
   "amount_salt": "{amount} Salz",
-  "@amount_salt": {
-    "placeholders": {
-      "amount": {
-        "type": "double",
-        "format": "decimalPatternDigits",
-        "optionalParameters": {
-          "decimalDigits": 1
-        }
-      }
-    }
-  },
   "na_salt": "n/a Salz",
   "days": "Tage",
   "weeks": "Wochen",
@@ -104,13 +93,20 @@
   "edit_calories_target": "Kalorien Ziele bearbeiten",
   "daily_target_new": "Tägl. Ziel (⌀) kCal neu:",
   "daily_target_original": "Tägl. Ziel (⌀) kCal Original:",
-  "monday_kcals": "Montag kCal:",
-  "tuesday_kcals": "Dienstag kCal:",
-  "wednesday_kcals": "Mittwoch kCal:",
-  "thursday_kcals": "Donnerstag kCal:",
-  "friday_kcals": "Freitag kCal:",
-  "saturday_kcals": "Samstag kCal:",
-  "sunday_kcals": "Sonntag kCal:",
+  "monday_kcals_label": "Montag kCal:",
+  "tuesday_kcals_label": "Dienstag kCal:",
+  "wednesday_kcals_label": "Mittwoch kCal:",
+  "thursday_kcals_label": "Donnerstag kCal:",
+  "friday_kcals_label": "Freitag kCal:",
+  "saturday_kcals_label": "Samstag kCal:",
+  "sunday_kcals_label": "Sonntag kCal:",
+  "monday_kcals": "Montag kCal",
+  "tuesday_kcals": "Dienstag kCal",
+  "wednesday_kcals": "Mittwoch kCal",
+  "thursday_kcals": "Donnerstag kCal",
+  "friday_kcals": "Freitag kCal",
+  "saturday_kcals": "Samstag kCal",
+  "sunday_kcals": "Sonntag kCal",
   "food_management": "Lebensmittelverwaltung",
   "food": "Lebensmittel",
   "open_food_facts_exception": "Open Food Fact Verbindungsfehler: {errorMessage}.",
@@ -139,5 +135,6 @@
   "add_eats_journal_entry": "Ernährungseintrag hinzufügen",
   "enter_valid_amount" : "Bitte eine gültige Menge eingeben",
   "enter_valid_eats_amount" : "Bitte eine gültige Essensmenge eingeben",
-  "na_kcal": "n/a kCal"
+  "na_kcal": "n/a kCal",
+  "input_invalid": "{name} Eingabe ist ungültig, der aktuelle Wert ist immer noch {value}."
 }

@@ -15,7 +15,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
       _height = ValueNotifier(settingsRepository.height),
+      _heightValid = ValueNotifier(true),
       _weight = ValueNotifier(settingsRepository.weight),
+      _weightValid = ValueNotifier(true),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
       _weightTarget = ValueNotifier(settingsRepository.weightTarget) {
     _setDailyKJoule();
@@ -40,7 +42,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<Gender> _gender;
   final ValueNotifier<DateTime> _birthday;
   final ValueNotifier<int> _height;
+  final ValueNotifier<bool> _heightValid;
   final ValueNotifier<double> _weight;
+  final ValueNotifier<bool> _weightValid;
   final ValueNotifier<double> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
 
@@ -52,7 +56,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<Gender> get gender => _gender;
   ValueNotifier<DateTime> get birthday => _birthday;
   ValueNotifier<int> get height => _height;
+  ValueNotifier<bool> get heightValid => _heightValid;
   ValueNotifier<double> get weight => _weight;
+  ValueNotifier<bool> get weightValid => _weightValid;
   ValueNotifier<double> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget> get weightTarget => _weightTarget;
 
@@ -153,10 +159,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(
-      kJoulePerDay: _getDailyKJoule(),
-      weightLossPerWeekKg: weightLossKg,
-    ).round();
+    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule(), weightLossPerWeekKg: weightLossKg).round();
 
     await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule);
 
@@ -188,7 +191,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _gender.dispose();
     _birthday.dispose();
     _height.dispose();
+    _heightValid.dispose();
     _weight.dispose();
+    _weightValid.dispose();
     _activityFactor.dispose();
     _weightTarget.dispose();
 
