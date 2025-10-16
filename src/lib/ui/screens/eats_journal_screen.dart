@@ -89,9 +89,9 @@ class EatsJournalScreen extends StatelessWidget {
           ListenableBuilder(
             listenable: _eatsJournalScreenViewModel.eatsJournalDataChanged,
             builder: (_, _) {
-              return FutureBuilder<FoodRepositoryGetDayDataResult>(
+              return FutureBuilder<FoodRepositoryGetDayMealSumsResult>(
                 future: _eatsJournalScreenViewModel.dayData,
-                builder: (BuildContext context, AsyncSnapshot<FoodRepositoryGetDayDataResult> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<FoodRepositoryGetDayMealSumsResult> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                   } else if (snapshot.hasError) {
@@ -618,12 +618,12 @@ class EatsJournalScreen extends StatelessWidget {
     return days;
   }
 
-  GaugeData _getKJouleGaugeData({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
+  GaugeData _getKJouleGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     int dayTargetKJoule = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.kJoule
         : _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule();
-    int daySumKJoule = foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null
-        ? foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.entries
+    int daySumKJoule = foodRepositoryGetDayDataResult.mealNutritionSums != null
+        ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.kJoule)
               .reduce((kJouleEntry1, kJouleEntry2) => kJouleEntry1 + kJouleEntry2)
         : 0;
@@ -631,12 +631,12 @@ class EatsJournalScreen extends StatelessWidget {
     return GaugeData(currentValue: daySumKJoule, maxValue: dayTargetKJoule, colorScheme: colorScheme);
   }
 
-  GaugeData _getCarbohydratesGaugeData({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
+  GaugeData _getCarbohydratesGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetCarbohydrates = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.carbohydrates!
         : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
-    double daySumCarbohydrates = foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null
-        ? foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.entries
+    double daySumCarbohydrates = foodRepositoryGetDayDataResult.mealNutritionSums != null
+        ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.carbohydrates!)
               .reduce((carbohydratesEntry1, carbohydratesEntry2) => carbohydratesEntry1 + carbohydratesEntry2)
         : 0;
@@ -644,12 +644,12 @@ class EatsJournalScreen extends StatelessWidget {
     return GaugeData(currentValue: daySumCarbohydrates, maxValue: dayTargetCarbohydrates, colorScheme: colorScheme);
   }
 
-  GaugeData _getProteinGaugeData({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
+  GaugeData _getProteinGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetProtein = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.protein!
         : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
-    double daySumProtein = foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null
-        ? foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.entries
+    double daySumProtein = foodRepositoryGetDayDataResult.mealNutritionSums != null
+        ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.protein!)
               .reduce((proteinEntry1, proteinEntry2) => proteinEntry1 + proteinEntry2)
         : 0;
@@ -657,12 +657,12 @@ class EatsJournalScreen extends StatelessWidget {
     return GaugeData(currentValue: daySumProtein, maxValue: dayTargetProtein, colorScheme: colorScheme);
   }
 
-  GaugeData _getFatGaugeData({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
+  GaugeData _getFatGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetFat = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.fat!
         : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
-    double daySumFat = foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null
-        ? foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.entries
+    double daySumFat = foodRepositoryGetDayDataResult.mealNutritionSums != null
+        ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.fat!)
               .reduce((fatEntry1, fatEntry2) => fatEntry1 + fatEntry2)
         : 0;
@@ -670,37 +670,37 @@ class EatsJournalScreen extends StatelessWidget {
     return GaugeData(currentValue: daySumFat, maxValue: dayTargetFat, colorScheme: colorScheme);
   }
 
-  double _getBreakfastKJoulePercent({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
+  double _getBreakfastKJoulePercent({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
     double percent = 0;
-    if (foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null && foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.containsKey(Meal.breakfast)) {
-      percent = foodRepositoryGetDayDataResult.nutritionSumsPerMeal![Meal.breakfast]!.kJoule / dayKJoule * 100;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.breakfast)) {
+      percent = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.breakfast]!.kJoule / dayKJoule * 100;
     }
 
     return percent;
   }
 
-  double _getLunchKJoulePercent({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
+  double _getLunchKJoulePercent({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
     double percent = 0;
-    if (foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null && foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.containsKey(Meal.lunch)) {
-      percent = foodRepositoryGetDayDataResult.nutritionSumsPerMeal![Meal.lunch]!.kJoule / dayKJoule * 100;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.lunch)) {
+      percent = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.lunch]!.kJoule / dayKJoule * 100;
     }
 
     return percent;
   }
 
-  double _getDinnerKJoulePercent({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
+  double _getDinnerKJoulePercent({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
     double percent = 0;
-    if (foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null && foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.containsKey(Meal.dinner)) {
-      percent = foodRepositoryGetDayDataResult.nutritionSumsPerMeal![Meal.dinner]!.kJoule / dayKJoule * 100;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.dinner)) {
+      percent = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.dinner]!.kJoule / dayKJoule * 100;
     }
 
     return percent;
   }
 
-  double _getSnacksKJoulePercent({required FoodRepositoryGetDayDataResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
+  double _getSnacksKJoulePercent({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required num dayKJoule}) {
     double percent = 0;
-    if (foodRepositoryGetDayDataResult.nutritionSumsPerMeal != null && foodRepositoryGetDayDataResult.nutritionSumsPerMeal!.containsKey(Meal.snacks)) {
-      percent = foodRepositoryGetDayDataResult.nutritionSumsPerMeal![Meal.snacks]!.kJoule / dayKJoule * 100;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.snacks)) {
+      percent = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.snacks]!.kJoule / dayKJoule * 100;
     }
 
     return percent;

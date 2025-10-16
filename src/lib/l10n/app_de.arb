@@ -77,7 +77,7 @@
   "weeks": "Wochen",
   "months": "Monate",
   "last_amount_timeinfo": "Letzte {ammount} {timeInfo}",
-  "average_number": "Durchschnitt: {average}",
+  "average_per_day_number": "Durchschnitt pro Tag: {average}",
   "app_settings": "App Einstellungen",
   "personal_settings": "Persönliche Einstellungen",
   "personal_settings_abbreviated": "Persönl. Einstellungen",

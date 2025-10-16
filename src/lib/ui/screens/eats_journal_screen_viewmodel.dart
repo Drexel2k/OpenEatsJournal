@@ -9,7 +9,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   EatsJournalScreenViewModel({required JournalRepository journalRepository, required SettingsRepository settingsRepository})
     : _journalRepository = journalRepository,
       _settingsRepository = settingsRepository,
-      _dayData = journalRepository.getDayData(date: settingsRepository.currentJournalDate.value) {
+      _dayData = journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value) {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
 
@@ -23,7 +23,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
   final ExternalTriggerChangedNotifier _eatsJournalDataChanged = ExternalTriggerChangedNotifier();
-  Future<FoodRepositoryGetDayDataResult> _dayData;
+  Future<FoodRepositoryGetDayMealSumsResult> _dayData;
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
@@ -31,12 +31,12 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   String get languageCode => _settingsRepository.languageCode.value;
   ValueListenable<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
   ExternalTriggerChangedNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
-  Future<FoodRepositoryGetDayDataResult> get dayData => _dayData;
+  Future<FoodRepositoryGetDayMealSumsResult> get dayData => _dayData;
   SettingsRepository get settingsRepository => _settingsRepository;
 
   _currentJournalDateChanged() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
-    _dayData = _journalRepository.getDayData(date: settingsRepository.currentJournalDate.value);
+    _dayData = _journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value);
     _eatsJournalDataChanged.notify();
   }
 

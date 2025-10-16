@@ -17,6 +17,7 @@ import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
+import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
@@ -79,7 +80,8 @@ class OpenEatsJournalApp extends StatelessWidget {
                 settingsRepository: _repositories.settingsRepository,
               ),
             ),
-            OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) => const StatisticsScreen(),
+            OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) =>
+                StatisticsScreen(statisticsScreenViewModel: StatisticsScreenViewModel(journalRepository: _repositories.journalRepository)),
             OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) => FoodSearchScreen(
               foodSearchScreenViewModel: FoodSearchScreenViewModel(
                 foodRepository: _repositories.foodRepository,

@@ -448,7 +448,7 @@ class FoodRepository {
     return result;
   }
 
-  Future<void> setFoodCache(Food food) async {
-    await _oejDatabase.setFoodCache(food);
+  Future<void> setFoodCache({required Food food}) async {
+    await _oejDatabase.setFoodCache(food: food);
   }
 }

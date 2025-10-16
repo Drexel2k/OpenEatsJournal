@@ -86,12 +86,19 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   void dispose() {
     _kJouleTargetDaily.dispose();
     _kJouleMonday.dispose();
+    _kJouleMondayValid.dispose();
     _kJouleTuesday.dispose();
+    _kJouleTuesdayValid.dispose();
     _kJouleWednesday.dispose();
+    _kJouleWednesdayValid.dispose();
     _kJouleThursday.dispose();
+    _kJouleThursdayValid.dispose();
     _kJouleFriday.dispose();
+    _kJouleFridayValid.dispose();
     _kJouleSaturday.dispose();
+    _kJouleSaturdayValid.dispose();
     _kJouleSunday.dispose();
+    _kJouleSundayValid.dispose();
 
     super.dispose();
   }

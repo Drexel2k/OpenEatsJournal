@@ -10,6 +10,7 @@ import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/nutrition_sums_result.dart";
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 
@@ -188,7 +189,7 @@ class OpenEatsJournalDatabaseService {
     // }
   }
 
-  Future<bool> _settingExists(String setting) async {
+  Future<bool> _settingExists({required String setting}) async {
     Database db = await instance.db;
     final List<Map<String, Object?>> result = await db.query(
       OpenEatsJournalStrings.dbTableSetting,
@@ -208,12 +209,12 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<void> _insertSetting(Map<String, String> setting) async {
+  Future<void> _insertSetting({required Map<String, String> setting}) async {
     Database db = await instance.db;
     await db.insert(OpenEatsJournalStrings.dbTableSetting, setting);
   }
 
-  Future<void> _updateSetting(Map<String, String> setting) async {
+  Future<void> _updateSetting({required Map<String, String> setting}) async {
     Database db = await instance.db;
     await db.update(
       OpenEatsJournalStrings.dbTableSetting,
@@ -224,69 +225,79 @@ class OpenEatsJournalDatabaseService {
   }
 
   //set...Setting methos create new settings if setting does not exist or updates the existing settings.
-  Future<void> setStringSetting(String setting, String value) async {
-    if (await _settingExists(setting)) {
-      _updateSetting({OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value});
+  Future<void> setStringSetting({required String setting, required String value}) async {
+    if (await _settingExists(setting: setting)) {
+      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value});
     } else {
-      await _insertSetting({
-        OpenEatsJournalStrings.dbColumnSetting: setting,
-        OpenEatsJournalStrings.dbColumnDartType: "String",
-        OpenEatsJournalStrings.dbColumnvalue: value,
-      });
+      await _insertSetting(
+        setting: {
+          OpenEatsJournalStrings.dbColumnSetting: setting,
+          OpenEatsJournalStrings.dbColumnDartType: "String",
+          OpenEatsJournalStrings.dbColumnvalue: value,
+        },
+      );
     }
   }
 
-  Future<void> setIntSetting(String setting, int value) async {
-    if (await _settingExists(setting)) {
-      _updateSetting({OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
+  Future<void> setIntSetting({required String setting, required int value}) async {
+    if (await _settingExists(setting: setting)) {
+      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
     } else {
-      await _insertSetting({
-        OpenEatsJournalStrings.dbColumnSetting: setting,
-        OpenEatsJournalStrings.dbColumnDartType: "int",
-        OpenEatsJournalStrings.dbColumnvalue: value.toString(),
-      });
+      await _insertSetting(
+        setting: {
+          OpenEatsJournalStrings.dbColumnSetting: setting,
+          OpenEatsJournalStrings.dbColumnDartType: "int",
+          OpenEatsJournalStrings.dbColumnvalue: value.toString(),
+        },
+      );
     }
   }
 
-  Future<void> setDoubleSetting(String setting, double value) async {
-    if (await _settingExists(setting)) {
-      _updateSetting({OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
+  Future<void> setDoubleSetting({required String setting, required double value}) async {
+    if (await _settingExists(setting: setting)) {
+      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
     } else {
-      await _insertSetting({
-        OpenEatsJournalStrings.dbColumnSetting: setting,
-        OpenEatsJournalStrings.dbColumnDartType: "double",
-        OpenEatsJournalStrings.dbColumnvalue: value.toString(),
-      });
+      await _insertSetting(
+        setting: {
+          OpenEatsJournalStrings.dbColumnSetting: setting,
+          OpenEatsJournalStrings.dbColumnDartType: "double",
+          OpenEatsJournalStrings.dbColumnvalue: value.toString(),
+        },
+      );
     }
   }
 
-  Future<void> setBoolSetting(String setting, bool value) async {
-    if (await _settingExists(setting)) {
-      _updateSetting({OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
+  Future<void> setBoolSetting({required String setting, required bool value}) async {
+    if (await _settingExists(setting: setting)) {
+      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
     } else {
-      await _insertSetting({
-        OpenEatsJournalStrings.dbColumnSetting: setting,
-        OpenEatsJournalStrings.dbColumnDartType: "bool",
-        OpenEatsJournalStrings.dbColumnvalue: value.toString(),
-      });
+      await _insertSetting(
+        setting: {
+          OpenEatsJournalStrings.dbColumnSetting: setting,
+          OpenEatsJournalStrings.dbColumnDartType: "bool",
+          OpenEatsJournalStrings.dbColumnvalue: value.toString(),
+        },
+      );
     }
   }
 
-  Future<void> setDateTimeSetting(String setting, DateTime value) async {
+  Future<void> setDateTimeSetting({required String setting, required DateTime value}) async {
     final String formattedDate = ConvertValidate.dateFormatterDateAndTime.format(value);
 
-    if (await _settingExists(setting)) {
-      _updateSetting({OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: formattedDate});
+    if (await _settingExists(setting: setting)) {
+      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: formattedDate});
     } else {
-      await _insertSetting({
-        OpenEatsJournalStrings.dbColumnSetting: setting,
-        OpenEatsJournalStrings.dbColumnDartType: "DateTime",
-        OpenEatsJournalStrings.dbColumnvalue: formattedDate,
-      });
+      await _insertSetting(
+        setting: {
+          OpenEatsJournalStrings.dbColumnSetting: setting,
+          OpenEatsJournalStrings.dbColumnDartType: "DateTime",
+          OpenEatsJournalStrings.dbColumnvalue: formattedDate,
+        },
+      );
     }
   }
 
-  Future<Object?> _getSetting(String setting) async {
+  Future<Object?> _getSetting({required String setting}) async {
     Database db = await instance.db;
     final List<Map<String, Object?>> result = await db.query(
       OpenEatsJournalStrings.dbTableSetting,
@@ -306,81 +317,81 @@ class OpenEatsJournalDatabaseService {
     return result[0][OpenEatsJournalStrings.dbColumnvalue];
   }
 
-  Future<void> setAllSettings(AllSettings allSettings) async {
-    await setBoolSetting(OpenEatsJournalStrings.settingDarkmode, allSettings.darkMode!);
-    await setStringSetting(OpenEatsJournalStrings.settingLanguageCode, allSettings.languageCode!);
-    await setIntSetting(OpenEatsJournalStrings.settingGender, allSettings.gender!.value);
-    await setDateTimeSetting(OpenEatsJournalStrings.settingBirthday, allSettings.birthday!);
-    await setIntSetting(OpenEatsJournalStrings.settingHeight, allSettings.height!);
-    await setDoubleSetting(OpenEatsJournalStrings.settingWeight, allSettings.weight!);
-    await setDoubleSetting(OpenEatsJournalStrings.settingActivityFactor, allSettings.activityFactor!);
-    await setIntSetting(OpenEatsJournalStrings.settingWeightTarget, allSettings.weightTarget!.value);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleMonday, allSettings.kJouleMonday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleTuesday, allSettings.kJouleTuesday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleWednesday, allSettings.kJouleWednesday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleThursday, allSettings.kJouleThursday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleFriday, allSettings.kJouleFriday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleSaturday, allSettings.kJouleSaturday!);
-    await setIntSetting(OpenEatsJournalStrings.settingKJouleSunday, allSettings.kJouleSunday!);
-    await setStringSetting(OpenEatsJournalStrings.settingLanguageCode, allSettings.languageCode!);
+  Future<void> setAllSettings({required AllSettings allSettings}) async {
+    await setBoolSetting(setting: OpenEatsJournalStrings.settingDarkmode, value: allSettings.darkMode!);
+    await setStringSetting(setting: OpenEatsJournalStrings.settingLanguageCode, value: allSettings.languageCode!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingGender, value: allSettings.gender!.value);
+    await setDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday, value: allSettings.birthday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingHeight, value: allSettings.height!);
+    await setDoubleSetting(setting: OpenEatsJournalStrings.settingWeight, value: allSettings.weight!);
+    await setDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor, value: allSettings.activityFactor!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget, value: allSettings.weightTarget!.value);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday, value: allSettings.kJouleMonday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday, value: allSettings.kJouleTuesday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday, value: allSettings.kJouleWednesday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleThursday, value: allSettings.kJouleThursday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleFriday, value: allSettings.kJouleFriday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday, value: allSettings.kJouleSaturday!);
+    await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSunday, value: allSettings.kJouleSunday!);
+    await setStringSetting(setting: OpenEatsJournalStrings.settingLanguageCode, value: allSettings.languageCode!);
   }
 
-  Future<String?> getStringSetting(String setting) async {
-    Object? result = await _getSetting(setting);
+  Future<String?> getStringSetting({required String setting}) async {
+    Object? result = await _getSetting(setting: setting);
     return result == null ? null : result as String;
   }
 
-  Future<int?> getIntSetting(String setting) async {
-    Object? result = await _getSetting(setting);
+  Future<int?> getIntSetting({required String setting}) async {
+    Object? result = await _getSetting(setting: setting);
     return result == null ? null : int.parse(result as String);
   }
 
-  Future<double?> getDoubleSetting(String setting) async {
-    Object? result = await _getSetting(setting);
+  Future<double?> getDoubleSetting({required String setting}) async {
+    Object? result = await _getSetting(setting: setting);
     return result == null ? null : double.parse(result as String);
   }
 
-  Future<bool?> getBoolSetting(String setting) async {
-    Object? result = await _getSetting(setting);
+  Future<bool?> getBoolSetting({required String setting}) async {
+    Object? result = await _getSetting(setting: setting);
     return result == null ? null : result == "true";
   }
 
-  Future<DateTime?> getDateTimeSetting(String setting) async {
-    Object? result = await _getSetting(setting);
+  Future<DateTime?> getDateTimeSetting({required String setting}) async {
+    Object? result = await _getSetting(setting: setting);
     if (result == null) {
       return null;
     }
 
-    return ConvertValidate.dateFormatterDateAndTime.parse(await _getSetting(setting) as String);
+    return ConvertValidate.dateFormatterDateAndTime.parse(await _getSetting(setting: setting) as String);
   }
 
   Future<AllSettings> getAllSettings() async {
-    int? gender = await getIntSetting(OpenEatsJournalStrings.settingGender);
-    int? weightTarget = await getIntSetting(OpenEatsJournalStrings.settingWeightTarget);
+    int? gender = await getIntSetting(setting: OpenEatsJournalStrings.settingGender);
+    int? weightTarget = await getIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget);
 
     return AllSettings(
-      darkMode: await getBoolSetting(OpenEatsJournalStrings.settingDarkmode),
-      languageCode: await getStringSetting(OpenEatsJournalStrings.settingLanguageCode),
+      darkMode: await getBoolSetting(setting: OpenEatsJournalStrings.settingDarkmode),
+      languageCode: await getStringSetting(setting: OpenEatsJournalStrings.settingLanguageCode),
       gender: gender != null ? Gender.getByValue(gender) : null,
-      birthday: await getDateTimeSetting(OpenEatsJournalStrings.settingBirthday),
-      height: await getIntSetting(OpenEatsJournalStrings.settingHeight),
-      weight: await getDoubleSetting(OpenEatsJournalStrings.settingWeight),
-      activityFactor: await getDoubleSetting(OpenEatsJournalStrings.settingActivityFactor),
+      birthday: await getDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday),
+      height: await getIntSetting(setting: OpenEatsJournalStrings.settingHeight),
+      weight: await getDoubleSetting(setting: OpenEatsJournalStrings.settingWeight),
+      activityFactor: await getDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor),
       weightTarget: weightTarget != null ? WeightTarget.getByValue(weightTarget) : null,
-      kJouleMonday: await getIntSetting(OpenEatsJournalStrings.settingKJouleMonday),
-      kJouleTuesday: await getIntSetting(OpenEatsJournalStrings.settingKJouleTuesday),
-      kJouleWednesday: await getIntSetting(OpenEatsJournalStrings.settingKJouleWednesday),
-      kJouleThursday: await getIntSetting(OpenEatsJournalStrings.settingKJouleThursday),
-      kJouleFriday: await getIntSetting(OpenEatsJournalStrings.settingKJouleFriday),
-      kJouleSaturday: await getIntSetting(OpenEatsJournalStrings.settingKJouleSaturday),
-      kJouleSunday: await getIntSetting(OpenEatsJournalStrings.settingKJouleSunday),
+      kJouleMonday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday),
+      kJouleTuesday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday),
+      kJouleWednesday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday),
+      kJouleThursday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleThursday),
+      kJouleFriday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleFriday),
+      kJouleSaturday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday),
+      kJouleSunday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleSunday),
     );
   }
 
-  Future<void> insertWeightJournalEntry(DateTime entryDate, double weight) async {
+  Future<void> insertWeightJournalEntry({required DateTime day, required double weight}) async {
     Database db = await instance.db;
 
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(entryDate);
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
     final List<Map<String, Object?>> result = await db.query(
       OpenEatsJournalStrings.dbTableWeightJournal,
@@ -408,7 +419,7 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<void> insertEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
+  Future<void> insertEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     Database db = await instance.db;
 
     if (eatsJournalEntry.food != null && eatsJournalEntry.food!.id == null) {
@@ -435,7 +446,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   //creates new cache entry or updates existing one.
-  Future<void> setFoodCache(Food food) async {
+  Future<void> setFoodCache({required Food food}) async {
     Database db = await instance.db;
     if (food.foodSource == FoodSource.user && food.foodSource == FoodSource.standard) {
       throw ArgumentError("Food cache is only needed for foods of external data sources.");
@@ -496,10 +507,10 @@ class OpenEatsJournalDatabaseService {
       food.id ??= result[0][OpenEatsJournalStrings.dbColumnId] as int;
     }
 
-    await _setFoodUnits(food);
+    await _setFoodUnits(food: food);
   }
 
-  Future<void> _setFoodUnits(Food food) async {
+  Future<void> _setFoodUnits({required Food food}) async {
     Database db = await instance.db;
     if (food.foodUnits.isEmpty) {
       return;
@@ -560,9 +571,8 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<void> insertOnceDayNutritionTarget(DateTime day, int dayTargetKJoule) async {
+  Future<void> insertOnceDayNutritionTarget({required DateTime day, required int dayTargetKJoule}) async {
     Database db = await instance.db;
-
 
     final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
@@ -585,10 +595,10 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<Map<Meal, Nutritions>?> getDaySumsPerMeal(DateTime entryDate) async {
+  Future<Map<Meal, Nutritions>?> getDayNutritionSumsPerMeal({required DateTime day}) async {
     Database db = await instance.db;
 
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(entryDate);
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
     final kJouleSum = "kilo_joule_sum";
     final carbohydratesSum = "carbohydrates_sum";
@@ -604,7 +614,7 @@ class OpenEatsJournalDatabaseService {
     );
 
     if (dbResult.isNotEmpty) {
-      Map<Meal, Nutritions> result = <Meal, Nutritions>{};
+      Map<Meal, Nutritions> result = {};
       for (Map<String, Object?> row in dbResult) {
         result[Meal.getByValue((row[OpenEatsJournalStrings.dbColumnMealIdRef] as int))] = Nutritions(
           kJoule: (row[kJouleSum] as int),
@@ -623,24 +633,66 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<int?> getDayNutritionTargets(DateTime day) async {
+  Future<Map<String, int>?> getGroupedKJouleTargets({required DateTime from, required DateTime until, required String groupBy}) async {
     Database db = await instance.db;
 
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
+    final String fromFormatted = ConvertValidate.dateformatterDateOnly.format(from);
+    final String untilFormatted = ConvertValidate.dateformatterDateOnly.format(until);
 
-    final List<Map<String, Object?>> result = await db.query(
-      OpenEatsJournalStrings.dbTableDailyNutritionTarget,
-      columns: [OpenEatsJournalStrings.dbColumnKiloJoule],
-      where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
-      whereArgs: [formattedDate],
-    );
-
-    if (result.length > 1) {
-      throw StateError("An entry for ate must exist only once in daily nutrition targets, mutiple instances on date $formattedDate found.");
+    List<Map<String, Object?>> dbResult;
+    if (groupBy == OpenEatsJournalStrings.dbColumnEntryDate) {
+      dbResult = await db.rawQuery(
+        "SELECT ${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn}, ${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultKJouleSum} FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?",
+        [fromFormatted, untilFormatted],
+      );
+    } else {
+      dbResult = await db.rawQuery(
+        "SELECT $groupBy AS ${OpenEatsJournalStrings.dbResultGroupColumn}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum} FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ? GROUP BY $groupBy",
+        [fromFormatted, untilFormatted],
+      );
     }
 
-    if (result.isNotEmpty) {
-      return (result[0][OpenEatsJournalStrings.dbColumnKiloJoule] as int);
+    if (dbResult.isNotEmpty) {
+      Map<String, int> result = {};
+      for (Map<String, Object?> row in dbResult) {
+        result[row[OpenEatsJournalStrings.dbResultGroupColumn] as String] = row[OpenEatsJournalStrings.dbResultKJouleSum] as int;
+      }
+
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  Future<Map<String, NutritionSums>?> getGroupedNutritionSums({required DateTime from, required DateTime until, required String groupBy}) async {
+    Database db = await instance.db;
+
+    final String fromFormatted = ConvertValidate.dateformatterDateOnly.format(from);
+    final String untilFormatted = ConvertValidate.dateformatterDateOnly.format(until);
+
+    final List<Map<String, Object?>> dbResult = await db.rawQuery(
+      "SELECT $groupBy AS ${OpenEatsJournalStrings.dbResultGroupColumn}, COUNT(DISTINCT ${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultDayCount}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum}, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum}, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS ${OpenEatsJournalStrings.dbResultSugarSum}, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS ${OpenEatsJournalStrings.dbResultFatSum}, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum}, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS ${OpenEatsJournalStrings.dbResultProteinSum}, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS ${OpenEatsJournalStrings.dbResultSaltSum} FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ? GROUP BY $groupBy",
+      [fromFormatted, untilFormatted],
+    );
+
+    if (dbResult.isNotEmpty) {
+      Map<String, NutritionSums> result = {};
+      for (Map<String, Object?> row in dbResult) {
+        result[row[OpenEatsJournalStrings.dbResultGroupColumn] as String] = NutritionSums(
+          entryCount: row[OpenEatsJournalStrings.dbResultDayCount] as int,
+          nutritions: Nutritions(
+            kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as int),
+            carbohydrates: (row[OpenEatsJournalStrings.dbResultCarbohydratesSum] as double),
+            sugar: (row[OpenEatsJournalStrings.dbResultSugarSum] as double),
+            fat: (row[OpenEatsJournalStrings.dbResultFatSum] as double),
+            saturatedFat: (row[OpenEatsJournalStrings.dbResultSaturatedFatSum] as double),
+            protein: (row[OpenEatsJournalStrings.dbResultProteinSum] as double),
+            salt: (row[OpenEatsJournalStrings.dbResultSaltSum] as double),
+          ),
+        );
+      }
+
+      return result;
     } else {
       return null;
     }

@@ -1,13 +1,12 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_type.dart";
 
 class BarchartTargetActual extends StatelessWidget {
-  const BarchartTargetActual({super.key, required data, required statisticsType})
-    : _data = data,
-      _statisticsType = statisticsType;
+  const BarchartTargetActual({super.key, required data, required statisticsType}) : _data = data, _statisticsType = statisticsType;
 
   final List<Tuple> _data;
   final StatisticType _statisticsType;
@@ -19,15 +18,48 @@ class BarchartTargetActual extends StatelessWidget {
 
     double barSize = _statisticsType == StatisticType.daily ? 4 : 18;
 
-    int maxkCalIntakeEntry = _data.reduce(
-      (currentEntry, nextEntry) => currentEntry["kCalIntake"] > nextEntry["kCalIntake"] ? currentEntry : nextEntry,
-    )["kCalIntake"];
+    int? maxkCalIntake = _data.reduce((currentEntry, nextEntry) {
+      if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
+        return nextEntry;
+      }
 
-    int maxkCalTargetEntry = _data.reduce(
-      (currentEntry, nextEntry) => currentEntry["kCalTarget"] > nextEntry["kCalTarget"] ? currentEntry : nextEntry,
-    )["kCalTarget"];
+      if (nextEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
+        return currentEntry;
+      }
 
-    int maxValue = maxkCalIntakeEntry > maxkCalTargetEntry ? maxkCalIntakeEntry : maxkCalTargetEntry;
+      if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] > nextEntry[OpenEatsJournalStrings.chartKCalIntake]) {
+        return currentEntry;
+      } else {
+        return nextEntry;
+      }
+    })[OpenEatsJournalStrings.chartKCalIntake];
+
+    int? maxkCalTarget = _data.reduce((currentEntry, nextEntry) {
+      if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
+        return nextEntry;
+      }
+
+      if (nextEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
+        return currentEntry;
+      }
+
+      if (currentEntry[OpenEatsJournalStrings.chartKCalTarget] > nextEntry[OpenEatsJournalStrings.chartKCalTarget]) {
+        return currentEntry;
+      } else {
+        return nextEntry;
+      }
+    })[OpenEatsJournalStrings.chartKCalTarget];
+
+    int maxValue = 0;
+    if (maxkCalIntake != null) {
+      maxValue = maxkCalIntake;
+    }
+
+    if (maxkCalTarget != null) {
+      if (maxkCalTarget > maxValue) {
+        maxValue = maxkCalTarget;
+      }
+    }
 
     double markOffset = -15;
     int yAxisScaleMaxValue = (maxValue * 1.3).toInt();
@@ -49,14 +81,21 @@ class BarchartTargetActual extends StatelessWidget {
     double xAxisLabelYOffset = 15;
     if (_statisticsType == StatisticType.weekly) {
       xAxisLabelXOffset = 6;
-      xAxisLabelYOffset = 10;
+      xAxisLabelYOffset = 18;
     } else if (_statisticsType == StatisticType.monthly) {
       xAxisLabelXOffset = 8;
-      xAxisLabelYOffset = 11;
+      xAxisLabelYOffset = 18;
     }
 
-    num totalkCalIntake = _data.fold(0, (sum, item) => sum + item["kCalIntake"]);
-    int average = (totalkCalIntake / _data.length).toInt();
+    List entriesWithValues = _data.where((item) {
+      return item[OpenEatsJournalStrings.chartKCalIntake] != null;
+    }).toList();
+    num totalkCalIntake = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartKCalIntake]);
+    num totalEntryCount = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartEntryCount]);
+    int average = 0;
+    if (entriesWithValues.isNotEmpty) {
+      average = (totalkCalIntake / totalEntryCount).toInt();
+    }
 
     String timeInfo = AppLocalizations.of(context)!.days;
     if (_statisticsType == StatisticType.weekly) {
@@ -65,17 +104,12 @@ class BarchartTargetActual extends StatelessWidget {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
-    String header = AppLocalizations.of(context)!.last_amount_timeinfo(_data.length, timeInfo);
+    String header = AppLocalizations.of(context)!.last_amount_timeinfo(_data.length - 1, timeInfo);
 
     return Column(
       children: [
         Center(child: Text(header, style: textTheme.titleMedium)),
-        Center(
-          child: Text(
-            AppLocalizations.of(context)!.average_number(ConvertValidate.numberFomatterInt.format(average)),
-            style: textTheme.titleSmall,
-          ),
-        ),
+        Center(child: Text(AppLocalizations.of(context)!.average_per_day_number(ConvertValidate.numberFomatterInt.format(average)), style: textTheme.titleSmall)),
         SizedBox(height: 5),
         SizedBox(
           width: 400,
@@ -83,9 +117,9 @@ class BarchartTargetActual extends StatelessWidget {
           child: Chart(
             data: _data,
             variables: {
-              "date_information": Variable(accessor: (Map map) => map["dateInformation"] as String),
-              "kCalIntake": Variable(
-                accessor: (Map map) => map["kCalIntake"] as num,
+              OpenEatsJournalStrings.chartDateInformation: Variable(accessor: (Map map) => map[OpenEatsJournalStrings.chartDateInformation] as String),
+              OpenEatsJournalStrings.chartKCalIntake: Variable(
+                accessor: (Map map) => map[OpenEatsJournalStrings.chartKCalIntake] != null ? map[OpenEatsJournalStrings.chartKCalIntake] as num : 0,
                 scale: LinearScale(
                   max: yAxisScaleMaxValue,
                   min: 0,
@@ -94,8 +128,8 @@ class BarchartTargetActual extends StatelessWidget {
                   //ticks: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
                 ),
               ),
-              "kCalTarget": Variable(
-                accessor: (Map map) => map["kCalTarget"] as num,
+              OpenEatsJournalStrings.chartKCalTarget: Variable(
+                accessor: (Map map) => map[OpenEatsJournalStrings.chartKCalTarget] != null ? map[OpenEatsJournalStrings.chartKCalTarget] as num : 0,
                 scale: LinearScale(max: yAxisScaleMaxValue, min: 0),
               ),
             },
@@ -104,7 +138,7 @@ class BarchartTargetActual extends StatelessWidget {
                 size: SizeEncode(value: barSize),
                 label: LabelEncode(
                   encoder: (tuple) => Label(
-                    ConvertValidate.numberFomatterInt.format(tuple["kCalIntake"]),
+                    ConvertValidate.numberFomatterInt.format(tuple[OpenEatsJournalStrings.chartKCalIntake]),
                     LabelStyle(
                       textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                       offset: Offset(6, markOffset),
@@ -115,7 +149,7 @@ class BarchartTargetActual extends StatelessWidget {
                 color: ColorEncode(value: colorTheme.primary),
               ),
               LineMark(
-                position: Varset("date_information") * Varset("kCalTarget"),
+                position: Varset(OpenEatsJournalStrings.chartDateInformation) * Varset(OpenEatsJournalStrings.chartKCalTarget),
                 size: SizeEncode(value: 1.5),
                 color: ColorEncode(value: colorTheme.tertiary),
               ),

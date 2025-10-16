@@ -1,14 +1,14 @@
 import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/nutritions.dart';
 
-class FoodRepositoryGetDayDataResult {
-  const FoodRepositoryGetDayDataResult({Nutritions? dayNutritionTargets, Map<Meal, Nutritions>? nutritionSumsPerMeal})
+class FoodRepositoryGetDayMealSumsResult {
+  const FoodRepositoryGetDayMealSumsResult({Nutritions? dayNutritionTargets, Map<Meal, Nutritions>? mealNutritionSums})
     : _dayNutritionTargets = dayNutritionTargets,
-      _nutritionSumsPerMeal = nutritionSumsPerMeal;
+      _mealNutritionSums = mealNutritionSums;
 
   final Nutritions? _dayNutritionTargets;
-  final Map<Meal, Nutritions>? _nutritionSumsPerMeal;
+  final Map<Meal, Nutritions>? _mealNutritionSums;
 
   Nutritions? get dayNutritionTargets => _dayNutritionTargets;
-  Map<Meal, Nutritions>? get nutritionSumsPerMeal => _nutritionSumsPerMeal;
+  Map<Meal, Nutritions>? get mealNutritionSums => _mealNutritionSums;
 }

@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/domain/utils/week_of_year.dart';
 
 class ConvertValidate {
   static void init({required String languageCode}) {
@@ -79,5 +80,26 @@ class ConvertValidate {
     }
 
     return true;
+  }
+
+  static WeekOfYear getweekNumber(DateTime date) {
+    int year = date.year;
+    int dayOfYear = int.parse(DateFormat("D").format(date));
+    int weekOfYear = ((dayOfYear - date.weekday + 10) / 7).floor();
+
+    if (weekOfYear < 1) {
+      weekOfYear = _getWeekCount(date.year - 1);
+      year = year - 1;
+    } else if (weekOfYear > _getWeekCount(date.year)) {
+      weekOfYear = 1;
+    }
+
+    return WeekOfYear(week: weekOfYear, year: year);
+  }
+
+  static int _getWeekCount(int year) {
+    DateTime dec28 = DateTime(year, 12, 28);
+    int dayOfDec28 = int.parse(DateFormat("D").format(dec28));
+    return ((dayOfDec28 - dec28.weekday + 10) / 7).floor();
   }
 }

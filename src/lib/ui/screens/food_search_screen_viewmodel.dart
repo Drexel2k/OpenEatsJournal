@@ -237,7 +237,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   void addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
     if (eatsJournalEntry.food != null) {
-      await _foodRepository.setFoodCache(eatsJournalEntry.food!);
+      await _foodRepository.setFoodCache(food: eatsJournalEntry.food!);
     }
 
     await _journalRepository.saveOnceDayNutritionTarget(
