@@ -5,7 +5,7 @@ import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
 import "package:openeatsjournal/repository/journal_repository_get_sums_result.dart";
-import "package:openeatsjournal/domain/nutrition_sums_result.dart";
+import "package:openeatsjournal/domain/nutrition_sums.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 
 class JournalRepository {
@@ -20,14 +20,17 @@ class JournalRepository {
   }
 
   Future<void> saveOnceDayNutritionTarget({required DateTime entryDate, required int dayTargetKJoule}) async {
+    await _oejDatabase.insertOnceDaDateInfo(date: entryDate);
     await _oejDatabase.insertOnceDayNutritionTarget(day: entryDate, dayTargetKJoule: dayTargetKJoule);
   }
 
   Future<void> addEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
+    await _oejDatabase.insertOnceDaDateInfo(date: eatsJournalEntry.entryDate);
     await _oejDatabase.insertEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
   }
 
   Future<void> addWeightJournalEntry({required DateTime date, required double weight}) async {
+    await _oejDatabase.insertOnceDaDateInfo(date: date);
     await _oejDatabase.insertWeightJournalEntry(day: date, weight: weight);
   }
 
@@ -100,27 +103,29 @@ class JournalRepository {
     }
   }
 
-  //current week and last 14 weeks, data of last 3 months. Last 30 months can have 31+30+31=92 days, 92/7=31,14, so we need 14 weeks + current week.
+  //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=31.14, so we need 14 weeks + current week.
   Future<JournalRepositoryGetSumsResult> getWeekSumsForLast15Weeks() async {
     DateTime today = DateTime.now();
     today = DateTime(today.year, today.month, today.day);
-    //14*7-1 (-1c because to get the current week, we need so substract 6 days from today. Then weh have Wednesday to Tuesday e.g.)
-    DateTime before14weeks = today.subtract(Duration(days: 97));
-    if (before14weeks.day == 1) {
-      before14weeks.subtract(Duration(days: before14weeks.day - 7));
-    } else {
-      before14weeks.subtract(Duration(days: before14weeks.day - (before14weeks.day - 1)));
+
+    //set start of week (monday) on before14weeks
+    DateTime before14weeks =  today;
+    if (today.weekday != 1) {
+      before14weeks = before14weeks.subtract(Duration(days: before14weeks.weekday - 1));
     }
+
+    before14weeks = before14weeks.subtract(Duration(days: 98));
+    
 
     Map<String, int>? weekKJouleTargets = await _oejDatabase.getGroupedKJouleTargets(
       from: before14weeks,
       until: today,
-      groupBy: OpenEatsJournalStrings.dbResultWeekOfYear,
+      groupBy: OpenEatsJournalStrings.dbColumnWeekOfYearNormalized,
     );
     Map<String, NutritionSums>? nutritionSumsPerWeek = await _oejDatabase.getGroupedNutritionSums(
       from: before14weeks,
       until: today,
-      groupBy: OpenEatsJournalStrings.dbResultWeekOfYear,
+      groupBy: OpenEatsJournalStrings.dbColumnWeekOfYearNormalized,
     );
     if ((weekKJouleTargets != null && nutritionSumsPerWeek != null) || (weekKJouleTargets == null && nutritionSumsPerWeek == null)) {
       if (weekKJouleTargets != null) {
@@ -162,12 +167,12 @@ class JournalRepository {
     Map<String, int>? weekKJouleTargets = await _oejDatabase.getGroupedKJouleTargets(
       from: before12months,
       until: today,
-      groupBy: OpenEatsJournalStrings.dbResultMonthOfYear,
+      groupBy: OpenEatsJournalStrings.dbColumnMonthOfYearNormalized,
     );
     Map<String, NutritionSums>? nutritionSumsPerWeek = await _oejDatabase.getGroupedNutritionSums(
       from: before12months,
       until: today,
-      groupBy: OpenEatsJournalStrings.dbResultMonthOfYear,
+      groupBy: OpenEatsJournalStrings.dbColumnMonthOfYearNormalized,
     );
     if ((weekKJouleTargets != null && nutritionSumsPerWeek != null) || (weekKJouleTargets == null && nutritionSumsPerWeek == null)) {
       if (weekKJouleTargets != null) {

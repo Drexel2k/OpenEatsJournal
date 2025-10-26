@@ -49,12 +49,14 @@ class OpenEatsJournalStrings {
   static const String dbTableMeasurementUnit = "t_measurement_unit";
   static const String dbTableFoodUnitType = "t_food_unit_type";
   static const String dbTableDailyNutritionTarget = "t_daily_nutrition_target";
+  static const String dbTableDateInfo = "t_date_info";
 
   static const String dbColumnId = "id";
   static const String dbColumnSetting = "setting";
   static const String dbColumnDartType = "dart_type";
   static const String dbColumnvalue = "value";
   static const String dbColumnEntryDate = "entry_date";
+  static const String dbColumnDate = "date";
   static const String dbColumnWeight = "weight";
   static const String dbColumnFoodSourceIdRef = "food_source_id_ref";
   static const String dbColumndbColumnFoodSourceIdExternalRef = "food_source_id_external_ref";
@@ -78,8 +80,8 @@ class OpenEatsJournalStrings {
   static const String dbColumnUrl = "url";
   static const String dbColumnBrands = "brands";
   static const String dbColumnSearchText = "search_text";
-  static const String dbResultWeekOfYear = "STRFTIME('%Y-%V', ${OpenEatsJournalStrings.dbColumnEntryDate})";
-  static const String dbResultMonthOfYear = "STRFTIME('%Y-%m', ${OpenEatsJournalStrings.dbColumnEntryDate})";
+  static const String dbColumnWeekOfYearNormalized = "week_of_year_normalized";
+  static const String dbColumnMonthOfYearNormalized = "month_of_year_normalized";
   static const String dbResultDayCount = "day_count";
   static const String dbResultKJouleSum = "kilo_joule_sum";
   static const String dbResultCarbohydratesSum = "carbohydrates_sum";
@@ -89,6 +91,9 @@ class OpenEatsJournalStrings {
   static const String dbResultProteinSum = "protein_sum";
   static const String dbResultSaltSum = "salt_sum";
   static const String dbResultGroupColumn = "group_column";
+
+  static const String dbIndexDateIndexTableDailyNutritionTarget = "date_index_$dbTableDailyNutritionTarget";
+  static const String dbIndexDateIndexTableDateInfo = "date_index_$dbTableDateInfo";
 
   static const String dbDateFormatDateAndTime = "yyyy-MM-d HH:mm:ss:SSSS";
   static const String dbDateFormatDateOnly = "yyyy-MM-dd";

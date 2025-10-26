@@ -8,9 +8,10 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/week_of_year.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
-import "package:openeatsjournal/domain/nutrition_sums_result.dart";
+import "package:openeatsjournal/domain/nutrition_sums.dart";
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
 
@@ -132,6 +133,12 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnKiloJoule} INT NOT NULL
       );""");
+    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableDateInfo} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnDate} DATE NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnWeekOfYearNormalized} TEXT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnMonthOfYearNormalized} TEXT NOT NULL
+      );""");
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodSource} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
@@ -150,6 +157,13 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnName} TEXT
       );""");
+
+    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateIndexTableDailyNutritionTarget} ON
+        ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}(${OpenEatsJournalStrings.dbColumnEntryDate})
+      ;""");
+    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateIndexTableDateInfo} ON
+        ${OpenEatsJournalStrings.dbTableDateInfo}(${OpenEatsJournalStrings.dbColumnDate})
+      ;""");
 
     batch.insert(OpenEatsJournalStrings.dbTableFoodSource, {
       OpenEatsJournalStrings.dbColumnId: 1,
@@ -584,7 +598,7 @@ class OpenEatsJournalDatabaseService {
     );
 
     if (result.length > 1) {
-      throw StateError("An entry for ate must exist only once in daily nutrition targets, mutiple instances on date $formattedDate found.");
+      throw StateError("An entry for date must exist only once in daily nutrition targets, mutiple instances on date $formattedDate found.");
     }
 
     if (result.isEmpty) {
@@ -595,21 +609,40 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
+  Future<void> insertOnceDaDateInfo({required DateTime date}) async {
+    Database db = await instance.db;
+
+    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(date);
+
+    final List<Map<String, Object?>> result = await db.query(
+      OpenEatsJournalStrings.dbTableDateInfo,
+      columns: [OpenEatsJournalStrings.dbColumnId],
+      where: "${OpenEatsJournalStrings.dbColumnDate} = ?",
+      whereArgs: [formattedDate],
+    );
+
+    if (result.length > 1) {
+      throw StateError("An entry for date must exist only once in date info, mutiple instances on date $formattedDate found.");
+    }
+
+    if (result.isEmpty) {
+      WeekOfYear weekOfYear = ConvertValidate.getweekNumber(date);
+
+      await db.insert(OpenEatsJournalStrings.dbTableDateInfo, {
+        OpenEatsJournalStrings.dbColumnDate: formattedDate,
+        OpenEatsJournalStrings.dbColumnWeekOfYearNormalized: "${weekOfYear.year}-${weekOfYear.week.toString().padLeft(2, "0")}",
+        OpenEatsJournalStrings.dbColumnMonthOfYearNormalized: "${date.year}-${date.month.toString().padLeft(2, "0")}",
+      });
+    }
+  }
+
   Future<Map<Meal, Nutritions>?> getDayNutritionSumsPerMeal({required DateTime day}) async {
     Database db = await instance.db;
 
     final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
-    final kJouleSum = "kilo_joule_sum";
-    final carbohydratesSum = "carbohydrates_sum";
-    final sugarSum = "sugar_sum";
-    final fatSum = "fat_sum";
-    final saturatedFatSum = "saturated_fat_sum";
-    final proteinSum = "protein_sum";
-    final saltSum = "salt_sum";
-
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
-      "SELECT ${OpenEatsJournalStrings.dbColumnMealIdRef}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS $kJouleSum, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS $carbohydratesSum, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS $sugarSum, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS $fatSum, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS $saturatedFatSum, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS $proteinSum, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS $saltSum FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ? GROUP BY ${OpenEatsJournalStrings.dbColumnEntryDate}, ${OpenEatsJournalStrings.dbColumnMealIdRef}",
+      "SELECT ${OpenEatsJournalStrings.dbColumnMealIdRef}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum}, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum}, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS ${OpenEatsJournalStrings.dbResultSugarSum}, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS ${OpenEatsJournalStrings.dbResultFatSum}, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum}, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS ${OpenEatsJournalStrings.dbResultProteinSum}, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS ${OpenEatsJournalStrings.dbResultSaltSum} FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ? GROUP BY ${OpenEatsJournalStrings.dbColumnEntryDate}, ${OpenEatsJournalStrings.dbColumnMealIdRef}",
       [formattedDate],
     );
 
@@ -617,13 +650,13 @@ class OpenEatsJournalDatabaseService {
       Map<Meal, Nutritions> result = {};
       for (Map<String, Object?> row in dbResult) {
         result[Meal.getByValue((row[OpenEatsJournalStrings.dbColumnMealIdRef] as int))] = Nutritions(
-          kJoule: (row[kJouleSum] as int),
-          carbohydrates: (row[carbohydratesSum] as double),
-          sugar: (row[sugarSum] as double),
-          fat: (row[fatSum] as double),
-          saturatedFat: (row[saturatedFatSum] as double),
-          protein: (row[proteinSum] as double),
-          salt: (row[saltSum] as double),
+          kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as int),
+          carbohydrates: (row[OpenEatsJournalStrings.dbResultCarbohydratesSum] as double),
+          sugar: (row[OpenEatsJournalStrings.dbResultSugarSum] as double),
+          fat: (row[OpenEatsJournalStrings.dbResultFatSum] as double),
+          saturatedFat: (row[OpenEatsJournalStrings.dbResultSaturatedFatSum] as double),
+          protein: (row[OpenEatsJournalStrings.dbResultProteinSum] as double),
+          salt: (row[OpenEatsJournalStrings.dbResultSaltSum] as double),
         );
       }
 
@@ -642,12 +675,30 @@ class OpenEatsJournalDatabaseService {
     List<Map<String, Object?>> dbResult;
     if (groupBy == OpenEatsJournalStrings.dbColumnEntryDate) {
       dbResult = await db.rawQuery(
-        "SELECT ${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn}, ${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultKJouleSum} FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?",
+        """SELECT
+        ${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn},
+        ${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultKJouleSum}
+        FROM
+                ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?""",
         [fromFormatted, untilFormatted],
       );
     } else {
       dbResult = await db.rawQuery(
-        "SELECT $groupBy AS ${OpenEatsJournalStrings.dbResultGroupColumn}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum} FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ? GROUP BY $groupBy",
+        """SELECT
+        $groupBy                                         AS ${OpenEatsJournalStrings.dbResultGroupColumn},
+        SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum}
+        FROM
+                ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}
+        LEFT JOIN
+                ${OpenEatsJournalStrings.dbTableDateInfo}
+        ON
+                ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}.${OpenEatsJournalStrings.dbColumnEntryDate} = ${OpenEatsJournalStrings.dbTableDateInfo}.${OpenEatsJournalStrings.dbColumnDate}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?
+        GROUP BY
+                $groupBy""",
         [fromFormatted, untilFormatted],
       );
     }
@@ -671,7 +722,26 @@ class OpenEatsJournalDatabaseService {
     final String untilFormatted = ConvertValidate.dateformatterDateOnly.format(until);
 
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
-      "SELECT $groupBy AS ${OpenEatsJournalStrings.dbResultGroupColumn}, COUNT(DISTINCT ${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultDayCount}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum}, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum}, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS ${OpenEatsJournalStrings.dbResultSugarSum}, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS ${OpenEatsJournalStrings.dbResultFatSum}, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum}, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS ${OpenEatsJournalStrings.dbResultProteinSum}, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS ${OpenEatsJournalStrings.dbResultSaltSum} FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ? GROUP BY $groupBy",
+      """SELECT
+        $groupBy                                                                                          AS ${OpenEatsJournalStrings.dbResultGroupColumn}     ,
+        COUNT(DISTINCT ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultDayCount}        ,
+        SUM(${OpenEatsJournalStrings.dbColumnKiloJoule})                                                  AS ${OpenEatsJournalStrings.dbResultKJouleSum}       ,
+        SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates})                                              AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum},
+        SUM(${OpenEatsJournalStrings.dbColumnSugar})                                                      AS ${OpenEatsJournalStrings.dbResultSugarSum}        ,
+        SUM(${OpenEatsJournalStrings.dbColumnFat})                                                        AS ${OpenEatsJournalStrings.dbResultFatSum}          ,
+        SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat})                                               AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum} ,
+        SUM(${OpenEatsJournalStrings.dbColumnProtein})                                                    AS ${OpenEatsJournalStrings.dbResultProteinSum}      ,
+        SUM(${OpenEatsJournalStrings.dbColumnSalt})                                                       AS ${OpenEatsJournalStrings.dbResultSaltSum}
+        FROM
+                ${OpenEatsJournalStrings.dbTableEatsJournal}
+        LEFT JOIN
+                ${OpenEatsJournalStrings.dbTableDateInfo}
+        ON
+                ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} = ${OpenEatsJournalStrings.dbTableDateInfo}.${OpenEatsJournalStrings.dbColumnDate}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?
+        GROUP BY
+        $groupBy""",
       [fromFormatted, untilFormatted],
     );
 

@@ -42,13 +42,13 @@ Use paths for SDKs without spaces and sepcial characers.
 1. If you want to test barcode scanning, you need to add a barcode to the virtual camera environment on the virtual device. On the bar beside the virtual device click the 3 dots at the bottom, then "Camera", and upload a barcode image on the "Wall" section. When using the camera to scan a barcode, walk to that wall with the camera controls.
 2. To copy files from or to the virtual device e.g. the database file, you can use the adb command from the SDK, therefore you need a rooted device (see [Setup Android SDK and Emulator](#setup-android-sdk-and-emulator) -> 5.). From a command line you can root and access the device.  
 List device names:  
-`adb devices`  
+`c:\path\to\android\sdk\platform-tools\adb devices`  
 Root with the device name:  
-`adb -s device-name root`  
+`c:\path\to\android\sdk\platform-tools\adb -s device-name root`  
 Copy database file e.g. (push for the other directioon):  
 `c:\path\to\android\sdk\platform-tools\adb -s device-name pull /data/data/com.drexeldevelopment.openeatsjournal/databases/oej.db c:\target\path`  
 Connect to shell to browse the file system e.g.:  
-`adb -s device-name shell`  
+`c:\path\to\android\sdk\platform-tools\adb -s device-name shell`  
 Exit:  
 `exit`  
  &nbsp;   

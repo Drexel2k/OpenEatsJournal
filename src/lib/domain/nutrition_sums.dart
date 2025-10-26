@@ -8,7 +8,6 @@ class NutritionSums {
   final int _entryCount;
   final Nutritions _nutritions;
 
-
   int get entryCount => _entryCount;
   Nutritions get nutritions => _nutritions;
 }
