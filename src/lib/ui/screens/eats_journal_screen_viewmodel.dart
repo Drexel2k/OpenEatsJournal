@@ -34,13 +34,13 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   Future<FoodRepositoryGetDayMealSumsResult> get dayData => _dayData;
   SettingsRepository get settingsRepository => _settingsRepository;
 
-  _currentJournalDateChanged() {
+  void _currentJournalDateChanged() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
     _dayData = _journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value);
     _eatsJournalDataChanged.notify();
   }
 
-  _currentMealChanged() {
+  void _currentMealChanged() {
     _settingsRepository.currentMeal.value = _currentMeal.value;
   }
 

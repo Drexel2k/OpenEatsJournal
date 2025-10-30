@@ -13,70 +13,32 @@ class ConvertValidate {
   static DateFormat dateformatterDateOnly = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
   static DateFormat dateFormatterDateAndTime = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
 
-  static double? convertLocalStringToDouble({required String numberString, required String languageCode}) {
-    num? number = NumberFormat(null, languageCode).tryParse(numberString);
-    return number == null ? null : number as double;
-  }
+  // static double? convertLocalStringToDouble({required String numberString, required String languageCode}) {
+  //   num? number = NumberFormat(null, languageCode).tryParse(numberString);
+  //   return number == null ? null : number as double;
+  // }
 
   static int? convertLocalStringToInt({required String numberString, required String languageCode}) {
     num? number = NumberFormat(null, languageCode).tryParse(numberString);
     return number?.toInt();
   }
 
-  //checks a weight string for eon comma and valid number lengths before and after comma
-  static bool validateWeight({required String weight, required String decimalSeparator}) {
-    //none or multiple digits (\d*) followed by none or one decimalSeparator (\decimalSeparator?) followed by none or multiple digits (\d*)
-    var matches = RegExp(r"^\d*\" + decimalSeparator + r"?\d*$").allMatches(weight);
+  static bool validateInt({required String intString, required String thousandSeparator}) {
+    //none or multiple digits (\d*) followed by none or one thousandSeparator (\thousandSeparator?) followed by none or multiple digits (\d*)
+    var matches = RegExp(r"^\d{1,3}(" + thousandSeparator + r"\d{3})*$").allMatches(intString);
     if (matches.length != 1) {
       return false;
-    }
-
-    List<String> parts = weight.split(decimalSeparator);
-
-    if (parts.length > 2) {
-      return false;
-    }
-
-    if (parts[0].length > 3) {
-      return false;
-    }
-
-    if (parts.length > 1) {
-      if (parts[1].length > 1) {
-        return false;
-      }
     }
 
     return true;
   }
 
-  static bool validateKJoule({required String kJoule, required String thousandSeparator}) {
+  //max 2 decimal digits
+  static bool validateDecimal({required String decimalString, required String thousandSeparator, required String decimalSeparator}) {
     //none or multiple digits (\d*) followed by none or one thousandSeparator (\thousandSeparator?) followed by none or multiple digits (\d*)
-    var matches = RegExp(r"^\d*\" + thousandSeparator + r"?\d*$").allMatches(kJoule);
+    var matches = RegExp(r"^\d{1,3}(" + thousandSeparator + r"\d{3})*(\" + decimalSeparator + r"\d{1,2})?$").allMatches(decimalString);
     if (matches.length != 1) {
       return false;
-    }
-
-    List<String> parts = kJoule.split(thousandSeparator);
-
-    if (parts.length > 2) {
-      return false;
-    }
-
-    if (parts.length > 1) {
-      if (parts[0].length > 1) {
-        return false;
-      }
-
-      if (parts.length > 1) {
-        if (parts[1].length > 3) {
-          return false;
-        }
-      }
-    } else {
-      if (parts[0].length > 4) {
-        return false;
-      }
     }
 
     return true;

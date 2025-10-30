@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -42,7 +44,6 @@ class EatsJournalScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                flex: 10,
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalScreenViewModel.currentJournalDate,
                   builder: (_, _, _) {
@@ -64,9 +65,8 @@ class EatsJournalScreen extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 5),
               Expanded(
-                flex: 10,
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalScreenViewModel.currentMeal,
                   builder: (_, _, _) {
@@ -156,19 +156,16 @@ class EatsJournalScreen extends StatelessWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  flex: 1,
                                   child: Center(
                                     child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.fat, gaugeData: fatGaugeData),
                                   ),
                                 ),
                                 Expanded(
-                                  flex: 1,
                                   child: Center(
                                     child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.carb, gaugeData: carbohydratesGaugeData),
                                   ),
                                 ),
                                 Expanded(
-                                  flex: 1,
                                   child: Center(
                                     child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.prot, gaugeData: proteinGaugeData),
                                   ),
@@ -201,15 +198,14 @@ class EatsJournalScreen extends StatelessWidget {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      flex: 1,
+                                    SizedBox(
+                                      width: 80,
                                       child: Align(
                                         alignment: Alignment.centerRight,
                                         child: GaugeDistribution(value: breakfastPercent, startValue: 0),
                                       ),
                                     ),
                                     Expanded(
-                                      flex: 4,
                                       child: Container(
                                         margin: const EdgeInsets.only(top: 11),
                                         child: Column(
@@ -229,15 +225,14 @@ class EatsJournalScreen extends StatelessWidget {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          flex: 1,
+                                        SizedBox(
+                                          width: 80,
                                           child: Align(
                                             alignment: Alignment.centerRight,
                                             child: GaugeDistribution(value: lunchPercent, startValue: breakfastPercent),
                                           ),
                                         ),
                                         Expanded(
-                                          flex: 4,
                                           child: Container(
                                             margin: const EdgeInsets.only(top: 11),
                                             child: Column(
@@ -259,15 +254,14 @@ class EatsJournalScreen extends StatelessWidget {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          flex: 1,
+                                        SizedBox(
+                                          width: 80,
                                           child: Align(
                                             alignment: Alignment.centerRight,
                                             child: GaugeDistribution(value: dinnerPercent, startValue: breakfastPercent + lunchPercent),
                                           ),
                                         ),
                                         Expanded(
-                                          flex: 4,
                                           child: Container(
                                             margin: const EdgeInsets.only(top: 11),
                                             child: Column(
@@ -291,15 +285,14 @@ class EatsJournalScreen extends StatelessWidget {
                                         Row(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Expanded(
-                                              flex: 1,
+                                            SizedBox(
+                                              width: 80,
                                               child: Align(
                                                 alignment: Alignment.centerRight,
                                                 child: GaugeDistribution(value: snacksPercent, startValue: breakfastPercent + lunchPercent + dinnerPercent),
                                               ),
                                             ),
                                             Expanded(
-                                              flex: 4,
                                               child: Container(
                                                 margin: const EdgeInsets.only(top: 11),
                                                 child: Column(
@@ -558,23 +551,33 @@ class EatsJournalScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                           },
-                          label: Text("Eats Journal Entry"),
+                          label: Text(AppLocalizations.of(context)!.eats_journal_entry),
                         ),
                       ),
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text("Weight Journal Entry")),
+                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text(AppLocalizations.of(context)!.weight_journal_entry)),
                       ),
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "3", onPressed: () {}, label: Text("Food")),
+                        child: FloatingActionButton.extended(
+                          heroTag: "3",
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                              arguments: Food(name: OpenEatsJournalStrings.emptyString, foodSource: FoodSource.user, kJoule: 1, nutritionPerGramAmount: 100),
+                            );
+                          },
+                          label: Text(AppLocalizations.of(context)!.food),
+                        ),
                       ),
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text("Quick Entry")),
+                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text(AppLocalizations.of(context)!.quick_entry)),
                       ),
                     ],
                   );

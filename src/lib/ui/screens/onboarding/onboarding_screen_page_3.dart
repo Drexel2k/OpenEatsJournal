@@ -5,7 +5,6 @@ import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
-import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
@@ -21,9 +20,7 @@ class OnboardingScreenPage3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String languageCode = Localizations.localeOf(context).toString();
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,9 +28,8 @@ class OnboardingScreenPage3 extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_gender, style: textTheme.titleMedium)),
+            Expanded(child: Text(AppLocalizations.of(context)!.your_gender, style: textTheme.titleSmall)),
             Flexible(
-              flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -73,9 +69,8 @@ class OnboardingScreenPage3 extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleMedium)),
+            Expanded(child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleSmall)),
             Flexible(
-              flex: 1,
               child: Align(
                 alignment: Alignment.topLeft,
                 child: SettingsTextField(
@@ -93,9 +88,8 @@ class OnboardingScreenPage3 extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleMedium)),
+            Expanded(child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleSmall)),
             Flexible(
-              flex: 1,
               child: Align(
                 alignment: Alignment.topLeft,
                 child: ValueListenableBuilder(
@@ -107,11 +101,16 @@ class OnboardingScreenPage3 extends StatelessWidget {
                         FilteringTextInputFormatter.digitsOnly,
                         TextInputFormatter.withFunction((oldValue, newValue) {
                           final String text = newValue.text.trim();
-                          return text.isEmpty
-                              ? newValue
-                              : text.length <= 3
-                              ? newValue
-                              : oldValue;
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          int? intValue = int.tryParse(text);
+                          if (intValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
                         }),
                       ],
                       onChanged: (value) {
@@ -128,9 +127,8 @@ class OnboardingScreenPage3 extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleMedium)),
+            Expanded(child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleSmall)),
             Flexible(
-              flex: 1,
               child: Align(
                 alignment: Alignment.topLeft,
                 child: ValueListenableBuilder(
@@ -144,19 +142,21 @@ class OnboardingScreenPage3 extends StatelessWidget {
                         //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
                         TextInputFormatter.withFunction((oldValue, newValue) {
                           final String text = newValue.text.trim();
-                          return text.isEmpty
-                              ? newValue
-                              : ConvertValidate.validateWeight(weight: text, decimalSeparator: decimalSeparator)
-                              ? newValue
-                              : oldValue;
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          double? doubleValue = double.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
                         }),
                       ],
                       onChanged: (value) {
-                        double? weightNum = ConvertValidate.convertLocalStringToDouble(
-                          numberString: value,
-                          languageCode: languageCode,
-                        );
-                        _onboardingScreenViewModel.weight.value = weightNum;
+                        double? doubleValue = double.tryParse(value);
+                        _onboardingScreenViewModel.weight.value = doubleValue;
                       },
                     );
                   },
@@ -170,11 +170,10 @@ class OnboardingScreenPage3 extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 1,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(AppLocalizations.of(context)!.your_acitivty_level, style: textTheme.titleMedium),
+                  Text(AppLocalizations.of(context)!.your_acitivty_level, style: textTheme.titleSmall),
                   Tooltip(
                     triggerMode: TooltipTriggerMode.tap,
                     showDuration: Duration(seconds: 60),
@@ -185,7 +184,6 @@ class OnboardingScreenPage3 extends StatelessWidget {
               ),
             ),
             Flexible(
-              flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -307,9 +305,11 @@ class OnboardingScreenPage3 extends StatelessWidget {
                 return;
               }
 
-              if (_onboardingScreenViewModel.height.value == null || _onboardingScreenViewModel.height.value! <= 0) {
+              if (_onboardingScreenViewModel.height.value == null ||
+                  _onboardingScreenViewModel.height.value! <= 0 ||
+                  _onboardingScreenViewModel.height.value! > 999) {
                 SnackBar snackBar = SnackBar(
-                  content: Text(AppLocalizations.of(context)!.select_height),
+                  content: Text(AppLocalizations.of(context)!.valid_height),
                   action: SnackBarAction(
                     label: AppLocalizations.of(context)!.close,
                     onPressed: () {
@@ -323,9 +323,11 @@ class OnboardingScreenPage3 extends StatelessWidget {
                 return;
               }
 
-              if (_onboardingScreenViewModel.weight.value == null || _onboardingScreenViewModel.weight.value! <= 0) {
+              if (_onboardingScreenViewModel.weight.value == null ||
+                  _onboardingScreenViewModel.weight.value! <= 0 ||
+                  _onboardingScreenViewModel.weight.value! > 999) {
                 SnackBar snackBar = SnackBar(
-                  content: Text(AppLocalizations.of(context)!.select_weight),
+                  content: Text(AppLocalizations.of(context)!.valid_weight),
                   action: SnackBarAction(
                     label: AppLocalizations.of(context)!.close,
                     onPressed: () {
@@ -371,12 +373,7 @@ class OnboardingScreenPage3 extends StatelessWidget {
   Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
     final String languageCode = Localizations.localeOf(context).toString();
 
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now());
 
     if (date != null) {
       _birthDayController.text = DateFormat.yMMMMd(languageCode).format(date);

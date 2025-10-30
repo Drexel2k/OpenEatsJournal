@@ -15,13 +15,21 @@ class KJoulePerDay {
        _kJouleSaturday = kJouleSaturday,
        _kJouleSunday = kJouleSunday;
 
-  final int _kJouleMonday;
-  final int _kJouleTuesday;
-  final int _kJouleWednesday;
-  final int _kJouleThursday;
-  final int _kJouleFriday;
-  final int _kJouleSaturday;
-  final int _kJouleSunday;
+  int _kJouleMonday;
+  int _kJouleTuesday;
+  int _kJouleWednesday;
+  int _kJouleThursday;
+  int _kJouleFriday;
+  int _kJouleSaturday;
+  int _kJouleSunday;
+
+  set kJouleMonday (int kJoule) => _kJouleMonday = kJoule;
+  set kJouleTuesday (int kJoule) => _kJouleTuesday = kJoule;
+  set kJouleWednesday (int kJoule) => _kJouleWednesday = kJoule;
+  set kJouleThursday (int kJoule) => _kJouleThursday = kJoule;
+  set kJouleFriday (int kJoule) => _kJouleFriday = kJoule;
+  set kJouleSaturday (int kJoule) => _kJouleSaturday = kJoule;
+  set kJouleSunday (int kJoule) => _kJouleSunday = kJoule;
 
   int get kJouleMonday => _kJouleMonday;
   int get kJouleTuesday => _kJouleTuesday;

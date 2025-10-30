@@ -1,23 +1,19 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/gender.dart";
-import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
+import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class SettingsScreenViewModel extends ChangeNotifier {
   SettingsScreenViewModel({required SettingsRepository settingsRepository})
     : _settingsRepository = settingsRepository,
       _darkMode = ValueNotifier(settingsRepository.darkMode.value),
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
-      _dailyKJoule = ValueNotifier(1),
-      _dailyTargetKJoule = ValueNotifier(1),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
       _height = ValueNotifier(settingsRepository.height),
-      _heightValid = ValueNotifier(true),
       _weight = ValueNotifier(settingsRepository.weight),
-      _weightValid = ValueNotifier(true),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
       _weightTarget = ValueNotifier(settingsRepository.weightTarget) {
     _setDailyKJoule();
@@ -37,16 +33,19 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final ValueNotifier<bool> _darkMode;
   final ValueNotifier<String> _languageCode;
-  final ValueNotifier<int> _dailyKJoule;
-  final ValueNotifier<int> _dailyTargetKJoule;
+  final ValueNotifier<int> _dailyKJoule = ValueNotifier(1);
+  final ValueNotifier<int> _dailyTargetKJoule = ValueNotifier(1);
   final ValueNotifier<Gender> _gender;
   final ValueNotifier<DateTime> _birthday;
-  final ValueNotifier<int> _height;
-  final ValueNotifier<bool> _heightValid;
-  final ValueNotifier<double> _weight;
-  final ValueNotifier<bool> _weightValid;
+  final ValueNotifier<int?> _height;
+  final ValueNotifier<bool> _heightValid = ValueNotifier(true);
+  final ValueNotifier<double?> _weight;
+  final ValueNotifier<bool> _weightValid = ValueNotifier(true);
   final ValueNotifier<double> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
+
+  final Debouncer _heightDebouncer = Debouncer();
+  final Debouncer _weightDebouncer = Debouncer();
 
   ValueNotifier<int> get currentPageIndex => _currentPageIndex;
   ValueNotifier<bool> get darkMode => _darkMode;
@@ -55,9 +54,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<int> get dailyTargetKJoule => _dailyTargetKJoule;
   ValueNotifier<Gender> get gender => _gender;
   ValueNotifier<DateTime> get birthday => _birthday;
-  ValueNotifier<int> get height => _height;
+  ValueNotifier<int?> get height => _height;
   ValueNotifier<bool> get heightValid => _heightValid;
-  ValueNotifier<double> get weight => _weight;
+  ValueNotifier<double?> get weight => _weight;
   ValueNotifier<bool> get weightValid => _weightValid;
   ValueNotifier<double> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget> get weightTarget => _weightTarget;
@@ -69,6 +68,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
   int get kJouleFriday => _settingsRepository.kJouleFriday;
   int get kJouleSaturday => _settingsRepository.kJouleSaturday;
   int get kJouleSunday => _settingsRepository.kJouleSunday;
+  int get repositoryHeight => _settingsRepository.height;
+  double get repositoryWeight => _settingsRepository.weight;
+
+  SettingsRepository get settingsRepository => _settingsRepository;
 
   void _setDailyTargetKJoule() {
     _dailyTargetKJoule.value =
@@ -86,8 +89,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
   double _getDailyKJoule() {
     int age = 0;
     final DateTime today = DateTime.now();
-    age = today.year - _birthday.value.year;
-    final month = today.month - _birthday.value.month;
+    age = today.year - _settingsRepository.birthday.year;
+    final month = today.month - _settingsRepository.birthday.month;
 
     if (month < 0) {
       age = age - 1;
@@ -95,12 +98,12 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
     return NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-        weightKg: _weight.value,
-        heightCm: _height.value,
+        weightKg: _settingsRepository.weight,
+        heightCm: _settingsRepository.height,
         ageYear: age,
-        gender: _gender.value,
+        gender: _settingsRepository.gender,
       ),
-      activityFactor: _activityFactor.value,
+      activityFactor: _settingsRepository.activityFactor,
     );
   }
 
@@ -127,13 +130,35 @@ class SettingsScreenViewModel extends ChangeNotifier {
   }
 
   void _heightChanged() {
-    _settingsRepository.height = _height.value;
-    _setDailyKJoule();
+    if (_height.value != null && _height.value! > 0 && _height.value! < 1000) {
+      _heightValid.value = true;
+
+      _heightDebouncer.run(
+        callback: () async {
+          _settingsRepository.height = _height.value;
+          _setDailyKJoule();
+        },
+      );
+    } else {
+      _heightDebouncer.cancel();
+      _heightValid.value = false;
+    }
   }
 
   void _weightChanged() {
-    _settingsRepository.weight = _weight.value;
-    _setDailyKJoule();
+    if (_weight.value != null && _weight.value! > 0 && _weight.value! <= 1000) {
+      _weightValid.value = true;
+      
+      _weightDebouncer.run(
+        callback: () async {
+          _settingsRepository.weight = _weight.value;
+          _setDailyKJoule();
+        },
+      );
+    } else {
+      _weightDebouncer.cancel();
+      _weightValid.value = false;
+    }
   }
 
   void _activityFactorChanged() {
@@ -164,21 +189,6 @@ class SettingsScreenViewModel extends ChangeNotifier {
     await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule);
 
     _dailyTargetKJoule.value = dailyTargetKJoule;
-  }
-
-  Future<void> setDailyKJouleAndSave(KJoulePerDay kJouleSettings) async {
-    _settingsRepository.saveDailyKJouleTargetsSameIndividual(kJouleSettings);
-
-    _dailyTargetKJoule.value =
-        ((kJouleSettings.kJouleMonday +
-                    kJouleSettings.kJouleTuesday +
-                    kJouleSettings.kJouleWednesday +
-                    kJouleSettings.kJouleThursday +
-                    kJouleSettings.kJouleFriday +
-                    kJouleSettings.kJouleSaturday +
-                    kJouleSettings.kJouleSunday) /
-                7)
-            .round();
   }
 
   @override

@@ -12,14 +12,13 @@ import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
-import "package:openeatsjournal/ui/utils/debouncer.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class SettingsScreenPagePersonal extends StatelessWidget {
-  SettingsScreenPagePersonal({super.key, required SettingsScreenViewModel settingsViewModel})
-    : _settingsScreenViewModel = settingsViewModel,
+  SettingsScreenPagePersonal({super.key, required SettingsScreenViewModel settingsScreenViewModel})
+    : _settingsScreenViewModel = settingsScreenViewModel,
       _birthDayController = TextEditingController(),
       _heightController = TextEditingController(),
       _weightController = TextEditingController();
@@ -35,16 +34,13 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
-    final Debouncer heightDebouncer = Debouncer();
-    final Debouncer weightDebouncer = Debouncer();
-
     _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsScreenViewModel.birthday.value);
 
     _heightController.text = ConvertValidate.numberFomatterInt.format(_settingsScreenViewModel.height.value);
-    _weightController.text = ConvertValidate.numberFomatterInt.format(_settingsScreenViewModel.weight.value);
+    _weightController.text = ConvertValidate.numberFomatterDouble.format(_settingsScreenViewModel.weight.value);
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
 
       child: SingleChildScrollView(
         child: Column(
@@ -59,7 +55,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(flex: 8, child: Text(AppLocalizations.of(context)!.daily_target_calories, style: textTheme.titleMedium)),
+                          Expanded(flex: 8, child: Text(AppLocalizations.of(context)!.daily_target_calories, style: textTheme.titleSmall)),
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
@@ -69,7 +65,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                                   ConvertValidate.numberFomatterInt.format(
                                     NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyTargetKJoule.value),
                                   ),
-                                  style: textTheme.titleMedium,
+                                  style: textTheme.titleSmall,
                                 );
                               },
                             ),
@@ -120,23 +116,35 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       RoundOutlinedButton(
                         onPressed: () async {
                           try {
-                            KJoulePerDay? kJouleSettings = await _showDailyCaloriesEditDialog(
+                            await showDialog<void>(
+                              useSafeArea: true,
+                              barrierDismissible: false,
                               context: context,
-                              dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
-                              originalDailyTargetKJoule: _settingsScreenViewModel.dailyTargetKJoule.value,
-                              initialkJouleSettings: KJoulePerDay(
-                                kJouleMonday: _settingsScreenViewModel.kJouleMonday,
-                                kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
-                                kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
-                                kJouleThursday: _settingsScreenViewModel.kJouleThursday,
-                                kJouleFriday: _settingsScreenViewModel.kJouleFriday,
-                                kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
-                                kJouleSunday: _settingsScreenViewModel.kJouleSunday,
-                              ),
+                              builder: (BuildContext contextBuilder) {
+                                double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.07;
+                                double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.05;
+
+                                return Dialog(
+                                  insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                                  child: DailyCaloriesEditorScreen(
+                                    dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
+                                      kJoulePerDay: KJoulePerDay(
+                                        kJouleMonday: _settingsScreenViewModel.kJouleMonday,
+                                        kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
+                                        kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
+                                        kJouleThursday: _settingsScreenViewModel.kJouleThursday,
+                                        kJouleFriday: _settingsScreenViewModel.kJouleFriday,
+                                        kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
+                                        kJouleSunday: _settingsScreenViewModel.kJouleSunday,
+                                      ),
+                                      settingsRepository: _settingsScreenViewModel.settingsRepository,
+                                    ),
+                                    dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
+                                    originalDailyTargetKJoule: _settingsScreenViewModel.dailyTargetKJoule.value,
+                                  ),
+                                );
+                              },
                             );
-                            if (kJouleSettings != null) {
-                              await _settingsScreenViewModel.setDailyKJouleAndSave(kJouleSettings);
-                            }
                           } on Exception catch (exc, stack) {
                             await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                           } on Error catch (error, stack) {
@@ -154,9 +162,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_gender, style: textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(context)!.your_gender, style: textTheme.titleSmall)),
                 Flexible(
-                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -196,9 +203,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(context)!.your_birthday, style: textTheme.titleSmall)),
                 Flexible(
-                  flex: 1,
                   child: SettingsTextField(
                     controller: _birthDayController,
                     onTap: () {
@@ -213,9 +219,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleSmall)),
                 Flexible(
-                  flex: 1,
                   child: ValueListenableBuilder(
                     valueListenable: _settingsScreenViewModel.height,
                     builder: (_, _, _) {
@@ -225,31 +230,13 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                           SettingsTextField(
                             controller: _heightController,
                             keyboardType: TextInputType.numberWithOptions(signed: false),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              TextInputFormatter.withFunction((oldValue, newValue) {
-                                final String text = newValue.text.trim();
-                                if (text.isEmpty) {
-                                  _settingsScreenViewModel.heightValid.value = false;
-                                  return newValue;
-                                } else {
-                                  if (text.length <= 3) {
-                                    _settingsScreenViewModel.heightValid.value = true;
-                                    return newValue;
-                                  } else {
-                                    return oldValue;
-                                  }
-                                }
-                              }),
-                            ],
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             onChanged: (value) {
-                              heightDebouncer.run(
-                                callback: () {
-                                  if (value.isNotEmpty && value.length <= 3 && int.parse(value) >= 1) {
-                                    _settingsScreenViewModel.height.value = int.parse(value);
-                                  }
-                                },
-                              );
+                              int? intValue = int.tryParse(value);
+                              _settingsScreenViewModel.height.value = intValue;
+                              if (intValue != null) {
+                                _heightController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                              }
                             },
                           ),
                           ValueListenableBuilder(
@@ -257,7 +244,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                             builder: (_, _, _) {
                               if (!_settingsScreenViewModel.heightValid.value) {
                                 return Text(
-                                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.height, _settingsScreenViewModel.height.value),
+                                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.height, _settingsScreenViewModel.repositoryHeight),
                                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                                 );
                               } else {
@@ -276,9 +263,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleSmall)),
                 Flexible(
-                  flex: 1,
                   child: ValueListenableBuilder(
                     valueListenable: _settingsScreenViewModel.weight,
                     builder: (_, _, _) {
@@ -295,26 +281,33 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               TextInputFormatter.withFunction((oldValue, newValue) {
                                 final String text = newValue.text.trim();
                                 if (text.isEmpty) {
-                                  _settingsScreenViewModel.weightValid.value = false;
+                                  return newValue;
+                                }
+
+                                num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                                if (doubleValue != null) {
                                   return newValue;
                                 } else {
-                                  if (ConvertValidate.validateWeight(weight: text, decimalSeparator: decimalSeparator)) {
-                                    _settingsScreenViewModel.weightValid.value = true;
-                                    return newValue;
-                                  } else {
-                                    return oldValue;
-                                  }
+                                  return oldValue;
                                 }
                               }),
                             ],
                             onChanged: (value) {
-                              weightDebouncer.run(
-                                callback: () {
-                                  if (value.isNotEmpty && ConvertValidate.validateWeight(weight: value, decimalSeparator: decimalSeparator)) {
-                                    _settingsScreenViewModel.weight.value = (ConvertValidate.numberFomatterInt.parse(value) as double);
-                                  }
-                                },
-                              );
+                              num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                              _settingsScreenViewModel.weight.value = doubleValue as double?;
+
+                              if (doubleValue != null) {
+                                String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
+                                if (value.endsWith(decimalSeparator)) {
+                                  formatted = formatted.substring(0, formatted.length - 1);
+                                }
+
+                                if (!value.contains(decimalSeparator)) {
+                                  formatted = formatted.substring(0, formatted.length - 2);
+                                }
+
+                                _weightController.text = formatted;
+                              }
                             },
                           ),
                           ValueListenableBuilder(
@@ -324,7 +317,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                                 return Text(
                                   AppLocalizations.of(context)!.input_invalid(
                                     AppLocalizations.of(context)!.weight,
-                                    ConvertValidate.numberFomatterDouble.format(_settingsScreenViewModel.weight.value),
+                                    ConvertValidate.numberFomatterDouble.format(_settingsScreenViewModel.repositoryWeight),
                                   ),
                                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                 );
@@ -345,11 +338,10 @@ class SettingsScreenPagePersonal extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 1,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(AppLocalizations.of(context)!.your_acitivty_level, style: textTheme.titleMedium),
+                      Text(AppLocalizations.of(context)!.your_acitivty_level, style: textTheme.titleSmall),
                       Tooltip(
                         triggerMode: TooltipTriggerMode.tap,
                         showDuration: Duration(seconds: 60),
@@ -360,7 +352,6 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                   ),
                 ),
                 Flexible(
-                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -450,9 +441,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleSmall)),
                 Flexible(
-                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -557,35 +547,6 @@ class SettingsScreenPagePersonal extends StatelessWidget {
               },
             ),
           ],
-        );
-      },
-    );
-  }
-
-  Future<KJoulePerDay?> _showDailyCaloriesEditDialog({
-    required BuildContext context,
-    required int dailyKJoule,
-    required int originalDailyTargetKJoule,
-    required KJoulePerDay initialkJouleSettings,
-  }) async {
-    return showDialog<KJoulePerDay>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (_) {
-        return DailyCaloriesEditorScreen(
-          dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
-            KJoulePerDay(
-              kJouleMonday: _settingsScreenViewModel.kJouleMonday,
-              kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
-              kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
-              kJouleThursday: _settingsScreenViewModel.kJouleThursday,
-              kJouleFriday: _settingsScreenViewModel.kJouleFriday,
-              kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
-              kJouleSunday: _settingsScreenViewModel.kJouleSunday,
-            ),
-          ),
-          dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
-          originalDailyTargetKjoule: _settingsScreenViewModel.dailyTargetKJoule.value,
         );
       },
     );

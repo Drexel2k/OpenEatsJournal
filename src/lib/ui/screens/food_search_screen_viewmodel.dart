@@ -67,11 +67,11 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   bool get sortButtonEnabled => _sortButtonEnabled;
   SortOrder get sortOrder => _sortOrder;
 
-  _currentJournalDateChanged() {
+  void _currentJournalDateChanged() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
   }
 
-  _currentMealChanged() {
+  void _currentMealChanged() {
     _settingsRepository.currentMeal.value = _currentMeal.value;
   }
 
@@ -81,8 +81,8 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _searchFinished();
 
       if (result.errorCode == null) {
-        if (result.food != null && result.food!.foodUnits.isNotEmpty) {
-          for (ObjectWithOrder<FoodUnit> unitWithOrder in result.food!.foodUnits) {
+        if (result.food != null && result.food!.foodUnitsWithOrder.isNotEmpty) {
+          for (ObjectWithOrder<FoodUnit> unitWithOrder in result.food!.foodUnitsWithOrder) {
             if (localizations.containsKey(unitWithOrder.object.name)) {
               unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
             }
@@ -112,8 +112,8 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           foodsWithOrder = [];
 
           for (Food food in result.foods!) {
-            if (food.foodUnits.isNotEmpty) {
-              for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnits) {
+            if (food.foodUnitsWithOrder.isNotEmpty) {
+              for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
                 if (localizations.containsKey(unitWithOrder.object.name)) {
                   unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
                 }

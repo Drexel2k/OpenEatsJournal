@@ -14,13 +14,13 @@ class SettingsScreenPageApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
       child: Column(
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.dark_mode, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.dark_mode, style: textTheme.titleSmall)),
               Flexible(
                 flex: 1,
                 child: ValueListenableBuilder(
@@ -40,7 +40,7 @@ class SettingsScreenPageApp extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.language, style: textTheme.titleMedium)),
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.language, style: textTheme.titleSmall)),
               Flexible(
                 flex: 1,
                 child: Column(

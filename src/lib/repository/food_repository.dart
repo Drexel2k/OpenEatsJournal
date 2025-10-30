@@ -3,6 +3,7 @@ import "dart:convert";
 import "package:http/http.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/food_unit_type.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/repository/food_repository_get_food_by_barcode_result.dart";
@@ -142,10 +143,12 @@ class FoodRepository {
         if (_getMeasurementUnitFromApiString(foodApi.servingQuantityUnit) == nutrimentsMeasurementUnit) {
           if (foodApi.servingQuantity != null) {
             food.addFoodUnit(
-              name: OpenEatsJournalStrings.serving,
-              amount: double.parse(foodApi.servingQuantity!).round(),
-              amountMeasurementUnit: nutrimentsMeasurementUnit,
-              foodUnitType: FoodUnitType.serving,
+              foodUnit: FoodUnit(
+                name: OpenEatsJournalStrings.serving,
+                amount: double.parse(foodApi.servingQuantity!).round(),
+                amountMeasurementUnit: nutrimentsMeasurementUnit,
+                foodUnitType: FoodUnitType.serving,
+              ),
             );
           }
         }
@@ -153,10 +156,12 @@ class FoodRepository {
         if (_getMeasurementUnitFromApiString(foodApi.productQuantityUnit) == nutrimentsMeasurementUnit) {
           if (foodApi.productQuantity != null) {
             food.addFoodUnit(
-              name: OpenEatsJournalStrings.piece,
-              amount: double.parse(foodApi.productQuantity!).round(),
-              amountMeasurementUnit: nutrimentsMeasurementUnit,
-              foodUnitType: FoodUnitType.piece,
+              foodUnit: FoodUnit(
+                name: OpenEatsJournalStrings.piece,
+                amount: double.parse(foodApi.productQuantity!).round(),
+                amountMeasurementUnit: nutrimentsMeasurementUnit,
+                foodUnitType: FoodUnitType.piece,
+              ),
             );
           }
         }

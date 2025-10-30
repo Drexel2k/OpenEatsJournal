@@ -26,7 +26,7 @@ class MainLayout extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       body: SafeArea(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 10.0), child: _body),
+        child: Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 5), child: _body),
       ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int targetNavigationIndex) {

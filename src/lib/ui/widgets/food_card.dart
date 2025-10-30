@@ -60,6 +60,15 @@ class FoodCard extends StatelessWidget {
                     margin: const EdgeInsets.fromLTRB(0, 7, 0, 0),
                     child: Badge(label: Text("OFF")),
                   ),
+                  PopupMenuButton<String>(
+                    onSelected: (selected) {},
+                    itemBuilder: (BuildContext context) {
+                      return {"As New Food"}.map((String choice) {
+                        return PopupMenuItem(value: choice, child: Text(choice));
+                      }).toList();
+                    },
+                    child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+                  ),
                 ],
               ),
               Row(

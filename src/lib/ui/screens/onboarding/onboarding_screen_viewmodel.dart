@@ -7,9 +7,9 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 
 class OnboardingScreenViewModel extends ChangeNotifier {
-  OnboardingScreenViewModel({required SettingsRepository settingsRepository, required JournalRepository weightRepository})
+  OnboardingScreenViewModel({required SettingsRepository settingsRepository, required JournalRepository journalRepository})
     : _settingsRepository = settingsRepository,
-      _weightRepository = weightRepository,
+      _journalRepository = journalRepository,
       _gender = ValueNotifier(null),
       _birthday = ValueNotifier(null),
       _height = ValueNotifier(null),
@@ -22,7 +22,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   }
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
-  final JournalRepository _weightRepository;
+  final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
 
   final ValueNotifier<Gender?> _gender;
@@ -100,7 +100,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       ),
     );
 
-    await _weightRepository.addWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
+    await _journalRepository.addWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
   }
 
   void _calculateKJoule() {

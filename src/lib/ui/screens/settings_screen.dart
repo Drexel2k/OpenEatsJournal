@@ -65,7 +65,7 @@ class SettingsScreen extends StatelessWidget {
             controller: _pageViewController,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              SettingsScreenPagePersonal(settingsViewModel: _settingsScreenViewModel),
+              SettingsScreenPagePersonal(settingsScreenViewModel: _settingsScreenViewModel),
               SettingsScreenPageApp(settingsViewModel: _settingsScreenViewModel),
             ],
           ),

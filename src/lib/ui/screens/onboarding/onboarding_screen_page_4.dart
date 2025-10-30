@@ -28,10 +28,10 @@ class OnboardingScreenPage4 extends StatelessWidget {
               valueListenable: _onboardingScreenViewModel.weightTarget,
               builder: (contextBuilder, _, _) {
                 return Text(
-                  AppLocalizations.of(
-                    contextBuilder,
-                  )!.your_daily_calories_need(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyNeedKJoule.value))),
-                  style: textTheme.titleMedium,
+                  AppLocalizations.of(contextBuilder)!.your_daily_calories_need(
+                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyNeedKJoule.value)),
+                  ),
+                  style: textTheme.titleSmall,
                 );
               },
             ),
@@ -39,9 +39,8 @@ class OnboardingScreenPage4 extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(contextBuilder)!.your_weight_target, style: textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(contextBuilder)!.your_weight_target, style: textTheme.titleSmall)),
                 Flexible(
-                  flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -106,10 +105,10 @@ class OnboardingScreenPage4 extends StatelessWidget {
               valueListenable: _onboardingScreenViewModel.weightTarget,
               builder: (contextBuilder, _, _) {
                 return Text(
-                  AppLocalizations.of(
-                    contextBuilder,
-                  )!.your_daily_calories_target(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyTargetKJoule.value))),
-                  style: textTheme.titleMedium,
+                  AppLocalizations.of(contextBuilder)!.your_daily_calories_target(
+                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyTargetKJoule.value)),
+                  ),
+                  style: textTheme.titleSmall,
                 );
               },
             ),

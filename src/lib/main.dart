@@ -25,7 +25,6 @@ Future<void> main() async {
 
   final Repositories repositories = Repositories(
     settingsRepository: SettingsRepository.instance,
-    weightRepository: JournalRepository.instance,
     foodRepository: FoodRepository.instance,
     journalRepository: JournalRepository.instance,
   );
@@ -39,7 +38,7 @@ Future<void> main() async {
     useStaging: repositories.settingsRepository.useStagingServices,
   );
 
-  repositories.weightRepository.init(oejDatabase: oejDatabase);
+  repositories.journalRepository.init(oejDatabase: oejDatabase);
   repositories.foodRepository.init(openFoodFactsService: openFoodFactsService, oejDatabase: oejDatabase);
 
   WidgetsFlutterBinding.ensureInitialized();

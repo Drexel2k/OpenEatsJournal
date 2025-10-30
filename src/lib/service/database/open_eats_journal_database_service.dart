@@ -526,7 +526,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<void> _setFoodUnits({required Food food}) async {
     Database db = await instance.db;
-    if (food.foodUnits.isEmpty) {
+    if (food.foodUnitsWithOrder.isEmpty) {
       return;
     }
 
@@ -538,7 +538,7 @@ class OpenEatsJournalDatabaseService {
       throw StateError("Food for food units must have an id.");
     }
 
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnits) {
+    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
       if (foodUnitWithOrder.object.foodUnitType != null) {
         List<Map<String, Object?>>? result;
 
@@ -557,7 +557,7 @@ class OpenEatsJournalDatabaseService {
         }
 
         if (result.isNotEmpty) {
-          //If food comes from external API the food unit and is used for the first time in the food search result screen e.g. it has id null.
+          //If food comes from external API and the food unit is used for the first time in the food search result screen e.g. it has id null.
           //If we know already the food unit, the id is assigned here.
           foodUnitWithOrder.object.id ??= result[0][OpenEatsJournalStrings.dbColumnId] as int;
         }

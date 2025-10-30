@@ -20,11 +20,11 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   String get languageCode => _settingsRepository.languageCode.value;
   ExternalTriggerChangedNotifier get darkModeOrLanguageCodeChanged => _darkModeOrLanguageCodeChanged;
 
-  _settingsDarkModeChanged() {
+  void _settingsDarkModeChanged() {
     _darkModeOrLanguageCodeChanged.notify();
   }
 
-  _settingsLanguageCodeChanged() {
+  void _settingsLanguageCodeChanged() {
     _darkModeOrLanguageCodeChanged.notify();
   }
 

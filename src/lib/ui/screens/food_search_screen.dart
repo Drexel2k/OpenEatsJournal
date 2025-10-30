@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 
@@ -42,7 +43,6 @@ class FoodSearchScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                flex: 10,
                 child: ValueListenableBuilder(
                   valueListenable: _foodSearchScreenViewModel.currentJournalDate,
                   builder: (_, _, _) {
@@ -64,9 +64,8 @@ class FoodSearchScreen extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 5),
               Expanded(
-                flex: 10,
                 child: ValueListenableBuilder(
                   valueListenable: _foodSearchScreenViewModel.currentMeal,
                   builder: (_, _, _) {
@@ -283,17 +282,27 @@ class FoodSearchScreen extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text("Weight Journal Entry")),
+                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text(AppLocalizations.of(context)!.weight_journal_entry)),
                       ),
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "3", onPressed: () {}, label: Text("Food")),
+                        child: FloatingActionButton.extended(
+                          heroTag: "3",
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                              arguments: Food(name: OpenEatsJournalStrings.emptyString, foodSource: FoodSource.user, kJoule: 1, nutritionPerGramAmount: 100),
+                            );
+                          },
+                          label: Text(AppLocalizations.of(context)!.food),
+                        ),
                       ),
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text("Quick Entry")),
+                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text(AppLocalizations.of(context)!.quick_entry)),
                       ),
                     ],
                   );

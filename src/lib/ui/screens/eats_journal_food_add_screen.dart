@@ -12,6 +12,7 @@ import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart';
 import 'package:openeatsjournal/ui/utils/error_handlers.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
 class EatsJournalFoodAddScreen extends StatelessWidget {
@@ -168,7 +169,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalFoodAddScreenViewModel.amount,
                   builder: (_, _, _) {
-                    return TextField(
+                    return OpenEatsJournalTextField(
                       controller: _amountController,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -176,9 +177,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         int? intValue = int.tryParse(value);
                         _eatsJournalFoodAddScreenViewModel.amount.value = intValue;
                         if (intValue != null) {
-                          {
-                            _amountController.text = ConvertValidate.numberFomatterInt.format(intValue);
-                          }
+                          _amountController.text = ConvertValidate.numberFomatterInt.format(intValue);
                         }
                       },
                     );
@@ -192,7 +191,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalFoodAddScreenViewModel.eatsAmount,
                   builder: (_, _, _) {
-                    return TextField(
+                    return OpenEatsJournalTextField(
                       controller: _eatsAmountController,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -200,9 +199,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         int? intValue = int.tryParse(value);
                         _eatsJournalFoodAddScreenViewModel.eatsAmount.value = intValue;
                         if (intValue != null) {
-                          {
-                            _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(intValue);
-                          }
+                          _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(intValue);
                         }
                       },
                     );
@@ -213,17 +210,21 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 child: RoundOutlinedButton(
                   onPressed: _eatsJournalFoodAddScreenViewModel.measurementSelectionEnabled
                       ? () {
-                          if (_eatsJournalFoodAddScreenViewModel.currentMesaureMentUnit.value == MeasurementUnit.gram) {
-                            _eatsJournalFoodAddScreenViewModel.currentMesaureMentUnit.value = MeasurementUnit.milliliter;
+                          if (_eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram) {
+                            _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.milliliter;
                           } else {
-                            _eatsJournalFoodAddScreenViewModel.currentMesaureMentUnit.value = MeasurementUnit.gram;
+                            _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.gram;
                           }
                         }
                       : null,
                   child: ValueListenableBuilder(
-                    valueListenable: _eatsJournalFoodAddScreenViewModel.salt,
+                    valueListenable: _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit,
                     builder: (_, _, _) {
-                      return Text(_eatsJournalFoodAddScreenViewModel.currentMesaureMentUnit.value.text);
+                      return Text(
+                        _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                            ? AppLocalizations.of(context)!.gram_abbreviated
+                            : AppLocalizations.of(context)!.milliliter_abbreviated,
+                      );
                     },
                   ),
                 ),
@@ -393,7 +394,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
       );
     }
 
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnits) {
+    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
       if (foodUnitWithOrder.object != food.defaultFoodUnit) {
         buttons.add(
           OutlinedButton(
@@ -470,7 +471,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
   }
 
   double _getKJouleFromFoodUnit(Food food, FoodUnit foodUnit) {
-    if (!List<FoodUnit>.from(food.foodUnits.map((source) => source.object)).contains(foodUnit)) {
+    if (!List<FoodUnit>.from(food.foodUnitsWithOrder.map((source) => source.object)).contains(foodUnit)) {
       throw ArgumentError("Food doesn't contain given food unit.");
     }
 

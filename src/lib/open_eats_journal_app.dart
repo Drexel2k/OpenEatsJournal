@@ -10,6 +10,8 @@ import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/food_edit_screen.dart";
+import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
@@ -92,7 +94,7 @@ class OpenEatsJournalApp extends StatelessWidget {
             OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) => OnboardingScreen(
               onboardingScreenViewModel: OnboardingScreenViewModel(
                 settingsRepository: _repositories.settingsRepository,
-                weightRepository: _repositories.weightRepository,
+                journalRepository: _repositories.journalRepository,
               ),
             ),
             OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
@@ -102,6 +104,12 @@ class OpenEatsJournalApp extends StatelessWidget {
                 journalRepository: _repositories.journalRepository,
                 foodRepository: _repositories.foodRepository,
                 settingsRepository: _repositories.settingsRepository,
+              ),
+            ),
+            OpenEatsJournalStrings.navigatorRouteFoodEdit: (contextBuilder) => FoodEditScreen(
+              foodEditScreenViewModel: FoodEditScreenViewModel(
+                food: (ModalRoute.of(contextBuilder)!.settings.arguments as Food),
+                foodRepository: _repositories.foodRepository,
               ),
             ),
           },

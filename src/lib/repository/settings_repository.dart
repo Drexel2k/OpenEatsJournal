@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
-import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
@@ -190,59 +189,49 @@ class SettingsRepository extends ChangeNotifier {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget, value: weightTarget.value);
   }
 
-  Future<void> _saveKJouleMonday(int kJoule) async {
+  Future<void> saveKJouleMonday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday, value: kJoule);
     _kJouleMonday = kJoule;
   }
 
-  Future<void> _saveKJouleTuesday(int kJoule) async {
+  Future<void> saveKJouleTuesday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday, value: kJoule);
     _kJouleTuesday = kJoule;
   }
 
-  Future<void> _saveKJouleWednesday(int kJoule) async {
+  Future<void> saveKJouleWednesday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday, value: kJoule);
     _kJouleWednesday = kJoule;
   }
 
-  Future<void> _saveKJouleThursday(int kJoule) async {
+  Future<void> saveKJouleThursday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleThursday, value: kJoule);
     _kJouleThursday = kJoule;
   }
 
-  Future<void> _saveKJouleFriday(int kJoule) async {
+  Future<void> saveKJouleFriday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleFriday, value: kJoule);
     _kJouleFriday = kJoule;
   }
 
-  Future<void> _saveKJouleSaturday(int kJoule) async {
+  Future<void> saveKJouleSaturday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday, value: kJoule);
     _kJouleSaturday = kJoule;
   }
 
-  Future<void> _saveKJouleSunday(int kJoule) async {
+  Future<void> saveKJouleSunday(int kJoule) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSunday, value: kJoule);
     _kJouleSunday = kJoule;
   }
 
   Future<void> saveDailyKJouleTargetsSame(int dailyTargetKJoule) async {
-    await _saveKJouleMonday(dailyTargetKJoule);
-    await _saveKJouleTuesday(dailyTargetKJoule);
-    await _saveKJouleWednesday(dailyTargetKJoule);
-    await _saveKJouleThursday(dailyTargetKJoule);
-    await _saveKJouleFriday(dailyTargetKJoule);
-    await _saveKJouleSaturday(dailyTargetKJoule);
-    await _saveKJouleSunday(dailyTargetKJoule);
-  }
-
-  Future<void> saveDailyKJouleTargetsSameIndividual(KJoulePerDay kJouleSettings) async {
-    await _saveKJouleMonday(kJouleSettings.kJouleMonday);
-    await _saveKJouleTuesday(kJouleSettings.kJouleTuesday);
-    await _saveKJouleWednesday(kJouleSettings.kJouleWednesday);
-    await _saveKJouleThursday(kJouleSettings.kJouleThursday);
-    await _saveKJouleFriday(kJouleSettings.kJouleFriday);
-    await _saveKJouleSaturday(kJouleSettings.kJouleSaturday);
-    await _saveKJouleSunday(kJouleSettings.kJouleSunday);
+    await saveKJouleMonday(dailyTargetKJoule);
+    await saveKJouleTuesday(dailyTargetKJoule);
+    await saveKJouleWednesday(dailyTargetKJoule);
+    await saveKJouleThursday(dailyTargetKJoule);
+    await saveKJouleFriday(dailyTargetKJoule);
+    await saveKJouleSaturday(dailyTargetKJoule);
+    await saveKJouleSunday(dailyTargetKJoule);
   }
 
   int getCurrentJournalDayTargetKJoule() {
