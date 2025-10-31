@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:openeatsjournal/domain/food_unit.dart';
+import 'package:openeatsjournal/domain/food_unit_edit_wrapper.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/object_with_order.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
@@ -20,6 +20,7 @@ class FoodEditScreen extends StatelessWidget {
 
   final FoodEditScreenViewModel _foodEditScreenViewModel;
 
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _gramAmountController = TextEditingController();
   final TextEditingController _milliliterAmountController = TextEditingController();
   final TextEditingController _kJouleController = TextEditingController();
@@ -38,6 +39,7 @@ class FoodEditScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
+    _nameController.text = _foodEditScreenViewModel.name.value;
     _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
         ? ConvertValidate.numberFomatterInt.format(_foodEditScreenViewModel.nutritionPerGramAmount.value)
         : OpenEatsJournalStrings.emptyString;
@@ -54,6 +56,27 @@ class FoodEditScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _foodEditScreenViewModel.name,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _nameController,
+                      onChanged: (value) {
+                        _foodEditScreenViewModel.name.value = value;
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          Divider(thickness: 2, height: 20),
           Text(AppLocalizations.of(context)!.amount_for_nutrition_values, style: textTheme.titleMedium),
           Row(
             children: [
@@ -107,7 +130,6 @@ class FoodEditScreen extends StatelessWidget {
               Expanded(child: SizedBox(height: 0)),
             ],
           ),
-
           ValueListenableBuilder(
             valueListenable: _foodEditScreenViewModel.amountsValid,
             builder: (_, _, _) {
@@ -469,7 +491,57 @@ class FoodEditScreen extends StatelessWidget {
             ],
           ),
           Divider(thickness: 2, height: 20),
-          Text(AppLocalizations.of(context)!.food_units, style: textTheme.titleMedium),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(AppLocalizations.of(context)!.food_units, style: textTheme.titleMedium),
+              Expanded(child: SizedBox()),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                child: RoundOutlinedButton(
+                  onPressed: () {
+                    _foodEditScreenViewModel.addFoddUnit(
+                      measurementUnit: _foodEditScreenViewModel.lastValidNutritionPerGramAmount.value != null
+                          ? MeasurementUnit.gram
+                          : MeasurementUnit.milliliter,
+                    );
+
+                    //Jump to end after rendering the ListView, see comment below.
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                    });
+
+                    //ListView ist not rendered here, so maxScrollExtent is the value before adding the new item and the list view is only scrolled to the item
+                    //before the last item.
+                    //_scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: _foodEditScreenViewModel.foodUnitsEditMode,
+                builder: (_, _, _) {
+                  if (_foodEditScreenViewModel.foodUnitsEditMode.value) {
+                    return RoundOutlinedButton(
+                      onPressed: () {
+                        _foodEditScreenViewModel.foodUnitsEditMode.value = false;
+                        _foodEditScreenViewModel.reorderableStateChanged.notify();
+                      },
+                      child: Icon(Icons.mode_edit),
+                    );
+                  } else {
+                    return RoundOutlinedButton(
+                      onPressed: () {
+                        _foodEditScreenViewModel.foodUnitsEditMode.value = true;
+                        _foodEditScreenViewModel.reorderableStateChanged.notify();
+                      },
+                      child: Icon(Icons.swap_vert),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
           ValueListenableBuilder(
             valueListenable: _foodEditScreenViewModel.foodUnitsCopyValid,
             builder: (_, _, _) {
@@ -510,40 +582,14 @@ class FoodEditScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListenableBuilder(
-              listenable: _foodEditScreenViewModel.foodUnitsChanged,
+              listenable: _foodEditScreenViewModel.reorderableStateChanged,
               builder: (_, _) {
                 return ReorderableListView(
+                  buildDefaultDragHandles: !_foodEditScreenViewModel.foodUnitsEditMode.value,
                   onReorder: (oldIndex, newIndex) {
                     _foodEditScreenViewModel.reorder(oldIndex, newIndex);
                   },
                   scrollController: _scrollController,
-                  footer: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsetsGeometry.fromLTRB(0, 10, 0, 0),
-                        child: RoundOutlinedButton(
-                          onPressed: () {
-                            _foodEditScreenViewModel.addFoddUnit(
-                              measurementUnit: _foodEditScreenViewModel.lastValidNutritionPerGramAmount.value != null
-                                  ? MeasurementUnit.gram
-                                  : MeasurementUnit.milliliter,
-                            );
-
-                            //Jump to end after rendering the ListView, see comment below.
-                            SchedulerBinding.instance.addPostFrameCallback((_) {
-                              _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                            });
-
-                            //ListView ist not rendered here, so maxScrollExtent is the value before adding the new item and the list view is only scrolled to the item
-                            //before the last item.
-                            //_scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                          },
-                          child: Icon(Icons.add),
-                        ),
-                      ),
-                    ],
-                  ),
                   children: _getFoodUnitEditors(textTheme: textTheme, context: context),
                 );
               },
@@ -566,20 +612,20 @@ class FoodEditScreen extends StatelessWidget {
     List<Widget> foodUnitEditors = [];
 
     int index = 0;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodEditScreenViewModel.foodFoodUnitsWithOrderCopy) {
+    for (ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithOrder in _foodEditScreenViewModel.foodFoodUnitsWithOrderCopy) {
       foodUnitEditors.add(
         FoodUnitEditor(
           key: Key("$index"),
           foodUnitEditorViewModel: FoodUnitEditorViewModel(
-            foodUnit: foodUnitWithOrder.object,
-            defaultFoodUnit: _foodEditScreenViewModel.defaultFoodUnit == foodUnitWithOrder.object,
+            foodUnitEditWrapper: foodUnitWithOrder.object,
+            defaultFoodUnit: _foodEditScreenViewModel.defaultFoodUnit == foodUnitWithOrder.object.foodUnit,
             changeMeasurementUnit: _foodEditScreenViewModel.checkFoodUnitsCopyValid,
             changeDefault: _foodEditScreenViewModel.changeDefaultFoodUnit,
             removeFoodUnit: _foodEditScreenViewModel.removeFoodUnit,
+            foodUnitsEditMode: _foodEditScreenViewModel.foodUnitsEditMode,
             foodNutritionPerGram: _foodEditScreenViewModel.lastValidNutritionPerGramAmount,
             foodNutritionPerMilliliter: _foodEditScreenViewModel.lastValidNutritionPerMilliliterAmount,
           ),
-          index: index,
         ),
       );
 

@@ -11,13 +11,15 @@ class OpenEatsJournalTextField extends StatelessWidget {
     List<TextInputFormatter>? inputFormatters,
     ValueChanged<String>? onChanged,
     bool readOnly = false,
+    bool? enabled,
   }) : _hintText = hintText,
        _onTap = onTap,
        _controller = controller,
        _keyboardType = keyboardType,
        _inputFormatters = inputFormatters,
        _onChanged = onChanged,
-       _readOnly = readOnly;
+       _readOnly = readOnly,
+       _enabled = enabled;
 
   final String? _hintText;
   final GestureTapCallback? _onTap;
@@ -26,6 +28,7 @@ class OpenEatsJournalTextField extends StatelessWidget {
   final List<TextInputFormatter>? _inputFormatters;
   final ValueChanged<String>? _onChanged;
   final bool _readOnly;
+  final bool? _enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +52,7 @@ class OpenEatsJournalTextField extends StatelessWidget {
       keyboardType: _keyboardType,
       inputFormatters: _inputFormatters,
       onChanged: _onChanged,
+      enabled: _enabled,
     );
   }
 }

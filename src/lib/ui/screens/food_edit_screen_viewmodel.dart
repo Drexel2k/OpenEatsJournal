@@ -2,6 +2,7 @@ import "package:collection/collection.dart";
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/food_unit_edit_wrapper.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
@@ -12,6 +13,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   FoodEditScreenViewModel({required Food food, required FoodRepository foodRepository})
     : _food = food,
       _foodRepository = foodRepository,
+      _name = ValueNotifier(food.name),
       _nutritionPerGramAmount = ValueNotifier(food.nutritionPerGramAmount),
       _lastValidNutritionPerGramAmount = ValueNotifier(food.nutritionPerGramAmount),
       _nutritionPerMilliliterAmount = ValueNotifier(food.nutritionPerMilliliterAmount),
@@ -24,9 +26,16 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _saturatedFat = ValueNotifier(food.saturatedFat),
       _protein = ValueNotifier(food.protein),
       _salt = ValueNotifier(food.salt),
-      _foodUnitsWithOrderCopy = List.from(food.foodUnitsWithOrder),
+      _foodUnitsWithOrderCopy = food.foodUnitsWithOrder
+          .map(
+            (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => ObjectWithOrder(
+              object: FoodUnitEditWrapper(foodUnit: foodUnitWithOrder.object),
+              order: foodUnitWithOrder.order,
+            ),
+          )
+          .toList(),
       _defaultFoodUnit = food.defaultFoodUnit {
-    _foodUnitsWithOrderCopy.sort((ObjectWithOrder<FoodUnit> unit1, ObjectWithOrder<FoodUnit> unit2) => unit1.order - unit2.order);
+    _foodUnitsWithOrderCopy.sort((ObjectWithOrder<FoodUnitEditWrapper> unit1, ObjectWithOrder<FoodUnitEditWrapper> unit2) => unit1.order - unit2.order);
     _nutritionPerGramAmount.addListener(_amountsChanged);
     _nutritionPerMilliliterAmount.addListener(_amountsChanged);
     _kJoule.addListener(_kJouleChanged);
@@ -38,7 +47,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   //Work on a copy to remain invalid states during editing by the user, e.g. when gram amount is set to null while milliliter amount is not null all food units
   //with unit grams are removed from the food object. That might be annoying for the user as he maybe sets the gram amount to null to immediately enter a new
   //value.
-  final List<ObjectWithOrder<FoodUnit>> _foodUnitsWithOrderCopy;
+  final List<ObjectWithOrder<FoodUnitEditWrapper>> _foodUnitsWithOrderCopy;
+  final ValueNotifier<String> _name;
   final ValueNotifier<int?> _nutritionPerGramAmount;
   final ValueNotifier<int?> _lastValidNutritionPerGramAmount;
   final ValueNotifier<int?> _nutritionPerMilliliterAmount;
@@ -53,12 +63,14 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _protein;
   final ValueNotifier<double?> _salt;
 
-  final ExternalTriggerChangedNotifier _foodUnitsChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangedNotifier _reorderableStateChanged = ExternalTriggerChangedNotifier();
   final ValueNotifier<bool> _foodUnitsCopyValid = ValueNotifier(true);
   FoodUnit? _defaultFoodUnit;
+  final ValueNotifier<bool> _foodUnitsEditMode = ValueNotifier(true);
 
   final Debouncer _amountsDebouncer = Debouncer();
 
+  ValueNotifier<String> get name => _name;
   ValueNotifier<int?> get nutritionPerGramAmount => _nutritionPerGramAmount;
   ValueNotifier<int?> get lastValidNutritionPerGramAmount => _lastValidNutritionPerGramAmount;
   ValueNotifier<int?> get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
@@ -73,11 +85,12 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get protein => _protein;
   ValueNotifier<double?> get salt => _salt;
 
-  ExternalTriggerChangedNotifier get foodUnitsChanged => _foodUnitsChanged;
+  ExternalTriggerChangedNotifier get reorderableStateChanged => _reorderableStateChanged;
   ValueNotifier<bool> get foodUnitsCopyValid => _foodUnitsCopyValid;
+  ValueNotifier<bool> get foodUnitsEditMode => _foodUnitsEditMode;
 
   int get foodkJoule => _food.kJoule;
-  List<ObjectWithOrder<FoodUnit>> get foodFoodUnitsWithOrderCopy => _foodUnitsWithOrderCopy;
+  List<ObjectWithOrder<FoodUnitEditWrapper>> get foodFoodUnitsWithOrderCopy => _foodUnitsWithOrderCopy;
 
   FoodUnit? get defaultFoodUnit => _defaultFoodUnit;
 
@@ -90,9 +103,12 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       order = _foodUnitsWithOrderCopy.last.order + 1;
     }
 
-    ObjectWithOrder<FoodUnit> foodUnitWithOrder = ObjectWithOrder(object: foodUnit, order: order);
+    ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithOrder = ObjectWithOrder(
+      object: FoodUnitEditWrapper(foodUnit: foodUnit),
+      order: order,
+    );
     _foodUnitsWithOrderCopy.add(foodUnitWithOrder);
-    _foodUnitsChanged.notify();
+    _reorderableStateChanged.notify();
   }
 
   void _amountsChanged() {
@@ -116,8 +132,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   void checkFoodUnitsCopyValid() {
     bool foodUnitsValid = true;
-    ObjectWithOrder<FoodUnit>? foodUnitWithOrder = _foodUnitsWithOrderCopy.firstWhereOrNull(
-      (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object.amountMeasurementUnit == MeasurementUnit.gram,
+    ObjectWithOrder<FoodUnitEditWrapper>? foodUnitWithOrder = _foodUnitsWithOrderCopy.firstWhereOrNull(
+      (ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithOrder) => foodUnitWithOrder.object.foodUnit.amountMeasurementUnit == MeasurementUnit.gram,
     );
     if (_nutritionPerGramAmount.value == null && foodUnitWithOrder != null) {
       foodUnitsValid = false;
@@ -125,7 +141,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
     foodUnitWithOrder = null;
     foodUnitWithOrder = _foodUnitsWithOrderCopy.firstWhereOrNull(
-      (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object.amountMeasurementUnit == MeasurementUnit.milliliter,
+      (ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithOrder) => foodUnitWithOrder.object.foodUnit.amountMeasurementUnit == MeasurementUnit.milliliter,
     );
     if (_nutritionPerMilliliterAmount.value == null && foodUnitWithOrder != null) {
       foodUnitsValid = false;
@@ -136,30 +152,30 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   void changeDefaultFoodUnit(FoodUnit foodUnit) {
     _defaultFoodUnit = foodUnit;
-    _foodUnitsChanged.notify();
+    _reorderableStateChanged.notify();
   }
 
   void removeFoodUnit(FoodUnit foodUnit) {
-    _foodUnitsWithOrderCopy.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrderInteral) {
-      return foodUnitWithOrderInteral.object == foodUnit;
+    _foodUnitsWithOrderCopy.removeWhere((ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithOrderInteral) {
+      return foodUnitWithOrderInteral.object.foodUnit == foodUnit;
     });
 
     if (_defaultFoodUnit == foodUnit) {
       if (_foodUnitsWithOrderCopy.isEmpty) {
         _defaultFoodUnit = null;
       } else {
-        _defaultFoodUnit = _foodUnitsWithOrderCopy.first.object;
+        _defaultFoodUnit = _foodUnitsWithOrderCopy.first.object.foodUnit;
       }
     }
 
     int order = 1;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodUnitsWithOrderCopy) {
+    for (ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithOrder in _foodUnitsWithOrderCopy) {
       foodUnitWithOrder.order = order;
       order++;
     }
 
     checkFoodUnitsCopyValid();
-    _foodUnitsChanged.notify();
+    _reorderableStateChanged.notify();
   }
 
   void _kJouleChanged() {
@@ -175,16 +191,16 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       newIndex -= 1;
     }
 
-    final ObjectWithOrder<FoodUnit> foodUnitWithorder = _foodUnitsWithOrderCopy.removeAt(oldIndex);
+    final ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithorder = _foodUnitsWithOrderCopy.removeAt(oldIndex);
     _foodUnitsWithOrderCopy.insert(newIndex, foodUnitWithorder);
 
     int order = 0;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithorderInteral in _foodUnitsWithOrderCopy) {
+    for (ObjectWithOrder<FoodUnitEditWrapper> foodUnitWithorderInteral in _foodUnitsWithOrderCopy) {
       foodUnitWithorderInteral.order = order;
       order++;
     }
 
-    _foodUnitsChanged.notify();
+    _reorderableStateChanged.notify();
   }
 
   @override
