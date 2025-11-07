@@ -3,8 +3,10 @@ import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/food_unit_type.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -55,13 +57,12 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE,
         ${OpenEatsJournalStrings.dbColumnWeight} REAL
       );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodCache} (
+    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFood} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceIdExternalRef} TEXT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef} TEXT,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
-        ${OpenEatsJournalStrings.dbColumnSearchText} TEXT,
         ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount} INT,
         ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount} INT,
         ${OpenEatsJournalStrings.dbColumnKiloJoule} INT,
@@ -70,51 +71,26 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnFat} REAL,
         ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
         ${OpenEatsJournalStrings.dbColumnProtein} REAL,
-        ${OpenEatsJournalStrings.dbColumnSalt} REAL
+        ${OpenEatsJournalStrings.dbColumnSalt} REAL,
+        ${OpenEatsJournalStrings.dbColumnQuantity} Text
       );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUser} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+    batch.execute("""CREATE VIRTUAL TABLE ${OpenEatsJournalStrings.dbTableFoodTextSearch} USING fts4(
+        content="${OpenEatsJournalStrings.dbTableFood}",
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
-        ${OpenEatsJournalStrings.dbColumnSearchText} TEXT,
-        ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount} INT,
-        ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount} INT,
-        ${OpenEatsJournalStrings.dbColumnKiloJoule} INT,
-        ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
-        ${OpenEatsJournalStrings.dbColumnSugar} REAL,
-        ${OpenEatsJournalStrings.dbColumnFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnProtein} REAL,
-        ${OpenEatsJournalStrings.dbColumnSalt} REAL
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodStandard} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
-        ${OpenEatsJournalStrings.dbColumnSearchText} TEXT,
-        ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount} INT,
-        ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount} INT,
-        ${OpenEatsJournalStrings.dbColumnKiloJoule} INT,
-        ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
-        ${OpenEatsJournalStrings.dbColumnSugar} REAL,
-        ${OpenEatsJournalStrings.dbColumnFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnProtein} REAL,
-        ${OpenEatsJournalStrings.dbColumnSalt}  REAL
+        ${OpenEatsJournalStrings.dbColumnBrands} TEXT
       );""");
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUnit} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnFoodSourceTableIdRef}  INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnAmount} INT,
+        ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnOrderNumber} INT
       );""");
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableEatsJournal} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT,
-        ${OpenEatsJournalStrings.dbColumnFoodSourceTableIdRef} INT,
+        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnAmount} INT,
@@ -205,18 +181,18 @@ class OpenEatsJournalDatabaseService {
 
   Future<bool> _settingExists({required String setting}) async {
     Database db = await instance.db;
-    final List<Map<String, Object?>> result = await db.query(
+    final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableSetting,
       columns: [OpenEatsJournalStrings.dbColumnSetting],
       where: "${OpenEatsJournalStrings.dbColumnSetting} = ?",
       whereArgs: [setting],
     );
 
-    if (result.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError("A setting must exist only once, mutiple instances of $setting found.");
     }
 
-    if (result.isEmpty) {
+    if (dbResult.isEmpty) {
       return false;
     } else {
       return true;
@@ -313,22 +289,22 @@ class OpenEatsJournalDatabaseService {
 
   Future<Object?> _getSetting({required String setting}) async {
     Database db = await instance.db;
-    final List<Map<String, Object?>> result = await db.query(
+    final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableSetting,
       columns: [OpenEatsJournalStrings.dbColumnvalue],
       where: "${OpenEatsJournalStrings.dbColumnSetting} = ?",
       whereArgs: [setting],
     );
 
-    if (result.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError("A setting must exist only once, mutiple instances of $setting found.");
     }
 
-    if (result.isEmpty) {
+    if (dbResult.isEmpty) {
       return null;
     }
 
-    return result[0][OpenEatsJournalStrings.dbColumnvalue];
+    return dbResult[0][OpenEatsJournalStrings.dbColumnvalue];
   }
 
   Future<void> setAllSettings({required AllSettings allSettings}) async {
@@ -407,18 +383,18 @@ class OpenEatsJournalDatabaseService {
 
     final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
-    final List<Map<String, Object?>> result = await db.query(
+    final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableWeightJournal,
       columns: [OpenEatsJournalStrings.dbColumnId],
       where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
       whereArgs: [formattedDate],
     );
 
-    if (result.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError("Only one weight journal entry may exist for a given date, multiple entries found for $formattedDate.");
     }
 
-    if (result.isEmpty) {
+    if (dbResult.isEmpty) {
       await db.insert(OpenEatsJournalStrings.dbTableWeightJournal, {
         OpenEatsJournalStrings.dbColumnEntryDate: formattedDate,
         OpenEatsJournalStrings.dbColumnWeight: weight,
@@ -442,8 +418,7 @@ class OpenEatsJournalDatabaseService {
 
     final String entryDateString = ConvertValidate.dateformatterDateOnly.format(eatsJournalEntry.entryDate);
     await db.insert(OpenEatsJournalStrings.dbTableEatsJournal, {
-      OpenEatsJournalStrings.dbColumnFoodSourceIdRef: eatsJournalEntry.foodSource?.value,
-      OpenEatsJournalStrings.dbColumnFoodSourceTableIdRef: eatsJournalEntry.food?.id,
+      OpenEatsJournalStrings.dbColumnFoodIdRef: eatsJournalEntry.food?.id,
       OpenEatsJournalStrings.dbColumnEntryDate: entryDateString,
       OpenEatsJournalStrings.dbColumnName: eatsJournalEntry.name,
       OpenEatsJournalStrings.dbColumnAmount: eatsJournalEntry.amount,
@@ -459,42 +434,79 @@ class OpenEatsJournalDatabaseService {
     });
   }
 
-  //creates new cache entry or updates existing one.
-  Future<void> setFoodCache({required Food food}) async {
+  //creates new food entry or updates an existing one.
+  Future<void> setFoodByExternalId({required Food food}) async {
     Database db = await instance.db;
-    if (food.foodSource == FoodSource.user && food.foodSource == FoodSource.standard) {
-      throw ArgumentError("Food cache is only needed for foods of external data sources.");
+    if (food.foodSource == FoodSource.user) {
+      throw ArgumentError("Food update by external id is only needed for foods of external data sources.");
     }
 
-    if (food.foodSourceIdExternal == null) {
-      throw ArgumentError("Food cache required an external food source id.");
+    if (food.foodSourceFoodId == null) {
+      throw ArgumentError("Food update by external id required an external food source id.");
     }
 
-    final List<Map<String, Object?>> result = await db.query(
-      OpenEatsJournalStrings.dbTableFoodCache,
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableFood,
       columns: [OpenEatsJournalStrings.dbColumnId],
-      where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ? AND ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceIdExternalRef} = ?",
-      whereArgs: [food.foodSource.value, food.foodSourceIdExternal],
+      where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ? AND ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef} = ?",
+      whereArgs: [food.foodSource.value, food.foodSourceFoodId],
     );
 
-    if (result.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError(
-        "Only one food cache entry may exist for a given external id and food source, multiple entries found for ${food.foodSourceIdExternal}, food source ${food.foodSource.name}.",
+        "Only one food entry may exist for a given external food id and food source, multiple entries found for ${food.foodSourceFoodId}, food source ${food.foodSource.name}.",
       );
     }
 
     if (food.id != null) {
-      if (result.isEmpty) {
-        throw StateError("No record for a given external id and food source, food id was not null, a food cache entry should exist.");
+      if (dbResult.isEmpty) {
+        throw StateError("No record for a given external id and food source, food id was not null, a food entry should exist.");
       }
     }
 
+    //If food comes from external API and is used for the first time in the food search result screen e.g. it has id null.
+    //If we know already the food in the food table, the id from the food table is assigned here.
+    if (food.id == null && dbResult.isNotEmpty) {
+      food.id = dbResult[0][OpenEatsJournalStrings.dbColumnId] as int;
+    }
+
+    await _setFoodInternal(food: food);
+  }
+
+  Future<void> setFood({required Food food}) async {
+    Database db = await instance.db;
+    if (food.foodSource == FoodSource.standard) {
+      throw ArgumentError("Food update of standard foods is not allowed.");
+    }
+
+    if (food.id != null) {
+      final List<Map<String, Object?>> dbResult = await db.query(
+        OpenEatsJournalStrings.dbTableFood,
+        columns: [OpenEatsJournalStrings.dbColumnId],
+        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+        whereArgs: [food.id],
+      );
+
+      if (dbResult.length > 1) {
+        throw StateError("Only one food entry may exist for a given food id, multiple entries found for ${food.id}.");
+      }
+
+      if (dbResult.isEmpty) {
+        throw StateError("No record for a given food id, food id was not null, a food entry should exist.");
+      }
+    }
+
+    await _setFoodInternal(food: food);
+  }
+
+  Future<void> _setFoodInternal({required Food food}) async {
+    Database db = await instance.db;
+
     Map<String, Object?> foodData = {
       OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
-      OpenEatsJournalStrings.dbColumndbColumnFoodSourceIdExternalRef: food.foodSourceIdExternal,
+      OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef: food.foodSourceFoodId,
       OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
       OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
-      OpenEatsJournalStrings.dbColumnSearchText: "${food.name}${food.brands != null ? " " : ""}${food.brands?.join("")}",
       OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
       OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
       OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
@@ -504,22 +516,26 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.dbColumnSaturatedFat: food.saturatedFat,
       OpenEatsJournalStrings.dbColumnProtein: food.protein,
       OpenEatsJournalStrings.dbColumnSalt: food.salt,
+      OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
     };
 
-    if (result.isEmpty) {
-      food.id = await db.insert(OpenEatsJournalStrings.dbTableFoodCache, foodData);
+    if (food.id == null) {
+      food.id = await db.insert(OpenEatsJournalStrings.dbTableFood, foodData);
     } else {
-      await db.update(
-        OpenEatsJournalStrings.dbTableFoodCache,
-        foodData,
-        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
-        whereArgs: [result[0][OpenEatsJournalStrings.dbColumnId]],
-      );
+      //can't update in fts4 table, need to delete and insert
+      await db.delete(OpenEatsJournalStrings.dbTableFoodTextSearch, where: "${OpenEatsJournalStrings.dbColumnRowId} = ?", whereArgs: [food.id]);
 
-      //If food comes from external API and is used for the first time in the food search result screen e.g. it has id null.
-      //If we know already the food in the cache, the id from the cache is assigned here.
-      food.id ??= result[0][OpenEatsJournalStrings.dbColumnId] as int;
+      await db.update(OpenEatsJournalStrings.dbTableFood, foodData, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [food.id]);
     }
+
+    //we must provide a rowid for contentless fts tables
+    Map<String, Object?> foodTextSearchData = {
+      OpenEatsJournalStrings.dbColumnRowId: food.id,
+      OpenEatsJournalStrings.dbColumnName: food.name,
+      OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
+    };
+
+    await db.insert(OpenEatsJournalStrings.dbTableFoodTextSearch, foodTextSearchData);
 
     await _setFoodUnits(food: food);
   }
@@ -540,34 +556,33 @@ class OpenEatsJournalDatabaseService {
 
     for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
       if (foodUnitWithOrder.object.foodUnitType != null) {
-        List<Map<String, Object?>>? result;
+        List<Map<String, Object?>>? dbResult;
 
-        result = await db.query(
+        dbResult = await db.query(
           OpenEatsJournalStrings.dbTableFoodUnit,
           columns: [OpenEatsJournalStrings.dbColumnId],
-          where:
-              "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef}= ? AND ${OpenEatsJournalStrings.dbColumnFoodSourceTableIdRef} = ? and ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef} = ?",
+          where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef}= ? AND ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef} = ?",
           whereArgs: [food.foodSource.value, food.id, foodUnitWithOrder.object.foodUnitType!.value],
         );
 
-        if (result.length > 1) {
+        if (dbResult.length > 1) {
           throw StateError(
             "Only one food unit entry of type ${foodUnitWithOrder.object.foodUnitType} may exist for a food, multiple entries found for food ${food.id} ${food.name}.",
           );
         }
 
-        if (result.isNotEmpty) {
+        if (dbResult.isNotEmpty) {
           //If food comes from external API and the food unit is used for the first time in the food search result screen e.g. it has id null.
           //If we know already the food unit, the id is assigned here.
-          foodUnitWithOrder.object.id ??= result[0][OpenEatsJournalStrings.dbColumnId] as int;
+          foodUnitWithOrder.object.id ??= dbResult[0][OpenEatsJournalStrings.dbColumnId] as int;
         }
       }
 
       Map<String, Object?> foodUnitData = {
-        OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
-        OpenEatsJournalStrings.dbColumnFoodSourceTableIdRef: food.id,
+        OpenEatsJournalStrings.dbColumnFoodIdRef: food.id,
         OpenEatsJournalStrings.dbColumnName: foodUnitWithOrder.object.name,
         OpenEatsJournalStrings.dbColumnAmount: foodUnitWithOrder.object.amount,
+        OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef: foodUnitWithOrder.object.amountMeasurementUnit.value,
         OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef: foodUnitWithOrder.object.foodUnitType?.value,
         OpenEatsJournalStrings.dbColumnOrderNumber: foodUnitWithOrder.order,
       };
@@ -585,23 +600,152 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
+  Future<Food?> getFoodById(int id) async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableFood,
+      columns: [
+        OpenEatsJournalStrings.dbColumnId,
+        OpenEatsJournalStrings.dbColumnName,
+        OpenEatsJournalStrings.dbColumnFoodSourceIdRef,
+        OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef,
+        OpenEatsJournalStrings.dbColumnName,
+        OpenEatsJournalStrings.dbColumnBrands,
+        OpenEatsJournalStrings.dbColumnNutritionPerGramAmount,
+        OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount,
+        OpenEatsJournalStrings.dbColumnKiloJoule,
+        OpenEatsJournalStrings.dbColumnCarbohydrates,
+        OpenEatsJournalStrings.dbColumnSugar,
+        OpenEatsJournalStrings.dbColumnFat,
+        OpenEatsJournalStrings.dbColumnSaturatedFat,
+        OpenEatsJournalStrings.dbColumnProtein,
+        OpenEatsJournalStrings.dbColumnSalt,
+      ],
+      where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+      whereArgs: [id],
+    );
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    return await _getFroodFromDbResult(dbRow: dbResult[0]);
+  }
+
+  Future<List<Food>?> getUserFoodBySearchtext(String searchText) async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.rawQuery(
+      """SELECT
+        ${OpenEatsJournalStrings.dbColumnId},
+        ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+        ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef},
+        ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName},
+        ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnBrands},
+        ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+        ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+        ${OpenEatsJournalStrings.dbColumnKiloJoule},
+        ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+        ${OpenEatsJournalStrings.dbColumnSugar},
+        ${OpenEatsJournalStrings.dbColumnFat},
+        ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+        ${OpenEatsJournalStrings.dbColumnProtein},
+        ${OpenEatsJournalStrings.dbColumnSalt},
+        ${OpenEatsJournalStrings.dbColumnQuantity}
+        FROM 
+                ${OpenEatsJournalStrings.dbTableFood}
+        WHERE ${OpenEatsJournalStrings.dbColumnId} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)
+        """,
+      [searchText],
+    );
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    List<Food> foods = [];
+    for (Map<String, Object?> row in dbResult) {
+      foods.add(await _getFroodFromDbResult(dbRow: row));
+    }
+
+    return foods;
+  }
+
+  Future<Food> _getFroodFromDbResult({required Map<String, Object?> dbRow}) async {
+    Database db = await instance.db;
+
+    Food food = Food(
+      id: dbRow[OpenEatsJournalStrings.dbColumnId] as int,
+      name: dbRow[OpenEatsJournalStrings.dbColumnName] as String,
+      foodSource: FoodSource.getByValue(dbRow[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] as int),
+      kJoule: dbRow[OpenEatsJournalStrings.dbColumnKiloJoule] as int,
+      foodSourceFoodId: dbRow[OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef] as String?,
+      brands: dbRow[OpenEatsJournalStrings.dbColumnBrands] != null
+          ? (dbRow[OpenEatsJournalStrings.dbColumnBrands] as String).split(",").map((String brand) => brand.trim()).toList()
+          : null,
+      nutritionPerGramAmount: dbRow[OpenEatsJournalStrings.dbColumnNutritionPerGramAmount] as int?,
+      nutritionPerMilliliterAmount: dbRow[OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount] as int?,
+      carbohydrates: dbRow[OpenEatsJournalStrings.dbColumnCarbohydrates] as double?,
+      sugar: dbRow[OpenEatsJournalStrings.dbColumnSugar] as double?,
+      fat: dbRow[OpenEatsJournalStrings.dbColumnFat] as double?,
+      saturatedFat: dbRow[OpenEatsJournalStrings.dbColumnSaturatedFat] as double?,
+      protein: dbRow[OpenEatsJournalStrings.dbColumnProtein] as double?,
+      salt: dbRow[OpenEatsJournalStrings.dbColumnSalt] as double?,
+      quantity: dbRow[OpenEatsJournalStrings.dbColumnQuantity] as String?,
+    );
+
+    final List<Map<String, Object?>> dbResultFoodUnit = await db.query(
+      OpenEatsJournalStrings.dbTableFoodUnit,
+      columns: [
+        OpenEatsJournalStrings.dbColumnId,
+        OpenEatsJournalStrings.dbColumnName,
+        OpenEatsJournalStrings.dbColumnAmount,
+        OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef,
+        OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef,
+        OpenEatsJournalStrings.dbColumnOrderNumber,
+      ],
+      where: "${OpenEatsJournalStrings.dbColumnFoodIdRef} = ?",
+      whereArgs: [food.id],
+    );
+
+    for (Map<String, Object?> row in dbResultFoodUnit) {
+      ObjectWithOrder<FoodUnit> foodUnitWithOrder = ObjectWithOrder(
+        object: FoodUnit(
+          id: row[OpenEatsJournalStrings.dbColumnId] as int,
+          name: row[OpenEatsJournalStrings.dbColumnName] as String,
+          amount: row[OpenEatsJournalStrings.dbColumnAmount] as int,
+          amountMeasurementUnit: MeasurementUnit.getByValue(row[OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef] as int),
+          foodUnitType: row[OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef] != null
+              ? FoodUnitType.getByValue(row[OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef] as int)
+              : null,
+        ),
+        order: row[OpenEatsJournalStrings.dbColumnOrderNumber] as int,
+      );
+
+      food.addFoodUnitWithOrder(foodUnitWithOrder: foodUnitWithOrder);
+    }
+
+    return food;
+  }
+
   Future<void> insertOnceDayNutritionTarget({required DateTime day, required int dayTargetKJoule}) async {
     Database db = await instance.db;
 
     final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
 
-    final List<Map<String, Object?>> result = await db.query(
+    final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableDailyNutritionTarget,
       columns: [OpenEatsJournalStrings.dbColumnId],
       where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
       whereArgs: [formattedDate],
     );
 
-    if (result.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError("An entry for date must exist only once in daily nutrition targets, mutiple instances on date $formattedDate found.");
     }
 
-    if (result.isEmpty) {
+    if (dbResult.isEmpty) {
       await db.insert(OpenEatsJournalStrings.dbTableDailyNutritionTarget, {
         OpenEatsJournalStrings.dbColumnEntryDate: formattedDate,
         OpenEatsJournalStrings.dbColumnKiloJoule: dayTargetKJoule,
@@ -614,18 +758,18 @@ class OpenEatsJournalDatabaseService {
 
     final String formattedDate = ConvertValidate.dateformatterDateOnly.format(date);
 
-    final List<Map<String, Object?>> result = await db.query(
+    final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableDateInfo,
       columns: [OpenEatsJournalStrings.dbColumnId],
       where: "${OpenEatsJournalStrings.dbColumnDate} = ?",
       whereArgs: [formattedDate],
     );
 
-    if (result.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError("An entry for date must exist only once in date info, mutiple instances on date $formattedDate found.");
     }
 
-    if (result.isEmpty) {
+    if (dbResult.isEmpty) {
       WeekOfYear weekOfYear = ConvertValidate.getweekNumber(date);
 
       await db.insert(OpenEatsJournalStrings.dbTableDateInfo, {

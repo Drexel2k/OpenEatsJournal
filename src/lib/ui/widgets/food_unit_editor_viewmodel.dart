@@ -1,21 +1,20 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
-import "package:openeatsjournal/domain/food_unit_edit_wrapper.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/ui/utils/debouncer.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
 class FoodUnitEditorViewModel extends ChangeNotifier {
   FoodUnitEditorViewModel({
-    required FoodUnitEditWrapper foodUnitEditWrapper,
+    required FoodUnit foodUnit,
     required bool defaultFoodUnit,
     required VoidCallback changeMeasurementUnit,
     required void Function(FoodUnit) changeDefault,
     required void Function(FoodUnit) removeFoodUnit,
-    required ValueListenable<bool> foodUnitsEditMode,
+    required ValueNotifier<bool> foodUnitsEditMode,
     required ValueNotifier<int?> foodNutritionPerGram,
     required ValueNotifier<int?> foodNutritionPerMilliliter,
-  }) : _foodUnitEditWrapper = foodUnitEditWrapper,
+  }) : _foodUnit = foodUnit,
        _defaultFoodUnit = ValueNotifier(defaultFoodUnit),
        _changeMeasurementUnit = changeMeasurementUnit,
        _changeDefault = changeDefault,
@@ -23,12 +22,12 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
        _foodUnitsEditMode = foodUnitsEditMode,
        _foodNutritionPerGram = foodNutritionPerGram,
        _foodNutritionPerMilliliter = foodNutritionPerMilliliter,
-       _name = ValueNotifier(foodUnitEditWrapper.foodUnit.name),
-       _amount = ValueNotifier(foodUnitEditWrapper.amount),
-       _amountValid = ValueNotifier(foodUnitEditWrapper.amount != null),
-       _currentMeasurementUnit = ValueNotifier(foodUnitEditWrapper.foodUnit.amountMeasurementUnit),
+       _name = ValueNotifier(foodUnit.name),
+       _nameValid = ValueNotifier(foodUnit.name.trim() != OpenEatsJournalStrings.emptyString),
+       _amount = ValueNotifier(foodUnit.amount),
+       _currentMeasurementUnit = ValueNotifier(foodUnit.amountMeasurementUnit),
        _measurementUnitSwitchButtonEnabled = ValueNotifier(
-         _getMeasurementUnitSwitchButtonEnabled(foodNutritionPerGram.value, foodNutritionPerMilliliter.value, foodUnitEditWrapper.foodUnit.amountMeasurementUnit),
+         _getMeasurementUnitSwitchButtonEnabled(foodNutritionPerGram.value, foodNutritionPerMilliliter.value, foodUnit.amountMeasurementUnit),
        ) {
     _name.addListener(_nameChanged);
     _amount.addListener(_amountChanged);
@@ -36,70 +35,65 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
     _foodNutritionPerGram.addListener(_foodAmountsChanged);
     _foodNutritionPerMilliliter.addListener(_foodAmountsChanged);
     _currentMeasurementUnit.addListener(_currentMeasurementUnitChanged);
+    _foodUnitsEditMode.addListener(_foodUnitsEditModeChanged);
   }
 
-  final FoodUnitEditWrapper _foodUnitEditWrapper;
+  final FoodUnit _foodUnit;
 
   final ValueNotifier<bool> _defaultFoodUnit;
   final ValueNotifier<String> _name;
+  final ValueNotifier<bool> _nameValid;
   final ValueNotifier<int?> _amount;
-  final ValueNotifier<bool> _amountValid;
+  final ValueNotifier<bool> _amountValid = ValueNotifier(true);
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final ValueNotifier<bool> _measurementUnitSwitchButtonEnabled;
   final void Function(FoodUnit) _changeDefault;
+  final ExternalTriggerChangedNotifier _defaultButtonChanged = ExternalTriggerChangedNotifier();
   final VoidCallback _changeMeasurementUnit;
   final void Function(FoodUnit) _removeFoodUnit;
-  final ValueListenable<bool> _foodUnitsEditMode;
+  final ValueNotifier<bool> _foodUnitsEditMode;
   final ValueNotifier<int?> _foodNutritionPerGram;
   final ValueNotifier<int?> _foodNutritionPerMilliliter;
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
-  final Debouncer _nameDebouncer = Debouncer();
-  final Debouncer _amountDebouncer = Debouncer();
-
+  FoodUnit get foodUnit => _foodUnit;
   ValueNotifier<bool> get defaultFoodUnit => _defaultFoodUnit;
+  ExternalTriggerChangedNotifier get defaultButtonChanged => _defaultButtonChanged;
   ValueNotifier<String> get name => _name;
+  ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<int?> get amount => _amount;
   ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   ValueNotifier<bool> get measurementUnitSwitchButtonEnabled => _measurementUnitSwitchButtonEnabled;
-  ValueListenable<bool> get foodUnitsEditMode => _foodUnitsEditMode;
+  ValueNotifier<bool> get foodUnitsEditMode => _foodUnitsEditMode;
   ValueNotifier<bool> get amountValid => _amountValid;
-
-  int get foodUnitAmount => _foodUnitEditWrapper.foodUnit.amount;
 
   ExternalTriggerChangedNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
 
   void _nameChanged() {
-    _nameDebouncer.run(
-      callback: () {
-        _foodUnitEditWrapper.foodUnit.name = _name.value;
-      },
-    );
+    if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {
+      _nameValid.value = false;
+    } else {
+      _nameValid.value = true;
+    }
   }
 
   void _amountChanged() {
     if (_amount.value != null) {
       _amountValid.value = true;
-      _amountDebouncer.run(
-        callback: () {
-          _foodUnitEditWrapper.amount = _amount.value!;
-          _foodUnitEditWrapper.foodUnit.amount = _amount.value!;
-        },
-      );
     } else {
-      _amountDebouncer.cancel();
-      _foodUnitEditWrapper.amount = _amount.value;
       _amountValid.value = false;
     }
   }
 
   void _defaultFoodUnitChanged() {
     if (_defaultFoodUnit.value) {
-      _changeDefault(_foodUnitEditWrapper.foodUnit);
+      _changeDefault(_foodUnit);
     } else {
       //can't deselect a default food unit, only select a new one.
       _defaultFoodUnit.value = true;
     }
+
+    _defaultButtonChanged.notify();
   }
 
   void _foodAmountsChanged() {
@@ -124,7 +118,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   }
 
   void _currentMeasurementUnitChanged() {
-    _foodUnitEditWrapper.foodUnit.amountMeasurementUnit = _currentMeasurementUnit.value;
+    _foodUnit.amountMeasurementUnit = _currentMeasurementUnit.value;
     _changeMeasurementUnit();
     _updatedMeasurementUnitSwitchButtonEnabled();
   }
@@ -140,12 +134,52 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   }
 
   void removeFoodUnit() {
-    _removeFoodUnit(_foodUnitEditWrapper.foodUnit);
+    _removeFoodUnit(_foodUnit);
+  }
+
+  void _foodUnitsEditModeChanged() {
+    _measurementUnitSwitchButtonChanged.notify();
+    _defaultButtonChanged.notify();
+  }
+
+  bool isValid({required int? foodNutritionPerGramAmount, required int? foodNutritionPerMilliliterAmount}) {
+    bool foodUnitValid = true;
+
+    if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {
+      foodUnitValid = false;
+    }
+
+    if (foodUnitValid && _amount.value == null) {
+      foodUnitValid = false;
+    }
+
+    if (foodUnitValid && _currentMeasurementUnit.value == MeasurementUnit.gram && foodNutritionPerGramAmount == null) {
+      foodUnitValid = false;
+    }
+
+    if (foodUnitValid && _currentMeasurementUnit.value == MeasurementUnit.milliliter && foodNutritionPerMilliliterAmount == null) {
+      foodUnitValid = false;
+    }
+
+    return foodUnitValid;
   }
 
   @override
   void dispose() {
     _defaultFoodUnit.dispose();
+    _name.dispose();
+    _nameValid.dispose();
+    _amount.dispose();
+    _amountValid.dispose();
+    _currentMeasurementUnit.dispose();
+    _measurementUnitSwitchButtonEnabled.dispose();
+    _defaultButtonChanged.dispose();
+    _measurementUnitSwitchButtonChanged.dispose();
+
+    //From food edit screen, the food edit screen disposes these.
+    //_foodUnitsEditMode.dispose();
+    //_foodNutritionPerGram.dispose();
+    //_foodNutritionPerMilliliter.dispose();
 
     super.dispose();
   }

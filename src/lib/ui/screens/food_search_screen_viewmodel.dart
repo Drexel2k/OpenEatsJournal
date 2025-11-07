@@ -77,7 +77,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   Future<void> getFoodByBarcode({required String barcode, required String languageCode, required Map<String, String> localizations}) async {
     _initSearch();
-    _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryGetFoodByBarcodeResult result) {
+    _foodRepository.getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryGetFoodByBarcodeResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
@@ -100,7 +100,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _initSearch();
     _currentSearchText = searchText;
     _currentLanguageCode = languageCode;
-    _foodRepository.getFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: _currentPage).then((
+    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((
       FoodRepositoryGetFoodBySearchTextResult result,
     ) {
       _searchFinished();
@@ -151,7 +151,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   void getFoodBySearchTextLoadMore() {
     _isLoading = true;
     _currentPage = _currentPage + 1;
-    _foodRepository.getFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage).then((
+    _foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage).then((
       FoodRepositoryGetFoodBySearchTextResult result,
     ) {
       if (result.errorCode == null) {
@@ -237,7 +237,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   void addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
     if (eatsJournalEntry.food != null) {
-      await _foodRepository.setFoodCache(food: eatsJournalEntry.food!);
+      await _foodRepository.setFoodByExternalId(food: eatsJournalEntry.food!);
     }
 
     await _journalRepository.saveOnceDayNutritionTarget(

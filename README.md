@@ -22,7 +22,7 @@ Use paths for SDKs without spaces and sepcial characers.
 6. Close Android Studio.
 
 #### Setup Flutter SDK
-1. Download Flutter (currently 3.35.5 is used) from https://docs.flutter.dev/install/archive and extract.
+1. Download Flutter (currently 3.35.7 is used) from https://docs.flutter.dev/install/archive and extract.
 
 #### Setup the Workspace in Visual Studio Code (VSC)
 1. Download and install git.

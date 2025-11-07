@@ -7,4 +7,8 @@ enum MeasurementUnit {
   final String text;
 
   const MeasurementUnit(this.value, this.text);
+
+  static MeasurementUnit getByValue(num i) {
+    return MeasurementUnit.values.firstWhere((x) => x.value == i);
+  }
 }

@@ -68,7 +68,7 @@ class EatsJournalEntry {
 
   Food? get food => _food;
   FoodSource? get foodSource => food != null ? _food!.foodSource : null;
-  String? get foodSourceIdExternal => food != null ? _food!.foodSourceIdExternal : null;
+  String? get foodSourceIdExternal => food != null ? _food!.foodSourceFoodId : null;
   DateTime get entryDate => _entryDate;
   String get name => food != null ? _food!.name : _name!;
   int? get amount => _amount;

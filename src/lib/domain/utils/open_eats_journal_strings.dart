@@ -39,9 +39,8 @@ class OpenEatsJournalStrings {
 
   static const String dbTableSetting = "t_setting";
   static const String dbTableWeightJournal = "t_weight_journal";
-  static const String dbTableFoodCache = "t_food_cache";
-  static const String dbTableFoodUser = "t_food_user";
-  static const String dbTableFoodStandard = "t_food_standard";
+  static const String dbTableFood = "t_food";
+  static const String dbTableFoodTextSearch = "t_food_text_search";
   static const String dbTableFoodUnit = "t_food_unit";
   static const String dbTableEatsJournal = "t_eats_journal";
   static const String dbTableFoodSource = "t_food_source";
@@ -59,7 +58,8 @@ class OpenEatsJournalStrings {
   static const String dbColumnDate = "date";
   static const String dbColumnWeight = "weight";
   static const String dbColumnFoodSourceIdRef = "food_source_id_ref";
-  static const String dbColumndbColumnFoodSourceIdExternalRef = "food_source_id_external_ref";
+  static const String dbColumndbColumnFoodSourceFoodIdRef = "food_source_food_id_ref";
+  static const String dbColumnFoodIdRef = "food_id_ref";
   static const String dbColumnName = "name";
   static const String dbColumnNutritionPerGramAmount = "nutrition_per_gram_mount";
   static const String dbColumnNutritionPerMilliliterAmount = "nutrition_per_milliliter_mount";
@@ -70,18 +70,18 @@ class OpenEatsJournalStrings {
   static const String dbColumnSaturatedFat = "saturated_fat";
   static const String dbColumnProtein = "protein";
   static const String dbColumnSalt = "salt";
-  static const String dbColumnFoodSourceTableIdRef = "food_source_table_id_ref";
+  static const String dbColumnQuantity = "quantity";
   static const String dbColumnAmount = "amount";
   static const String dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
   static const String dbColumnOrderNumber = "order_number";
-  static const String dbColumnamountMeasurementUnitIdRef = "amount_unit_id_ref";
+  static const String dbColumnamountMeasurementUnitIdRef = "amount_measurement_unit_id_ref";
   static const String dbColumnDescription = "description";
   static const String dbColumnMealIdRef = "meal_id_ref";
   static const String dbColumnUrl = "url";
   static const String dbColumnBrands = "brands";
-  static const String dbColumnSearchText = "search_text";
   static const String dbColumnWeekOfYearNormalized = "week_of_year_normalized";
   static const String dbColumnMonthOfYearNormalized = "month_of_year_normalized";
+  static const String dbColumnRowId = "rowid";
   static const String dbResultDayCount = "day_count";
   static const String dbResultKJouleSum = "kilo_joule_sum";
   static const String dbResultCarbohydratesSum = "carbohydrates_sum";

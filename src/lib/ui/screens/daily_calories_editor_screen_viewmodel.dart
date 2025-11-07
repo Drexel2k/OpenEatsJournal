@@ -101,7 +101,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalMondayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleMonday = _kJouleMonday.value!;
-          await _settingsRepository.saveKJouleMonday(_kJoulePerDay.kJouleMonday);
+          await _settingsRepository.saveKJouleMonday(kJoule: _kJoulePerDay.kJouleMonday);
         },
       );
     } else {
@@ -118,7 +118,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalTuesdayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleTuesday = _kJouleTuesday.value!;
-          await _settingsRepository.saveKJouleTuesday(_kJoulePerDay.kJouleTuesday);
+          await _settingsRepository.saveKJouleTuesday(kJoule: _kJoulePerDay.kJouleTuesday);
         },
       );
     } else {
@@ -135,7 +135,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalWednesdayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleWednesday = _kJouleWednesday.value!;
-          await _settingsRepository.saveKJouleWednesday(_kJoulePerDay.kJouleWednesday);
+          await _settingsRepository.saveKJouleWednesday(kJoule: _kJoulePerDay.kJouleWednesday);
         },
       );
     } else {
@@ -152,7 +152,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalThursdayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleThursday = _kJouleThursday.value!;
-          await _settingsRepository.saveKJouleThursday(_kJoulePerDay.kJouleThursday);
+          await _settingsRepository.saveKJouleThursday(kJoule: _kJoulePerDay.kJouleThursday);
         },
       );
     } else {
@@ -169,7 +169,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalFridayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleFriday = _kJouleFriday.value!;
-          await _settingsRepository.saveKJouleFriday(_kJoulePerDay.kJouleFriday);
+          await _settingsRepository.saveKJouleFriday(kJoule: _kJoulePerDay.kJouleFriday);
         },
       );
     } else {
@@ -186,7 +186,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalSaturdayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleSaturday = _kJouleSaturday.value!;
-          await _settingsRepository.saveKJouleSaturday(_kJoulePerDay.kJouleSaturday);
+          await _settingsRepository.saveKJouleSaturday(kJoule: _kJoulePerDay.kJouleSaturday);
         },
       );
     } else {
@@ -203,7 +203,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _kCalSundayDebouncer.run(
         callback: () async {
           _kJoulePerDay.kJouleSunday = _kJouleSunday.value!;
-          await _settingsRepository.saveKJouleSunday(_kJoulePerDay.kJouleSunday);
+          await _settingsRepository.saveKJouleSunday(kJoule: _kJoulePerDay.kJouleSunday);
         },
       );
     } else {

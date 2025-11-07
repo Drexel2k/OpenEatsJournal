@@ -10,7 +10,7 @@ class Food {
     required FoodSource foodSource,
     required int kJoule,
     int? id,
-    String? foodSourceIdExternal,
+    String? foodSourceFoodId,
     List<String>? brands,
     int? nutritionPerGramAmount,
     int? nutritionPerMilliliterAmount,
@@ -25,7 +25,7 @@ class Food {
        _brands = brands,
        _foodSource = foodSource,
        _id = id,
-       _foodSourceIdExternal = foodSourceIdExternal,
+       _foodSourceFoodId = foodSourceFoodId,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
        _kJoule = kJoule,
@@ -35,13 +35,14 @@ class Food {
        _saturatedFat = saturatedFat,
        _protein = protein,
        _salt = salt,
+       _quantity = quantity,
        _foodUnitsWithOrder = [];
 
-  final String _name;
+  String _name;
   final List<String>? _brands;
-  final FoodSource _foodSource;
   int? _id;
-  final String? _foodSourceIdExternal;
+  final FoodSource _foodSource;
+  final String? _foodSourceFoodId;
   int _kJoule;
   int? _nutritionPerGramAmount;
   int? _nutritionPerMilliliterAmount;
@@ -51,10 +52,11 @@ class Food {
   double? _saturatedFat;
   double? _protein;
   double? _salt;
+  final String? _quantity;
   final List<ObjectWithOrder<FoodUnit>> _foodUnitsWithOrder;
   FoodUnit? _defaultFoodUnit;
 
-  set id(int? id) {
+  set id(int? value) {
     if (_foodSource == FoodSource.standard) {
       throw ArgumentError("Id of standard food does always exist and can't be set after object creation.");
     }
@@ -63,86 +65,90 @@ class Food {
       throw ArgumentError("Existing id must must not be overriden.");
     }
 
-    if (id == null) {
+    if (value == null) {
       throw ArgumentError("Id must be set to value.");
     }
 
-    _id = id;
+    _id = value;
   }
 
-  set nutritionPerGramAmount(int? amount) {
-    if (amount != null || _nutritionPerMilliliterAmount != null) {
-      if (amount == null) {
+  set name(String value) {
+    _name = value;
+  }
+
+  set nutritionPerGramAmount(int? value) {
+    if (value != null || _nutritionPerMilliliterAmount != null) {
+      if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.gram);
       }
 
-      _nutritionPerGramAmount = amount;
+      _nutritionPerGramAmount = value;
     } else {
-      throw ArgumentError("Can't set nutritionPerGramAmount to null when nutritionPerMilliliterAmount is also null");
+      throw ArgumentError("Can't set nutritionPerGramAmount to null when nutritionPerMilliliterAmount is also null.");
     }
   }
 
-  set nutritionPerMilliliterAmount(int? amount) {
-    if (amount != null || _nutritionPerGramAmount != null) {
-      if (amount == null) {
+  set nutritionPerMilliliterAmount(int? value) {
+    if (value != null || _nutritionPerGramAmount != null) {
+      if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.milliliter);
       }
 
-      _nutritionPerMilliliterAmount = amount;
+      _nutritionPerMilliliterAmount = value;
     } else {
-      throw ArgumentError("Can't set nutritionPerMilliliterAmount to null when nutritionPerGramAmount is also null");
+      throw ArgumentError("Can't set nutritionPerMilliliterAmount to null when nutritionPerGramAmount is also null.");
     }
   }
 
-  set kJoule(int kJoule) {
-    _kJoule = kJoule;
+  set kJoule(int value) {
+    _kJoule = value;
   }
 
-  set carbohydrates(double? carbohydrates) {
-    _carbohydrates = carbohydrates;
+  set carbohydrates(double? value) {
+    _carbohydrates = value;
   }
 
-  set sugar(double? sugar) {
-    _sugar = sugar;
+  set sugar(double? value) {
+    _sugar = value;
   }
 
-  set fat(double? fat) {
-    _fat = fat;
+  set fat(double? value) {
+    _fat = value;
   }
 
-  set saturatedFat(double? saturatedFat) {
-    _saturatedFat = saturatedFat;
+  set saturatedFat(double? value) {
+    _saturatedFat = value;
   }
 
-  set protein(double? protein) {
-    _protein = protein;
+  set protein(double? value) {
+    _protein = value;
   }
 
-  set salt(double? salt) {
-    _salt = salt;
+  set salt(double? value) {
+    _salt = value;
   }
 
-  set defaultFoodUnit(FoodUnit? foodUnit) {
-    if(foodUnit == null) {
+  set defaultFoodUnit(FoodUnit? value) {
+    if (value == null) {
       throw ArgumentError("Default food unit must not be null.");
     }
 
     ObjectWithOrder<FoodUnit>? foodUnitWithOrder = _foodUnitsWithOrder.firstWhereOrNull(
-      (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object == foodUnit,
+      (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object == value,
     );
 
-    if(foodUnitWithOrder == null) {
+    if (foodUnitWithOrder == null) {
       throw ArgumentError("Can't set default food unit must which is not in list of food units.");
     }
 
-    _defaultFoodUnit = foodUnit;
+    _defaultFoodUnit = value;
   }
 
   String get name => _name;
   List<String>? get brands => _brands;
   FoodSource get foodSource => _foodSource;
   int? get id => _id;
-  String? get foodSourceIdExternal => _foodSourceIdExternal;
+  String? get foodSourceFoodId => _foodSourceFoodId;
   int? get nutritionPerGramAmount => _nutritionPerGramAmount;
   int? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
   int get kJoule => _kJoule;
@@ -152,6 +158,7 @@ class Food {
   double? get saturatedFat => _saturatedFat;
   double? get protein => _protein;
   double? get salt => _salt;
+  String? get quantity => _quantity;
   List<ObjectWithOrder<FoodUnit>> get foodUnitsWithOrder => List.unmodifiable(_foodUnitsWithOrder);
   FoodUnit? get defaultFoodUnit => _defaultFoodUnit;
 
@@ -182,9 +189,37 @@ class Food {
     return true;
   }
 
+  addFoodUnitWithOrder({required ObjectWithOrder<FoodUnit> foodUnitWithOrder}) {
+    ObjectWithOrder<FoodUnit>? foodUnitWithOrderExists = _foodUnitsWithOrder.firstWhereOrNull(
+      (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnitWithOrder.object,
+    );
+
+    if (foodUnitWithOrderExists != null) {
+      throw ArgumentError("Can't add same food unit a second time.");
+    }
+
+    foodUnitWithOrderExists = _foodUnitsWithOrder.firstWhereOrNull(
+      (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.order == foodUnitWithOrder.order,
+    );
+
+    if (foodUnitWithOrderExists != null) {
+      throw ArgumentError("Can't add same food unit with an existing order number.");
+    }
+
+    _foodUnitsWithOrder.add(foodUnitWithOrder);
+  }
+
+  removeFoodUnit({required FoodUnit foodUnit}) {
+    _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit);
+    _ensureDefaultFoodUnit();
+  }
+
   void _removeFoodUnitWithMeasurementUnit({required MeasurementUnit measurementUnit}) {
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object.amountMeasurementUnit == measurementUnit);
+    _ensureDefaultFoodUnit();
+  }
 
+  void _ensureDefaultFoodUnit() {
     if (_foodUnitsWithOrder.isEmpty) {
       _defaultFoodUnit = null;
     } else {

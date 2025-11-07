@@ -186,7 +186,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
     int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule(), weightLossPerWeekKg: weightLossKg).round();
 
-    await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule);
+    await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule: dailyTargetKJoule);
 
     _dailyTargetKJoule.value = dailyTargetKJoule;
   }

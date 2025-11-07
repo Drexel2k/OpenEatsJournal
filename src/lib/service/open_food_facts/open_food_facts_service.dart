@@ -116,7 +116,7 @@ class OpenFoodFactsService {
 
   static String _encodeSearchText(String searchText) {
     List<String> searchWords = searchText.split(" ");
-    searchWords = searchWords.map((word) => "'$word'").toList();
+    searchWords = searchWords.map((String word) => "'${word.trim()}'").toList();
     searchText = searchWords.join(",");
     searchText = Uri.encodeComponent(searchText);
 

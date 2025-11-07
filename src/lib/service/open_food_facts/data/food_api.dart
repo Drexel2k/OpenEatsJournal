@@ -91,7 +91,7 @@ class FoodApi {
     return FoodApi(
       code: json[OpenFoodFactsApiStrings.fieldCode],
       brandsTags: json.containsKey(OpenFoodFactsApiStrings.fieldBrandsTags)
-          ? (json[OpenFoodFactsApiStrings.fieldBrandsTags] as List<dynamic>).map((brand) => brand as String).toList()
+          ? (json[OpenFoodFactsApiStrings.fieldBrandsTags] as List<dynamic>).map((dynamic brand) => (brand as String).trim()).toList()
           : null,
       productName: json.containsKey(OpenFoodFactsApiStrings.fieldProductName) ? json[OpenFoodFactsApiStrings.fieldProductName] : null,
       productNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameEn) ? json[OpenFoodFactsApiStrings.fieldProductNameEn] : null,

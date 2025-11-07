@@ -63,7 +63,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               builder: (_, _, _) {
                                 return Text(
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyTargetKJoule.value),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _settingsScreenViewModel.dailyTargetKJoule.value),
                                   ),
                                   style: textTheme.titleSmall,
                                 );
@@ -82,7 +82,9 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               valueListenable: _settingsScreenViewModel.dailyKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_settingsScreenViewModel.dailyKJoule.value)),
+                                  ConvertValidate.numberFomatterInt.format(
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _settingsScreenViewModel.dailyKJoule.value),
+                                  ),
                                   style: textTheme.bodySmall,
                                 );
                               },

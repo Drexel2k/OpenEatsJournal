@@ -67,7 +67,7 @@ class NutrimentsApi {
       energyKj: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy)
           ? _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergy])
           : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal)
-          ? NutritionCalculator.getKJoulesFromKCals(_getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal]))
+          ? NutritionCalculator.getKJoulesFromKCals(kCals: _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal]))
           : null,
       carbohydrates: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates)
           ? _getDoubleFromNumOrString(json[OpenFoodFactsApiStrings.fieldCarboHydrates])
@@ -82,7 +82,7 @@ class NutrimentsApi {
       energyKj100g: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy100g)
           ? _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergy100g])
           : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal100g)
-          ? NutritionCalculator.getKJoulesFromKCals(_getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal100g]))
+          ? NutritionCalculator.getKJoulesFromKCals(kCals: _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal100g]))
           : null,
       carbohydrates100g: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates100g)
           ? _getDoubleFromNumOrString(json[OpenFoodFactsApiStrings.fieldCarboHydrates100g])

@@ -59,7 +59,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   ? Text(
                       style: textTheme.titleMedium,
                       AppLocalizations.of(context)!.amount_kcal(
-                        ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_eatsJournalFoodAddScreenViewModel.kJoule.value!)),
+                        ConvertValidate.numberFomatterInt.format(
+                          NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodAddScreenViewModel.kJoule.value!),
+                        ),
                       ),
                     )
                   : Text(AppLocalizations.of(context)!.na_kcal);
@@ -299,9 +301,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           SizedBox(height: 10),
           Text(
             style: textTheme.titleMedium,
-            AppLocalizations.of(
-              context,
-            )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_eatsJournalFoodAddScreenViewModel.food.kJoule))),
+            AppLocalizations.of(context)!.amount_kcal(
+              ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodAddScreenViewModel.food.kJoule)),
+            ),
           ),
           Row(
             children: [
@@ -381,7 +383,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
               Text(
                 style: textTheme.titleSmall,
                 AppLocalizations.of(context)!.amount_kcal(
-                  ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_getKJouleFromFoodUnit(food, food.defaultFoodUnit!))),
+                  ConvertValidate.numberFomatterInt.format(
+                    NutritionCalculator.getKCalsFromKJoules(kJoules: _getKJouleFromFoodUnit(food, food.defaultFoodUnit!)),
+                  ),
                 ),
               ),
               Text(
@@ -407,7 +411,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 Text(
                   style: textTheme.titleSmall,
                   AppLocalizations.of(context)!.amount_kcal(
-                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_getKJouleFromFoodUnit(food, foodUnitWithOrder.object))),
+                    ConvertValidate.numberFomatterInt.format(
+                      NutritionCalculator.getKCalsFromKJoules(kJoules: _getKJouleFromFoodUnit(food, foodUnitWithOrder.object)),
+                    ),
                   ),
                 ),
                 Text(
@@ -434,7 +440,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 style: textTheme.titleSmall,
                 AppLocalizations.of(context)!.amount_kcal(
                   ConvertValidate.numberFomatterInt.format(
-                    NutritionCalculator.getKCalsFromKJoules((food.kJoule * (100 / food.nutritionPerGramAmount!)).round()),
+                    NutritionCalculator.getKCalsFromKJoules(kJoules: (food.kJoule * (100 / food.nutritionPerGramAmount!)).round()),
                   ),
                 ),
               ),
@@ -457,7 +463,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
               Text(
                 style: textTheme.titleSmall,
                 AppLocalizations.of(context)!.amount_kcal(
-                  ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules((food.kJoule * (100 / food.nutritionPerMilliliterAmount!)))),
+                  ConvertValidate.numberFomatterInt.format(
+                    NutritionCalculator.getKCalsFromKJoules(kJoules: (food.kJoule * (100 / food.nutritionPerMilliliterAmount!))),
+                  ),
                 ),
               ),
               Text(style: textTheme.labelSmall, "${ConvertValidate.numberFomatterInt.format(100)}${MeasurementUnit.milliliter.text}"),

@@ -100,7 +100,7 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
 
   Future<void> addEatsJournalEntry() async {
     if (_amount.value != null && eatsAmount.value != null) {
-      await _foodRepository.setFoodCache(food: _food);
+      await _foodRepository.setFoodByExternalId(food: _food);
 
       await _journalRepository.saveOnceDayNutritionTarget(
         entryDate: _settingsRepository.currentJournalDate.value,

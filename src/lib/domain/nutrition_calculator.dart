@@ -4,6 +4,7 @@ class NutritionCalculator {
   //Deutsche Gesellschaft für Ernährung
   //https://www.dge.de/wissenschaft/referenzwerte/energie/
   static const double _kCalKJouleConversionFactor = 4.184;
+  static const int kJouleForOncekCal = 4;
 
   //calculation according to Mifflin St Jeor equation
   static double calculateBasalMetabolicRateInKJoule({
@@ -45,11 +46,11 @@ class NutritionCalculator {
     return kJoule / 37 * 0.3;
   }
 
-  static int getKCalsFromKJoules(num kJoules) {
+  static int getKCalsFromKJoules({required num kJoules}) {
     return (kJoules / _kCalKJouleConversionFactor).round();
   }
 
-  static int getKJoulesFromKCals(num kCals) {
+  static int getKJoulesFromKCals({required num kCals}) {
     return (kCals * _kCalKJouleConversionFactor).round();
   }
 }

@@ -42,10 +42,10 @@ class StatisticsScreen extends StatelessWidget {
                     dayData.add({
                       OpenEatsJournalStrings.chartDateInformation: dateFormatter.format(currentDate),
                       OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                        snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.nutritions.kJoule,
+                        kJoules: snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.nutritions.kJoule,
                       ),
                       OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                        snapshot.data!.groupNutritionTargets![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.kJoule,
+                        kJoules: snapshot.data!.groupNutritionTargets![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.kJoule,
                       ),
                       OpenEatsJournalStrings.chartEntryCount:
                           snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.entryCount,
@@ -87,10 +87,10 @@ class StatisticsScreen extends StatelessWidget {
                     weekData.add({
                       OpenEatsJournalStrings.chartDateInformation: "${weekOfYear.week}/${weekOfYear.year}",
                       OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                        snapshot.data!.groupNutritionSums![dbResultKey]!.nutritions.kJoule,
+                        kJoules: snapshot.data!.groupNutritionSums![dbResultKey]!.nutritions.kJoule,
                       ),
                       OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                        snapshot.data!.groupNutritionTargets![dbResultKey]!.kJoule,
+                        kJoules: snapshot.data!.groupNutritionTargets![dbResultKey]!.kJoule,
                       ),
                       OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![dbResultKey]!.entryCount,
                     });
@@ -130,10 +130,10 @@ class StatisticsScreen extends StatelessWidget {
                     monthData.add({
                       OpenEatsJournalStrings.chartDateInformation: "$currentMonth/$currentYear",
                       OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                        snapshot.data!.groupNutritionSums![dbResultKey]!.nutritions.kJoule,
+                        kJoules: snapshot.data!.groupNutritionSums![dbResultKey]!.nutritions.kJoule,
                       ),
                       OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                        snapshot.data!.groupNutritionTargets![dbResultKey]!.kJoule,
+                        kJoules: snapshot.data!.groupNutritionTargets![dbResultKey]!.kJoule,
                       ),
                       OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![dbResultKey]!.entryCount,
                     });

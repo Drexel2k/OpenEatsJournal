@@ -55,6 +55,7 @@
   "daily_target_calories": "Tägl. Ziel (⌀) kCal:",
   "statistics": "Statistiken",
   "kcal": "kCal",
+  "kcal_label": "kCal:",
   "amount_kcal": "{amount} kCal",
   "fat": "Fett",
   "fat_label": "Fett:",
@@ -149,7 +150,6 @@
   "milliliter_abbreviated": "ml",
   "nutrition_values": "Nährwerte:",
   "kjoule": "KJoule",
-  "kjoule_label": "kJoule:",
   "default_key": "Standard",
   "delete": "Löschen",
   "unit": "Einheit",
@@ -164,5 +164,12 @@
   "amount_abbreviated": "Mng.",
   "default_abbreviated": "Def.",
   "delete_abbreviated": "Lsch.",
-  "unit_abbreviated": "Einh."
+  "unit_abbreviated": "Einh.",
+  "empty": "leer",
+  "food_created": "Lebensmittel erstellt.",
+  "cant_create_food": "Kann Lebensmittel nicht erstellen, bitte korrigiere die Fehler.",
+  "as_new_food": "Als neues Lebensmittel",
+  "usr": "USR",
+  "std": "STD",
+  "off": "OFF"
 }

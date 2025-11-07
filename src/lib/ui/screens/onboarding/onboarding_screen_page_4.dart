@@ -29,7 +29,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
               builder: (contextBuilder, _, _) {
                 return Text(
                   AppLocalizations.of(contextBuilder)!.your_daily_calories_need(
-                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyNeedKJoule.value)),
+                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _onboardingScreenViewModel.dailyNeedKJoule.value)),
                   ),
                   style: textTheme.titleSmall,
                 );
@@ -106,7 +106,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
               builder: (contextBuilder, _, _) {
                 return Text(
                   AppLocalizations.of(contextBuilder)!.your_daily_calories_target(
-                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_onboardingScreenViewModel.dailyTargetKJoule.value)),
+                    ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _onboardingScreenViewModel.dailyTargetKJoule.value)),
                   ),
                   style: textTheme.titleSmall,
                 );

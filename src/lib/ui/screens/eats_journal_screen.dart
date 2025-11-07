@@ -120,7 +120,7 @@ class EatsJournalScreen extends StatelessWidget {
                               SizedBox(height: 50),
                               Text(AppLocalizations.of(context)!.kcal, style: textTheme.titleLarge, textAlign: TextAlign.center),
                               Text(
-                                "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJouleGaugeData.currentValue))}/\n${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJouleGaugeData.maxValue))}",
+                                "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.currentValue))}/\n${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.maxValue))}",
                                 style: textTheme.titleMedium,
                                 textAlign: TextAlign.center,
                               ),
@@ -568,7 +568,12 @@ class EatsJournalScreen extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                              arguments: Food(name: OpenEatsJournalStrings.emptyString, foodSource: FoodSource.user, kJoule: 1, nutritionPerGramAmount: 100),
+                              arguments: Food(
+                                name: OpenEatsJournalStrings.emptyString,
+                                foodSource: FoodSource.user,
+                                kJoule: NutritionCalculator.kJouleForOncekCal,
+                                nutritionPerGramAmount: 100,
+                              ),
                             );
                           },
                           label: Text(AppLocalizations.of(context)!.food),

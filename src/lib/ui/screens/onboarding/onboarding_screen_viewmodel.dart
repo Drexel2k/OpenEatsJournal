@@ -81,7 +81,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
     int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg).round();
 
     await _settingsRepository.saveAllSettings(
-      AllSettings(
+      settings: AllSettings(
         darkMode: _settingsRepository.darkMode.value,
         gender: _gender.value!,
         birthday: _birthday.value!,

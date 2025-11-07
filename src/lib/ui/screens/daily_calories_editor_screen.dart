@@ -39,25 +39,25 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleMonday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleMonday.value!),
     );
     _kJouleTuesdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTuesday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value!),
     );
     _kJouleWednesdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleWednesday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value!),
     );
     _kJouleThursdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleThursday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleThursday.value!),
     );
     _kJouleFridayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleFriday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleFriday.value!),
     );
     _kJouleSaturdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSaturday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value!),
     );
     _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleSunday.value!),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleSunday.value!),
     );
 
     return Column(
@@ -79,7 +79,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                         return Text(
                           AppLocalizations.of(context)!.amount_kcal(
                             ConvertValidate.numberFomatterInt.format(
-                              NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value),
+                              NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value),
                             ),
                           ),
                           style: textTheme.titleMedium,
@@ -97,7 +97,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                     child: Text(
                       AppLocalizations.of(
                         context,
-                      )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_originalDailyTargetKJoule))),
+                      )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _originalDailyTargetKJoule))),
                       style: textTheme.bodySmall,
                     ),
                   ),
@@ -111,7 +111,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                     child: Text(
                       AppLocalizations.of(
                         context,
-                      )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_dailyKJoule))),
+                      )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyKJoule))),
                       style: textTheme.bodySmall,
                     ),
                   ),
@@ -133,7 +133,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleMonday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals:  intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -149,7 +149,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.monday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleMonday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleMonday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -180,7 +180,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -196,7 +196,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.tuesday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleTuesday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleTuesday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -227,7 +227,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -243,7 +243,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.wednesday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleWednesday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleWednesday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -274,7 +274,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleThursday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -290,7 +290,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.thursday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleThursday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleThursday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -321,7 +321,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleFriday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -337,7 +337,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.friday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleFriday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleFriday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -368,7 +368,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -384,7 +384,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.saturday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleSaturday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleSaturday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -415,7 +415,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                           onChanged: (value) {
                             int? intValue = int.tryParse(value);
                             _dailyCaloriesEditorScreenViewModel.kJouleSunday.value = intValue != null
-                                ? NutritionCalculator.getKJoulesFromKCals(intValue)
+                                ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                                 : intValue;
 
                             if (intValue != null) {
@@ -431,7 +431,7 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
                                 AppLocalizations.of(context)!.input_invalid(
                                   AppLocalizations.of(context)!.sunday_kcals,
                                   ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(_dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleSunday),
+                                    NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleSunday),
                                   ),
                                 ),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openeatsjournal/domain/food.dart';
+import 'package:openeatsjournal/domain/food_source.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
@@ -26,8 +27,11 @@ class FoodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(8);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     MeasurementUnit measurementUnit = _getMeasurementUnit();
+    String foodSourceLabel = _getFoodSourceLabel(context: context);
+    Color foodSourceColor = _getFoodSourceColor(colorScheme: colorScheme);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
@@ -58,12 +62,12 @@ class FoodCard extends StatelessWidget {
                   ),
                   Container(
                     margin: const EdgeInsets.fromLTRB(0, 7, 0, 0),
-                    child: Badge(label: Text("OFF")),
+                    child: Badge(label: Text(foodSourceLabel), backgroundColor: foodSourceColor),
                   ),
                   PopupMenuButton<String>(
                     onSelected: (selected) {},
                     itemBuilder: (BuildContext context) {
-                      return {"As New Food"}.map((String choice) {
+                      return {AppLocalizations.of(context)!.as_new_food}.map((String choice) {
                         return PopupMenuItem(value: choice, child: Text(choice));
                       }).toList();
                     },
@@ -82,7 +86,7 @@ class FoodCard extends StatelessWidget {
                           style: _textTheme.titleMedium,
                           AppLocalizations.of(
                             context,
-                          )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_food.kJoule))),
+                          )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _food.kJoule))),
                         ),
                         Text(
                           style: _textTheme.labelSmall,
@@ -121,7 +125,7 @@ class FoodCard extends StatelessWidget {
                         children: [
                           Text(
                             style: _textTheme.titleSmall,
-                            "+${AppLocalizations.of(context)!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(_getKJoulesToAdd())))}",
+                            "+${AppLocalizations.of(context)!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _getKJoulesToAdd())))}",
                           ),
                           Text(
                             style: _textTheme.labelSmall,
@@ -159,6 +163,32 @@ class FoodCard extends StatelessWidget {
         return MeasurementUnit.milliliter;
       }
     }
+  }
+
+  String _getFoodSourceLabel({required BuildContext context}) {
+    String label = AppLocalizations.of(context)!.usr;
+    if (_food.foodSource == FoodSource.openFoodFacts) {
+      label = AppLocalizations.of(context)!.off;
+    }
+
+    if (_food.foodSource == FoodSource.standard) {
+      label = AppLocalizations.of(context)!.std;
+    }
+
+    return label;
+  }
+
+  Color _getFoodSourceColor({required ColorScheme colorScheme}) {
+    Color color = colorScheme.primary;
+    if (_food.foodSource == FoodSource.openFoodFacts) {
+      color = colorScheme.secondary;
+    }
+
+    if (_food.foodSource == FoodSource.standard) {
+      color = colorScheme.tertiary;
+    }
+
+    return color;
   }
 
   int _getKJoulesToAdd() {

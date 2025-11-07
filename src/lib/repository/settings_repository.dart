@@ -32,32 +32,32 @@ class SettingsRepository extends ChangeNotifier {
 
   set gender(Gender value) {
     _gender = value;
-    _saveGender(value);
+    _saveGender(gender: value);
   }
 
   set birthday(value) {
     _birthday = value;
-    _saveBirthday(value);
+    _saveBirthday(birthday: value);
   }
 
   set height(value) {
     _height = value;
-    _saveHeight(value);
+    _saveHeight(height: value);
   }
 
   set weight(value) {
     _weight = value;
-    _saveWeight(value);
+    _saveWeight(weight:  value);
   }
 
   set activityFactor(value) {
     _activityFactor = value;
-    _saveActivityFactor(value);
+    _saveActivityFactor(activityFactor: value);
   }
 
   set weightTarget(value) {
     _weightTarget = value;
-    _saveWeightTarget(value);
+    _saveWeightTarget(weightTarget: value);
   }
 
   ValueNotifier<bool> get darkMode => _darkMode;
@@ -136,7 +136,7 @@ class SettingsRepository extends ChangeNotifier {
     _languageCode.addListener(_languageCodeChanged);
   }
 
-  Future<void> saveAllSettings(AllSettings settings) async {
+  Future<void> saveAllSettings({required AllSettings settings}) async {
     await _oejDatabase.setAllSettings(allSettings: settings);
 
     _initialized.value = true;
@@ -165,73 +165,73 @@ class SettingsRepository extends ChangeNotifier {
     await _oejDatabase.setStringSetting(setting: OpenEatsJournalStrings.settingLanguageCode, value: _languageCode.value);
   }
 
-  Future<void> _saveGender(Gender gender) async {
+  Future<void> _saveGender({required Gender gender}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingGender, value: gender.value);
   }
 
-  Future<void> _saveBirthday(DateTime birthday) async {
+  Future<void> _saveBirthday({required DateTime birthday}) async {
     await _oejDatabase.setDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday, value: birthday);
   }
 
-  Future<void> _saveHeight(int height) async {
+  Future<void> _saveHeight({required int height}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingHeight, value: height);
   }
 
-  Future<void> _saveWeight(double weight) async {
+  Future<void> _saveWeight({required double weight}) async {
     await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingWeight, value: weight);
   }
 
-  Future<void> _saveActivityFactor(double activityFactor) async {
+  Future<void> _saveActivityFactor({required double activityFactor}) async {
     await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor, value: activityFactor);
   }
 
-  Future<void> _saveWeightTarget(WeightTarget weightTarget) async {
+  Future<void> _saveWeightTarget({required WeightTarget weightTarget}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget, value: weightTarget.value);
   }
 
-  Future<void> saveKJouleMonday(int kJoule) async {
+  Future<void> saveKJouleMonday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday, value: kJoule);
     _kJouleMonday = kJoule;
   }
 
-  Future<void> saveKJouleTuesday(int kJoule) async {
+  Future<void> saveKJouleTuesday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday, value: kJoule);
     _kJouleTuesday = kJoule;
   }
 
-  Future<void> saveKJouleWednesday(int kJoule) async {
+  Future<void> saveKJouleWednesday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday, value: kJoule);
     _kJouleWednesday = kJoule;
   }
 
-  Future<void> saveKJouleThursday(int kJoule) async {
+  Future<void> saveKJouleThursday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleThursday, value: kJoule);
     _kJouleThursday = kJoule;
   }
 
-  Future<void> saveKJouleFriday(int kJoule) async {
+  Future<void> saveKJouleFriday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleFriday, value: kJoule);
     _kJouleFriday = kJoule;
   }
 
-  Future<void> saveKJouleSaturday(int kJoule) async {
+  Future<void> saveKJouleSaturday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday, value: kJoule);
     _kJouleSaturday = kJoule;
   }
 
-  Future<void> saveKJouleSunday(int kJoule) async {
+  Future<void> saveKJouleSunday({required int kJoule}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSunday, value: kJoule);
     _kJouleSunday = kJoule;
   }
 
-  Future<void> saveDailyKJouleTargetsSame(int dailyTargetKJoule) async {
-    await saveKJouleMonday(dailyTargetKJoule);
-    await saveKJouleTuesday(dailyTargetKJoule);
-    await saveKJouleWednesday(dailyTargetKJoule);
-    await saveKJouleThursday(dailyTargetKJoule);
-    await saveKJouleFriday(dailyTargetKJoule);
-    await saveKJouleSaturday(dailyTargetKJoule);
-    await saveKJouleSunday(dailyTargetKJoule);
+  Future<void> saveDailyKJouleTargetsSame({required int dailyTargetKJoule}) async {
+    await saveKJouleMonday(kJoule: dailyTargetKJoule);
+    await saveKJouleTuesday(kJoule: dailyTargetKJoule);
+    await saveKJouleWednesday(kJoule: dailyTargetKJoule);
+    await saveKJouleThursday(kJoule: dailyTargetKJoule);
+    await saveKJouleFriday(kJoule: dailyTargetKJoule);
+    await saveKJouleSaturday(kJoule: dailyTargetKJoule);
+    await saveKJouleSunday(kJoule: dailyTargetKJoule);
   }
 
   int getCurrentJournalDayTargetKJoule() {
