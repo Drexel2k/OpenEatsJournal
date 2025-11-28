@@ -56,7 +56,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
               Spacer(),
               Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
               Text(
-                "${ConvertValidate.numberFomatterDouble.format(_gaugeData.currentValue)}/\n${ConvertValidate.numberFomatterDouble.format(_gaugeData.maxValue)}",
+                "${ConvertValidate.getCleanDoubleString(doubleValue: _gaugeData.currentValue as double)}/\n${ConvertValidate.getCleanDoubleString(doubleValue: _gaugeData.maxValue as double)}",
                 style: textTheme.labelSmall,
                 textAlign: TextAlign.center,
               ),

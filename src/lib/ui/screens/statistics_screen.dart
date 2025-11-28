@@ -38,17 +38,17 @@ class StatisticsScreen extends StatelessWidget {
                 for (int dayIndex = 0; dayIndex <= 31; dayIndex++) {
                   currentDate = snapshot.data!.from!.add(Duration(days: dayIndex));
                   if (snapshot.data!.groupNutritionSums != null &&
-                      snapshot.data!.groupNutritionSums!.containsKey(ConvertValidate.dateformatterDateOnly.format(currentDate))) {
+                      snapshot.data!.groupNutritionSums!.containsKey(ConvertValidate.dateformatterDatabaseDateOnly.format(currentDate))) {
                     dayData.add({
                       OpenEatsJournalStrings.chartDateInformation: dateFormatter.format(currentDate),
                       OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                        kJoules: snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.nutritions.kJoule,
+                        kJoules: snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDatabaseDateOnly.format(currentDate)]!.nutritions.kJoule,
                       ),
                       OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                        kJoules: snapshot.data!.groupNutritionTargets![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.kJoule,
+                        kJoules: snapshot.data!.groupNutritionTargets![ConvertValidate.dateformatterDatabaseDateOnly.format(currentDate)]!.kJoule,
                       ),
                       OpenEatsJournalStrings.chartEntryCount:
-                          snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDateOnly.format(currentDate)]!.entryCount,
+                          snapshot.data!.groupNutritionSums![ConvertValidate.dateformatterDatabaseDateOnly.format(currentDate)]!.entryCount,
                     });
                   } else {
                     dayData.add({

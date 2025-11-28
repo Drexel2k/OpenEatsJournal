@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/gender.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
@@ -371,12 +371,10 @@ class OnboardingScreenPage3 extends StatelessWidget {
   }
 
   Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
-    final String languageCode = Localizations.localeOf(context).toString();
-
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now());
 
     if (date != null) {
-      _birthDayController.text = DateFormat.yMMMMd(languageCode).format(date);
+      _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(date);
       _onboardingScreenViewModel.birthday.value = date;
     }
   }

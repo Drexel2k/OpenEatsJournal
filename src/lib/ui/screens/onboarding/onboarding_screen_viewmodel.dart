@@ -86,7 +86,6 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         gender: _gender.value!,
         birthday: _birthday.value!,
         height: _height.value!,
-        weight: _weight.value!,
         activityFactor: _activityFactor.value!,
         weightTarget: _weightTarget.value!,
         kJouleMonday: dailyTargetKJoule,
@@ -100,7 +99,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       ),
     );
 
-    await _journalRepository.addWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
+    await _journalRepository.setWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
   }
 
   void _calculateKJoule() {

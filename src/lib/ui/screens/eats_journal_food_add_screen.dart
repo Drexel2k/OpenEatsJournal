@@ -78,7 +78,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         ? Text(
                             AppLocalizations.of(
                               context,
-                            )!.amount_carb(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.carbohydrates.value!)),
+                            )!.amount_carb(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.carbohydrates.value!)),
                           )
                         : Text(AppLocalizations.of(context)!.na_carb);
                   },
@@ -92,7 +92,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         ? Text(
                             AppLocalizations.of(
                               context,
-                            )!.amount_sugar(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.sugar.value!)),
+                            )!.amount_sugar(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.sugar.value!)),
                           )
                         : Text(AppLocalizations.of(context)!.na_sugar);
                   },
@@ -110,7 +110,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         ? Text(
                             AppLocalizations.of(
                               context,
-                            )!.amount_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.fat.value!)),
+                            )!.amount_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.fat.value!)),
                           )
                         : Text(AppLocalizations.of(context)!.na_fat);
                   },
@@ -124,7 +124,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         ? Text(
                             AppLocalizations.of(
                               context,
-                            )!.amount_saturated_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.saturatedFat.value!)),
+                            )!.amount_saturated_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.saturatedFat.value!)),
                           )
                         : Text(AppLocalizations.of(context)!.na_saturated_fat);
                   },
@@ -142,7 +142,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         ? Text(
                             AppLocalizations.of(
                               context,
-                            )!.amount_prot(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.protein.value!)),
+                            )!.amount_prot(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.protein.value!)),
                           )
                         : Text(AppLocalizations.of(context)!.na_prot);
                   },
@@ -156,7 +156,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                         ? Text(
                             AppLocalizations.of(
                               context,
-                            )!.amount_salt(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.salt.value!)),
+                            )!.amount_salt(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.salt.value!)),
                           )
                         : Text(AppLocalizations.of(context)!.na_salt);
                   },
@@ -312,14 +312,14 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                     ? Text(
                         AppLocalizations.of(
                           context,
-                        )!.amount_carb(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.carbohydrates!)),
+                        )!.amount_carb(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.carbohydrates!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_carb),
               ),
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.sugar != null
                     ? Text(
-                        AppLocalizations.of(context)!.amount_sugar(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.sugar!)),
+                        AppLocalizations.of(context)!.amount_sugar(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.sugar!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_sugar),
               ),
@@ -329,7 +329,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.fat != null
-                    ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.fat!)))
+                    ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.fat!)))
                     : Text(AppLocalizations.of(context)!.na_fat),
               ),
               Expanded(
@@ -337,7 +337,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                     ? Text(
                         AppLocalizations.of(
                           context,
-                        )!.amount_saturated_fat(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.saturatedFat!)),
+                        )!.amount_saturated_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.saturatedFat!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_saturated_fat),
               ),
@@ -350,14 +350,14 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                     ? Text(
                         AppLocalizations.of(
                           context,
-                        )!.amount_prot(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.protein!)),
+                        )!.amount_prot(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.protein!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_prot),
               ),
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.food.salt != null
                     ? Text(
-                        AppLocalizations.of(context)!.amount_salt(ConvertValidate.numberFomatterDouble.format(_eatsJournalFoodAddScreenViewModel.food.salt!)),
+                        AppLocalizations.of(context)!.amount_salt(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.salt!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_salt),
               ),

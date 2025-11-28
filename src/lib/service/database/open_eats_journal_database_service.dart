@@ -11,6 +11,7 @@ import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/week_of_year.dart";
+import "package:openeatsjournal/domain/weight_journal_entry.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/nutrition_sums.dart";
@@ -60,6 +61,7 @@ class OpenEatsJournalDatabaseService {
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFood} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef} INT,
         ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef} TEXT,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
@@ -272,7 +274,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> setDateTimeSetting({required String setting, required DateTime value}) async {
-    final String formattedDate = ConvertValidate.dateFormatterDateAndTime.format(value);
+    final String formattedDate = ConvertValidate.dateFormatterDatabaseDateAndTime.format(value);
 
     if (await _settingExists(setting: setting)) {
       _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: formattedDate});
@@ -313,7 +315,6 @@ class OpenEatsJournalDatabaseService {
     await setIntSetting(setting: OpenEatsJournalStrings.settingGender, value: allSettings.gender!.value);
     await setDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday, value: allSettings.birthday!);
     await setIntSetting(setting: OpenEatsJournalStrings.settingHeight, value: allSettings.height!);
-    await setDoubleSetting(setting: OpenEatsJournalStrings.settingWeight, value: allSettings.weight!);
     await setDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor, value: allSettings.activityFactor!);
     await setIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget, value: allSettings.weightTarget!.value);
     await setIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday, value: allSettings.kJouleMonday!);
@@ -352,7 +353,7 @@ class OpenEatsJournalDatabaseService {
       return null;
     }
 
-    return ConvertValidate.dateFormatterDateAndTime.parse(await _getSetting(setting: setting) as String);
+    return ConvertValidate.dateFormatterDatabaseDateAndTime.parse(await _getSetting(setting: setting) as String);
   }
 
   Future<AllSettings> getAllSettings() async {
@@ -365,7 +366,6 @@ class OpenEatsJournalDatabaseService {
       gender: gender != null ? Gender.getByValue(gender) : null,
       birthday: await getDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday),
       height: await getIntSetting(setting: OpenEatsJournalStrings.settingHeight),
-      weight: await getDoubleSetting(setting: OpenEatsJournalStrings.settingWeight),
       activityFactor: await getDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor),
       weightTarget: weightTarget != null ? WeightTarget.getByValue(weightTarget) : null,
       kJouleMonday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday),
@@ -378,37 +378,6 @@ class OpenEatsJournalDatabaseService {
     );
   }
 
-  Future<void> insertWeightJournalEntry({required DateTime day, required double weight}) async {
-    Database db = await instance.db;
-
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
-
-    final List<Map<String, Object?>> dbResult = await db.query(
-      OpenEatsJournalStrings.dbTableWeightJournal,
-      columns: [OpenEatsJournalStrings.dbColumnId],
-      where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
-      whereArgs: [formattedDate],
-    );
-
-    if (dbResult.length > 1) {
-      throw StateError("Only one weight journal entry may exist for a given date, multiple entries found for $formattedDate.");
-    }
-
-    if (dbResult.isEmpty) {
-      await db.insert(OpenEatsJournalStrings.dbTableWeightJournal, {
-        OpenEatsJournalStrings.dbColumnEntryDate: formattedDate,
-        OpenEatsJournalStrings.dbColumnWeight: weight,
-      });
-    } else {
-      await db.update(
-        OpenEatsJournalStrings.dbTableWeightJournal,
-        {OpenEatsJournalStrings.dbColumnEntryDate: formattedDate, OpenEatsJournalStrings.dbColumnWeight: weight},
-        where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
-        whereArgs: [formattedDate],
-      );
-    }
-  }
-
   Future<void> insertEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     Database db = await instance.db;
 
@@ -416,7 +385,7 @@ class OpenEatsJournalDatabaseService {
       throw StateError("Food for eats journal entry must have an id.");
     }
 
-    final String entryDateString = ConvertValidate.dateformatterDateOnly.format(eatsJournalEntry.entryDate);
+    final String entryDateString = ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate);
     await db.insert(OpenEatsJournalStrings.dbTableEatsJournal, {
       OpenEatsJournalStrings.dbColumnFoodIdRef: eatsJournalEntry.food?.id,
       OpenEatsJournalStrings.dbColumnEntryDate: entryDateString,
@@ -504,6 +473,7 @@ class OpenEatsJournalDatabaseService {
 
     Map<String, Object?> foodData = {
       OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
+      OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef: food.originalFoodSource?.value,
       OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef: food.foodSourceFoodId,
       OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
       OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
@@ -561,8 +531,8 @@ class OpenEatsJournalDatabaseService {
         dbResult = await db.query(
           OpenEatsJournalStrings.dbTableFoodUnit,
           columns: [OpenEatsJournalStrings.dbColumnId],
-          where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef}= ? AND ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef} = ?",
-          whereArgs: [food.foodSource.value, food.id, foodUnitWithOrder.object.foodUnitType!.value],
+          where: "${OpenEatsJournalStrings.dbColumnFoodIdRef}= ? AND ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef} = ?",
+          whereArgs: [food.id, foodUnitWithOrder.object.foodUnitType!.value],
         );
 
         if (dbResult.length > 1) {
@@ -609,6 +579,7 @@ class OpenEatsJournalDatabaseService {
         OpenEatsJournalStrings.dbColumnId,
         OpenEatsJournalStrings.dbColumnName,
         OpenEatsJournalStrings.dbColumnFoodSourceIdRef,
+        OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef,
         OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef,
         OpenEatsJournalStrings.dbColumnName,
         OpenEatsJournalStrings.dbColumnBrands,
@@ -641,6 +612,7 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnId},
         ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
         ${OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef},
+        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
         ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName},
         ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnBrands},
         ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
@@ -680,6 +652,9 @@ class OpenEatsJournalDatabaseService {
       name: dbRow[OpenEatsJournalStrings.dbColumnName] as String,
       foodSource: FoodSource.getByValue(dbRow[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] as int),
       kJoule: dbRow[OpenEatsJournalStrings.dbColumnKiloJoule] as int,
+      originalFoodSource: dbRow[OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] != null
+          ? FoodSource.getByValue(dbRow[OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] as int)
+          : null,
       foodSourceFoodId: dbRow[OpenEatsJournalStrings.dbColumndbColumnFoodSourceFoodIdRef] as String?,
       brands: dbRow[OpenEatsJournalStrings.dbColumnBrands] != null
           ? (dbRow[OpenEatsJournalStrings.dbColumnBrands] as String).split(",").map((String brand) => brand.trim()).toList()
@@ -732,7 +707,7 @@ class OpenEatsJournalDatabaseService {
   Future<void> insertOnceDayNutritionTarget({required DateTime day, required int dayTargetKJoule}) async {
     Database db = await instance.db;
 
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
 
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableDailyNutritionTarget,
@@ -756,7 +731,7 @@ class OpenEatsJournalDatabaseService {
   Future<void> insertOnceDaDateInfo({required DateTime date}) async {
     Database db = await instance.db;
 
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(date);
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
 
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableDateInfo,
@@ -783,7 +758,7 @@ class OpenEatsJournalDatabaseService {
   Future<Map<Meal, Nutritions>?> getDayNutritionSumsPerMeal({required DateTime day}) async {
     Database db = await instance.db;
 
-    final String formattedDate = ConvertValidate.dateformatterDateOnly.format(day);
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
 
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
       "SELECT ${OpenEatsJournalStrings.dbColumnMealIdRef}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum}, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum}, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS ${OpenEatsJournalStrings.dbResultSugarSum}, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS ${OpenEatsJournalStrings.dbResultFatSum}, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum}, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS ${OpenEatsJournalStrings.dbResultProteinSum}, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS ${OpenEatsJournalStrings.dbResultSaltSum} FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ? GROUP BY ${OpenEatsJournalStrings.dbColumnEntryDate}, ${OpenEatsJournalStrings.dbColumnMealIdRef}",
@@ -813,8 +788,8 @@ class OpenEatsJournalDatabaseService {
   Future<Map<String, int>?> getGroupedKJouleTargets({required DateTime from, required DateTime until, required String groupBy}) async {
     Database db = await instance.db;
 
-    final String fromFormatted = ConvertValidate.dateformatterDateOnly.format(from);
-    final String untilFormatted = ConvertValidate.dateformatterDateOnly.format(until);
+    final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
+    final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
 
     List<Map<String, Object?>> dbResult;
     if (groupBy == OpenEatsJournalStrings.dbColumnEntryDate) {
@@ -862,8 +837,8 @@ class OpenEatsJournalDatabaseService {
   Future<Map<String, NutritionSums>?> getGroupedNutritionSums({required DateTime from, required DateTime until, required String groupBy}) async {
     Database db = await instance.db;
 
-    final String fromFormatted = ConvertValidate.dateformatterDateOnly.format(from);
-    final String untilFormatted = ConvertValidate.dateformatterDateOnly.format(until);
+    final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
+    final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
 
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
       """SELECT
@@ -910,5 +885,123 @@ class OpenEatsJournalDatabaseService {
     } else {
       return null;
     }
+  }
+
+  Future<void> setWeightJournalEntry({required DateTime day, required double weight}) async {
+    Database db = await instance.db;
+
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableWeightJournal,
+      columns: [OpenEatsJournalStrings.dbColumnId],
+      where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
+      whereArgs: [formattedDate],
+    );
+
+    if (dbResult.length > 1) {
+      throw StateError("Only one weight journal entry may exist for a given date, multiple entries found for $formattedDate.");
+    }
+
+    if (dbResult.isEmpty) {
+      await db.insert(OpenEatsJournalStrings.dbTableWeightJournal, {
+        OpenEatsJournalStrings.dbColumnEntryDate: formattedDate,
+        OpenEatsJournalStrings.dbColumnWeight: weight,
+      });
+    } else {
+      await db.update(
+        OpenEatsJournalStrings.dbTableWeightJournal,
+        {OpenEatsJournalStrings.dbColumnEntryDate: formattedDate, OpenEatsJournalStrings.dbColumnWeight: weight},
+        where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
+        whereArgs: [formattedDate],
+      );
+    }
+  }
+
+  Future<bool> deleteWeightJournalEntry({required DateTime date}) async {
+    Database db = await instance.db;
+
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableWeightJournal,
+      columns: [OpenEatsJournalStrings.dbColumnId],
+      where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
+      whereArgs: [formattedDate],
+    );
+
+    if (dbResult.length > 1) {
+      throw StateError("Only one weight journal entry may exist for a given date, multiple entries found for $formattedDate.");
+    }
+
+    if (dbResult.isEmpty) {
+      return false;
+    }
+
+    db.delete(OpenEatsJournalStrings.dbTableWeightJournal, where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?", whereArgs: [formattedDate]);
+    return true;
+  }
+
+  Future<WeightJournalEntry?> getWeightJournalEntryFor({required DateTime date}) async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableWeightJournal,
+      columns: [OpenEatsJournalStrings.dbColumnEntryDate, OpenEatsJournalStrings.dbColumnWeight],
+      orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} DESC",
+      where: "${OpenEatsJournalStrings.dbColumnEntryDate} <= ?",
+      limit: 1,
+      whereArgs: [ConvertValidate.dateformatterDatabaseDateOnly.format(date)],
+    );
+
+    if (dbResult.isNotEmpty) {
+      return WeightJournalEntry(
+        date: ConvertValidate.dateformatterDatabaseDateOnly.parse(dbResult[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
+        weight: dbResult[0][OpenEatsJournalStrings.dbColumnWeight] as double,
+      );
+    }
+
+    return null;
+  }
+
+  Future<double> getLastWeightJournalEntry() async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableWeightJournal,
+      columns: [OpenEatsJournalStrings.dbColumnEntryDate, OpenEatsJournalStrings.dbColumnWeight],
+      orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} DESC",
+      limit: 1,
+    );
+
+    return dbResult[0][OpenEatsJournalStrings.dbColumnWeight] as double;
+  }
+
+  Future<List<WeightJournalEntry>?> get10WeightJournalEntries({required int startIndex}) async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableWeightJournal,
+      columns: [OpenEatsJournalStrings.dbColumnEntryDate, OpenEatsJournalStrings.dbColumnWeight],
+      orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} DESC",
+      limit: 10,
+      offset: startIndex * 10,
+    );
+
+    if (dbResult.isNotEmpty) {
+      List<WeightJournalEntry> result = [];
+      for (Map<String, Object?> row in dbResult) {
+        result.add(
+          WeightJournalEntry(
+            date: ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbColumnEntryDate] as String),
+            weight: row[OpenEatsJournalStrings.dbColumnWeight] as double,
+          ),
+        );
+      }
+
+      return result;
+    }
+
+    return null;
   }
 }

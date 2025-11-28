@@ -67,9 +67,29 @@ class FoodCard extends StatelessWidget {
                   PopupMenuButton<String>(
                     onSelected: (selected) {},
                     itemBuilder: (BuildContext context) {
-                      return {AppLocalizations.of(context)!.as_new_food}.map((String choice) {
-                        return PopupMenuItem(value: choice, child: Text(choice));
-                      }).toList();
+                      if (_food.foodSource == FoodSource.openFoodFacts) {
+                        return [
+                          PopupMenuItem(
+                            onTap: () {
+                              Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.asUserFood(food: _food));
+                            },
+                            child: Text(AppLocalizations.of(context)!.as_new_food),
+                          ),
+                        ];
+                      }
+
+                      if (_food.foodSource == FoodSource.user) {
+                        return [
+                          PopupMenuItem(
+                            onTap: () {
+                              Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: _food);
+                            },
+                            child: Text(AppLocalizations.of(context)!.edit),
+                          ),
+                        ];
+                      }
+
+                      return [];
                     },
                     child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
                   ),
@@ -103,13 +123,13 @@ class FoodCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _food.carbohydrates != null
-                            ? Text(AppLocalizations.of(context)!.amount_carb(ConvertValidate.numberFomatterDouble.format(_food.carbohydrates!)))
+                            ? Text(AppLocalizations.of(context)!.amount_carb(ConvertValidate.getCleanDoubleString(doubleValue: _food.carbohydrates!)))
                             : Text(AppLocalizations.of(context)!.na_carb),
                         _food.fat != null
-                            ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.numberFomatterDouble.format(_food.fat!)))
+                            ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.getCleanDoubleString(doubleValue: _food.fat!)))
                             : Text(AppLocalizations.of(context)!.na_fat),
                         _food.protein != null
-                            ? Text(AppLocalizations.of(context)!.amount_prot(ConvertValidate.numberFomatterDouble.format(_food.protein!)))
+                            ? Text(AppLocalizations.of(context)!.amount_prot(ConvertValidate.getCleanDoubleString(doubleValue: _food.protein!)))
                             : Text(AppLocalizations.of(context)!.na_prot),
                       ],
                     ),

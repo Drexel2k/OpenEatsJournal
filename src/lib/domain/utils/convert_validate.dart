@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 import 'package:openeatsjournal/domain/utils/week_of_year.dart';
 
@@ -6,17 +7,49 @@ class ConvertValidate {
   static void init({required String languageCode}) {
     numberFomatterInt = NumberFormat(null, languageCode);
     numberFomatterDouble = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);
+    _decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
+
+    initializeDateFormatting(languageCode);
+    dateFormatterDisplayLongDateOnly = DateFormat.yMMMMd(languageCode);
   }
 
   static late NumberFormat numberFomatterInt;
   static late NumberFormat numberFomatterDouble;
-  static DateFormat dateformatterDateOnly = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
-  static DateFormat dateFormatterDateAndTime = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
+  static final DateFormat dateformatterDatabaseDateOnly = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
+  static final DateFormat dateFormatterDatabaseDateAndTime = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
+  static late DateFormat dateFormatterDisplayLongDateOnly;
+  static late String _decimalSeparator;
 
   // static double? convertLocalStringToDouble({required String numberString, required String languageCode}) {
   //   num? number = NumberFormat(null, languageCode).tryParse(numberString);
   //   return number == null ? null : number as double;
   // }
+
+  static String getCleanDoubleString({required double doubleValue}) {
+    String decimalString = numberFomatterDouble.format(doubleValue);
+    bool cleaned = false;
+
+    while (!cleaned) {
+      if (decimalString.contains(_decimalSeparator) && (decimalString.endsWith(_decimalSeparator) || decimalString.endsWith("0"))) {
+        decimalString = decimalString.substring(0, decimalString.length - 1);
+      } else {
+        cleaned = true;
+      }
+    }
+
+    return decimalString;
+  }
+
+  //if original string ended with decimal separator, leave it to allow adding of decimals durign editing.
+  static String getCleanDoubleEditString({required double doubleValue, required String doubleValueString}) {
+    String decimalString = getCleanDoubleString(doubleValue: doubleValue);
+
+    if (doubleValueString.endsWith(_decimalSeparator)) {
+      decimalString = "$decimalString$_decimalSeparator";
+    }
+
+    return decimalString;
+  }
 
   static int? convertLocalStringToInt({required String numberString, required String languageCode}) {
     num? number = NumberFormat(null, languageCode).tryParse(numberString);

@@ -10,6 +10,7 @@ class Food {
     required FoodSource foodSource,
     required int kJoule,
     int? id,
+    FoodSource? originalFoodSource,
     String? foodSourceFoodId,
     List<String>? brands,
     int? nutritionPerGramAmount,
@@ -25,6 +26,7 @@ class Food {
        _brands = brands,
        _foodSource = foodSource,
        _id = id,
+       _originalFoodSource = originalFoodSource,
        _foodSourceFoodId = foodSourceFoodId,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
@@ -38,10 +40,37 @@ class Food {
        _quantity = quantity,
        _foodUnitsWithOrder = [];
 
+  Food.asUserFood({required Food food})
+    : _name = food.name,
+      _brands = food.brands != null ? List.from(food.brands!) : null,
+      _foodSource = FoodSource.user,
+      _originalFoodSource = food.originalFoodSource ?? food.foodSource,
+      _foodSourceFoodId = food.foodSourceFoodId,
+      _kJoule = food.kJoule,
+      _nutritionPerGramAmount = food.nutritionPerGramAmount,
+      _nutritionPerMilliliterAmount = food.nutritionPerMilliliterAmount,
+      _carbohydrates = food.carbohydrates,
+      _sugar = food.sugar,
+      _fat = food.fat,
+      _saturatedFat = food.saturatedFat,
+      _protein = food.protein,
+      _quantity = food.quantity,
+      _foodUnitsWithOrder = food.foodUnitsWithOrder.map((ObjectWithOrder<FoodUnit> foodUnitWithOrder) {
+        return ObjectWithOrder<FoodUnit>(
+          object: FoodUnit(
+            name: foodUnitWithOrder.object.name,
+            amount: foodUnitWithOrder.object.amount,
+            amountMeasurementUnit: foodUnitWithOrder.object.amountMeasurementUnit,
+          ),
+          order: foodUnitWithOrder.order,
+        );
+      }).toList();
+
   String _name;
   final List<String>? _brands;
   int? _id;
   final FoodSource _foodSource;
+  final FoodSource? _originalFoodSource;
   final String? _foodSourceFoodId;
   int _kJoule;
   int? _nutritionPerGramAmount;
@@ -147,6 +176,7 @@ class Food {
   String get name => _name;
   List<String>? get brands => _brands;
   FoodSource get foodSource => _foodSource;
+  FoodSource? get originalFoodSource => _originalFoodSource;
   int? get id => _id;
   String? get foodSourceFoodId => _foodSourceFoodId;
   int? get nutritionPerGramAmount => _nutritionPerGramAmount;

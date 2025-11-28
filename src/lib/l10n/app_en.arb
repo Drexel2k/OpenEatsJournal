@@ -27,7 +27,8 @@
   "your_weight": "Your weight (kg):",
   "birthday": "Birthday",
   "height": "Height",
-  "weight": "Weight",
+  "weight": "weight",
+  "weight_capital": "Weight",
   "your_acitivty_level": "Your activity level:",
   "acitivity_level_explanation": "Very low: \nSitting, no activity\n\nLow: \nSitting, light sports (1-2 times / week)\n\nMedium: \nPredominantly sitting, some walking, moderate sports (2-3 times / week)\n\nHigh: \nPredominantly standing/walking, demanding sports (3-5 times / week)\n\nVery high: \nPhysical demanding, demanding sports (6-7 times / week)",
   "very_low": "Very low",
@@ -171,6 +172,15 @@
   "as_new_food": "As New Food",
   "usr": "USR",
   "std": "STD",
-  "off": "OFF"
+  "off": "OFF",
+  "edit": "Edit",
+  "update": "Update",
+  "kg" : "kg",
+  "settings_weight_explanation": "Weight of the last weight journal entry. The weight entered is not saved here, but is only used for the kCal calculation.",
+  "na": "n/a",
+  "weight_journal": "Weight Journal",
+  "delete_weight_journal_entry": "Delete Weight Entry",
+  "cant_delete_last_weight_journal_entry": "Deletion of last weight entry not possible.",
+  "add_weight_journal_entry": "Add Weight Entry"
 }
 

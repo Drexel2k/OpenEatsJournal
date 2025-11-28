@@ -14,25 +14,18 @@ class DailyCaloriesEditorScreen extends StatelessWidget {
     required int originalDailyTargetKJoule,
   }) : _dailyCaloriesEditorScreenViewModel = dailyCaloriesEditorScreenViewModel,
        _dailyKJoule = dailyKJoule,
-       _originalDailyTargetKJoule = originalDailyTargetKJoule,
-       _kJouleMondayController = TextEditingController(),
-       _kJouleTuesdayController = TextEditingController(),
-       _kJouleWednesdayController = TextEditingController(),
-       _kJouleThursdayController = TextEditingController(),
-       _kJouleFridayController = TextEditingController(),
-       _kJouleSaturdayController = TextEditingController(),
-       _kJouleSundayController = TextEditingController();
+       _originalDailyTargetKJoule = originalDailyTargetKJoule;
 
   final DailyCaloriesEditorScreenViewModel _dailyCaloriesEditorScreenViewModel;
   final int _dailyKJoule;
   final int _originalDailyTargetKJoule;
-  final TextEditingController _kJouleMondayController;
-  final TextEditingController _kJouleTuesdayController;
-  final TextEditingController _kJouleWednesdayController;
-  final TextEditingController _kJouleThursdayController;
-  final TextEditingController _kJouleFridayController;
-  final TextEditingController _kJouleSaturdayController;
-  final TextEditingController _kJouleSundayController;
+  final TextEditingController _kJouleMondayController = TextEditingController();
+  final TextEditingController _kJouleTuesdayController = TextEditingController();
+  final TextEditingController _kJouleWednesdayController = TextEditingController();
+  final TextEditingController _kJouleThursdayController = TextEditingController();
+  final TextEditingController _kJouleFridayController = TextEditingController();
+  final TextEditingController _kJouleSaturdayController = TextEditingController();
+  final TextEditingController _kJouleSundayController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

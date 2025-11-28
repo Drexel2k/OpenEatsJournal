@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
@@ -32,12 +31,11 @@ class SettingsScreenPagePersonal extends StatelessWidget {
   Widget build(BuildContext context) {
     final String languageCode = Localizations.localeOf(context).toString();
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
-    _birthDayController.text = DateFormat.yMMMMd(languageCode).format(_settingsScreenViewModel.birthday.value);
+    _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(_settingsScreenViewModel.birthday.value);
 
     _heightController.text = ConvertValidate.numberFomatterInt.format(_settingsScreenViewModel.height.value);
-    _weightController.text = ConvertValidate.numberFomatterDouble.format(_settingsScreenViewModel.weight.value);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _settingsScreenViewModel.weight.value!);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
@@ -223,13 +221,13 @@ class SettingsScreenPagePersonal extends StatelessWidget {
               children: [
                 Expanded(child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleSmall)),
                 Flexible(
-                  child: ValueListenableBuilder(
-                    valueListenable: _settingsScreenViewModel.height,
-                    builder: (_, _, _) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SettingsTextField(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _settingsScreenViewModel.height,
+                        builder: (_, _, _) {
+                          return SettingsTextField(
                             controller: _heightController,
                             keyboardType: TextInputType.numberWithOptions(signed: false),
                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -240,23 +238,23 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                                 _heightController.text = ConvertValidate.numberFomatterInt.format(intValue);
                               }
                             },
-                          ),
-                          ValueListenableBuilder(
-                            valueListenable: _settingsScreenViewModel.heightValid,
-                            builder: (_, _, _) {
-                              if (!_settingsScreenViewModel.heightValid.value) {
-                                return Text(
-                                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.height, _settingsScreenViewModel.repositoryHeight),
-                                  style: textTheme.labelSmall!.copyWith(color: Colors.red),
-                                );
-                              } else {
-                                return SizedBox();
-                              }
-                            },
-                          ),
-                        ],
-                      );
-                    },
+                          );
+                        },
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: _settingsScreenViewModel.heightValid,
+                        builder: (_, _, _) {
+                          if (!_settingsScreenViewModel.heightValid.value) {
+                            return Text(
+                              AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.height, _settingsScreenViewModel.repositoryHeight),
+                              style: textTheme.labelSmall!.copyWith(color: Colors.red),
+                            );
+                          } else {
+                            return SizedBox();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -265,7 +263,19 @@ class SettingsScreenPagePersonal extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleSmall)),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleSmall),
+                      Tooltip(
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: Duration(seconds: 60),
+                        message: AppLocalizations.of(context)!.settings_weight_explanation,
+                        child: Icon(Icons.help_outline),
+                      ),
+                    ],
+                  ),
+                ),
                 Flexible(
                   child: ValueListenableBuilder(
                     valueListenable: _settingsScreenViewModel.weight,
@@ -299,16 +309,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               _settingsScreenViewModel.weight.value = doubleValue as double?;
 
                               if (doubleValue != null) {
-                                String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                                if (value.endsWith(decimalSeparator)) {
-                                  formatted = formatted.substring(0, formatted.length - 1);
-                                }
-
-                                if (!value.contains(decimalSeparator)) {
-                                  formatted = formatted.substring(0, formatted.length - 2);
-                                }
-
-                                _weightController.text = formatted;
+                                _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                               }
                             },
                           ),
@@ -318,8 +319,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                               if (!_settingsScreenViewModel.weightValid.value) {
                                 return Text(
                                   AppLocalizations.of(context)!.input_invalid(
-                                    AppLocalizations.of(context)!.weight,
-                                    ConvertValidate.numberFomatterDouble.format(_settingsScreenViewModel.repositoryWeight),
+                                    AppLocalizations.of(context)!.weight_capital,
+                                    ConvertValidate.getCleanDoubleString(doubleValue: _settingsScreenViewModel.lastValidWeight),
                                   ),
                                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                 );
@@ -558,7 +559,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now());
 
     if (date != null) {
-      _birthDayController.text = DateFormat.yMMMMd(languageCode).format(date);
+      _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(date);
       _settingsScreenViewModel.birthday.value = date;
     }
   }

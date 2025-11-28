@@ -8,7 +8,6 @@ class AllSettings {
     Gender? gender,
     DateTime? birthday,
     int? height,
-    double? weight,
     double? activityFactor,
     WeightTarget? weightTarget,
     int? kJouleMonday,
@@ -23,7 +22,6 @@ class AllSettings {
        _gender = gender,
        _birthday = birthday,
        _height = height,
-       _weight = weight,
        _activityFactor = activityFactor,
        _weightTarget = weightTarget,
        _kJouleMonday = kJouleMonday,
@@ -39,7 +37,6 @@ class AllSettings {
   final Gender? _gender;
   final DateTime? _birthday;
   final int? _height;
-  final double? _weight;
   final double? _activityFactor;
   final WeightTarget? _weightTarget;
   final int? _kJouleMonday;
@@ -55,7 +52,6 @@ class AllSettings {
   Gender? get gender => _gender;
   DateTime? get birthday => _birthday;
   int? get height => _height;
-  double? get weight => _weight;
   double? get activityFactor => _activityFactor;
   WeightTarget? get weightTarget => _weightTarget;
   int? get kJouleMonday => _kJouleMonday;

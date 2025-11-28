@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:openeatsjournal/domain/food_unit.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/object_with_order.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
+import 'package:openeatsjournal/global_navigator_key.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
@@ -36,9 +36,7 @@ class FoodEditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String languageCode = Localizations.localeOf(context).toString();
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final String decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
     _nameController.text = _foodEditScreenViewModel.name.value;
     _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
@@ -249,16 +247,7 @@ class FoodEditScreen extends StatelessWidget {
                         _foodEditScreenViewModel.carbohydrates.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                          if (value.endsWith(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 1);
-                          }
-
-                          if (!value.contains(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 2);
-                          }
-
-                          _carbohydratesController.text = formatted;
+                          _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -294,16 +283,7 @@ class FoodEditScreen extends StatelessWidget {
                         _foodEditScreenViewModel.sugar.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                          if (value.endsWith(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 1);
-                          }
-
-                          if (!value.contains(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 2);
-                          }
-
-                          _sugarController.text = formatted;
+                          _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -349,16 +329,7 @@ class FoodEditScreen extends StatelessWidget {
                         _foodEditScreenViewModel.fat.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                          if (value.endsWith(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 1);
-                          }
-
-                          if (!value.contains(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 2);
-                          }
-
-                          _fatController.text = formatted;
+                          _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -394,16 +365,7 @@ class FoodEditScreen extends StatelessWidget {
                         _foodEditScreenViewModel.saturatedFat.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                          if (value.endsWith(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 1);
-                          }
-
-                          if (!value.contains(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 2);
-                          }
-
-                          _saturatedFatController.text = formatted;
+                          _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -449,16 +411,7 @@ class FoodEditScreen extends StatelessWidget {
                         _foodEditScreenViewModel.protein.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                          if (value.endsWith(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 1);
-                          }
-
-                          if (!value.contains(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 2);
-                          }
-
-                          _proteinController.text = formatted;
+                          _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -494,16 +447,7 @@ class FoodEditScreen extends StatelessWidget {
                         _foodEditScreenViewModel.salt.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          String formatted = ConvertValidate.numberFomatterDouble.format(doubleValue);
-                          if (value.endsWith(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 1);
-                          }
-
-                          if (!value.contains(decimalSeparator)) {
-                            formatted = formatted.substring(0, formatted.length - 2);
-                          }
-
-                          _saltController.text = formatted;
+                          _saltController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -626,34 +570,43 @@ class FoodEditScreen extends StatelessWidget {
             child: SizedBox(
               height: 48,
               child: OutlinedButton(
-                onPressed: () {
-                  if (!_foodEditScreenViewModel.createFood()) {
+                onPressed: () async {
+                  if (!(await _foodEditScreenViewModel.createFood())) {
                     SnackBar snackBar = SnackBar(
-                      content: Text(AppLocalizations.of(context)!.cant_create_food),
+                      content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_food),
                       action: SnackBarAction(
-                        label: AppLocalizations.of(context)!.close,
+                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
                         onPressed: () {
                           //Click on SnackbarAction closes the SnackBar,
                           //nothing else to do here...
                         },
                       ),
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
                   } else {
                     SnackBar snackBar = SnackBar(
-                      content: Text(AppLocalizations.of(context)!.food_created),
+                      content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.food_created),
                       action: SnackBarAction(
-                        label: AppLocalizations.of(context)!.close,
+                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
                         onPressed: () {
                           //Click on SnackbarAction closes the SnackBar,
                           //nothing else to do here...
                         },
                       ),
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
                   }
                 },
-                child: Text(AppLocalizations.of(context)!.create),
+                child: ValueListenableBuilder(
+                  valueListenable: _foodEditScreenViewModel.foodId,
+                  builder: (_, _, _) {
+                    if (_foodEditScreenViewModel.foodId.value == null) {
+                      return Text(AppLocalizations.of(context)!.create);
+                    } else {
+                      return Text(AppLocalizations.of(context)!.update);
+                    }
+                  },
+                ),
               ),
             ),
           ),

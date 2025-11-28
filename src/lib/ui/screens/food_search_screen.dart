@@ -1,12 +1,13 @@
 import "dart:async";
 
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
@@ -57,7 +58,7 @@ class FoodSearchScreen extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        DateFormat.yMMMMd(_foodSearchScreenViewModel.languageCode).format(_foodSearchScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_foodSearchScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -169,7 +170,7 @@ class FoodSearchScreen extends StatelessWidget {
             },
           ),
           ListenableBuilder(
-            listenable: _foodSearchScreenViewModel.foodSearchResultChangedNotifier,
+            listenable: _foodSearchScreenViewModel.foodSearchResultChanged,
             builder: (_, _) {
               if (_foodSearchScreenViewModel.foodSearchResult.isNotEmpty) {
                 return Row(
@@ -226,7 +227,7 @@ class FoodSearchScreen extends StatelessWidget {
             },
           ),
           ListenableBuilder(
-            listenable: _foodSearchScreenViewModel.foodSearchResultChangedNotifier,
+            listenable: _foodSearchScreenViewModel.foodSearchResultChanged,
             builder: (contextBuilder, _) {
               return Expanded(
                 child: ListView.builder(
@@ -247,8 +248,8 @@ class FoodSearchScreen extends StatelessWidget {
                       onCardTap: (Food cardFood) {
                         Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsAdd, arguments: cardFood);
                       },
-                      onAddJournalEntryPressed: (Food cardFood, int amount, MeasurementUnit measurementUnit) {
-                        _foodSearchScreenViewModel.addEatsJournalEntry(
+                      onAddJournalEntryPressed:  (Food cardFood, int amount, MeasurementUnit measurementUnit) async {
+                        await _foodSearchScreenViewModel.addEatsJournalEntry(
                           EatsJournalEntry.fromFood(
                             food: cardFood,
                             entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
@@ -293,7 +294,12 @@ class FoodSearchScreen extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                              arguments: Food(name: OpenEatsJournalStrings.emptyString, foodSource: FoodSource.user, kJoule: 1, nutritionPerGramAmount: 100),
+                              arguments: Food(
+                                name: OpenEatsJournalStrings.emptyString,
+                                foodSource: FoodSource.user,
+                                kJoule: NutritionCalculator.kJouleForOncekCal,
+                                nutritionPerGramAmount: 100,
+                              ),
                             );
                           },
                           label: Text(AppLocalizations.of(context)!.food),

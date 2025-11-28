@@ -58,6 +58,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnDate = "date";
   static const String dbColumnWeight = "weight";
   static const String dbColumnFoodSourceIdRef = "food_source_id_ref";
+  static const String dbColumnOriginalFoodSourceIdRef = "original_food_source_id_ref";
   static const String dbColumndbColumnFoodSourceFoodIdRef = "food_source_food_id_ref";
   static const String dbColumnFoodIdRef = "food_id_ref";
   static const String dbColumnName = "name";

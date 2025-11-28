@@ -41,7 +41,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   int _currentPage = 1;
   String _currentSearchText = OpenEatsJournalStrings.emptyString;
   String _currentLanguageCode = OpenEatsJournalStrings.emptyString;
-  final ExternalTriggerChangedNotifier _foodSearchResultChangedNotifier = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangedNotifier _foodSearchResultChanged = ExternalTriggerChangedNotifier();
   final ValueNotifier<bool> _showInitialLoading = ValueNotifier(false);
   final ValueNotifier<int?> _errorCode = ValueNotifier(null);
   String _errorMessage = OpenEatsJournalStrings.emptyString;
@@ -58,7 +58,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   List<ObjectWithOrder<Food>> get foodSearchResult => _foodSearchResult;
   bool get hasMore => _hasMore;
   bool get isLoading => _isLoading;
-  ExternalTriggerChangedNotifier get foodSearchResultChangedNotifier => _foodSearchResultChangedNotifier;
+  ExternalTriggerChangedNotifier get foodSearchResultChanged => _foodSearchResultChanged;
   ValueNotifier<bool> get showInitialLoading => _showInitialLoading;
   ValueNotifier<int?> get errorCode => _errorCode;
   String get errorMessage => _errorMessage;
@@ -194,7 +194,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _foodSearchResult.clear();
     _sortButtonChanged.notify();
     _showInitialLoading.value = true;
-    _foodSearchResultChangedNotifier.notify();
+    _foodSearchResultChanged.notify();
   }
 
   _searchFinished() {
@@ -207,12 +207,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _foodSearchResult.addAll(foods);
     }
 
-    _foodSearchResultChangedNotifier.notify();
+    _foodSearchResultChanged.notify();
   }
 
   void _clearSearchResult() {
     _foodSearchResult.clear();
-    _foodSearchResultChangedNotifier.notify();
+    _foodSearchResultChanged.notify();
     _sortButtonChanged.notify();
   }
 
@@ -228,14 +228,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _foodSearchResult.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
     }
 
-    _foodSearchResultChangedNotifier.notify();
+    _foodSearchResultChanged.notify();
   }
 
   ObjectWithOrder toElement(Food e, int order) {
     return ObjectWithOrder(object: e, order: order);
   }
 
-  void addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
+  Future<void> addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
     if (eatsJournalEntry.food != null) {
       await _foodRepository.setFoodByExternalId(food: eatsJournalEntry.food!);
     }
@@ -256,7 +256,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _currentJournalDate.dispose();
     _currentMeal.dispose();
     _floatincActionMenuElapsed.dispose();
-    _foodSearchResultChangedNotifier.dispose();
+    _foodSearchResultChanged.dispose();
     _showInitialLoading.dispose();
     _errorCode.dispose();
     _searchMessageCode.dispose();

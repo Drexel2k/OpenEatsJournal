@@ -6,6 +6,7 @@ import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/weight_journal_entry.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
@@ -13,6 +14,10 @@ import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_edit_screen.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -36,6 +41,9 @@ class EatsJournalScreen extends StatelessWidget {
     double dimension = 200;
     double radius = 0.9;
 
+    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
+    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
+
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteEatsJournal,
       title: AppLocalizations.of(context)!.eats_journal,
@@ -58,7 +66,7 @@ class EatsJournalScreen extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        DateFormat.yMMMMd(_eatsJournalScreenViewModel.languageCode).format(_eatsJournalScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -212,7 +220,7 @@ class EatsJournalScreen extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(AppLocalizations.of(context)!.breakfast),
-                                            Text("${ConvertValidate.numberFomatterDouble.format(breakfastPercent)}%"),
+                                            Text("${ConvertValidate.getCleanDoubleString(doubleValue: breakfastPercent)}%"),
                                           ],
                                         ),
                                       ),
@@ -239,7 +247,7 @@ class EatsJournalScreen extends StatelessWidget {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(AppLocalizations.of(context)!.lunch),
-                                                Text("${ConvertValidate.numberFomatterDouble.format(lunchPercent)}%"),
+                                                Text("${ConvertValidate.getCleanDoubleString(doubleValue: lunchPercent)}%"),
                                               ],
                                             ),
                                           ),
@@ -268,7 +276,7 @@ class EatsJournalScreen extends StatelessWidget {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(AppLocalizations.of(context)!.dinner),
-                                                Text("${ConvertValidate.numberFomatterDouble.format(dinnerPercent)}%"),
+                                                Text("${ConvertValidate.getCleanDoubleString(doubleValue: dinnerPercent)}%"),
                                               ],
                                             ),
                                           ),
@@ -277,34 +285,83 @@ class EatsJournalScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                Stack(
+                                Column(
                                   children: [
-                                    Column(
+                                    SizedBox(height: 150),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(height: 150),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 80,
-                                              child: Align(
-                                                alignment: Alignment.centerRight,
-                                                child: GaugeDistribution(value: snacksPercent, startValue: breakfastPercent + lunchPercent + dinnerPercent),
-                                              ),
+                                        SizedBox(
+                                          width: 80,
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: GaugeDistribution(value: snacksPercent, startValue: breakfastPercent + lunchPercent + dinnerPercent),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            margin: const EdgeInsets.only(top: 11),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(AppLocalizations.of(context)!.snacks),
+                                                Text("${ConvertValidate.getCleanDoubleString(doubleValue: snacksPercent)}%"),
+                                              ],
                                             ),
-                                            Expanded(
-                                              child: Container(
-                                                margin: const EdgeInsets.only(top: 11),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(AppLocalizations.of(context)!.snacks),
-                                                    Text("${ConvertValidate.numberFomatterDouble.format(snacksPercent)}%"),
-                                                  ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    SizedBox(height: 200),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 20),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 54,
+                                          child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: Icon(Icons.scale, size: 45, color: colorScheme.primary),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            margin: const EdgeInsets.only(top: 11),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(AppLocalizations.of(context)!.weight),
+                                                ListenableBuilder(
+                                                  listenable: _eatsJournalScreenViewModel.currentWeightChanged,
+                                                  builder: (_, _) {
+                                                    return FutureBuilder<WeightJournalEntry?>(
+                                                      future: _eatsJournalScreenViewModel.currentWeight,
+                                                      builder: (BuildContext context, AsyncSnapshot<WeightJournalEntry?> snapshot) {
+                                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                                          return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
+                                                        } else if (snapshot.hasError) {
+                                                          throw StateError("Something went wrong: ${snapshot.error}");
+                                                        } else if (snapshot.hasData) {
+                                                          return Text(
+                                                            snapshot.data != null
+                                                                ? "${ConvertValidate.getCleanDoubleString(doubleValue: snapshot.data!.weight)}${AppLocalizations.of(context)!.kg}"
+                                                                : AppLocalizations.of(context)!.na,
+                                                          );
+                                                        } else {
+                                                          return Text("No Data Available");
+                                                        }
+                                                      },
+                                                    );
+                                                  },
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -318,6 +375,7 @@ class EatsJournalScreen extends StatelessWidget {
                                         Row(
                                           children: [
                                             Expanded(
+                                              //Main nutrition button
                                               child: SizedBox(height: 48, child: OutlinedButton(onPressed: () {}, child: null)),
                                             ),
                                           ],
@@ -450,6 +508,58 @@ class EatsJournalScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                                Column(
+                                  children: [
+                                    SizedBox(height: 207),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 48,
+                                            //weight button
+                                            child: OutlinedButton(
+                                              onPressed: () async {
+                                                try {
+                                                  await showDialog<void>(
+                                                    useSafeArea: true,
+                                                    barrierDismissible: false,
+                                                    context: navigatorKey.currentContext!,
+                                                    builder: (BuildContext contextBuilder) {
+                                                      double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                                      double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                                      return Dialog(
+                                                        insetPadding: EdgeInsets.fromLTRB(
+                                                          horizontalPadding,
+                                                          verticalPadding,
+                                                          horizontalPadding,
+                                                          verticalPadding,
+                                                        ),
+                                                        child: WeightJournalEditScreen(
+                                                          weightEditScreenViewModel: WeightJournalEditScreenViewModel(
+                                                            journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+
+                                                  _eatsJournalScreenViewModel.refreshCurrentWeight();
+                                                } on Exception catch (exc, stack) {
+                                                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
+                                                } on Error catch (error, stack) {
+                                                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                                                }
+                                              },
+                                              child: null,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(child: SizedBox()),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ],
@@ -484,19 +594,23 @@ class EatsJournalScreen extends StatelessWidget {
                                     child: IconButton(
                                       onPressed: () async {
                                         try {
+                                          double weight = await _eatsJournalScreenViewModel.getLastWeightJournalEntry();
                                           await showDialog<void>(
                                             useSafeArea: true,
                                             barrierDismissible: false,
-                                            context: context,
+                                            context: navigatorKey.currentContext!,
                                             builder: (BuildContext contextBuilder) {
-                                              double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                              double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
                                               return Dialog(
-                                                insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                                                insetPadding: EdgeInsets.fromLTRB(
+                                                  dialogHorizontalPadding,
+                                                  dialogVerticalPadding,
+                                                  dialogHorizontalPadding,
+                                                  dialogVerticalPadding,
+                                                ),
                                                 child: SettingsScreen(
                                                   settingsScreenViewModel: SettingsScreenViewModel(
                                                     settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
+                                                    weight: weight,
                                                   ),
                                                 ),
                                               );
@@ -557,7 +671,51 @@ class EatsJournalScreen extends StatelessWidget {
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text(AppLocalizations.of(context)!.weight_journal_entry)),
+                        child: FloatingActionButton.extended(
+                          heroTag: "4",
+                          onPressed: () async {
+                            try {
+                              double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
+                              double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
+                              double weight = await _eatsJournalScreenViewModel.getLastWeightJournalEntry();
+
+                              WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
+                                initialWeight: weight,
+                              );
+
+                              if ((await showDialog<bool>(
+                                useSafeArea: true,
+                                barrierDismissible: false,
+                                context: navigatorKey.currentContext!,
+                                builder: (BuildContext contextBuilder) {
+                                  return Dialog(
+                                    insetPadding: EdgeInsets.fromLTRB(
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                    ),
+                                    child: WeightJournalEntryAddScreen(
+                                      weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
+                                      date: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                    ),
+                                  );
+                                },
+                              ))!) {
+                                await _eatsJournalScreenViewModel.setWeightJournalEntry(
+                                  date: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                  weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
+                                );
+                                _eatsJournalScreenViewModel.refreshCurrentWeight();
+                              }
+                            } on Exception catch (exc, stack) {
+                              await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
+                            } on Error catch (error, stack) {
+                              await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                            }
+                          },
+                          label: Text(AppLocalizations.of(context)!.weight_journal_entry),
+                        ),
                       ),
                       SizedBox(height: 5),
                       SizedBox(

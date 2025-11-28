@@ -27,7 +27,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _salt = ValueNotifier(food.salt),
       _foodUnitsWithOrderCopy = food.foodUnitsWithOrder
           .map((ObjectWithOrder<FoodUnit> foodUnitWithOrder) => ObjectWithOrder(object: foodUnitWithOrder.object, order: foodUnitWithOrder.order))
-          .toList() {
+          .toList(),
+      _foodId = ValueNotifier(food.id) {
     _foodUnitsWithOrderCopy.sort((ObjectWithOrder<FoodUnit> unit1, ObjectWithOrder<FoodUnit> unit2) => unit1.order - unit2.order);
     _foodUnitEditorViewModels.addAll(
       food.foodUnitsWithOrder
@@ -72,6 +73,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final ExternalTriggerChangedNotifier _reorderableStateChanged = ExternalTriggerChangedNotifier();
   final ValueNotifier<bool> _foodUnitsCopyValid = ValueNotifier(true);
   final ValueNotifier<bool> _foodUnitsEditMode = ValueNotifier(true);
+  final ValueNotifier<int?> _foodId;
 
   //Work on a copy to remain invalid states during editing by the user, e.g. when gram amount is set to null while milliliter amount is not null all food units
   //with unit grams are removed from the food object. That might be annoying for the user as he maybe sets the gram amount to null to immediately enter a new
@@ -99,6 +101,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   List<ObjectWithOrder<FoodUnit>> get foodFoodUnitsWithOrderCopy => _foodUnitsWithOrderCopy;
   List<FoodUnitEditorViewModel> get foodUnitEditorViewModels => _foodUnitEditorViewModels;
+  ValueNotifier<int?> get foodId => _foodId;
 
   void addFoddUnit({required MeasurementUnit measurementUnit}) {
     FoodUnit foodUnit = FoodUnit(name: "", amount: 100, amountMeasurementUnit: measurementUnit);
@@ -227,7 +230,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     _reorderableStateChanged.notify();
   }
 
-  bool createFood() {
+  Future<bool> createFood() async {
     bool foodValid = true;
 
     if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {
@@ -316,7 +319,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
         _food.defaultFoodUnit = foodUnitEditorViewModel.foodUnit;
       }
 
-      _foodRepository.setFood(food: _food);
+      await _foodRepository.setFood(food: _food);
+      _foodId.value = _food.id;
     }
 
     return foodValid;

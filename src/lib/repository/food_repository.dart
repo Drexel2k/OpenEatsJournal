@@ -485,7 +485,7 @@ class FoodRepository {
     await _oejDatabase.setFoodByExternalId(food: food);
   }
 
-  void setFood({required Food food}) async {
+  Future<void> setFood({required Food food}) async {
     await _oejDatabase.setFood(food: food);
   }
 }

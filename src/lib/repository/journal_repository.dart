@@ -3,6 +3,7 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/weight_journal_entry.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
 import "package:openeatsjournal/repository/journal_repository_get_sums_result.dart";
 import "package:openeatsjournal/domain/nutrition_sums.dart";
@@ -27,11 +28,6 @@ class JournalRepository {
   Future<void> addEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: eatsJournalEntry.entryDate);
     await _oejDatabase.insertEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
-  }
-
-  Future<void> addWeightJournalEntry({required DateTime date, required double weight}) async {
-    await _oejDatabase.insertOnceDaDateInfo(date: date);
-    await _oejDatabase.insertWeightJournalEntry(day: date, weight: weight);
   }
 
   Future<FoodRepositoryGetDayMealSumsResult> getDayMealSums({required DateTime date}) async {
@@ -109,13 +105,12 @@ class JournalRepository {
     today = DateTime(today.year, today.month, today.day);
 
     //set start of week (monday) on before14weeks
-    DateTime before14weeks =  today;
+    DateTime before14weeks = today;
     if (today.weekday != 1) {
       before14weeks = before14weeks.subtract(Duration(days: before14weeks.weekday - 1));
     }
 
     before14weeks = before14weeks.subtract(Duration(days: 98));
-    
 
     Map<String, int>? weekKJouleTargets = await _oejDatabase.getGroupedKJouleTargets(
       from: before14weeks,
@@ -203,5 +198,26 @@ class JournalRepository {
     } else {
       throw StateError("Day data and day targets must both exist or both not exist.");
     }
+  }
+
+  Future<void> setWeightJournalEntry({required DateTime date, required double weight}) async {
+    await _oejDatabase.insertOnceDaDateInfo(date: date);
+    await _oejDatabase.setWeightJournalEntry(day: date, weight: weight);
+  }
+
+  Future<bool> deleteWeightJournalEntry(DateTime date) async {
+    return await _oejDatabase.deleteWeightJournalEntry(date: date);
+  }  
+
+  Future<WeightJournalEntry?> getWeightJournalEntryFor(DateTime date) async {
+    return await _oejDatabase.getWeightJournalEntryFor(date: date);
+  }
+
+  Future<double> getLastWeightJournalEntry() async {
+    return await _oejDatabase.getLastWeightJournalEntry();
+  }
+
+  Future<List<WeightJournalEntry>?> get10WeightJournalEntries({required int startIndex}) async {
+    return await _oejDatabase.get10WeightJournalEntries(startIndex: startIndex);
   }
 }

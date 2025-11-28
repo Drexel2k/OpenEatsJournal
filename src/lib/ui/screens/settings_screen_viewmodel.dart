@@ -6,14 +6,15 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class SettingsScreenViewModel extends ChangeNotifier {
-  SettingsScreenViewModel({required SettingsRepository settingsRepository})
+  SettingsScreenViewModel({required SettingsRepository settingsRepository, required double weight})
     : _settingsRepository = settingsRepository,
       _darkMode = ValueNotifier(settingsRepository.darkMode.value),
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
       _height = ValueNotifier(settingsRepository.height),
-      _weight = ValueNotifier(settingsRepository.weight),
+      _lastValidWeight = weight,
+      _weight = ValueNotifier(weight),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
       _weightTarget = ValueNotifier(settingsRepository.weightTarget) {
     _setDailyKJoule();
@@ -39,6 +40,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<DateTime> _birthday;
   final ValueNotifier<int?> _height;
   final ValueNotifier<bool> _heightValid = ValueNotifier(true);
+  double _lastValidWeight;
   final ValueNotifier<double?> _weight;
   final ValueNotifier<bool> _weightValid = ValueNotifier(true);
   final ValueNotifier<double> _activityFactor;
@@ -56,6 +58,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<DateTime> get birthday => _birthday;
   ValueNotifier<int?> get height => _height;
   ValueNotifier<bool> get heightValid => _heightValid;
+  double get lastValidWeight => _lastValidWeight;
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<bool> get weightValid => _weightValid;
   ValueNotifier<double> get activityFactor => _activityFactor;
@@ -69,7 +72,6 @@ class SettingsScreenViewModel extends ChangeNotifier {
   int get kJouleSaturday => _settingsRepository.kJouleSaturday;
   int get kJouleSunday => _settingsRepository.kJouleSunday;
   int get repositoryHeight => _settingsRepository.height;
-  double get repositoryWeight => _settingsRepository.weight;
 
   SettingsRepository get settingsRepository => _settingsRepository;
 
@@ -98,7 +100,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
     return NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-        weightKg: _settingsRepository.weight,
+        weightKg: _lastValidWeight,
         heightCm: _settingsRepository.height,
         ageYear: age,
         gender: _settingsRepository.gender,
@@ -148,10 +150,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
   void _weightChanged() {
     if (_weight.value != null && _weight.value! > 0 && _weight.value! <= 1000) {
       _weightValid.value = true;
-      
+
       _weightDebouncer.run(
         callback: () async {
-          _settingsRepository.weight = _weight.value;
+          _lastValidWeight = _weight.value!;
           _setDailyKJoule();
         },
       );

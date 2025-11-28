@@ -28,6 +28,7 @@
   "birthday": "Geburtstag",
   "height": "Größe",
   "weight": "Gewicht",
+  "weight_capital": "Gewicht",
   "your_acitivty_level": "Dein Aktivitätslevel:",
   "acitivity_level_explanation": "Sehr niedrig: \nSitzen, keine Aktivität\n\nNiedrig: \nSitzen, wenig Sport (1-2 Mal / Woche)\n\nMedium: \nÜberwiegend sitzen, etwas laufen, moderater Sport (2-3 Mal / Woche)\n\nHoch: \nÜberwiegend stehen/laufen, fordernder Sport (3-5 Mal / Woche)\n\nSehr hoch: \nKörperlich fordernd, fordernder Sport (6-7 Mal / Woche)",
   "very_low": "Sehr niedrig",
@@ -171,5 +172,14 @@
   "as_new_food": "Als neues Lebensmittel",
   "usr": "USR",
   "std": "STD",
-  "off": "OFF"
+  "off": "OFF",
+  "edit": "Bearbeiten",
+  "update": "Aktualisieren",
+  "kg" : "kg",
+  "settings_weight_explanation": "Gewicht des letzten Gewichttagebucheintrags. Das eingegebene Gewicht wird hier nicht gespeicher sonder nur für die kCal Kalkulation genutzt.",
+  "na": "n/a",
+  "weight_journal": "Gewichtstagebuch",
+  "delete_weight_journal_entry": "Gewichtseintrag löschen",
+  "cant_delete_last_weight_journal_entry": "Löschen des letzten Gewichtseintrags nicht möglich.",
+  "add_weight_journal_entry": "Gewichtseintrag hinzufügen"
 }

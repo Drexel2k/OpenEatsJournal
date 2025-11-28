@@ -19,7 +19,6 @@ class SettingsRepository extends ChangeNotifier {
   late Gender _gender;
   late DateTime _birthday;
   late int _height;
-  late double _weight;
   late double _activityFactor;
   late WeightTarget _weightTarget;
   late int _kJouleMonday;
@@ -45,11 +44,6 @@ class SettingsRepository extends ChangeNotifier {
     _saveHeight(height: value);
   }
 
-  set weight(value) {
-    _weight = value;
-    _saveWeight(weight:  value);
-  }
-
   set activityFactor(value) {
     _activityFactor = value;
     _saveActivityFactor(activityFactor: value);
@@ -65,7 +59,6 @@ class SettingsRepository extends ChangeNotifier {
   Gender get gender => _gender;
   DateTime get birthday => _birthday;
   int get height => _height;
-  double get weight => _weight;
   double get activityFactor => _activityFactor;
   WeightTarget get weightTarget => _weightTarget;
   int get kJouleMonday => _kJouleMonday;
@@ -104,7 +97,6 @@ class SettingsRepository extends ChangeNotifier {
         allSettings.gender != null &&
         allSettings.birthday != null &&
         allSettings.height != null &&
-        allSettings.weight != null &&
         allSettings.activityFactor != null &&
         allSettings.weightTarget != null &&
         allSettings.kJouleMonday != null &&
@@ -120,7 +112,6 @@ class SettingsRepository extends ChangeNotifier {
       _gender = allSettings.gender!;
       _birthday = allSettings.birthday!;
       _height = allSettings.height!;
-      _weight = allSettings.weight!;
       _activityFactor = allSettings.activityFactor!;
       _weightTarget = allSettings.weightTarget!;
       _kJouleMonday = allSettings.kJouleMonday!;
@@ -144,7 +135,6 @@ class SettingsRepository extends ChangeNotifier {
     _gender = settings.gender!;
     _birthday = settings.birthday!;
     _height = settings.height!;
-    _weight = settings.weight!;
     _activityFactor = settings.activityFactor!;
     _weightTarget = settings.weightTarget!;
     _kJouleMonday = settings.kJouleMonday!;
@@ -175,10 +165,6 @@ class SettingsRepository extends ChangeNotifier {
 
   Future<void> _saveHeight({required int height}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingHeight, value: height);
-  }
-
-  Future<void> _saveWeight({required double weight}) async {
-    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingWeight, value: weight);
   }
 
   Future<void> _saveActivityFactor({required double activityFactor}) async {
