@@ -80,7 +80,7 @@
   "weeks": "weeks",
   "months": "months",
   "last_amount_timeinfo": "Last {ammount} {timeInfo}",
-  "average_per_day_number": "Average per day: {average}",
+  "average_per_day_number": "day ⌀: {average}",
   "app_settings": "App Settings",
   "personal_settings": "Personal Settings",
   "personal_settings_abbreviated": "Personal Settings",
@@ -181,6 +181,7 @@
   "weight_journal": "Weight Journal",
   "delete_weight_journal_entry": "Delete Weight Entry",
   "cant_delete_last_weight_journal_entry": "Deletion of last weight entry not possible.",
-  "add_weight_journal_entry": "Add Weight Entry"
+  "add_weight_journal_entry": "Add Weight Entry",
+  "energy": "Energy"
 }
 

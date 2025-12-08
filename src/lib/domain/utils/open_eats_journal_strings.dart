@@ -17,9 +17,15 @@ class OpenEatsJournalStrings {
   static const String piece = "piece";
 
   static const String chartKCalIntake = "kCalIntake";
+  static const String chartKCalIntakeVar = "kCalIntakeVar";
   static const String chartKCalTarget = "kCalTarget";
+  static const String chartKCalTargetVar = "kCalTargetVar";
   static const String chartDateInformation = "dateInformation";
+  static const String chartDateVar = "dateVar";
+  static const String chartDateLabelVar = "dateLabelVar";
   static const String chartEntryCount = "entryCount";
+  static const String chartWeight = "weight";
+  static const String chartWeightVar = "weightVar";
 
   static const String settingDarkmode = "darkmode";
   static const String settingGender = "gender";
@@ -80,8 +86,8 @@ class OpenEatsJournalStrings {
   static const String dbColumnMealIdRef = "meal_id_ref";
   static const String dbColumnUrl = "url";
   static const String dbColumnBrands = "brands";
-  static const String dbColumnWeekOfYearNormalized = "week_of_year_normalized";
-  static const String dbColumnMonthOfYearNormalized = "month_of_year_normalized";
+  static const String dbColumnMonthStartDate = "month_start_date";
+  static const String dbColumnWeekStartDate = "week_start_date";
   static const String dbColumnRowId = "rowid";
   static const String dbResultDayCount = "day_count";
   static const String dbResultKJouleSum = "kilo_joule_sum";
@@ -91,6 +97,7 @@ class OpenEatsJournalStrings {
   static const String dbResultSaturatedFatSum = "saturated_fat_sum";
   static const String dbResultProteinSum = "protein_sum";
   static const String dbResultSaltSum = "salt_sum";
+  static const String dbResultWeightMax = "weight_max";
   static const String dbResultGroupColumn = "group_column";
 
   static const String dbIndexDateIndexTableDailyNutritionTarget = "date_index_$dbTableDailyNutritionTarget";

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
 class ErrorHandlers {
-  static Future<bool?> showException({
+  static Future showException({
     required BuildContext context,
     required StackTrace stackTrace,
     Exception? exception,
     Error? error
   }) async {
-    return showDialog<bool>(
+    return showDialog(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext contextBuilder) {
@@ -40,7 +40,7 @@ class ErrorHandlers {
             TextButton(
               child: Text("OK"),
               onPressed: () async {
-                Navigator.pop(contextBuilder, true);
+                Navigator.pop(contextBuilder);
               },
             ),
           ],

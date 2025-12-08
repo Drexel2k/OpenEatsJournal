@@ -19,7 +19,7 @@ import "package:openeatsjournal/ui/screens/weight_journal_edit_screen_viewmodel.
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
-import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
@@ -82,7 +82,7 @@ class EatsJournalScreen extends StatelessWidget {
                       onSelected: (int? mealValue) {
                         _eatsJournalScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
-                      dropdownMenuEntries: LocalizedMealDropDownEntries.getMealDropDownMenuEntries(context: context),
+                      dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
                       initialSelection: _eatsJournalScreenViewModel.currentMeal.value.value,
                     );
                   },

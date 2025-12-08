@@ -100,9 +100,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _initSearch();
     _currentSearchText = searchText;
     _currentLanguageCode = languageCode;
-    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((
-      FoodRepositoryGetFoodBySearchTextResult result,
-    ) {
+    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((FoodRepositoryGetFoodBySearchTextResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
@@ -249,6 +247,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   void toggleFloatingActionButtons() {
     _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
+  }
+
+  Future<double> getLastWeightJournalEntry() async {
+    return await _journalRepository.getLastWeightJournalEntry();
+  }
+
+  Future<void> setWeightJournalEntry({required DateTime date, required double weight}) async {
+    await _journalRepository.setWeightJournalEntry(date: date, weight: weight);
   }
 
   @override

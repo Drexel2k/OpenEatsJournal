@@ -13,8 +13,10 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
-import "package:openeatsjournal/ui/utils/localized_meal_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 import "package:openeatsjournal/ui/widgets/food_card.dart";
@@ -74,7 +76,7 @@ class FoodSearchScreen extends StatelessWidget {
                       onSelected: (int? mealValue) {
                         _foodSearchScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
-                      dropdownMenuEntries: LocalizedMealDropDownEntries.getMealDropDownMenuEntries(context: context),
+                      dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
                       initialSelection: _foodSearchScreenViewModel.currentMeal.value.value,
                     );
                   },
@@ -248,7 +250,7 @@ class FoodSearchScreen extends StatelessWidget {
                       onCardTap: (Food cardFood) {
                         Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsAdd, arguments: cardFood);
                       },
-                      onAddJournalEntryPressed:  (Food cardFood, int amount, MeasurementUnit measurementUnit) async {
+                      onAddJournalEntryPressed: (Food cardFood, int amount, MeasurementUnit measurementUnit) async {
                         await _foodSearchScreenViewModel.addEatsJournalEntry(
                           EatsJournalEntry.fromFood(
                             food: cardFood,
@@ -283,7 +285,50 @@ class FoodSearchScreen extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "4", onPressed: () {}, label: Text(AppLocalizations.of(context)!.weight_journal_entry)),
+                        child: FloatingActionButton.extended(
+                          heroTag: "4",
+                          onPressed: () async {
+                            try {
+                              double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
+                              double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
+                              double weight = await _foodSearchScreenViewModel.getLastWeightJournalEntry();
+
+                              WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
+                                initialWeight: weight,
+                              );
+
+                              if ((await showDialog<bool>(
+                                useSafeArea: true,
+                                barrierDismissible: false,
+                                context: navigatorKey.currentContext!,
+                                builder: (BuildContext contextBuilder) {
+                                  return Dialog(
+                                    insetPadding: EdgeInsets.fromLTRB(
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                    ),
+                                    child: WeightJournalEntryAddScreen(
+                                      weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
+                                      date: _foodSearchScreenViewModel.currentJournalDate.value,
+                                    ),
+                                  );
+                                },
+                              ))!) {
+                                await _foodSearchScreenViewModel.setWeightJournalEntry(
+                                  date: _foodSearchScreenViewModel.currentJournalDate.value,
+                                  weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
+                                );
+                              }
+                            } on Exception catch (exc, stack) {
+                              await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
+                            } on Error catch (error, stack) {
+                              await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                            }
+                          },
+                          label: Text(AppLocalizations.of(context)!.weight_journal_entry),
+                        ),
                       ),
                       SizedBox(height: 5),
                       SizedBox(

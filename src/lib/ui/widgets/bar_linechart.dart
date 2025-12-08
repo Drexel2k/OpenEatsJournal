@@ -5,10 +5,18 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_type.dart";
 
-class BarchartTargetActual extends StatelessWidget {
-  const BarchartTargetActual({super.key, required data, required statisticsType}) : _data = data, _statisticsType = statisticsType;
+//Values and bars on the corner cases are cut off, due to limitation on setting marginMin and marginMax on a TimeScale when min and max values are set.
+//We could work with a linear scale here, but the placement of xAxis values is different than on the line charts, that looks also strange, especially
+//on switching charts.
+//See issue https://github.com/entronad/graphic/issues/358
+class BarLinechart extends StatelessWidget {
+  const BarLinechart({super.key, required List<Tuple> data, required Map<DateTime, String> xAxisInfo, required StatisticType statisticsType})
+    : _data = data,
+      _xAxisInfo = xAxisInfo,
+      _statisticsType = statisticsType;
 
   final List<Tuple> _data;
+  final Map<DateTime, String> _xAxisInfo;
   final StatisticType _statisticsType;
 
   @override
@@ -61,6 +69,7 @@ class BarchartTargetActual extends StatelessWidget {
       }
     }
 
+    //offset for point values
     double markOffset = -15;
     int yAxisScaleMaxValue = (maxValue * 1.3).toInt();
     if (maxValue >= 100000) {
@@ -80,10 +89,10 @@ class BarchartTargetActual extends StatelessWidget {
     double xAxisLabelXOffset = 12;
     double xAxisLabelYOffset = 15;
     if (_statisticsType == StatisticType.weekly) {
-      xAxisLabelXOffset = 6;
+      xAxisLabelXOffset = 14;
       xAxisLabelYOffset = 18;
     } else if (_statisticsType == StatisticType.monthly) {
-      xAxisLabelXOffset = 8;
+      xAxisLabelXOffset = 12;
       xAxisLabelYOffset = 18;
     }
 
@@ -97,6 +106,32 @@ class BarchartTargetActual extends StatelessWidget {
       average = (totalkCalIntake / totalEntryCount).toInt();
     }
 
+    DateTime displayFrom =
+        _data.reduce((currentEntry, nextEntry) {
+              if ((currentEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime).compareTo(
+                    nextEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime,
+                  ) <
+                  1) {
+                return currentEntry;
+              } else {
+                return nextEntry;
+              }
+            })[OpenEatsJournalStrings.chartDateInformation]!
+            as DateTime;
+
+    DateTime displayUntil =
+        _data.reduce((currentEntry, nextEntry) {
+              if ((currentEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime).compareTo(
+                    nextEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime,
+                  ) >
+                  1) {
+                return currentEntry;
+              } else {
+                return nextEntry;
+              }
+            })[OpenEatsJournalStrings.chartDateInformation]!
+            as DateTime;
+
     String timeInfo = AppLocalizations.of(context)!.days;
     if (_statisticsType == StatisticType.weekly) {
       timeInfo = AppLocalizations.of(context)!.weeks;
@@ -108,8 +143,13 @@ class BarchartTargetActual extends StatelessWidget {
 
     return Column(
       children: [
-        Center(child: Text(header, style: textTheme.titleMedium)),
-        Center(child: Text(AppLocalizations.of(context)!.average_per_day_number(ConvertValidate.numberFomatterInt.format(average)), style: textTheme.titleSmall)),
+        Row(
+          children: [
+            Text(header, style: textTheme.titleMedium),
+            Spacer(),
+            Text(AppLocalizations.of(context)!.average_per_day_number(ConvertValidate.numberFomatterInt.format(average)), style: textTheme.titleSmall),
+          ],
+        ),
         SizedBox(height: 5),
         SizedBox(
           width: 400,
@@ -117,28 +157,42 @@ class BarchartTargetActual extends StatelessWidget {
           child: Chart(
             data: _data,
             variables: {
-              OpenEatsJournalStrings.chartDateInformation: Variable(accessor: (Map map) => map[OpenEatsJournalStrings.chartDateInformation] as String),
-              OpenEatsJournalStrings.chartKCalIntake: Variable(
-                accessor: (Map map) => map[OpenEatsJournalStrings.chartKCalIntake] != null ? map[OpenEatsJournalStrings.chartKCalIntake] as num : 0,
+              OpenEatsJournalStrings.chartDateVar: Variable(
+                accessor: (Map<dynamic, dynamic> map) => map[OpenEatsJournalStrings.chartDateInformation] as DateTime,
+                scale: TimeScale(
+                  min: displayFrom,
+                  max: displayUntil,
+                  ticks: _xAxisInfo.keys.toList(),
+                  formatter: (DateTime date) {
+                    return _xAxisInfo[date];
+                  },
+                ),
+              ),
+              OpenEatsJournalStrings.chartKCalIntakeVar: Variable(
+                accessor: (Map<dynamic, dynamic> map) =>
+                    map[OpenEatsJournalStrings.chartKCalIntake] != null ? map[OpenEatsJournalStrings.chartKCalIntake] as num : 0,
                 scale: LinearScale(
-                  max: yAxisScaleMaxValue,
                   min: 0,
+                  max: yAxisScaleMaxValue,
                   //value is num/double, this removes the decimal separator on y axis label.
                   formatter: (value) => ConvertValidate.numberFomatterInt.format(value.toInt()),
                   //ticks: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
                 ),
               ),
-              OpenEatsJournalStrings.chartKCalTarget: Variable(
-                accessor: (Map map) => map[OpenEatsJournalStrings.chartKCalTarget] != null ? map[OpenEatsJournalStrings.chartKCalTarget] as num : 0,
-                scale: LinearScale(max: yAxisScaleMaxValue, min: 0),
+              OpenEatsJournalStrings.chartKCalTargetVar: Variable(
+                accessor: (Map<dynamic, dynamic> map) =>
+                    map[OpenEatsJournalStrings.chartKCalTarget] != null ? map[OpenEatsJournalStrings.chartKCalTarget] as num : 0,
+                scale: LinearScale(min: 0, max: yAxisScaleMaxValue),
               ),
             },
             marks: [
               IntervalMark(
                 size: SizeEncode(value: barSize),
                 label: LabelEncode(
-                  encoder: (tuple) => Label(
-                    ConvertValidate.numberFomatterInt.format(tuple[OpenEatsJournalStrings.chartKCalIntake]),
+                  encoder: (Map<dynamic, dynamic> map) => Label(
+                    map[OpenEatsJournalStrings.chartKCalIntakeVar] > 0
+                        ? ConvertValidate.numberFomatterInt.format(map[OpenEatsJournalStrings.chartKCalIntakeVar])
+                        : OpenEatsJournalStrings.emptyString,
                     LabelStyle(
                       textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                       offset: Offset(6, markOffset),
@@ -149,7 +203,7 @@ class BarchartTargetActual extends StatelessWidget {
                 color: ColorEncode(value: colorTheme.primary),
               ),
               LineMark(
-                position: Varset(OpenEatsJournalStrings.chartDateInformation) * Varset(OpenEatsJournalStrings.chartKCalTarget),
+                position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(OpenEatsJournalStrings.chartKCalTargetVar),
                 size: SizeEncode(value: 1.5),
                 color: ColorEncode(value: colorTheme.tertiary),
               ),
@@ -173,6 +227,7 @@ class BarchartTargetActual extends StatelessWidget {
                 grid: PaintStyle(strokeColor: colorTheme.surfaceDim, strokeWidth: 1),
               ),
             ],
+            padding: (_) => const EdgeInsets.fromLTRB(40, 5, 20, 20),
           ),
         ),
       ],

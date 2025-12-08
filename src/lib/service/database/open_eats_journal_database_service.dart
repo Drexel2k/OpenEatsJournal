@@ -10,7 +10,6 @@ import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
-import "package:openeatsjournal/domain/utils/week_of_year.dart";
 import "package:openeatsjournal/domain/weight_journal_entry.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -114,8 +113,8 @@ class OpenEatsJournalDatabaseService {
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableDateInfo} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnDate} DATE NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnWeekOfYearNormalized} TEXT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnMonthOfYearNormalized} TEXT NOT NULL
+        ${OpenEatsJournalStrings.dbColumnMonthStartDate} DATE NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnWeekStartDate} DATE NOT NULL
       );""");
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodSource} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
@@ -745,12 +744,12 @@ class OpenEatsJournalDatabaseService {
     }
 
     if (dbResult.isEmpty) {
-      WeekOfYear weekOfYear = ConvertValidate.getweekNumber(date);
+      DateTime weekOfYearStartDate = ConvertValidate.getWeekStartDate(date);
 
       await db.insert(OpenEatsJournalStrings.dbTableDateInfo, {
         OpenEatsJournalStrings.dbColumnDate: formattedDate,
-        OpenEatsJournalStrings.dbColumnWeekOfYearNormalized: "${weekOfYear.year}-${weekOfYear.week.toString().padLeft(2, "0")}",
-        OpenEatsJournalStrings.dbColumnMonthOfYearNormalized: "${date.year}-${date.month.toString().padLeft(2, "0")}",
+        OpenEatsJournalStrings.dbColumnMonthStartDate: ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime(date.year, date.month, 1)),
+        OpenEatsJournalStrings.dbColumnWeekStartDate: ConvertValidate.dateformatterDatabaseDateOnly.format(weekOfYearStartDate),
       });
     }
   }
@@ -761,7 +760,22 @@ class OpenEatsJournalDatabaseService {
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
 
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
-      "SELECT ${OpenEatsJournalStrings.dbColumnMealIdRef}, SUM(${OpenEatsJournalStrings.dbColumnKiloJoule}) AS ${OpenEatsJournalStrings.dbResultKJouleSum}, SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum}, SUM(${OpenEatsJournalStrings.dbColumnSugar}) AS ${OpenEatsJournalStrings.dbResultSugarSum}, SUM(${OpenEatsJournalStrings.dbColumnFat}) AS ${OpenEatsJournalStrings.dbResultFatSum}, SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat}) AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum}, SUM(${OpenEatsJournalStrings.dbColumnProtein}) AS ${OpenEatsJournalStrings.dbResultProteinSum}, SUM(${OpenEatsJournalStrings.dbColumnSalt}) AS ${OpenEatsJournalStrings.dbResultSaltSum} FROM ${OpenEatsJournalStrings.dbTableEatsJournal} WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ? GROUP BY ${OpenEatsJournalStrings.dbColumnEntryDate}, ${OpenEatsJournalStrings.dbColumnMealIdRef}",
+      """SELECT
+      ${OpenEatsJournalStrings.dbColumnMealIdRef}                                                               ,
+      SUM(${OpenEatsJournalStrings.dbColumnKiloJoule})     AS ${OpenEatsJournalStrings.dbResultKJouleSum}       ,
+      SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates}) AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum},
+      SUM(${OpenEatsJournalStrings.dbColumnSugar})         AS ${OpenEatsJournalStrings.dbResultSugarSum}        ,
+      SUM(${OpenEatsJournalStrings.dbColumnFat})           AS ${OpenEatsJournalStrings.dbResultFatSum}          ,
+      SUM(${OpenEatsJournalStrings.dbColumnSaturatedFat})  AS ${OpenEatsJournalStrings.dbResultSaturatedFatSum} ,
+      SUM(${OpenEatsJournalStrings.dbColumnProtein})       AS ${OpenEatsJournalStrings.dbResultProteinSum}      ,
+            SUM(${OpenEatsJournalStrings.dbColumnSalt})          AS ${OpenEatsJournalStrings.dbResultSaltSum}
+      FROM
+              ${OpenEatsJournalStrings.dbTableEatsJournal}
+      WHERE
+              ${OpenEatsJournalStrings.dbColumnEntryDate} = ?
+      GROUP BY
+              ${OpenEatsJournalStrings.dbColumnEntryDate},
+              ${OpenEatsJournalStrings.dbColumnMealIdRef}""",
       [formattedDate],
     );
 
@@ -785,23 +799,25 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<Map<String, int>?> getGroupedKJouleTargets({required DateTime from, required DateTime until, required String groupBy}) async {
+  Future<Map<DateTime, int>?> getGroupedKJouleTargets({required DateTime from, required DateTime until, required String groupBy}) async {
     Database db = await instance.db;
 
     final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
     final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
 
     List<Map<String, Object?>> dbResult;
-    if (groupBy == OpenEatsJournalStrings.dbColumnEntryDate) {
-      dbResult = await db.rawQuery(
-        """SELECT
-        ${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn},
-        ${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultKJouleSum}
-        FROM
-                ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}
-        WHERE
-                ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?""",
-        [fromFormatted, untilFormatted],
+    if (groupBy == OpenEatsJournalStrings.dbColumnDate) {
+      dbResult = await db.query(
+        OpenEatsJournalStrings.dbTableDailyNutritionTarget,
+        columns: [
+          "${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn}",
+          "${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultKJouleSum}",
+        ],
+
+        where: "${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?",
+
+        whereArgs: [fromFormatted, untilFormatted],
+        orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} ASC",
       );
     } else {
       dbResult = await db.rawQuery(
@@ -817,15 +833,18 @@ class OpenEatsJournalDatabaseService {
         WHERE
                 ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?
         GROUP BY
-                $groupBy""",
+                $groupBy
+        ORDER BY
+                $groupBy ASC""",
         [fromFormatted, untilFormatted],
       );
     }
 
     if (dbResult.isNotEmpty) {
-      Map<String, int> result = {};
+      Map<DateTime, int> result = {};
       for (Map<String, Object?> row in dbResult) {
-        result[row[OpenEatsJournalStrings.dbResultGroupColumn] as String] = row[OpenEatsJournalStrings.dbResultKJouleSum] as int;
+        result[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
+            row[OpenEatsJournalStrings.dbResultKJouleSum] as int;
       }
 
       return result;
@@ -834,7 +853,7 @@ class OpenEatsJournalDatabaseService {
     }
   }
 
-  Future<Map<String, NutritionSums>?> getGroupedNutritionSums({required DateTime from, required DateTime until, required String groupBy}) async {
+  Future<Map<DateTime, NutritionSums>?> getGroupedNutritionSums({required DateTime from, required DateTime until, required String groupBy}) async {
     Database db = await instance.db;
 
     final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
@@ -843,7 +862,7 @@ class OpenEatsJournalDatabaseService {
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
       """SELECT
         $groupBy                                                                                          AS ${OpenEatsJournalStrings.dbResultGroupColumn}     ,
-        COUNT(DISTINCT ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultDayCount}        ,
+        COUNT(DISTINCT ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnEntryDate}) AS ${OpenEatsJournalStrings.dbResultDayCount}        ,
         SUM(${OpenEatsJournalStrings.dbColumnKiloJoule})                                                  AS ${OpenEatsJournalStrings.dbResultKJouleSum}       ,
         SUM(${OpenEatsJournalStrings.dbColumnCarbohydrates})                                              AS ${OpenEatsJournalStrings.dbResultCarbohydratesSum},
         SUM(${OpenEatsJournalStrings.dbColumnSugar})                                                      AS ${OpenEatsJournalStrings.dbResultSugarSum}        ,
@@ -860,14 +879,16 @@ class OpenEatsJournalDatabaseService {
         WHERE
                 ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?
         GROUP BY
-        $groupBy""",
+        $groupBy
+        ORDER BY
+                $groupBy ASC""",
       [fromFormatted, untilFormatted],
     );
 
     if (dbResult.isNotEmpty) {
-      Map<String, NutritionSums> result = {};
+      Map<DateTime, NutritionSums> result = {};
       for (Map<String, Object?> row in dbResult) {
-        result[row[OpenEatsJournalStrings.dbResultGroupColumn] as String] = NutritionSums(
+        result[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] = NutritionSums(
           entryCount: row[OpenEatsJournalStrings.dbResultDayCount] as int,
           nutritions: Nutritions(
             kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as int),
@@ -942,22 +963,96 @@ class OpenEatsJournalDatabaseService {
     return true;
   }
 
-  Future<WeightJournalEntry?> getWeightJournalEntryFor({required DateTime date}) async {
+  Future<WeightJournalEntry?> getMaxWeightJournalEntryFor({required DateTime date, required String maxOf}) async {
     Database db = await instance.db;
 
-    final List<Map<String, Object?>> dbResult = await db.query(
-      OpenEatsJournalStrings.dbTableWeightJournal,
-      columns: [OpenEatsJournalStrings.dbColumnEntryDate, OpenEatsJournalStrings.dbColumnWeight],
-      orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} DESC",
-      where: "${OpenEatsJournalStrings.dbColumnEntryDate} <= ?",
-      limit: 1,
-      whereArgs: [ConvertValidate.dateformatterDatabaseDateOnly.format(date)],
-    );
+    List<Map<String, Object?>> dbResult;
+    if (maxOf == OpenEatsJournalStrings.dbColumnDate) {
+      dbResult = await db.query(
+        OpenEatsJournalStrings.dbTableWeightJournal,
+        columns: [
+          "${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn}",
+          "${OpenEatsJournalStrings.dbColumnWeight} AS ${OpenEatsJournalStrings.dbResultWeightMax}",
+        ],
+        orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} DESC",
+        where: "${OpenEatsJournalStrings.dbColumnEntryDate} <= ?",
+        limit: 1,
+        whereArgs: [ConvertValidate.dateformatterDatabaseDateOnly.format(date)],
+      );
+    } else {
+      dbResult = await db.rawQuery(
+        """SELECT
+        $maxOf                                                                 AS ${OpenEatsJournalStrings.dbResultGroupColumn}     ,
+        MAX(${OpenEatsJournalStrings.dbColumnWeight})                          AS ${OpenEatsJournalStrings.dbResultWeightMax}
+        FROM
+                ${OpenEatsJournalStrings.dbTableWeightJournal}
+        LEFT JOIN
+                ${OpenEatsJournalStrings.dbTableDateInfo}
+        ON
+                ${OpenEatsJournalStrings.dbTableWeightJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} = ${OpenEatsJournalStrings.dbTableDateInfo}.${OpenEatsJournalStrings.dbColumnDate}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} <= ?
+        GROUP BY
+                $maxOf
+        ORDER BY
+                $maxOf DESC
+        LIMIT 1""",
+        [ConvertValidate.dateformatterDatabaseDateOnly.format(date)],
+      );
+    }
 
     if (dbResult.isNotEmpty) {
       return WeightJournalEntry(
-        date: ConvertValidate.dateformatterDatabaseDateOnly.parse(dbResult[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
-        weight: dbResult[0][OpenEatsJournalStrings.dbColumnWeight] as double,
+        date: ConvertValidate.dateformatterDatabaseDateOnly.parse(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
+        weight: dbResult[0][OpenEatsJournalStrings.dbResultWeightMax] as double,
+      );
+    }
+
+    return null;
+  }
+
+  Future<WeightJournalEntry?> getMaxWeightJournalEntryAfter({required DateTime date, required String maxOf}) async {
+    Database db = await instance.db;
+
+    List<Map<String, Object?>> dbResult;
+    if (maxOf == OpenEatsJournalStrings.dbColumnDate) {
+      dbResult = await db.query(
+        OpenEatsJournalStrings.dbTableWeightJournal,
+        columns: [
+          "${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn}",
+          "${OpenEatsJournalStrings.dbColumnWeight} AS ${OpenEatsJournalStrings.dbResultWeightMax}",
+        ],
+        orderBy: "${OpenEatsJournalStrings.dbColumnEntryDate} ASC",
+        where: "${OpenEatsJournalStrings.dbColumnEntryDate} >= ?",
+        limit: 1,
+        whereArgs: [ConvertValidate.dateformatterDatabaseDateOnly.format(date)],
+      );
+    } else {
+      dbResult = await db.rawQuery(
+        """SELECT
+        $maxOf                                                                   AS ${OpenEatsJournalStrings.dbResultGroupColumn}     ,
+        MAX(${OpenEatsJournalStrings.dbColumnWeight})                            AS ${OpenEatsJournalStrings.dbResultWeightMax}
+        FROM
+                ${OpenEatsJournalStrings.dbTableWeightJournal}
+        LEFT JOIN
+                ${OpenEatsJournalStrings.dbTableDateInfo}
+        ON
+                ${OpenEatsJournalStrings.dbTableWeightJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} = ${OpenEatsJournalStrings.dbTableDateInfo}.${OpenEatsJournalStrings.dbColumnDate}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} >= ?
+        GROUP BY
+                $maxOf
+        ORDER BY
+                $maxOf ASC
+        LIMIT 1""",
+        [ConvertValidate.dateformatterDatabaseDateOnly.format(date)],
+      );
+    }
+
+    if (dbResult.isNotEmpty) {
+      return WeightJournalEntry(
+        date: ConvertValidate.dateformatterDatabaseDateOnly.parse(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
+        weight: dbResult[0][OpenEatsJournalStrings.dbResultWeightMax] as double,
       );
     }
 
@@ -1003,5 +1098,60 @@ class OpenEatsJournalDatabaseService {
     }
 
     return null;
+  }
+
+  Future<Map<DateTime, double>?> getWeightMax({required DateTime from, required DateTime until, required String maxOf}) async {
+    Database db = await instance.db;
+
+    final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
+    final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
+
+    List<Map<String, Object?>> dbResult;
+    if (maxOf == OpenEatsJournalStrings.dbColumnEntryDate) {
+      dbResult = await db.rawQuery(
+        """SELECT
+        ${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn},
+        ${OpenEatsJournalStrings.dbColumnEntryDate} AS ${OpenEatsJournalStrings.dbResultGroupColumn},
+        ${OpenEatsJournalStrings.dbColumnWeight} AS ${OpenEatsJournalStrings.dbResultWeightMax}
+        FROM
+                ${OpenEatsJournalStrings.dbTableWeightJournal}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?
+        ORDER BY
+                ${OpenEatsJournalStrings.dbColumnEntryDate} ASC""",
+        [fromFormatted, untilFormatted],
+      );
+    } else {
+      dbResult = await db.rawQuery(
+        """SELECT
+        $maxOf                                                                                          AS ${OpenEatsJournalStrings.dbResultGroupColumn}     ,
+        MAX(${OpenEatsJournalStrings.dbColumnWeight})                                                  AS ${OpenEatsJournalStrings.dbResultWeightMax}
+        FROM
+                ${OpenEatsJournalStrings.dbTableWeightJournal}
+        LEFT JOIN
+                ${OpenEatsJournalStrings.dbTableDateInfo}
+        ON
+                ${OpenEatsJournalStrings.dbTableWeightJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} = ${OpenEatsJournalStrings.dbTableDateInfo}.${OpenEatsJournalStrings.dbColumnDate}
+        WHERE
+                ${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?
+        GROUP BY
+                $maxOf
+        ORDER BY
+                $maxOf ASC""",
+        [fromFormatted, untilFormatted],
+      );
+    }
+
+    if (dbResult.isNotEmpty) {
+      Map<DateTime, double> result = {};
+      for (Map<String, Object?> row in dbResult) {
+        result[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
+            row[OpenEatsJournalStrings.dbResultWeightMax] as double;
+      }
+
+      return result;
+    } else {
+      return null;
+    }
   }
 }
