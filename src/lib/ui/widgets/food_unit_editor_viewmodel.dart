@@ -12,8 +12,8 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
     required void Function(FoodUnit) changeDefault,
     required void Function(FoodUnit) removeFoodUnit,
     required ValueNotifier<bool> foodUnitsEditMode,
-    required ValueNotifier<int?> foodNutritionPerGram,
-    required ValueNotifier<int?> foodNutritionPerMilliliter,
+    required ValueNotifier<double?> foodNutritionPerGram,
+    required ValueNotifier<double?> foodNutritionPerMilliliter,
   }) : _foodUnit = foodUnit,
        _defaultFoodUnit = ValueNotifier(defaultFoodUnit),
        _changeMeasurementUnit = changeMeasurementUnit,
@@ -43,7 +43,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _defaultFoodUnit;
   final ValueNotifier<String> _name;
   final ValueNotifier<bool> _nameValid;
-  final ValueNotifier<int?> _amount;
+  final ValueNotifier<double?> _amount;
   final ValueNotifier<bool> _amountValid = ValueNotifier(true);
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final ValueNotifier<bool> _measurementUnitSwitchButtonEnabled;
@@ -52,8 +52,8 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   final VoidCallback _changeMeasurementUnit;
   final void Function(FoodUnit) _removeFoodUnit;
   final ValueNotifier<bool> _foodUnitsEditMode;
-  final ValueNotifier<int?> _foodNutritionPerGram;
-  final ValueNotifier<int?> _foodNutritionPerMilliliter;
+  final ValueNotifier<double?> _foodNutritionPerGram;
+  final ValueNotifier<double?> _foodNutritionPerMilliliter;
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
   FoodUnit get foodUnit => _foodUnit;
@@ -61,7 +61,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   ExternalTriggerChangedNotifier get defaultButtonChanged => _defaultButtonChanged;
   ValueNotifier<String> get name => _name;
   ValueNotifier<bool> get nameValid => _nameValid;
-  ValueNotifier<int?> get amount => _amount;
+  ValueNotifier<double?> get amount => _amount;
   ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   ValueNotifier<bool> get measurementUnitSwitchButtonEnabled => _measurementUnitSwitchButtonEnabled;
   ValueNotifier<bool> get foodUnitsEditMode => _foodUnitsEditMode;
@@ -101,8 +101,8 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   }
 
   static bool _getMeasurementUnitSwitchButtonEnabled(
-    int? foodNutritionPerGram,
-    int? foodNutritionPerMilliliter,
+    double? foodNutritionPerGram,
+    double? foodNutritionPerMilliliter,
     MeasurementUnit currentMeasurementUnitInternal,
   ) {
     bool measurementSwitchEnabled = true;
@@ -142,7 +142,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
     _defaultButtonChanged.notify();
   }
 
-  bool isValid({required int? foodNutritionPerGramAmount, required int? foodNutritionPerMilliliterAmount}) {
+  bool isValid({required double? foodNutritionPerGramAmount, required double? foodNutritionPerMilliliterAmount}) {
     bool foodUnitValid = true;
 
     if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {

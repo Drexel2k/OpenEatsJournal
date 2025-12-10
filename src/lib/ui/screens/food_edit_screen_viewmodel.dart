@@ -58,8 +58,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   final ValueNotifier<String> _name;
   final ValueNotifier<bool> _nameValid;
-  final ValueNotifier<int?> _nutritionPerGramAmount;
-  final ValueNotifier<int?> _nutritionPerMilliliterAmount;
+  final ValueNotifier<double?> _nutritionPerGramAmount;
+  final ValueNotifier<double?> _nutritionPerMilliliterAmount;
   final ValueNotifier<bool> _amountsValid;
   final ValueNotifier<int?> _kJoule;
   final ValueNotifier<bool> _kJouleValid = ValueNotifier(true);
@@ -83,8 +83,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   ValueNotifier<String> get name => _name;
   ValueNotifier<bool> get nameValid => _nameValid;
-  ValueNotifier<int?> get nutritionPerGramAmount => _nutritionPerGramAmount;
-  ValueNotifier<int?> get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
+  ValueNotifier<double?> get nutritionPerGramAmount => _nutritionPerGramAmount;
+  ValueNotifier<double?> get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
   ValueNotifier<bool> get amountsValid => _amountsValid;
   ValueNotifier<int?> get kJoule => _kJoule;
   ValueNotifier<bool> get kJouleValid => _kJouleValid;
@@ -247,6 +247,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
     if (foodValid) {
       if (_foodUnitsWithOrderCopy.isNotEmpty) {
+        //check if one food unit has defaultFoodUnit set to true
         if (_foodUnitEditorViewModels
                 .where((FoodUnitEditorViewModel foodUnitEditorViewModel) => foodUnitEditorViewModel.defaultFoodUnit.value)
                 .toList()

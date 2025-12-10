@@ -155,7 +155,7 @@ class FoodRepository {
           name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
-          foodSourceFoodId: foodApi.code,
+          originalFoodSourceFoodId: foodApi.code,
           nutritionPerGramAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? 100 : null,
           nutritionPerMilliliterAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? null : 100,
           kJoule: energyKjPer100Units,
@@ -173,7 +173,7 @@ class FoodRepository {
             food.addFoodUnit(
               foodUnit: FoodUnit(
                 name: OpenEatsJournalStrings.serving,
-                amount: double.parse(foodApi.servingQuantity!).round(),
+                amount: double.parse(foodApi.servingQuantity!),
                 amountMeasurementUnit: nutrimentsMeasurementUnit,
                 foodUnitType: FoodUnitType.serving,
               ),
@@ -186,7 +186,7 @@ class FoodRepository {
             food.addFoodUnit(
               foodUnit: FoodUnit(
                 name: OpenEatsJournalStrings.piece,
-                amount: double.parse(foodApi.productQuantity!).round(),
+                amount: double.parse(foodApi.productQuantity!),
                 amountMeasurementUnit: nutrimentsMeasurementUnit,
                 foodUnitType: FoodUnitType.piece,
               ),

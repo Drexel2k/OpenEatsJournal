@@ -2,7 +2,7 @@ import 'package:openeatsjournal/domain/food_unit_type.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 
 class FoodUnit {
-  FoodUnit({required String name, required int amount, required MeasurementUnit amountMeasurementUnit, int? id, FoodUnitType? foodUnitType})
+  FoodUnit({required String name, required double amount, required MeasurementUnit amountMeasurementUnit, int? id, FoodUnitType? foodUnitType})
     : _id = id,
       _name = name,
       _amount = amount,
@@ -11,7 +11,7 @@ class FoodUnit {
 
   int? _id;
   String _name;
-  int _amount;
+  double _amount;
   MeasurementUnit _amountMeasurementUnit;
 
   final FoodUnitType? _foodUnitType;
@@ -30,7 +30,7 @@ class FoodUnit {
 
   set name(String name) => _name = name;
 
-  set amount(int value) {
+  set amount(double value) {
     if (value < 0) {
       throw ArgumentError("Amount must not be negative.");
     }
@@ -44,7 +44,7 @@ class FoodUnit {
 
   int? get id => _id;
   String get name => _name;
-  int get amount => _amount;
+  double get amount => _amount;
   MeasurementUnit get amountMeasurementUnit => _amountMeasurementUnit;
   FoodUnitType? get foodUnitType => _foodUnitType;
 }

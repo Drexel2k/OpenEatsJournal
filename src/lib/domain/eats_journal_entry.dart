@@ -7,7 +7,7 @@ class EatsJournalEntry {
   EatsJournalEntry.fromFood({
     required Food food,
     required DateTime entryDate,
-    required int amount,
+    required double amount,
     required MeasurementUnit amountMeasurementUnit,
     required Meal meal,
   }) : _food = food,
@@ -29,7 +29,7 @@ class EatsJournalEntry {
     required String name,
     required int kJoule,
     required Meal meal,
-    int? amount,
+    double? amount,
     MeasurementUnit? amountMeasurementUnit,
     double? carbohydrates,
     double? sugar,
@@ -54,7 +54,7 @@ class EatsJournalEntry {
   final DateTime _entryDate;
   final Meal _meal;
 
-  final int? _amount;
+  final double? _amount;
   final MeasurementUnit? _amountMeasurementUnit;
   final Food? _food;
   final String? _name;
@@ -68,10 +68,10 @@ class EatsJournalEntry {
 
   Food? get food => _food;
   FoodSource? get foodSource => food != null ? _food!.foodSource : null;
-  String? get foodSourceIdExternal => food != null ? _food!.foodSourceFoodId : null;
+  String? get foodSourceIdExternal => food != null ? _food!.originalFoodSourceFoodId : null;
   DateTime get entryDate => _entryDate;
   String get name => food != null ? _food!.name : _name!;
-  int? get amount => _amount;
+  double? get amount => _amount;
   MeasurementUnit? get amountMeasurementUnit => _amountMeasurementUnit;
   int get kJoule => _getKJoule();
   double? get carbohydrates => _getCarbohydrates();

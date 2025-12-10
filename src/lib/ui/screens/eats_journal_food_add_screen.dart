@@ -173,13 +173,28 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _amountController,
-                      keyboardType: TextInputType.numberWithOptions(signed: false),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                    inputFormatters: [
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        final String text = newValue.text.trim();
+                        if (text.isEmpty) {
+                          return newValue;
+                        }
+
+                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                        if (doubleValue != null) {
+                          return newValue;
+                        } else {
+                          return oldValue;
+                        }
+                      }),
+                    ],
                       onChanged: (value) {
-                        int? intValue = int.tryParse(value);
-                        _eatsJournalFoodAddScreenViewModel.amount.value = intValue;
-                        if (intValue != null) {
-                          _amountController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalFoodAddScreenViewModel.amount.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -195,13 +210,28 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _eatsAmountController,
-                      keyboardType: TextInputType.numberWithOptions(signed: false),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                    inputFormatters: [
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        final String text = newValue.text.trim();
+                        if (text.isEmpty) {
+                          return newValue;
+                        }
+
+                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                        if (doubleValue != null) {
+                          return newValue;
+                        } else {
+                          return oldValue;
+                        }
+                      }),
+                    ],
                       onChanged: (value) {
-                        int? intValue = int.tryParse(value);
-                        _eatsJournalFoodAddScreenViewModel.eatsAmount.value = intValue;
-                        if (intValue != null) {
-                          _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalFoodAddScreenViewModel.eatsAmount.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _eatsAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );

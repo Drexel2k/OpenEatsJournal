@@ -11,10 +11,10 @@ class Food {
     required int kJoule,
     int? id,
     FoodSource? originalFoodSource,
-    String? foodSourceFoodId,
+    String? originalFoodSourceFoodId,
     List<String>? brands,
-    int? nutritionPerGramAmount,
-    int? nutritionPerMilliliterAmount,
+    double? nutritionPerGramAmount,
+    double? nutritionPerMilliliterAmount,
     double? carbohydrates,
     double? sugar,
     double? fat,
@@ -27,7 +27,7 @@ class Food {
        _foodSource = foodSource,
        _id = id,
        _originalFoodSource = originalFoodSource,
-       _foodSourceFoodId = foodSourceFoodId,
+       _originalFoodSourceFoodId = originalFoodSourceFoodId,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
        _kJoule = kJoule,
@@ -45,7 +45,7 @@ class Food {
       _brands = food.brands != null ? List.from(food.brands!) : null,
       _foodSource = FoodSource.user,
       _originalFoodSource = food.originalFoodSource ?? food.foodSource,
-      _foodSourceFoodId = food.foodSourceFoodId,
+      _originalFoodSourceFoodId = food.originalFoodSourceFoodId,
       _kJoule = food.kJoule,
       _nutritionPerGramAmount = food.nutritionPerGramAmount,
       _nutritionPerMilliliterAmount = food.nutritionPerMilliliterAmount,
@@ -55,26 +55,36 @@ class Food {
       _saturatedFat = food.saturatedFat,
       _protein = food.protein,
       _quantity = food.quantity,
-      _foodUnitsWithOrder = food.foodUnitsWithOrder.map((ObjectWithOrder<FoodUnit> foodUnitWithOrder) {
-        return ObjectWithOrder<FoodUnit>(
-          object: FoodUnit(
-            name: foodUnitWithOrder.object.name,
-            amount: foodUnitWithOrder.object.amount,
-            amountMeasurementUnit: foodUnitWithOrder.object.amountMeasurementUnit,
-          ),
-          order: foodUnitWithOrder.order,
-        );
-      }).toList();
+      _foodUnitsWithOrder = [] {
+    ObjectWithOrder<FoodUnit> foodUnitWithOrderCopy;
+    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
+      foodUnitWithOrderCopy = ObjectWithOrder<FoodUnit>(
+        object: FoodUnit(
+          name: foodUnitWithOrder.object.name,
+          amount: foodUnitWithOrder.object.amount,
+          amountMeasurementUnit: foodUnitWithOrder.object.amountMeasurementUnit,
+          foodUnitType: foodUnitWithOrder.object.foodUnitType,
+        ),
+        order: foodUnitWithOrder.order,
+      );
+
+      _foodUnitsWithOrder.add(foodUnitWithOrderCopy);
+
+      if (food.defaultFoodUnit == foodUnitWithOrder.object) {
+        _defaultFoodUnit = foodUnitWithOrderCopy.object;
+      }
+    }
+  }
 
   String _name;
   final List<String>? _brands;
   int? _id;
   final FoodSource _foodSource;
   final FoodSource? _originalFoodSource;
-  final String? _foodSourceFoodId;
+  final String? _originalFoodSourceFoodId;
   int _kJoule;
-  int? _nutritionPerGramAmount;
-  int? _nutritionPerMilliliterAmount;
+  double? _nutritionPerGramAmount;
+  double? _nutritionPerMilliliterAmount;
   double? _carbohydrates;
   double? _sugar;
   double? _fat;
@@ -105,7 +115,7 @@ class Food {
     _name = value;
   }
 
-  set nutritionPerGramAmount(int? value) {
+  set nutritionPerGramAmount(double? value) {
     if (value != null || _nutritionPerMilliliterAmount != null) {
       if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.gram);
@@ -117,7 +127,7 @@ class Food {
     }
   }
 
-  set nutritionPerMilliliterAmount(int? value) {
+  set nutritionPerMilliliterAmount(double? value) {
     if (value != null || _nutritionPerGramAmount != null) {
       if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.milliliter);
@@ -178,9 +188,9 @@ class Food {
   FoodSource get foodSource => _foodSource;
   FoodSource? get originalFoodSource => _originalFoodSource;
   int? get id => _id;
-  String? get foodSourceFoodId => _foodSourceFoodId;
-  int? get nutritionPerGramAmount => _nutritionPerGramAmount;
-  int? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
+  String? get originalFoodSourceFoodId => _originalFoodSourceFoodId;
+  double? get nutritionPerGramAmount => _nutritionPerGramAmount;
+  double? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
   int get kJoule => _kJoule;
   double? get carbohydrates => _carbohydrates;
   double? get sugar => _sugar;
@@ -219,7 +229,7 @@ class Food {
     return true;
   }
 
-  addFoodUnitWithOrder({required ObjectWithOrder<FoodUnit> foodUnitWithOrder}) {
+  addFoodUnitWithOrder({required ObjectWithOrder<FoodUnit> foodUnitWithOrder, required bool isDefaultFoodUnit}) {
     ObjectWithOrder<FoodUnit>? foodUnitWithOrderExists = _foodUnitsWithOrder.firstWhereOrNull(
       (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnitWithOrder.object,
     );
@@ -237,6 +247,14 @@ class Food {
     }
 
     _foodUnitsWithOrder.add(foodUnitWithOrder);
+
+    if (isDefaultFoodUnit) {
+      if (_defaultFoodUnit != null) {
+        throw ArgumentError("Default food unit already set.");
+      }
+
+      _defaultFoodUnit = foodUnitWithOrder.object;
+    }
   }
 
   removeFoodUnit({required FoodUnit foodUnit}) {

@@ -168,6 +168,7 @@
   "unit_abbreviated": "Unit",
   "empty": "empty",
   "food_created": "Food created.",
+  "food_updated": "Food updated.",
   "cant_create_food": "Can't create food, please correct errors.",
   "as_new_food": "As New Food",
   "usr": "USR",

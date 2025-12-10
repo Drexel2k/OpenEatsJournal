@@ -250,7 +250,7 @@ class FoodSearchScreen extends StatelessWidget {
                       onCardTap: (Food cardFood) {
                         Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsAdd, arguments: cardFood);
                       },
-                      onAddJournalEntryPressed: (Food cardFood, int amount, MeasurementUnit measurementUnit) async {
+                      onAddJournalEntryPressed: (Food cardFood, double amount, MeasurementUnit measurementUnit) async {
                         await _foodSearchScreenViewModel.addEatsJournalEntry(
                           EatsJournalEntry.fromFood(
                             food: cardFood,

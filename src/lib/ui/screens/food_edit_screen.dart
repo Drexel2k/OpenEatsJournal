@@ -119,13 +119,28 @@ class FoodEditScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _gramAmountController,
-                      keyboardType: TextInputType.numberWithOptions(signed: false),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
                       onChanged: (value) {
-                        int? intValue = int.tryParse(value);
-                        _foodEditScreenViewModel.nutritionPerGramAmount.value = intValue;
-                        if (intValue != null) {
-                          _gramAmountController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.nutritionPerGramAmount.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _gramAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -140,13 +155,28 @@ class FoodEditScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _milliliterAmountController,
-                      keyboardType: TextInputType.numberWithOptions(signed: false),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
                       onChanged: (value) {
-                        int? intValue = int.tryParse(value);
-                        _foodEditScreenViewModel.nutritionPerMilliliterAmount.value = intValue;
-                        if (intValue != null) {
-                          _milliliterAmountController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.nutritionPerMilliliterAmount.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _milliliterAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -243,8 +273,8 @@ class FoodEditScreen extends StatelessWidget {
                         }),
                       ],
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _foodEditScreenViewModel.carbohydrates.value = doubleValue as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.carbohydrates.value = doubleValue;
 
                         if (doubleValue != null) {
                           _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -279,8 +309,8 @@ class FoodEditScreen extends StatelessWidget {
                         }),
                       ],
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _foodEditScreenViewModel.sugar.value = doubleValue as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.sugar.value = doubleValue;
 
                         if (doubleValue != null) {
                           _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -325,8 +355,8 @@ class FoodEditScreen extends StatelessWidget {
                         }),
                       ],
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _foodEditScreenViewModel.fat.value = doubleValue as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.fat.value = doubleValue;
 
                         if (doubleValue != null) {
                           _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -361,8 +391,8 @@ class FoodEditScreen extends StatelessWidget {
                         }),
                       ],
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _foodEditScreenViewModel.saturatedFat.value = doubleValue as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.saturatedFat.value = doubleValue;
 
                         if (doubleValue != null) {
                           _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -407,8 +437,8 @@ class FoodEditScreen extends StatelessWidget {
                         }),
                       ],
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _foodEditScreenViewModel.protein.value = doubleValue as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _foodEditScreenViewModel.protein.value = doubleValue;
 
                         if (doubleValue != null) {
                           _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -571,6 +601,7 @@ class FoodEditScreen extends StatelessWidget {
               height: 48,
               child: OutlinedButton(
                 onPressed: () async {
+                  int? originalFoodId = _foodEditScreenViewModel.foodId.value;
                   if (!(await _foodEditScreenViewModel.createFood())) {
                     SnackBar snackBar = SnackBar(
                       content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_food),
@@ -585,7 +616,9 @@ class FoodEditScreen extends StatelessWidget {
                     ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
                   } else {
                     SnackBar snackBar = SnackBar(
-                      content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.food_created),
+                      content: originalFoodId == null
+                          ? Text(AppLocalizations.of(navigatorKey.currentContext!)!.food_created)
+                          : Text(AppLocalizations.of(navigatorKey.currentContext!)!.food_updated),
                       action: SnackBarAction(
                         label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
                         onPressed: () {

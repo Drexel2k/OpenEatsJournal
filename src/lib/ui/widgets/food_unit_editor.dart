@@ -68,14 +68,28 @@ class FoodUnitEditor extends StatelessWidget {
                 builder: (_, _, _) {
                   return OpenEatsJournalTextField(
                     controller: _amountController,
-                    keyboardType: TextInputType.numberWithOptions(signed: false),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                    inputFormatters: [
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        final String text = newValue.text.trim();
+                        if (text.isEmpty) {
+                          return newValue;
+                        }
+
+                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                        if (doubleValue != null) {
+                          return newValue;
+                        } else {
+                          return oldValue;
+                        }
+                      }),
+                    ],
                     enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
                     onChanged: (value) {
-                      int? intValue = int.tryParse(value);
-                      _foodUnitEditorViewModel.amount.value = intValue;
-                      if (intValue != null) {
-                        _amountController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                      double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                      _foodUnitEditorViewModel.amount.value = doubleValue;
+                      if (doubleValue != null) {
+                        _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                       }
                     },
                   );
@@ -111,7 +125,7 @@ class FoodUnitEditor extends StatelessWidget {
               width: 52,
               child: ListenableBuilder(
                 listenable: _foodUnitEditorViewModel.defaultButtonChanged,
-                builder: ( _, _) {
+                builder: (_, _) {
                   return Switch(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: _foodUnitEditorViewModel.defaultFoodUnit.value,

@@ -65,7 +65,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnWeight = "weight";
   static const String dbColumnFoodSourceIdRef = "food_source_id_ref";
   static const String dbColumnOriginalFoodSourceIdRef = "original_food_source_id_ref";
-  static const String dbColumndbColumnFoodSourceFoodIdRef = "food_source_food_id_ref";
+  static const String dbColumnOriginalFoodSourceFoodIdRef = "original_food_source_food_id_ref";
   static const String dbColumnFoodIdRef = "food_id_ref";
   static const String dbColumnName = "name";
   static const String dbColumnNutritionPerGramAmount = "nutrition_per_gram_mount";
@@ -81,6 +81,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnAmount = "amount";
   static const String dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
   static const String dbColumnOrderNumber = "order_number";
+  static const String dbColumnIsDefault  = "is_default";
   static const String dbColumnamountMeasurementUnitIdRef = "amount_measurement_unit_id_ref";
   static const String dbColumnDescription = "description";
   static const String dbColumnMealIdRef = "meal_id_ref";

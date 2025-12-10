@@ -168,6 +168,7 @@
   "unit_abbreviated": "Einh.",
   "empty": "leer",
   "food_created": "Lebensmittel erstellt.",
+  "food_updated": "Lebensmittel aktualisiert.",
   "cant_create_food": "Kann Lebensmittel nicht erstellen, bitte korrigiere die Fehler.",
   "as_new_food": "Als neues Lebensmittel",
   "usr": "USR",

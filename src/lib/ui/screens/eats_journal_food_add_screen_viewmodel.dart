@@ -34,8 +34,8 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final FoodRepository _foodRepository;
   final SettingsRepository _settingsRepository;
-  final ValueNotifier<int?> _amount = ValueNotifier(1);
-  final ValueNotifier<int?> _eatsAmount;
+  final ValueNotifier<double?> _amount = ValueNotifier(1);
+  final ValueNotifier<double?> _eatsAmount;
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final bool _measurementSelectionEnabled;
 
@@ -49,8 +49,8 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
 
   Food get food => _food;
 
-  ValueNotifier<int?> get amount => _amount;
-  ValueNotifier<int?> get eatsAmount => _eatsAmount;
+  ValueNotifier<double?> get amount => _amount;
+  ValueNotifier<double?> get eatsAmount => _eatsAmount;
   ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   bool get measurementSelectionEnabled => _measurementSelectionEnabled;
 
@@ -119,7 +119,7 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
     }
   }
 
-  static int _getInitialFoodAmount(Food food) {
+  static double _getInitialFoodAmount(Food food) {
     if (food.defaultFoodUnit != null) {
       return food.defaultFoodUnit!.amount;
     } else if (food.foodUnitsWithOrder.isNotEmpty) {

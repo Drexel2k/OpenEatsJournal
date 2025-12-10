@@ -13,7 +13,7 @@ class FoodCard extends StatelessWidget {
     required Food food,
     required TextTheme textTheme,
     required void Function(Food) onCardTap,
-    required void Function(Food, int, MeasurementUnit) onAddJournalEntryPressed,
+    required void Function(Food, double, MeasurementUnit) onAddJournalEntryPressed,
   }) : _textTheme = textTheme,
        _food = food,
        _onCardTap = onCardTap,
@@ -22,7 +22,7 @@ class FoodCard extends StatelessWidget {
   final TextTheme _textTheme;
   final Food _food;
   final void Function(Food) _onCardTap;
-  final void Function(Food, int, MeasurementUnit) _onAddJournalEntryPressed;
+  final void Function(Food, double, MeasurementUnit) _onAddJournalEntryPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +32,7 @@ class FoodCard extends StatelessWidget {
     MeasurementUnit measurementUnit = _getMeasurementUnit();
     String foodSourceLabel = _getFoodSourceLabel(context: context);
     Color foodSourceColor = _getFoodSourceColor(colorScheme: colorScheme);
+    
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
