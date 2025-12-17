@@ -73,10 +73,15 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
   }
 
-  refreshData() {
+  refreshWeightTarget() {
     //no need to refresh data _dayData, either the screen was opened with saved day targets then they remain the same,
     //or the screen was opened without saved day targets then the target is requeried in EatsJournalScreen._getKJouleGaugeData e.g.
     //requery may be required when quick entries are implemented.
+    _eatsJournalDataChanged.notify();
+  }
+
+  refreshNutritionData() {
+    _dayData = _journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value);
     _eatsJournalDataChanged.notify();
   }
 

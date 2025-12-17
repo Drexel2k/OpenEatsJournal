@@ -28,15 +28,23 @@ class JournalRepository {
     await _oejDatabase.insertOnceDayNutritionTarget(day: entryDate, dayTargetKJoule: dayTargetKJoule);
   }
 
-  Future<void> addEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
+  Future<void> setEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: eatsJournalEntry.entryDate);
-    await _oejDatabase.insertEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+    await _oejDatabase.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+  }
+
+  Future<List<EatsJournalEntry>?> getEatsJournalEntries({required DateTime date, Meal? meal}) async {
+    return await _oejDatabase.getEatsJournalEntries(date: date, meal: meal);
+  }
+
+  Future<bool> deleteEatsJournalEntry(int id) async {
+    return await _oejDatabase.deleteEatsJournalEntry(id: id);
   }
 
   Future<FoodRepositoryGetDayMealSumsResult> getDayMealSums({required DateTime date}) async {
     Map<DateTime, int>? dayKJouleTarget = await _oejDatabase.getGroupedKJouleTargets(from: date, until: date, groupBy: OpenEatsJournalStrings.dbColumnDate);
     Map<Meal, Nutritions>? sumsPerMeal = await _oejDatabase.getDayNutritionSumsPerMeal(day: date);
-    if ((dayKJouleTarget != null && sumsPerMeal != null) || (dayKJouleTarget == null && sumsPerMeal == null)) {
+    if ((dayKJouleTarget != null && sumsPerMeal != null) || (dayKJouleTarget == null && sumsPerMeal == null) || (dayKJouleTarget != null && sumsPerMeal == null)) {
       if (dayKJouleTarget != null) {
         return FoodRepositoryGetDayMealSumsResult(
           dayNutritionTargets: Nutritions(
@@ -51,7 +59,7 @@ class JournalRepository {
         return FoodRepositoryGetDayMealSumsResult();
       }
     } else {
-      throw StateError("Day data and day targets must both exist or both not exist.");
+      throw StateError("If day data exists, day targets must exist.");
     }
   }
 
@@ -59,7 +67,7 @@ class JournalRepository {
   Future<JournalRepositoryGetNutritionSumsResult> getNutritionDaySumsForLast32Days() async {
     DateTime today = DateTime.now();
     today = DateTime(today.year, today.month, today.day);
-    
+
     DateTime before31days = today.subtract(Duration(days: 31));
 
     Map<DateTime, int>? dayKJouleTargets = await _oejDatabase.getGroupedKJouleTargets(

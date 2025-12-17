@@ -7,6 +7,7 @@ class OpenEatsJournalStrings {
   static const String navigatorRouteBarcodeScanner = "/barcode";
   static const String navigatorRouteEatsAdd = "/eatsadd";
   static const String navigatorRouteFoodEdit = "/foodedit";
+  static const String navigatorRouteQuickEntry = "/quickentry";
 
   static const String emptyString = "";
   static const String de = "de";
@@ -81,7 +82,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnAmount = "amount";
   static const String dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
   static const String dbColumnOrderNumber = "order_number";
-  static const String dbColumnIsDefault  = "is_default";
+  static const String dbColumnIsDefault = "is_default";
   static const String dbColumnamountMeasurementUnitIdRef = "amount_measurement_unit_id_ref";
   static const String dbColumnDescription = "description";
   static const String dbColumnMealIdRef = "meal_id_ref";
@@ -100,6 +101,30 @@ class OpenEatsJournalStrings {
   static const String dbResultSaltSum = "salt_sum";
   static const String dbResultWeightMax = "weight_max";
   static const String dbResultGroupColumn = "group_column";
+  static const String dbResultEatsJournalEntryId = "eats_journal_entry_id";
+  static const String dbResultFoodId = "food_id";
+  static const String dbResultFoodUnitId = "food_unit_id";
+  static const String dbResultEatsJournalEntryName = "eats_journal_entry_name";
+  static const String dbResultFoodName = "food_name";
+  static const String dbResultFoodUnitName = "food_unit_name";
+  static const String dbResultEatsJournalEntryAmount = "eats_journal_entry_amount";
+  static const String dbResultFoodUnitAmount = "food_unit_amount";
+  static const String dbResultEatsJournalEntryAmountMeasurementUnitIdRef = "eats_journal_entry_amount_measurement_unit_id_ref";
+  static const String dbResultFoodUnitAmountMeasurementUnitIdRef = "food_unit_amount_measurement_unit_id_ref";
+  static const String dbResultFoodKiloJoule = "food_kilo_joule";
+  static const String dbResultEatsJournalEntryKiloJoule = "eats_journal_entry_kilo_joule";
+  static const String dbResultFoodCarbohydrates = "food_carbohydrates";
+  static const String dbResultEatsJournalEntryCarbohydrates = "eats_journal_entry_carbohydrates";
+  static const String dbResultFoodSugar = "food_sugar";
+  static const String dbResultEatsJournalEntrySugar = "eats_journal_entry_sugar";
+  static const String dbResultFoodFat = "eats_journal_entry_fat";
+  static const String dbResultEatsJournalEntryFat = "eats_journal_entry_fat";
+  static const String dbResultFoodSaturatedFat = "food_saturated_fat";
+  static const String dbResultEatsJournalEntrySaturatedFat = "eats_journal_entry_saturated_fat";
+  static const String dbResultFoodProtein = "food_protein";
+  static const String dbResultEatsJournalEntryProtein = "eats_journal_entry_protein";
+  static const String dbResultFoodSalt = "food_salt";
+  static const String dbResultEatsJournalEntrySalt = "eats_journal_entry_salt";
 
   static const String dbIndexDateIndexTableDailyNutritionTarget = "date_index_$dbTableDailyNutritionTarget";
   static const String dbIndexDateIndexTableDateInfo = "date_index_$dbTableDateInfo";

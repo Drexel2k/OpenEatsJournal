@@ -6,10 +6,13 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_add_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen.dart";
@@ -62,6 +65,14 @@ class OpenEatsJournalApp extends StatelessWidget {
             pageTransitionsTheme: PageTransitionsTheme(
               builders: {TargetPlatform.android: NoPageTransitionsBuilder(), TargetPlatform.iOS: NoPageTransitionsBuilder()},
             ),
+            extensions: const <ThemeExtension<dynamic>>[
+              OpenEatsJournalColors(
+                userFoodColor: Color.fromARGB(255, 26, 65, 255),
+                standardFoodColor: Color.fromARGB(255, 255, 135, 20),
+                openFoodFactsFoodColor: Color.fromARGB(255, 12, 255, 0),
+                quickEntryColor: Color.fromARGB(255, 255, 0, 233),
+              ),
+            ],
           ),
           darkTheme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
@@ -72,6 +83,14 @@ class OpenEatsJournalApp extends StatelessWidget {
             pageTransitionsTheme: PageTransitionsTheme(
               builders: {TargetPlatform.android: NoPageTransitionsBuilder(), TargetPlatform.iOS: NoPageTransitionsBuilder()},
             ),
+            extensions: const <ThemeExtension<dynamic>>[
+              OpenEatsJournalColors(
+                userFoodColor: Color.fromARGB(255, 77, 99, 203),
+                standardFoodColor: Color.fromARGB(255, 202, 136, 73),
+                openFoodFactsFoodColor: Color.fromARGB(255, 64, 198, 57),
+                quickEntryColor: Color.fromARGB(255, 198, 57, 186),
+              ),
+            ],
           ),
           themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
           initialRoute: initialRoute,
@@ -110,6 +129,12 @@ class OpenEatsJournalApp extends StatelessWidget {
               foodEditScreenViewModel: FoodEditScreenViewModel(
                 food: (ModalRoute.of(contextBuilder)!.settings.arguments as Food),
                 foodRepository: _repositories.foodRepository,
+              ),
+            ),
+            OpenEatsJournalStrings.navigatorRouteQuickEntry: (contextBuilder) => EatsJournalQuickEntryAddScreen(
+              eatsJournalQuickEntryAddScreenViewModel: EatsJournalQuickEntryAddScreenViewModel(
+                journalRepository: _repositories.journalRepository,
+                settingsRepository: _repositories.settingsRepository,
               ),
             ),
           },

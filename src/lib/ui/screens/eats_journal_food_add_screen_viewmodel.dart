@@ -107,7 +107,7 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
         dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
       );
 
-      await _journalRepository.addEatsJournalEntry(
+      await _journalRepository.setEatsJournalEntry(
         eatsJournalEntry: EatsJournalEntry.fromFood(
           food: _food,
           entryDate: _settingsRepository.currentJournalDate.value,

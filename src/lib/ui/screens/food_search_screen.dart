@@ -342,7 +342,7 @@ class FoodSearchScreen extends StatelessWidget {
                               arguments: Food(
                                 name: OpenEatsJournalStrings.emptyString,
                                 foodSource: FoodSource.user,
-                                kJoule: NutritionCalculator.kJouleForOncekCal,
+                                kJoule: NutritionCalculator.kJouleForOnekCal,
                                 nutritionPerGramAmount: 100,
                               ),
                             );
@@ -353,7 +353,13 @@ class FoodSearchScreen extends StatelessWidget {
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text(AppLocalizations.of(context)!.quick_entry)),
+                        child: FloatingActionButton.extended(
+                          heroTag: "2",
+                          onPressed: () {
+                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntry);
+                          },
+                          label: Text(AppLocalizations.of(context)!.quick_entry),
+                        ),
                       ),
                     ],
                   );

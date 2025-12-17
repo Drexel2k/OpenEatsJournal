@@ -6,6 +6,7 @@ import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/ui/utils/food_source_format.dart';
 
 class FoodCard extends StatelessWidget {
   const FoodCard({
@@ -27,12 +28,11 @@ class FoodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(8);
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     MeasurementUnit measurementUnit = _getMeasurementUnit();
-    String foodSourceLabel = _getFoodSourceLabel(context: context);
-    Color foodSourceColor = _getFoodSourceColor(colorScheme: colorScheme);
-    
+    String foodSourceLabel = FoodSourceFormat.getFoodSourceLabel(food: _food, context: context);
+    Color foodSourceColor = FoodSourceFormat.getFoodSourceColor(food: _food, context: context);
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
@@ -184,32 +184,6 @@ class FoodCard extends StatelessWidget {
         return MeasurementUnit.milliliter;
       }
     }
-  }
-
-  String _getFoodSourceLabel({required BuildContext context}) {
-    String label = AppLocalizations.of(context)!.usr;
-    if (_food.foodSource == FoodSource.openFoodFacts) {
-      label = AppLocalizations.of(context)!.off;
-    }
-
-    if (_food.foodSource == FoodSource.standard) {
-      label = AppLocalizations.of(context)!.std;
-    }
-
-    return label;
-  }
-
-  Color _getFoodSourceColor({required ColorScheme colorScheme}) {
-    Color color = colorScheme.primary;
-    if (_food.foodSource == FoodSource.openFoodFacts) {
-      color = colorScheme.secondary;
-    }
-
-    if (_food.foodSource == FoodSource.standard) {
-      color = colorScheme.tertiary;
-    }
-
-    return color;
   }
 
   int _getKJoulesToAdd() {

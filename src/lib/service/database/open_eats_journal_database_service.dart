@@ -9,6 +9,7 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/nutritions.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
+import "package:openeatsjournal/domain/ordered_default_food_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_journal_entry.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
@@ -92,7 +93,7 @@ class OpenEatsJournalDatabaseService {
       );""");
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableEatsJournal} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnAmount} REAL,
@@ -378,17 +379,33 @@ class OpenEatsJournalDatabaseService {
     );
   }
 
-  Future<void> insertEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
+  Future<void> setEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     Database db = await instance.db;
 
     if (eatsJournalEntry.food != null && eatsJournalEntry.food!.id == null) {
       throw StateError("Food for eats journal entry must have an id.");
     }
 
-    final String entryDateString = ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate);
-    await db.insert(OpenEatsJournalStrings.dbTableEatsJournal, {
+    if (eatsJournalEntry.id != null) {
+      final List<Map<String, Object?>> dbResult = await db.query(
+        OpenEatsJournalStrings.dbTableEatsJournal,
+        columns: [OpenEatsJournalStrings.dbColumnId],
+        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+        whereArgs: [eatsJournalEntry.id],
+      );
+
+      if (dbResult.length > 1) {
+        throw StateError("Only one eats journal entry may exist for a given  eats journal id, multiple entries found for ${eatsJournalEntry.id}.");
+      }
+
+      if (dbResult.isEmpty) {
+        throw StateError("No record for a given  eats journal id,  eats journal id was not null, a food entry should exist.");
+      }
+    }
+
+    Map<String, Object?> eatsJournalEntryData = {
       OpenEatsJournalStrings.dbColumnFoodIdRef: eatsJournalEntry.food?.id,
-      OpenEatsJournalStrings.dbColumnEntryDate: entryDateString,
+      OpenEatsJournalStrings.dbColumnEntryDate: ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate),
       OpenEatsJournalStrings.dbColumnName: eatsJournalEntry.name,
       OpenEatsJournalStrings.dbColumnAmount: eatsJournalEntry.amount,
       OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef: eatsJournalEntry.amountMeasurementUnit?.value,
@@ -400,7 +417,175 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.dbColumnProtein: eatsJournalEntry.protein,
       OpenEatsJournalStrings.dbColumnSalt: eatsJournalEntry.salt,
       OpenEatsJournalStrings.dbColumnMealIdRef: eatsJournalEntry.meal.value,
-    });
+    };
+
+    if (eatsJournalEntry.id == null) {
+      eatsJournalEntry.id = await db.insert(OpenEatsJournalStrings.dbTableEatsJournal, eatsJournalEntryData);
+    } else {
+      await db.update(
+        OpenEatsJournalStrings.dbTableEatsJournal,
+        eatsJournalEntryData,
+        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+        whereArgs: [eatsJournalEntry.id],
+      );
+    }
+  }
+
+  Future<List<EatsJournalEntry>?> getEatsJournalEntries({required DateTime date, Meal? meal}) async {
+    Database db = await instance.db;
+
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
+    String where = "WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ?";
+    List<Object?> arguments = [formattedDate];
+
+    if (meal != null) {
+      where = "$where AND  ${OpenEatsJournalStrings.dbColumnMealIdRef} = ?";
+      arguments.add(meal.value);
+    }
+
+    //first block of columns from dbTableEatsJournal, second from dbTableFood, third from dbTableFoodUnit
+    final List<Map<String, Object?>> dbResult = await db.rawQuery("""SELECT
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryId},
+              ${OpenEatsJournalStrings.dbColumnEntryDate},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryName},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryAmount},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnCarbohydrates} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSugar} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySugar},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFat} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryFat},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSaturatedFat} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnProtein} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryProtein},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSalt} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySalt},
+              ${OpenEatsJournalStrings.dbColumnMealIdRef},
+
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodId},
+              ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+              ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+              ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodName},
+              ${OpenEatsJournalStrings.dbColumnBrands},
+              ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+              ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultFoodKiloJoule},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnCarbohydrates} AS ${OpenEatsJournalStrings.dbResultFoodCarbohydrates},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSugar} AS ${OpenEatsJournalStrings.dbResultFoodSugar},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnFat} AS ${OpenEatsJournalStrings.dbResultFoodFat},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSaturatedFat} AS ${OpenEatsJournalStrings.dbResultFoodSaturatedFat},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnProtein} AS ${OpenEatsJournalStrings.dbResultFoodProtein},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSalt} AS ${OpenEatsJournalStrings.dbResultFoodSalt},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnQuantity},
+
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodUnitId},
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodUnitName},
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmount},
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef},
+              ${OpenEatsJournalStrings.dbColumnOrderNumber},
+              ${OpenEatsJournalStrings.dbColumnIsDefault}
+        FROM
+              ${OpenEatsJournalStrings.dbTableEatsJournal}
+        LEFT JOIN
+              ${OpenEatsJournalStrings.dbTableFood}
+        ON
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
+        LEFT JOIN
+              ${OpenEatsJournalStrings.dbTableFoodUnit}
+        ON
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} = ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnFoodIdRef}
+        $where
+        ORDER BY
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} ASC,
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} ASC,
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} ASC
+        """, arguments);
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    List<EatsJournalEntry> eatsJournalEntries = [];
+
+    int currentRowEatsJournalEntryId = -1;
+    int currentEatsJournalEntryId = -1;
+
+    List<Map<String, Object?>> eatsJournalEntriesRows = [];
+    for (Map<String, Object?> eatsJournalEntryRow in dbResult) {
+      currentRowEatsJournalEntryId = eatsJournalEntryRow[OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int;
+      if (currentEatsJournalEntryId != currentRowEatsJournalEntryId) {
+        if (currentEatsJournalEntryId != -1) {
+          eatsJournalEntries.add(_getEatsJournalEntryFromDbResult(eatsJournalEntriesRows: eatsJournalEntriesRows));
+          eatsJournalEntriesRows.clear();
+        }
+
+        currentEatsJournalEntryId = currentRowEatsJournalEntryId;
+      }
+
+      eatsJournalEntriesRows.add(eatsJournalEntryRow);
+    }
+
+    eatsJournalEntries.add(_getEatsJournalEntryFromDbResult(eatsJournalEntriesRows: eatsJournalEntriesRows));
+
+    return eatsJournalEntries;
+  }
+
+  EatsJournalEntry _getEatsJournalEntryFromDbResult({required List<Map<String, Object?>> eatsJournalEntriesRows}) {
+    if ((eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultFoodId] as int?) != null) {
+      return EatsJournalEntry.fromData(
+        id: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int,
+        entryDate: ConvertValidate.dateformatterDatabaseDateOnly.parse(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
+        name: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryName] as String,
+        kJoule: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule] as int,
+        meal: Meal.getByValue(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnMealIdRef] as int),
+        food: _getFoodFromDbResult(dbResult: eatsJournalEntriesRows),
+        amount: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryAmount] as double,
+        amountMeasurementUnit: MeasurementUnit.getByValue(
+          eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryAmountMeasurementUnitIdRef] as int,
+        ),
+        carbohydrates: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates] as double?,
+        sugar: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySugar] as double?,
+        fat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryFat] as double?,
+        satureatedFat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat] as double?,
+        protein: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryProtein] as double?,
+        salt: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySalt] as double?,
+      );
+    } else {
+      return EatsJournalEntry.fromData(
+        id: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int,
+        entryDate: ConvertValidate.dateformatterDatabaseDateOnly.parse(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
+        name: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryName] as String,
+        kJoule: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule] as int,
+        meal: Meal.getByValue(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnMealIdRef] as int),
+        amount: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryAmount] as double?,
+        amountMeasurementUnit: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryAmountMeasurementUnitIdRef] != null
+            ? MeasurementUnit.getByValue(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryAmountMeasurementUnitIdRef] as int)
+            : null,
+        carbohydrates: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates] as double?,
+        sugar: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySugar] as double?,
+        fat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryFat] as double?,
+        satureatedFat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat] as double?,
+        protein: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryProtein] as double?,
+        salt: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySalt] as double?,
+      );
+    }
+  }
+
+  Future<bool> deleteEatsJournalEntry({required int id}) async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableEatsJournal,
+      columns: [OpenEatsJournalStrings.dbColumnId],
+      where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+      whereArgs: [id],
+    );
+
+    if (dbResult.isEmpty) {
+      return false;
+    }
+
+    db.delete(OpenEatsJournalStrings.dbTableEatsJournal, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [id]);
+    return true;
   }
 
   //creates new food entry or updates an existing one.
@@ -574,64 +759,91 @@ class OpenEatsJournalDatabaseService {
   Future<Food?> getFoodById(int id) async {
     Database db = await instance.db;
 
-    final List<Map<String, Object?>> dbResult = await db.query(
-      OpenEatsJournalStrings.dbTableFood,
-      columns: [
-        OpenEatsJournalStrings.dbColumnId,
-        OpenEatsJournalStrings.dbColumnName,
-        OpenEatsJournalStrings.dbColumnFoodSourceIdRef,
-        OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef,
-        OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef,
-        OpenEatsJournalStrings.dbColumnName,
-        OpenEatsJournalStrings.dbColumnBrands,
-        OpenEatsJournalStrings.dbColumnNutritionPerGramAmount,
-        OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount,
-        OpenEatsJournalStrings.dbColumnKiloJoule,
-        OpenEatsJournalStrings.dbColumnCarbohydrates,
-        OpenEatsJournalStrings.dbColumnSugar,
-        OpenEatsJournalStrings.dbColumnFat,
-        OpenEatsJournalStrings.dbColumnSaturatedFat,
-        OpenEatsJournalStrings.dbColumnProtein,
-        OpenEatsJournalStrings.dbColumnSalt,
-        OpenEatsJournalStrings.dbColumnQuantity,
-      ],
-      where: "${OpenEatsJournalStrings.dbColumnId} = ?",
-      whereArgs: [id],
+    //first block of columns from dbTableFood, second from dbTableFoodUnit
+    final List<Map<String, Object?>> dbResult = await db.rawQuery(
+      """SELECT
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodId},
+              ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+              ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+              ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName}  AS ${OpenEatsJournalStrings.dbResultFoodName},
+              ${OpenEatsJournalStrings.dbColumnBrands},
+              ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+              ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+              ${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultFoodKiloJoule},
+              ${OpenEatsJournalStrings.dbColumnCarbohydrates} AS ${OpenEatsJournalStrings.dbResultFoodCarbohydrates},
+              ${OpenEatsJournalStrings.dbColumnSugar} AS ${OpenEatsJournalStrings.dbResultFoodSugar},
+              ${OpenEatsJournalStrings.dbColumnFat} AS ${OpenEatsJournalStrings.dbResultFoodFat},
+              ${OpenEatsJournalStrings.dbColumnSaturatedFat} AS ${OpenEatsJournalStrings.dbResultFoodSaturatedFat},
+              ${OpenEatsJournalStrings.dbColumnProtein} AS ${OpenEatsJournalStrings.dbResultFoodProtein},
+              ${OpenEatsJournalStrings.dbColumnSalt} AS ${OpenEatsJournalStrings.dbResultFoodSalt},
+              ${OpenEatsJournalStrings.dbColumnQuantity},
+
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodUnitId},
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodUnitName},
+              ${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmount},
+              ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef},
+              ${OpenEatsJournalStrings.dbColumnOrderNumber},
+              ${OpenEatsJournalStrings.dbColumnIsDefault}
+        FROM 
+              ${OpenEatsJournalStrings.dbTableFood}
+        LEFT JOIN 
+              ${OpenEatsJournalStrings.dbTableFoodUnit}
+        ON
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} = ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnFoodIdRef}
+        WHERE 
+              ${OpenEatsJournalStrings.dbColumnId} = ?
+        """,
+      [id],
     );
 
     if (dbResult.isEmpty) {
       return null;
     }
 
-    return await _getFoodFromDbResult(dbRow: dbResult[0]);
+    return _getFoodFromDbResult(dbResult: dbResult);
   }
 
   Future<List<Food>?> getUserFoodBySearchtext(String searchText) async {
     Database db = await instance.db;
 
+    //first block of columns from dbTableFood, second from dbTableFoodUnit
     final List<Map<String, Object?>> dbResult = await db.rawQuery(
       """SELECT
-              ${OpenEatsJournalStrings.dbColumnId},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodId},
               ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
-              ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
-              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName},
-              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnBrands},
+              ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodName},
+              ${OpenEatsJournalStrings.dbColumnBrands},
               ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
               ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
-              ${OpenEatsJournalStrings.dbColumnKiloJoule},
-              ${OpenEatsJournalStrings.dbColumnCarbohydrates},
-              ${OpenEatsJournalStrings.dbColumnSugar},
-              ${OpenEatsJournalStrings.dbColumnFat},
-              ${OpenEatsJournalStrings.dbColumnSaturatedFat},
-              ${OpenEatsJournalStrings.dbColumnProtein},
-              ${OpenEatsJournalStrings.dbColumnSalt},
-              ${OpenEatsJournalStrings.dbColumnQuantity}
+              ${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultFoodKiloJoule},
+              ${OpenEatsJournalStrings.dbColumnCarbohydrates} AS ${OpenEatsJournalStrings.dbResultFoodCarbohydrates},
+              ${OpenEatsJournalStrings.dbColumnSugar} AS ${OpenEatsJournalStrings.dbResultFoodSugar},
+              ${OpenEatsJournalStrings.dbColumnFat} AS ${OpenEatsJournalStrings.dbResultFoodFat},
+              ${OpenEatsJournalStrings.dbColumnSaturatedFat} AS ${OpenEatsJournalStrings.dbResultFoodSaturatedFat},
+              ${OpenEatsJournalStrings.dbColumnProtein} AS ${OpenEatsJournalStrings.dbResultFoodProtein},
+              ${OpenEatsJournalStrings.dbColumnSalt} AS ${OpenEatsJournalStrings.dbResultFoodSalt},
+              ${OpenEatsJournalStrings.dbColumnQuantity},
+
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodUnitId},
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodUnitName},
+              ${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmount},
+              ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef},
+              ${OpenEatsJournalStrings.dbColumnOrderNumber},
+              ${OpenEatsJournalStrings.dbColumnIsDefault}
         FROM 
               ${OpenEatsJournalStrings.dbTableFood}
+        LEFT JOIN 
+              ${OpenEatsJournalStrings.dbTableFoodUnit}
+        ON
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} = ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnFoodIdRef}
         WHERE 
               ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = 1 AND
-              ${OpenEatsJournalStrings.dbColumnId} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)
         """,
       [searchText],
     );
@@ -641,76 +853,109 @@ class OpenEatsJournalDatabaseService {
     }
 
     List<Food> foods = [];
+
+    List<Map<String, Object?>> foodRows = [];
+    int currentFoodId = -1;
+    int currentRowFoodId;
     for (Map<String, Object?> row in dbResult) {
-      foods.add(await _getFoodFromDbResult(dbRow: row));
+      currentRowFoodId = row[OpenEatsJournalStrings.dbResultFoodId] as int;
+      if (currentRowFoodId != currentFoodId) {
+        if (currentFoodId != -1) {
+          foods.add(_getFoodFromDbResult(dbResult: foodRows));
+          foodRows.clear();
+        }
+
+        currentFoodId = currentRowFoodId;
+      }
+
+      foodRows.add(row);
     }
+
+    foods.add(_getFoodFromDbResult(dbResult: foodRows));
 
     return foods;
   }
 
-  Future<Food> _getFoodFromDbResult({required Map<String, Object?> dbRow}) async {
-    Database db = await instance.db;
-
-    Food food = Food(
-      id: dbRow[OpenEatsJournalStrings.dbColumnId] as int,
-      name: dbRow[OpenEatsJournalStrings.dbColumnName] as String,
-      foodSource: FoodSource.getByValue(dbRow[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] as int),
-      kJoule: dbRow[OpenEatsJournalStrings.dbColumnKiloJoule] as int,
-      originalFoodSource: dbRow[OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] != null
-          ? FoodSource.getByValue(dbRow[OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] as int)
-          : null,
-      originalFoodSourceFoodId: dbRow[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef] as String?,
-      brands: dbRow[OpenEatsJournalStrings.dbColumnBrands] != null
-          ? (dbRow[OpenEatsJournalStrings.dbColumnBrands] as String).split(",").map((String brand) => brand.trim()).toList()
-          : null,
-      nutritionPerGramAmount: dbRow[OpenEatsJournalStrings.dbColumnNutritionPerGramAmount] as double?,
-      nutritionPerMilliliterAmount: dbRow[OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount] as double?,
-      carbohydrates: dbRow[OpenEatsJournalStrings.dbColumnCarbohydrates] as double?,
-      sugar: dbRow[OpenEatsJournalStrings.dbColumnSugar] as double?,
-      fat: dbRow[OpenEatsJournalStrings.dbColumnFat] as double?,
-      saturatedFat: dbRow[OpenEatsJournalStrings.dbColumnSaturatedFat] as double?,
-      protein: dbRow[OpenEatsJournalStrings.dbColumnProtein] as double?,
-      salt: dbRow[OpenEatsJournalStrings.dbColumnSalt] as double?,
-      quantity: dbRow[OpenEatsJournalStrings.dbColumnQuantity] as String?,
-    );
-
-    final List<Map<String, Object?>> dbResultFoodUnit = await db.query(
-      OpenEatsJournalStrings.dbTableFoodUnit,
-      columns: [
-        OpenEatsJournalStrings.dbColumnId,
-        OpenEatsJournalStrings.dbColumnName,
-        OpenEatsJournalStrings.dbColumnAmount,
-        OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef,
-        OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef,
-        OpenEatsJournalStrings.dbColumnOrderNumber,
-        OpenEatsJournalStrings.dbColumnIsDefault
-      ],
-      where: "${OpenEatsJournalStrings.dbColumnFoodIdRef} = ?",
-      whereArgs: [food.id],
-    );
-
-    for (Map<String, Object?> row in dbResultFoodUnit) {
-      ObjectWithOrder<FoodUnit> foodUnitWithOrder = ObjectWithOrder(
-        object: FoodUnit(
-          id: row[OpenEatsJournalStrings.dbColumnId] as int,
-          name: row[OpenEatsJournalStrings.dbColumnName] as String,
-          amount: row[OpenEatsJournalStrings.dbColumnAmount] as double,
-          amountMeasurementUnit: MeasurementUnit.getByValue(row[OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef] as int),
-          foodUnitType: row[OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef] != null
-              ? FoodUnitType.getByValue(row[OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef] as int)
-              : null,
-        ),
-        order: row[OpenEatsJournalStrings.dbColumnOrderNumber] as int,
-      );
-
-      food.addFoodUnitWithOrder(foodUnitWithOrder: foodUnitWithOrder, isDefaultFoodUnit: (row[OpenEatsJournalStrings.dbColumnIsDefault] as int) == 1);
+  Food _getFoodFromDbResult({required List<Map<String, Object?>> dbResult}) {
+    if (dbResult.isEmpty) {
+      throw ArgumentError("Food result must not be empty.");
     }
 
-    if (food.foodUnitsWithOrder.length > 1 && food.defaultFoodUnit == null) {
-      throw StateError("No default food was set for food ${food.id} ${food.name}.");
+    List<OrderedDefaultFoodUnit> orderedDefaultFoodUnits = [];
+
+    int currentRowFoodUnitId = -1;
+    int currentFoodUnitId = -1;
+
+    Map<String, Object?>? foodUnitRow;
+    OrderedDefaultFoodUnit? orderedDefaultFoodUnit;
+    for (Map<String, Object?> foodUnitRowInternal in dbResult) {
+      currentRowFoodUnitId = foodUnitRowInternal[OpenEatsJournalStrings.dbResultFoodUnitId] as int;
+      if (currentFoodUnitId != currentRowFoodUnitId) {
+        if (currentFoodUnitId != -1) {
+          orderedDefaultFoodUnit = _getOrderedDefaultFoodUnit(foodUnitRow: foodUnitRow!);
+          if (orderedDefaultFoodUnit != null) {
+            orderedDefaultFoodUnits.add(orderedDefaultFoodUnit);
+          }
+        }
+
+        currentFoodUnitId = currentRowFoodUnitId;
+      }
+
+      foodUnitRow = foodUnitRowInternal;
     }
+
+    orderedDefaultFoodUnit = _getOrderedDefaultFoodUnit(foodUnitRow: foodUnitRow!);
+    if (orderedDefaultFoodUnit != null) {
+      orderedDefaultFoodUnits.add(orderedDefaultFoodUnit);
+    }
+
+    Food food = Food.fromData(
+      id: dbResult[0][OpenEatsJournalStrings.dbResultFoodId] as int,
+      name: dbResult[0][OpenEatsJournalStrings.dbResultFoodName] as String,
+      foodSource: FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbColumnFoodSourceIdRef] as int),
+      kJoule: dbResult[0][OpenEatsJournalStrings.dbResultFoodKiloJoule] as int,
+      originalFoodSource: dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] != null
+          ? FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] as int)
+          : null,
+      originalFoodSourceFoodId: dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef] as String?,
+      brands: dbResult[0][OpenEatsJournalStrings.dbColumnBrands] != null
+          ? (dbResult[0][OpenEatsJournalStrings.dbColumnBrands] as String).split(",").map((String brand) => brand.trim()).toList()
+          : null,
+      nutritionPerGramAmount: dbResult[0][OpenEatsJournalStrings.dbColumnNutritionPerGramAmount] as double?,
+      nutritionPerMilliliterAmount: dbResult[0][OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount] as double?,
+      carbohydrates: dbResult[0][OpenEatsJournalStrings.dbResultFoodCarbohydrates] as double?,
+      sugar: dbResult[0][OpenEatsJournalStrings.dbResultFoodSugar] as double?,
+      fat: dbResult[0][OpenEatsJournalStrings.dbResultFoodFat] as double?,
+      saturatedFat: dbResult[0][OpenEatsJournalStrings.dbResultFoodSaturatedFat] as double?,
+      protein: dbResult[0][OpenEatsJournalStrings.dbResultFoodProtein] as double?,
+      salt: dbResult[0][OpenEatsJournalStrings.dbResultFoodSalt] as double?,
+      quantity: dbResult[0][OpenEatsJournalStrings.dbColumnQuantity] as String?,
+      orderedDefaultFoodUnits: orderedDefaultFoodUnits.isNotEmpty ? orderedDefaultFoodUnits : null,
+    );
 
     return food;
+  }
+
+  OrderedDefaultFoodUnit? _getOrderedDefaultFoodUnit({required Map<String, Object?> foodUnitRow}) {
+    if ((foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitId] as int?) != null) {
+      return OrderedDefaultFoodUnit(
+        foodUnitWithOrder: ObjectWithOrder<FoodUnit>(
+          object: FoodUnit(
+            id: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitId] as int,
+            name: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitName] as String,
+            amount: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitAmount] as double,
+            amountMeasurementUnit: MeasurementUnit.getByValue(foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef] as int),
+            foodUnitType: foodUnitRow[OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef] != null
+                ? FoodUnitType.getByValue(foodUnitRow[OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef] as int)
+                : null,
+          ),
+          order: foodUnitRow[OpenEatsJournalStrings.dbColumnOrderNumber] as int,
+        ),
+        isDefault: (foodUnitRow[OpenEatsJournalStrings.dbColumnIsDefault] as int) == 1,
+      );
+    }
+
+    return null;
   }
 
   Future<void> insertOnceDayNutritionTarget({required DateTime day, required int dayTargetKJoule}) async {
@@ -794,12 +1039,12 @@ class OpenEatsJournalDatabaseService {
       for (Map<String, Object?> row in dbResult) {
         result[Meal.getByValue((row[OpenEatsJournalStrings.dbColumnMealIdRef] as int))] = Nutritions(
           kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as int),
-          carbohydrates: (row[OpenEatsJournalStrings.dbResultCarbohydratesSum] as double),
-          sugar: (row[OpenEatsJournalStrings.dbResultSugarSum] as double),
-          fat: (row[OpenEatsJournalStrings.dbResultFatSum] as double),
-          saturatedFat: (row[OpenEatsJournalStrings.dbResultSaturatedFatSum] as double),
-          protein: (row[OpenEatsJournalStrings.dbResultProteinSum] as double),
-          salt: (row[OpenEatsJournalStrings.dbResultSaltSum] as double),
+          carbohydrates: (row[OpenEatsJournalStrings.dbResultCarbohydratesSum] as double?),
+          sugar: (row[OpenEatsJournalStrings.dbResultSugarSum] as double?),
+          fat: (row[OpenEatsJournalStrings.dbResultFatSum] as double?),
+          saturatedFat: (row[OpenEatsJournalStrings.dbResultSaturatedFatSum] as double?),
+          protein: (row[OpenEatsJournalStrings.dbResultProteinSum] as double?),
+          salt: (row[OpenEatsJournalStrings.dbResultSaltSum] as double?),
         );
       }
 

@@ -1,0 +1,503 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:openeatsjournal/domain/measurement_unit.dart';
+import 'package:openeatsjournal/domain/nutrition_calculator.dart';
+import 'package:openeatsjournal/domain/utils/convert_validate.dart';
+import 'package:openeatsjournal/global_navigator_key.dart';
+import 'package:openeatsjournal/l10n/app_localizations.dart';
+import 'package:openeatsjournal/ui/main_layout.dart';
+import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/ui/screens/eats_journal_quick_entry_add_screen_viewmodel.dart';
+import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
+import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
+
+class EatsJournalQuickEntryAddScreen extends StatelessWidget {
+  EatsJournalQuickEntryAddScreen({super.key, required EatsJournalQuickEntryAddScreenViewModel eatsJournalQuickEntryAddScreenViewModel})
+    : _eatsJournalQuickEntryAddScreenViewModel = eatsJournalQuickEntryAddScreenViewModel;
+
+  final EatsJournalQuickEntryAddScreenViewModel _eatsJournalQuickEntryAddScreenViewModel;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _kCalController = TextEditingController();
+  final TextEditingController _carbohydratesController = TextEditingController();
+  final TextEditingController _sugarController = TextEditingController();
+  final TextEditingController _fatController = TextEditingController();
+  final TextEditingController _saturatedFatController = TextEditingController();
+  final TextEditingController _proteinController = TextEditingController();
+  final TextEditingController _saltController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    _nameController.text = _eatsJournalQuickEntryAddScreenViewModel.name.value;
+    _amountController.text = _eatsJournalQuickEntryAddScreenViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalQuickEntryAddScreenViewModel.amount.value)
+        : OpenEatsJournalStrings.emptyString;
+    _kCalController.text = _eatsJournalQuickEntryAddScreenViewModel.kJoule.value != null
+        ? ConvertValidate.numberFomatterInt.format(
+            NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalQuickEntryAddScreenViewModel.kJoule.value as int),
+          )
+        : OpenEatsJournalStrings.emptyString;
+
+    double inputFieldsWidth = 90;
+
+    return MainLayout(
+      route: OpenEatsJournalStrings.navigatorRouteQuickEntry,
+      title: AppLocalizations.of(context)!.quick_entry,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
+          ),
+
+          Row(
+            children: [
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.name,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _nameController,
+                      onChanged: (value) {
+                        _eatsJournalQuickEntryAddScreenViewModel.name.value = value;
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.nameValid,
+                  builder: (_, _, _) {
+                    if (!_eatsJournalQuickEntryAddScreenViewModel.nameValid.value) {
+                      return Text(
+                        AppLocalizations.of(context)!.input_invalid(
+                          AppLocalizations.of(context)!.name_capital,
+                          _eatsJournalQuickEntryAddScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
+                              ? AppLocalizations.of(context)!.empty
+                              : _eatsJournalQuickEntryAddScreenViewModel.name.value,
+                        ),
+                        style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          Divider(thickness: 2, height: 20),
+          Text(AppLocalizations.of(context)!.nutrition_values, style: textTheme.titleMedium),
+          Row(
+            children: [
+              Expanded(child: Text(AppLocalizations.of(context)!.kcal_label, style: textTheme.titleSmall)),
+              Expanded(child: Text(AppLocalizations.of(context)!.amount_label, style: textTheme.titleSmall)),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.kJoule,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _kCalController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onChanged: (value) {
+                        int? intValue = int.tryParse(value);
+                        _eatsJournalQuickEntryAddScreenViewModel.kJoule.value = intValue != null
+                            ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
+                            : null;
+                        if (intValue != null) {
+                          _kCalController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox(height: 0)),
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.amount,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _amountController,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.amount.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  width: 50,
+                  child: ListenableBuilder(
+                    listenable: _eatsJournalQuickEntryAddScreenViewModel.measurementUnitSwitchButtonChanged,
+                    builder: (_, _) {
+                      return RoundOutlinedButton(
+                        onPressed: () {
+                          _eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value =
+                              _eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                              ? MeasurementUnit.milliliter
+                              : MeasurementUnit.gram;
+                        },
+                        child: Text(
+                          _eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                              ? AppLocalizations.of(context)!.gram_abbreviated
+                              : AppLocalizations.of(context)!.milliliter_abbreviated,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          ValueListenableBuilder(
+            valueListenable: _eatsJournalQuickEntryAddScreenViewModel.kJouleValid,
+            builder: (_, _, _) {
+              if (!_eatsJournalQuickEntryAddScreenViewModel.kJouleValid.value) {
+                return Text(
+                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.kjoule, AppLocalizations.of(context)!.nothing),
+                  style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                );
+              } else {
+                return SizedBox();
+              }
+            },
+          ),
+          Row(
+            children: [
+              Expanded(child: Text(AppLocalizations.of(context)!.carbohydrates, style: textTheme.titleSmall)),
+              Expanded(child: Text(AppLocalizations.of(context)!.sugar, style: textTheme.titleSmall)),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.carbohydrates,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _carbohydratesController,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.carbohydrates.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox(height: 0)),
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.sugar,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _sugarController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.sugar.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox(height: 0)),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(child: Text(AppLocalizations.of(context)!.fat_label, style: textTheme.titleSmall)),
+              Expanded(child: Text(AppLocalizations.of(context)!.saturated_fat, style: textTheme.titleSmall)),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.fat,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _fatController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.fat.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox(height: 0)),
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.saturatedFat,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _saturatedFatController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.saturatedFat.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox(height: 0)),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(child: Text(AppLocalizations.of(context)!.protein, style: textTheme.titleSmall)),
+              Expanded(child: Text(AppLocalizations.of(context)!.salt, style: textTheme.titleSmall)),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.protein,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _proteinController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.protein.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              SizedBox(
+                width: inputFieldsWidth,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.salt,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalTextField(
+                      controller: _saltController,
+                      keyboardType: TextInputType.numberWithOptions(signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
+
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      onChanged: (value) {
+                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                        _eatsJournalQuickEntryAddScreenViewModel.salt.value = doubleValue as double?;
+
+                        if (doubleValue != null) {
+                          _saltController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: SizedBox()),
+            ],
+          ),
+          Divider(thickness: 2, height: 20),
+          Align(
+            alignment: AlignmentGeometry.center,
+            child: SizedBox(
+              height: 48,
+              child: OutlinedButton(
+                onPressed: () async {
+                  int? originalQuickEntryId = _eatsJournalQuickEntryAddScreenViewModel.quickEntryId.value;
+
+                  if (!(await _eatsJournalQuickEntryAddScreenViewModel.createQuickEntry())) {
+                    SnackBar snackBar = SnackBar(
+                      content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_quick_entry),
+                      action: SnackBarAction(
+                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
+                        onPressed: () {
+                          //Click on SnackbarAction closes the SnackBar,
+                          //nothing else to do here...
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
+                  } else {
+                    SnackBar snackBar = SnackBar(
+                      content: originalQuickEntryId == null
+                          ? Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_inserted)
+                          : Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_updated),
+                      action: SnackBarAction(
+                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
+                        onPressed: () {
+                          //Click on SnackbarAction closes the SnackBar,
+                          //nothing else to do here...
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
+                  }
+                },
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId,
+                  builder: (_, _, _) {
+                    if (_eatsJournalQuickEntryAddScreenViewModel.quickEntryId.value == null) {
+                      return Text(AppLocalizations.of(context)!.insert);
+                    } else {
+                      return Text(AppLocalizations.of(context)!.update);
+                    }
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

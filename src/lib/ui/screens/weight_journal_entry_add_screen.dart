@@ -25,7 +25,11 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.add_weight_journal_entry)),
+          AppBar(
+            backgroundColor: Color.fromARGB(0, 0, 0, 0),
+            automaticallyImplyLeading: false,
+            title: Text(AppLocalizations.of(context)!.add_weight_journal_entry),
+          ),
           Row(
             children: [
               Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_date), style: textTheme.titleSmall)),

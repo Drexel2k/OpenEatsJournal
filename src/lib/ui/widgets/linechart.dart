@@ -30,7 +30,7 @@ class Linechart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorTheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     double? maxWeight = _data.reduce((currentEntry, nextEntry) {
       if (currentEntry[OpenEatsJournalStrings.chartWeight] == null) {
@@ -114,7 +114,7 @@ class Linechart extends StatelessWidget {
               LineMark(
                 position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(OpenEatsJournalStrings.chartWeightVar),
                 size: SizeEncode(value: 1.5),
-                color: ColorEncode(value: colorTheme.tertiary),
+                color: ColorEncode(value: colorScheme.tertiary),
                 shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                 label: LabelEncode(
                   encoder: (Map<dynamic, dynamic> map) {
@@ -139,7 +139,7 @@ class Linechart extends StatelessWidget {
                 dim: Dim.x,
                 line: PaintStyle(strokeColor: Color(0xffe8e8e8), strokeWidth: 1),
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorTheme.secondary),
+                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
                   offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
                   rotation: 1,
                 ),
@@ -147,10 +147,10 @@ class Linechart extends StatelessWidget {
               AxisGuide(
                 dim: Dim.y,
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorTheme.secondary),
+                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
                   offset: const Offset(-7.5, 0),
                 ),
-                grid: PaintStyle(strokeColor: colorTheme.surfaceDim, strokeWidth: 1),
+                grid: PaintStyle(strokeColor: colorScheme.surfaceDim, strokeWidth: 1),
               ),
             ],
             padding: (_) => const EdgeInsets.fromLTRB(40, 5, 20, 20),

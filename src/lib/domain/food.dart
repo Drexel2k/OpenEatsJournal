@@ -3,6 +3,7 @@ import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
+import "package:openeatsjournal/domain/ordered_default_food_unit.dart";
 
 class Food {
   Food({
@@ -76,6 +77,60 @@ class Food {
     }
   }
 
+  Food.fromData({
+    required String name,
+    required int id,
+    required FoodSource foodSource,
+    required int kJoule,
+    List<String>? brands,
+    FoodSource? originalFoodSource,
+    String? originalFoodSourceFoodId,
+    double? nutritionPerGramAmount,
+    double? nutritionPerMilliliterAmount,
+    double? carbohydrates,
+    double? sugar,
+    double? fat,
+    double? saturatedFat,
+    double? protein,
+    double? salt,
+    String? quantity,
+    List<OrderedDefaultFoodUnit>? orderedDefaultFoodUnits,
+  }) : _name = name,
+       _brands = brands,
+       _id = id,
+       _foodSource = foodSource,
+       _kJoule = kJoule,
+       _originalFoodSource = originalFoodSource,
+       _originalFoodSourceFoodId = originalFoodSourceFoodId,
+       _nutritionPerGramAmount = nutritionPerGramAmount,
+       _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
+       _carbohydrates = carbohydrates,
+       _sugar = sugar,
+       _fat = fat,
+       _saturatedFat = saturatedFat,
+       _protein = protein,
+       _salt = salt,
+       _quantity = quantity,
+       _foodUnitsWithOrder = [] {
+    if (orderedDefaultFoodUnits != null) {
+      for (OrderedDefaultFoodUnit orderedDefaultFoodUnit in orderedDefaultFoodUnits) {
+        _addFoodUnitWithOrder(orderedDefaultFoodUnit.foodUnitWithOrder);
+
+        if (orderedDefaultFoodUnit.isDefault) {
+          if (_defaultFoodUnit != null) {
+            throw StateError("Default food unit was already set.");
+          }
+
+          _defaultFoodUnit = orderedDefaultFoodUnit.foodUnitWithOrder.object;
+        }
+      }
+
+      if (_foodUnitsWithOrder.isNotEmpty && _defaultFoodUnit == null) {
+        throw ("Food units exist, but no default food unit is set.");
+      }
+    }
+  }
+
   String _name;
   final List<String>? _brands;
   int? _id;
@@ -96,16 +151,16 @@ class Food {
   FoodUnit? _defaultFoodUnit;
 
   set id(int? value) {
+    if (value == null) {
+      throw ArgumentError("Id must be set to value.");
+    }
+    
     if (_foodSource == FoodSource.standard) {
       throw ArgumentError("Id of standard food does always exist and can't be set after object creation.");
     }
 
     if (_id != null) {
       throw ArgumentError("Existing id must must not be overriden.");
-    }
-
-    if (value == null) {
-      throw ArgumentError("Id must be set to value.");
     }
 
     _id = value;
@@ -220,7 +275,8 @@ class Food {
       order = _foodUnitsWithOrder.last.order + 1;
     }
 
-    _foodUnitsWithOrder.add(ObjectWithOrder(object: foodUnit, order: order));
+    ObjectWithOrder<FoodUnit> foodUnitWithOrder = ObjectWithOrder(object: foodUnit, order: order);
+    _addFoodUnitWithOrder(foodUnitWithOrder);
 
     if (_foodUnitsWithOrder.length <= 1) {
       _defaultFoodUnit = foodUnit;
@@ -229,7 +285,7 @@ class Food {
     return true;
   }
 
-  addFoodUnitWithOrder({required ObjectWithOrder<FoodUnit> foodUnitWithOrder, required bool isDefaultFoodUnit}) {
+  void _addFoodUnitWithOrder(ObjectWithOrder<FoodUnit> foodUnitWithOrder) {
     ObjectWithOrder<FoodUnit>? foodUnitWithOrderExists = _foodUnitsWithOrder.firstWhereOrNull(
       (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnitWithOrder.object,
     );
@@ -238,23 +294,7 @@ class Food {
       throw ArgumentError("Can't add same food unit a second time.");
     }
 
-    foodUnitWithOrderExists = _foodUnitsWithOrder.firstWhereOrNull(
-      (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.order == foodUnitWithOrder.order,
-    );
-
-    if (foodUnitWithOrderExists != null) {
-      throw ArgumentError("Can't add same food unit with an existing order number.");
-    }
-
     _foodUnitsWithOrder.add(foodUnitWithOrder);
-
-    if (isDefaultFoodUnit) {
-      if (_defaultFoodUnit != null) {
-        throw ArgumentError("Default food unit already set.");
-      }
-
-      _defaultFoodUnit = foodUnitWithOrder.object;
-    }
   }
 
   removeFoodUnit({required FoodUnit foodUnit}) {

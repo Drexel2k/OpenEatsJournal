@@ -4,7 +4,7 @@ class NutritionCalculator {
   //Deutsche Gesellschaft für Ernährung
   //https://www.dge.de/wissenschaft/referenzwerte/energie/
   static const double _kCalKJouleConversionFactor = 4.184;
-  static const int kJouleForOncekCal = 4;
+  static const int kJouleForOnekCal = 4;
 
   //calculation according to Mifflin St Jeor equation
   static double calculateBasalMetabolicRateInKJoule({

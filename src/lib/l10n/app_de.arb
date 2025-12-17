@@ -174,6 +174,7 @@
   "usr": "USR",
   "std": "STD",
   "off": "OFF",
+  "qck": "QCK",
   "edit": "Bearbeiten",
   "update": "Aktualisieren",
   "kg" : "kg",
@@ -183,5 +184,16 @@
   "delete_weight_journal_entry": "Gewichtseintrag löschen",
   "cant_delete_last_weight_journal_entry": "Löschen des letzten Gewichtseintrags nicht möglich.",
   "add_weight_journal_entry": "Gewichtseintrag hinzufügen",
-  "energy": "Energie"
+  "energy": "Energie",
+  "whole_day": "Whole day",
+  "breakfast_capital": "Frühstück",
+  "lunch_capital": "Mittagessen",
+  "dinner_capital": "Abendessen",
+  "snacks_capital": "Snacks",
+  "na_amount": "n/a Menge",
+  "amount_label": "Menge:",
+  "cant_create_quick_entry": "Kann Schnelleintrag nicht erstellen, bitte korrigiere die Fehler.",
+  "quick_entry_inserted": "Schnelleintrag hinzugefügt.",
+  "quick_entry_updated": "Schnelleintrag aktualisiert.",
+  "insert": "Hinzufügen"
 }

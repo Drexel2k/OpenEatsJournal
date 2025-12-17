@@ -12,9 +12,9 @@ class WeightRow extends StatelessWidget {
     super.key,
     required WeightRowViewModel weightRowViewModel,
     required DateTime date,
-    required void Function({required DateTime date, required double weight}) onWeightEdit,
+    required Future<void> Function({required DateTime date, required double weight}) onWeightEdit,
     required bool deleteEnabled,
-    required void Function({required DateTime date}) onDeletePressed,
+    required Future<void> Function({required DateTime date}) onDeletePressed,
     required Color deleteIconColor,
   }) : _weightRowViewModel = weightRowViewModel,
        _date = date,
@@ -28,9 +28,9 @@ class WeightRow extends StatelessWidget {
   final WeightRowViewModel _weightRowViewModel;
 
   final DateTime _date;
-  final void Function({required DateTime date, required double weight}) _onWeightEdit;
+  final Future<void> Function({required DateTime date, required double weight}) _onWeightEdit;
   final bool _deleteEnabled;
-  final void Function({required DateTime date}) _onDeletePressed;
+  final Future<void> Function({required DateTime date}) _onDeletePressed;
   final Color _deleteIconColor;
 
   final TextEditingController _weightController = TextEditingController();
@@ -85,7 +85,7 @@ class WeightRow extends StatelessWidget {
                 icon: Icon(Icons.delete, color: _deleteIconColor),
                 onPressed: () async {
                   if (_deleteEnabled) {
-                    _onDeletePressed(date: _date);
+                    await _onDeletePressed(date: _date);
                   } else {
                     await _showRecalulateKJouleConfirmDialog(context: context);
                   }
@@ -112,8 +112,8 @@ class WeightRow extends StatelessWidget {
     );
   }
 
-  void _weightChanged() {
-    _onWeightEdit(date: _date, weight: _weightRowViewModel.lastValidWeight);
+  void _weightChanged() async {
+    await _onWeightEdit(date: _date, weight: _weightRowViewModel.lastValidWeight);
   }
 
   Future<void> _showRecalulateKJouleConfirmDialog({required BuildContext context}) async {

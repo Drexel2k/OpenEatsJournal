@@ -22,7 +22,7 @@ class BarLinechart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorTheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     double barSize = _statisticsType == StatisticType.daily ? 4 : 18;
 
@@ -200,12 +200,12 @@ class BarLinechart extends StatelessWidget {
                     ),
                   ),
                 ),
-                color: ColorEncode(value: colorTheme.primary),
+                color: ColorEncode(value: colorScheme.primary),
               ),
               LineMark(
                 position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(OpenEatsJournalStrings.chartKCalTargetVar),
                 size: SizeEncode(value: 1.5),
-                color: ColorEncode(value: colorTheme.tertiary),
+                color: ColorEncode(value: colorScheme.tertiary),
               ),
             ],
             axes: [
@@ -213,7 +213,7 @@ class BarLinechart extends StatelessWidget {
                 dim: Dim.x,
                 line: PaintStyle(strokeColor: Color(0xffe8e8e8), strokeWidth: 1),
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorTheme.secondary),
+                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
                   offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
                   rotation: 1,
                 ),
@@ -221,10 +221,10 @@ class BarLinechart extends StatelessWidget {
               AxisGuide(
                 dim: Dim.y,
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorTheme.secondary),
+                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
                   offset: const Offset(-7.5, 0),
                 ),
-                grid: PaintStyle(strokeColor: colorTheme.surfaceDim, strokeWidth: 1),
+                grid: PaintStyle(strokeColor: colorScheme.surfaceDim, strokeWidth: 1),
               ),
             ],
             padding: (_) => const EdgeInsets.fromLTRB(40, 5, 20, 20),

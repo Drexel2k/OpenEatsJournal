@@ -54,6 +54,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _foodUnitsEditMode;
   final ValueNotifier<double?> _foodNutritionPerGram;
   final ValueNotifier<double?> _foodNutritionPerMilliliter;
+
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
   FoodUnit get foodUnit => _foodUnit;

@@ -11,6 +11,8 @@ import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_edit_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
@@ -375,8 +377,52 @@ class EatsJournalScreen extends StatelessWidget {
                                         Row(
                                           children: [
                                             Expanded(
-                                              //Main nutrition button
-                                              child: SizedBox(height: 48, child: OutlinedButton(onPressed: () {}, child: null)),
+                                              //breakfast nutrition button
+                                              child: SizedBox(
+                                                height: 48,
+                                                child: OutlinedButton(
+                                                  onPressed: () async {
+                                                    try {
+                                                      await showDialog<void>(
+                                                        useSafeArea: true,
+                                                        barrierDismissible: false,
+                                                        context: navigatorKey.currentContext!,
+                                                        builder: (BuildContext contextBuilder) {
+                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                                          return Dialog(
+                                                            insetPadding: EdgeInsets.fromLTRB(
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                            ),
+                                                            child: EatsJournalEditScreen(
+                                                              eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
+                                                                journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                                settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
+                                                                meal: Meal.breakfast,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+
+                                                      _eatsJournalScreenViewModel.refreshNutritionData();
+                                                    } on Exception catch (exc, stack) {
+                                                      await ErrorHandlers.showException(
+                                                        context: navigatorKey.currentContext!,
+                                                        exception: exc,
+                                                        stackTrace: stack,
+                                                      );
+                                                    } on Error catch (error, stack) {
+                                                      await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                                                    }
+                                                  },
+                                                  child: null,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -411,7 +457,52 @@ class EatsJournalScreen extends StatelessWidget {
                                         Row(
                                           children: [
                                             Expanded(
-                                              child: SizedBox(height: 48, child: OutlinedButton(onPressed: () {}, child: null)),
+                                              //lunch nutrition button
+                                              child: SizedBox(
+                                                height: 48,
+                                                child: OutlinedButton(
+                                                  onPressed: () async {
+                                                    try {
+                                                      await showDialog<void>(
+                                                        useSafeArea: true,
+                                                        barrierDismissible: false,
+                                                        context: navigatorKey.currentContext!,
+                                                        builder: (BuildContext contextBuilder) {
+                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                                          return Dialog(
+                                                            insetPadding: EdgeInsets.fromLTRB(
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                            ),
+                                                            child: EatsJournalEditScreen(
+                                                              eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
+                                                                journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                                settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
+                                                                meal: Meal.lunch,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+
+                                                      _eatsJournalScreenViewModel.refreshNutritionData();
+                                                    } on Exception catch (exc, stack) {
+                                                      await ErrorHandlers.showException(
+                                                        context: navigatorKey.currentContext!,
+                                                        exception: exc,
+                                                        stackTrace: stack,
+                                                      );
+                                                    } on Error catch (error, stack) {
+                                                      await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                                                    }
+                                                  },
+                                                  child: null,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -446,7 +537,52 @@ class EatsJournalScreen extends StatelessWidget {
                                         Row(
                                           children: [
                                             Expanded(
-                                              child: SizedBox(height: 48, child: OutlinedButton(onPressed: () {}, child: null)),
+                                              //dinner nutrition button
+                                              child: SizedBox(
+                                                height: 48,
+                                                child: OutlinedButton(
+                                                  onPressed: () async {
+                                                    try {
+                                                      await showDialog<void>(
+                                                        useSafeArea: true,
+                                                        barrierDismissible: false,
+                                                        context: navigatorKey.currentContext!,
+                                                        builder: (BuildContext contextBuilder) {
+                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                                          return Dialog(
+                                                            insetPadding: EdgeInsets.fromLTRB(
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                            ),
+                                                            child: EatsJournalEditScreen(
+                                                              eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
+                                                                journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                                settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
+                                                                meal: Meal.dinner,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+
+                                                      _eatsJournalScreenViewModel.refreshNutritionData();
+                                                    } on Exception catch (exc, stack) {
+                                                      await ErrorHandlers.showException(
+                                                        context: navigatorKey.currentContext!,
+                                                        exception: exc,
+                                                        stackTrace: stack,
+                                                      );
+                                                    } on Error catch (error, stack) {
+                                                      await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                                                    }
+                                                  },
+                                                  child: null,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -481,7 +617,52 @@ class EatsJournalScreen extends StatelessWidget {
                                         Row(
                                           children: [
                                             Expanded(
-                                              child: SizedBox(height: 48, child: OutlinedButton(onPressed: () {}, child: null)),
+                                              //snacks nutrition button
+                                              child: SizedBox(
+                                                height: 48,
+                                                child: OutlinedButton(
+                                                  onPressed: () async {
+                                                    try {
+                                                      await showDialog<void>(
+                                                        useSafeArea: true,
+                                                        barrierDismissible: false,
+                                                        context: navigatorKey.currentContext!,
+                                                        builder: (BuildContext contextBuilder) {
+                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                                          return Dialog(
+                                                            insetPadding: EdgeInsets.fromLTRB(
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                            ),
+                                                            child: EatsJournalEditScreen(
+                                                              eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
+                                                                journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                                settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
+                                                                meal: Meal.snacks,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+
+                                                      _eatsJournalScreenViewModel.refreshNutritionData();
+                                                    } on Exception catch (exc, stack) {
+                                                      await ErrorHandlers.showException(
+                                                        context: navigatorKey.currentContext!,
+                                                        exception: exc,
+                                                        stackTrace: stack,
+                                                      );
+                                                    } on Error catch (error, stack) {
+                                                      await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                                                    }
+                                                  },
+                                                  child: null,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -572,9 +753,38 @@ class EatsJournalScreen extends StatelessWidget {
                                 Expanded(
                                   child: SizedBox(
                                     height: 220,
+                                    //main nutrition button
                                     child: OutlinedButton(
                                       style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        try {
+                                          await showDialog<void>(
+                                            useSafeArea: true,
+                                            barrierDismissible: false,
+                                            context: navigatorKey.currentContext!,
+                                            builder: (BuildContext contextBuilder) {
+                                              double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                              double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                              return Dialog(
+                                                insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                                                child: EatsJournalEditScreen(
+                                                  eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
+                                                    journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                    settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+
+                                          _eatsJournalScreenViewModel.refreshNutritionData();
+                                        } on Exception catch (exc, stack) {
+                                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
+                                        } on Error catch (error, stack) {
+                                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                                        }
+                                      },
                                       child: null,
                                     ),
                                   ),
@@ -591,6 +801,7 @@ class EatsJournalScreen extends StatelessWidget {
                                 Expanded(
                                   child: Align(
                                     alignment: Alignment.centerRight,
+                                    //settings button
                                     child: IconButton(
                                       onPressed: () async {
                                         try {
@@ -617,7 +828,7 @@ class EatsJournalScreen extends StatelessWidget {
                                             },
                                           );
 
-                                          _eatsJournalScreenViewModel.refreshData();
+                                          _eatsJournalScreenViewModel.refreshWeightTarget();
                                         } on Exception catch (exc, stack) {
                                           await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
                                         } on Error catch (error, stack) {
@@ -729,7 +940,7 @@ class EatsJournalScreen extends StatelessWidget {
                               arguments: Food(
                                 name: OpenEatsJournalStrings.emptyString,
                                 foodSource: FoodSource.user,
-                                kJoule: NutritionCalculator.kJouleForOncekCal,
+                                kJoule: NutritionCalculator.kJouleForOnekCal,
                                 nutritionPerGramAmount: 100,
                               ),
                             );
@@ -740,7 +951,13 @@ class EatsJournalScreen extends StatelessWidget {
                       SizedBox(height: 5),
                       SizedBox(
                         width: fabMenuWidth,
-                        child: FloatingActionButton.extended(heroTag: "2", onPressed: () {}, label: Text(AppLocalizations.of(context)!.quick_entry)),
+                        child: FloatingActionButton.extended(
+                          heroTag: "2",
+                          onPressed: () {
+                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntry);
+                          },
+                          label: Text(AppLocalizations.of(context)!.quick_entry),
+                        ),
                       ),
                     ],
                   );
@@ -803,7 +1020,7 @@ class EatsJournalScreen extends StatelessWidget {
         : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumCarbohydrates = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
-              .map((mealNutritionsEntry) => mealNutritionsEntry.value.carbohydrates!)
+              .map((mealNutritionsEntry) => mealNutritionsEntry.value.carbohydrates != null ? mealNutritionsEntry.value.carbohydrates! : 0.0)
               .reduce((carbohydratesEntry1, carbohydratesEntry2) => carbohydratesEntry1 + carbohydratesEntry2)
         : 0;
 
@@ -816,7 +1033,7 @@ class EatsJournalScreen extends StatelessWidget {
         : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumProtein = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
-              .map((mealNutritionsEntry) => mealNutritionsEntry.value.protein!)
+              .map((mealNutritionsEntry) => mealNutritionsEntry.value.protein != null ? mealNutritionsEntry.value.protein! : 0.0)
               .reduce((proteinEntry1, proteinEntry2) => proteinEntry1 + proteinEntry2)
         : 0;
 
@@ -829,7 +1046,7 @@ class EatsJournalScreen extends StatelessWidget {
         : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumFat = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
-              .map((mealNutritionsEntry) => mealNutritionsEntry.value.fat!)
+              .map((mealNutritionsEntry) => mealNutritionsEntry.value.fat != null ? mealNutritionsEntry.value.fat! : 0.0)
               .reduce((fatEntry1, fatEntry2) => fatEntry1 + fatEntry2)
         : 0;
 

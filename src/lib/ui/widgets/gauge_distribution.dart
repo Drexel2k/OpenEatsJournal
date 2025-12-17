@@ -19,9 +19,9 @@ class GaugeDistribution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorTheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    List<Color> colors = [colorTheme.inversePrimary, colorTheme.primary, colorTheme.inversePrimary];
+    List<Color> colors = [colorScheme.inversePrimary, colorScheme.primary, colorScheme.inversePrimary];
 
     double dimension = 75;
     double radius = 0.85;

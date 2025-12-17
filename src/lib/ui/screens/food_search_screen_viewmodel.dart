@@ -1,6 +1,7 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
@@ -234,7 +235,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
-    if (eatsJournalEntry.food != null) {
+    if (eatsJournalEntry.food != null && eatsJournalEntry.food!.foodSource != FoodSource.user && eatsJournalEntry.food!.foodSource != FoodSource.standard) {
       await _foodRepository.setFoodByExternalId(food: eatsJournalEntry.food!);
     }
 
@@ -242,7 +243,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       entryDate: eatsJournalEntry.entryDate,
       dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
     );
-    await _journalRepository.addEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+    await _journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
   }
 
   void toggleFloatingActionButtons() {
