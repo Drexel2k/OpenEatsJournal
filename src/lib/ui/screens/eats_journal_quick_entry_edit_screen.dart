@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
@@ -7,15 +8,18 @@ import 'package:openeatsjournal/global_navigator_key.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/ui/screens/eats_journal_quick_entry_add_screen_viewmodel.dart';
+import 'package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart';
+import 'package:openeatsjournal/ui/utils/error_handlers.dart';
+import 'package:openeatsjournal/ui/utils/localized_drop_down_entries.dart';
+import 'package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
-class EatsJournalQuickEntryAddScreen extends StatelessWidget {
-  EatsJournalQuickEntryAddScreen({super.key, required EatsJournalQuickEntryAddScreenViewModel eatsJournalQuickEntryAddScreenViewModel})
+class EatsJournalQuickEntryEditScreen extends StatelessWidget {
+  EatsJournalQuickEntryEditScreen({super.key, required EatsJournalQuickEntryEditScreenViewModel eatsJournalQuickEntryAddScreenViewModel})
     : _eatsJournalQuickEntryAddScreenViewModel = eatsJournalQuickEntryAddScreenViewModel;
 
-  final EatsJournalQuickEntryAddScreenViewModel _eatsJournalQuickEntryAddScreenViewModel;
+  final EatsJournalQuickEntryEditScreenViewModel _eatsJournalQuickEntryAddScreenViewModel;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
@@ -44,15 +48,56 @@ class EatsJournalQuickEntryAddScreen extends StatelessWidget {
     double inputFieldsWidth = 90;
 
     return MainLayout(
-      route: OpenEatsJournalStrings.navigatorRouteQuickEntry,
-      title: AppLocalizations.of(context)!.quick_entry,
+      route: OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+      title: AppLocalizations.of(context)!.add_quick_entry,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            children: [
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate,
+                  builder: (_, _, _) {
+                    return OutlinedButton(
+                      onPressed: () async {
+                        try {
+                          _selectDate(initialDate: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value, context: context);
+                        } on Exception catch (exc, stack) {
+                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
+                        } on Error catch (error, stack) {
+                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                        }
+                      },
+                      child: Text(
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentMeal,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalDropdownMenu<int>(
+                      onSelected: (int? mealValue) {
+                        _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                      },
+                      dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
+                      initialSelection: _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value.value,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 6),
+          Row(
             children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
           ),
-
           Row(
             children: [
               Expanded(
@@ -453,9 +498,9 @@ class EatsJournalQuickEntryAddScreen extends StatelessWidget {
               height: 48,
               child: OutlinedButton(
                 onPressed: () async {
-                  int? originalQuickEntryId = _eatsJournalQuickEntryAddScreenViewModel.quickEntryId.value;
+                  int? originalQuickEntryId = _eatsJournalQuickEntryAddScreenViewModel.quickEntryId;
 
-                  if (!(await _eatsJournalQuickEntryAddScreenViewModel.createQuickEntry())) {
+                  if (!(await _eatsJournalQuickEntryAddScreenViewModel.setQuickEntry())) {
                     SnackBar snackBar = SnackBar(
                       content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_quick_entry),
                       action: SnackBarAction(
@@ -470,7 +515,7 @@ class EatsJournalQuickEntryAddScreen extends StatelessWidget {
                   } else {
                     SnackBar snackBar = SnackBar(
                       content: originalQuickEntryId == null
-                          ? Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_inserted)
+                          ? Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_added)
                           : Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_updated),
                       action: SnackBarAction(
                         label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
@@ -481,23 +526,25 @@ class EatsJournalQuickEntryAddScreen extends StatelessWidget {
                       ),
                     );
                     ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
+                    Navigator.pop(navigatorKey.currentContext!);
                   }
                 },
-                child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId,
-                  builder: (_, _, _) {
-                    if (_eatsJournalQuickEntryAddScreenViewModel.quickEntryId.value == null) {
-                      return Text(AppLocalizations.of(context)!.insert);
-                    } else {
-                      return Text(AppLocalizations.of(context)!.update);
-                    }
-                  },
-                ),
+                child: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
+                    ? Text(AppLocalizations.of(context)!.add)
+                    : Text(AppLocalizations.of(context)!.update),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
+
+    if (date != null) {
+      _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value = date;
+    }
   }
 }

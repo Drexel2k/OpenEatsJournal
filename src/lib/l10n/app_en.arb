@@ -193,8 +193,9 @@
   "na_amount": "n/a amount",
   "amount_label": "amount:",
   "cant_create_quick_entry": "Can't create quick entry, please correct errors.",
-  "quick_entry_inserted": "Quick entry inserted.",
+  "quick_entry_added": "Quick entry added.",
   "quick_entry_updated": "Quick entry updated.",
-  "insert": "Insert"
+  "add": "Add",
+  "add_quick_entry": "Add quick entry"
 }
 

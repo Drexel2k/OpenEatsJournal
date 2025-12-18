@@ -54,7 +54,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
   String get languageCode => _settingsRepository.languageCode.value;
-  ValueListenable<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
+  ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
 
   List<ObjectWithOrder<Food>> get foodSearchResult => _foodSearchResult;
   bool get hasMore => _hasMore;

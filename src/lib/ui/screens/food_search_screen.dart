@@ -247,16 +247,26 @@ class FoodSearchScreen extends StatelessWidget {
                     return FoodCard(
                       food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object,
                       textTheme: textTheme,
-                      onCardTap: (Food cardFood) {
-                        Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsAdd, arguments: cardFood);
+                      onCardTap: ({required Food food}) {
+                        Navigator.pushNamed(
+                          context,
+                          OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                          arguments: EatsJournalEntry.fromFood(
+                            entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                            food: food,
+                            amount: 100,
+                            amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
+                            meal: _foodSearchScreenViewModel.currentMeal.value,
+                          ),
+                        );
                       },
-                      onAddJournalEntryPressed: (Food cardFood, double amount, MeasurementUnit measurementUnit) async {
+                      onAddJournalEntryPressed: ({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) async {
                         await _foodSearchScreenViewModel.addEatsJournalEntry(
                           EatsJournalEntry.fromFood(
-                            food: cardFood,
+                            food: food,
                             entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                             amount: amount,
-                            amountMeasurementUnit: measurementUnit,
+                            amountMeasurementUnit: amountMeasurementUnit,
                             meal: _foodSearchScreenViewModel.currentMeal.value,
                           ),
                         );
@@ -288,6 +298,8 @@ class FoodSearchScreen extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           heroTag: "4",
                           onPressed: () async {
+                            _foodSearchScreenViewModel.toggleFloatingActionButtons();
+
                             try {
                               double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
                               double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
@@ -336,6 +348,8 @@ class FoodSearchScreen extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           heroTag: "3",
                           onPressed: () {
+                            _foodSearchScreenViewModel.toggleFloatingActionButtons();
+
                             Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteFoodEdit,
@@ -356,7 +370,18 @@ class FoodSearchScreen extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           heroTag: "2",
                           onPressed: () {
-                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntry);
+                            _foodSearchScreenViewModel.toggleFloatingActionButtons();
+
+                            Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                              arguments: EatsJournalEntry.quick(
+                                entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                                name: OpenEatsJournalStrings.emptyString,
+                                kJoule: NutritionCalculator.kJouleForOnekCal,
+                                meal: _foodSearchScreenViewModel.currentMeal.value,
+                              ),
+                            );
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
                         ),

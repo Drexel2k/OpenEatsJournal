@@ -5,9 +5,9 @@ class OpenEatsJournalStrings {
   static const String navigatorRouteSettings = "/settings";
   static const String navigatorRouteOnboarding = "/onboarding";
   static const String navigatorRouteBarcodeScanner = "/barcode";
-  static const String navigatorRouteEatsAdd = "/eatsadd";
   static const String navigatorRouteFoodEdit = "/foodedit";
-  static const String navigatorRouteQuickEntry = "/quickentry";
+  static const String navigatorRouteFoodEntryEdit = "/foodentryedit";
+  static const String navigatorRouteQuickEntryEdit = "/quickentryedit";
 
   static const String emptyString = "";
   static const String de = "de";
@@ -67,6 +67,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnFoodSourceIdRef = "food_source_id_ref";
   static const String dbColumnOriginalFoodSourceIdRef = "original_food_source_id_ref";
   static const String dbColumnOriginalFoodSourceFoodIdRef = "original_food_source_food_id_ref";
+  static const String dbColumnBarcode = "barcode";
   static const String dbColumnFoodIdRef = "food_id_ref";
   static const String dbColumnName = "name";
   static const String dbColumnNutritionPerGramAmount = "nutrition_per_gram_mount";
@@ -83,7 +84,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
   static const String dbColumnOrderNumber = "order_number";
   static const String dbColumnIsDefault = "is_default";
-  static const String dbColumnamountMeasurementUnitIdRef = "amount_measurement_unit_id_ref";
+  static const String dbColumnAmountMeasurementUnitIdRef = "amount_measurement_unit_id_ref";
   static const String dbColumnDescription = "description";
   static const String dbColumnMealIdRef = "meal_id_ref";
   static const String dbColumnUrl = "url";
@@ -126,8 +127,21 @@ class OpenEatsJournalStrings {
   static const String dbResultFoodSalt = "food_salt";
   static const String dbResultEatsJournalEntrySalt = "eats_journal_entry_salt";
 
-  static const String dbIndexDateIndexTableDailyNutritionTarget = "date_index_$dbTableDailyNutritionTarget";
-  static const String dbIndexDateIndexTableDateInfo = "date_index_$dbTableDateInfo";
+  static const String dbIndexSettingTableSetting = "i_${dbColumnEntryDate}_$dbTableSetting";
+  static const String dbIndexFoodSourceIdRefTableFood = "i_${dbColumnFoodSourceIdRef}_$dbTableFood";
+  static const String dbIndexOriginalFoodSourceIdRefTableFood = "i_${dbColumnOriginalFoodSourceIdRef}_$dbTableFood";
+  static const String dbIndexOriginalFoodSourceFoodIdRefTableFood = "i_${dbColumnOriginalFoodSourceFoodIdRef}_$dbTableFood";
+  static const String dbIndexBarcodeTableFood = "i_${dbColumnBarcode}_$dbTableFood";
+  static const String dbIndexFoodIdRefTableFoodUnit = "i_${dbColumnFoodIdRef}_$dbTableFoodUnit";
+  static const String dbIndexAmountMeasurementUnitIdRefTableFoodUnit = "i_${dbColumnAmountMeasurementUnitIdRef}_$dbTableFoodUnit";
+  static const String dbIndexFoodUnitTypeIdRefTableFoodUnit = "i_${dbColumnFoodUnitTypeIdRef}_$dbTableFoodUnit";
+  static const String dbIndexFoodIdRefTableEatsJournal = "i_${dbColumnFoodIdRef}_$dbTableEatsJournal";
+  static const String dbIndexEntryDateTableEatsJournal = "i_${dbColumnEntryDate}_$dbTableEatsJournal";
+  static const String dbIndexAmountMeasurementUnitIdRefTableEatsJournal = "i_${dbColumnAmountMeasurementUnitIdRef}_$dbTableEatsJournal";
+  static const String dbIndexMealIdRefTableEatsJournal = "i_${dbColumnMealIdRef}_$dbTableEatsJournal";
+
+  static const String dbIndexDateTableDailyNutritionTarget = "i_${dbColumnEntryDate}_$dbTableDailyNutritionTarget";
+  static const String dbIndexDateTableDateInfo = "i_${dbColumnDate}_$dbTableDateInfo";
 
   static const String dbDateFormatDateAndTime = "yyyy-MM-d HH:mm:ss:SSSS";
   static const String dbDateFormatDateOnly = "yyyy-MM-dd";

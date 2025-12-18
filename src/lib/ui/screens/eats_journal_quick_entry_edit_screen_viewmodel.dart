@@ -1,34 +1,41 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
-class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
-  EatsJournalQuickEntryAddScreenViewModel({required JournalRepository journalRepository, required SettingsRepository settingsRepository})
-    : _journalRepository = journalRepository,
-      _settingsRepository = settingsRepository,
-      _quickEntry = EatsJournalEntry.quick(
-        entryDate: settingsRepository.currentJournalDate.value,
-        name: OpenEatsJournalStrings.emptyString,
-        kJoule: NutritionCalculator.kJouleForOnekCal,
-        meal: settingsRepository.currentMeal.value,
-      ),
-      _quickEntryId = ValueNotifier(null),
-      _name = ValueNotifier(OpenEatsJournalStrings.emptyString),
-      _nameValid = ValueNotifier(false),
-      _amount = ValueNotifier(null),
-      _amountMeasurementUnit = ValueNotifier(MeasurementUnit.gram),
-      _kJoule = ValueNotifier(null),
-      _carbohydrates = ValueNotifier(null),
-      _sugar = ValueNotifier(null),
-      _fat = ValueNotifier(null),
-      _saturatedFat = ValueNotifier(null),
-      _protein = ValueNotifier(null),
-      _salt = ValueNotifier(null) {
+class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
+  EatsJournalQuickEntryEditScreenViewModel({
+    required EatsJournalEntry quickEntry,
+    required JournalRepository journalRepository,
+    required SettingsRepository settingsRepository,
+  }) : _journalRepository = journalRepository,
+       _settingsRepository = settingsRepository,
+       _quickEntry = quickEntry,
+       _quickEntryId = quickEntry.id,
+       _name = ValueNotifier(quickEntry.name),
+       _nameValid = ValueNotifier(false),
+       _amount = ValueNotifier(quickEntry.amount),
+       _amountMeasurementUnit = ValueNotifier(quickEntry.amountMeasurementUnit != null ? quickEntry.amountMeasurementUnit! : MeasurementUnit.gram),
+       _kJoule = ValueNotifier(quickEntry.kJoule),
+       _carbohydrates = ValueNotifier(quickEntry.carbohydrates),
+       _sugar = ValueNotifier(quickEntry.sugar),
+       _fat = ValueNotifier(quickEntry.fat),
+       _saturatedFat = ValueNotifier(quickEntry.saturatedFat),
+       _protein = ValueNotifier(quickEntry.protein),
+       _salt = ValueNotifier(quickEntry.salt) {
+    if (_quickEntry.food != null) {
+      throw StateError("Quick entry must not have a food.");
+    }
+
+    _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
+    _currentMeal.value = _settingsRepository.currentMeal.value;
+
+    _currentJournalDate.addListener(_currentJournalDateChanged);
+    _currentMeal.addListener(_currentMealChanged);
     _name.addListener(_nameChanged);
     _kJoule.addListener(_kJouleChanged);
     _currentMeasurementUnit.addListener(_currentMeasurementUnitChanged);
@@ -37,8 +44,11 @@ class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
 
+  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
+  final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
+
   final EatsJournalEntry _quickEntry;
-  final ValueNotifier<int?> _quickEntryId;
+  final int? _quickEntryId;
   final ValueNotifier<String> _name;
   final ValueNotifier<bool> _nameValid;
   final ValueNotifier<double?> _amount;
@@ -55,7 +65,10 @@ class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit = ValueNotifier(MeasurementUnit.gram);
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
-  ValueNotifier<int?> get quickEntryId => _quickEntryId;
+  ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
+  ValueNotifier<Meal> get currentMeal => _currentMeal;
+
+  int? get quickEntryId => _quickEntryId;
   ValueNotifier<String> get name => _name;
   ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<double?> get amount => _amount;
@@ -71,6 +84,14 @@ class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
 
   ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   ExternalTriggerChangedNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
+
+  void _currentJournalDateChanged() {
+    _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
+  }
+
+  void _currentMealChanged() {
+    _settingsRepository.currentMeal.value = _currentMeal.value;
+  }
 
   void _nameChanged() {
     if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {
@@ -88,7 +109,7 @@ class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> createQuickEntry() async {
+  Future<bool> setQuickEntry() async {
     bool quickEntryValid = true;
 
     if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {
@@ -117,9 +138,8 @@ class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
         entryDate: _settingsRepository.currentJournalDate.value,
         dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
       );
-      
+
       await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _quickEntry);
-      _quickEntryId.value = _quickEntry.id;
     }
 
     return quickEntryValid;
@@ -131,6 +151,8 @@ class EatsJournalQuickEntryAddScreenViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _currentJournalDate.dispose();
+    _currentMeal.dispose();
     _name.dispose();
     _nameValid.dispose();
     _amount.dispose();

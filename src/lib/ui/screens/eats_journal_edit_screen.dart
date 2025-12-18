@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -48,6 +49,13 @@ class EatsJournalEditScreen extends StatelessWidget {
 
                     return EatsJournalEntryRow(
                       eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
+                      onPressed: ({required EatsJournalEntry eatsJournalEntry}) {
+                        if (eatsJournalEntry.food != null) {
+                          Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
+                        } else {
+                          Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
+                        }
+                      },
                       onDeletePressed: ({required int eatsJournalEntryId}) async {
                         bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
 

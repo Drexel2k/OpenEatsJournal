@@ -14,41 +14,11 @@ class EatsJournalEntry {
        _meal = meal,
        _food = food,
        _name = food.name,
-       _kJoule = amountMeasurementUnit == MeasurementUnit.gram
-           ? (food.kJoule * (amount / food.nutritionPerGramAmount!)).round()
-           : (food.kJoule * (amount / food.nutritionPerMilliliterAmount!)).round(),
-       _carbohydrates = food.carbohydrates != null
-           ? (amountMeasurementUnit == MeasurementUnit.gram
-                 ? food.carbohydrates! * (amount / food.nutritionPerGramAmount!)
-                 : food.carbohydrates! * (amount / food.nutritionPerMilliliterAmount!))
-           : null,
-       _sugar = food.sugar != null
-           ? (amountMeasurementUnit == MeasurementUnit.gram
-                 ? food.sugar! * (amount / food.nutritionPerGramAmount!)
-                 : food.sugar! * (amount / food.nutritionPerMilliliterAmount!))
-           : null,
-       _fat = food.fat != null
-           ? (amountMeasurementUnit == MeasurementUnit.gram
-                 ? food.fat! * (amount / food.nutritionPerGramAmount!)
-                 : food.fat! * (amount / food.nutritionPerMilliliterAmount!))
-           : null,
-       _saturatedFat = food.saturatedFat != null
-           ? (amountMeasurementUnit == MeasurementUnit.gram
-                 ? food.saturatedFat! * (amount / food.nutritionPerGramAmount!)
-                 : food.saturatedFat! * (amount / food.nutritionPerMilliliterAmount!))
-           : null,
-       _protein = food.protein != null
-           ? (amountMeasurementUnit == MeasurementUnit.gram
-                 ? food.protein! * (amount / food.nutritionPerGramAmount!)
-                 : food.protein! * (amount / food.nutritionPerMilliliterAmount!))
-           : null,
-       _salt = food.salt != null
-           ? (amountMeasurementUnit == MeasurementUnit.gram
-                 ? food.salt! * (amount / food.nutritionPerGramAmount!)
-                 : food.salt! * (amount / food.nutritionPerMilliliterAmount!))
-           : null,
+       _kJoule = 1, //dummy value, recalculated in constructor
        _amount = amount,
-       _amountMeasurementUnit = amountMeasurementUnit;
+       _amountMeasurementUnit = amountMeasurementUnit {
+    _updateNutrionsValues();
+  }
 
   EatsJournalEntry.quick({
     required DateTime entryDate,
@@ -127,7 +97,7 @@ class EatsJournalEntry {
     if (value == null) {
       throw ArgumentError("Id must be set to value.");
     }
-    
+
     if (_id != null) {
       throw ArgumentError("Existing id must must not be overriden.");
     }
@@ -145,6 +115,10 @@ class EatsJournalEntry {
 
   set amount(double? value) {
     if (value == null) {
+      if (_food != null) {
+        throw ArgumentError("Amount needed on food entry.");
+      }
+
       _amountMeasurementUnit = null;
     }
 
@@ -153,11 +127,28 @@ class EatsJournalEntry {
     }
 
     _amount = value;
+    _updateNutrionsValues();
   }
 
   set amountMeasurementUnit(MeasurementUnit? value) {
     if (value == null) {
+      if (_food != null) {
+        throw ArgumentError("Mesaurement unit needed on food entry.");
+      }
+
       _amount = null;
+    } else {
+      if (_food != null) {
+        if (value == MeasurementUnit.gram) {
+          if (_food!.nutritionPerGramAmount == null) {
+            throw ArgumentError("Food doesn't support measurement unit gram.");
+          }
+        } else {
+          if (_food!.nutritionPerMilliliterAmount == null) {
+            throw ArgumentError("Food doesn't support measurement unit milliliter.");
+          }
+        }
+      }
     }
 
     if (value != null && _amount == null) {
@@ -165,52 +156,20 @@ class EatsJournalEntry {
     }
 
     _amountMeasurementUnit = value;
+    _updateNutrionsValues();
   }
 
   set food(Food? value) {
     _food = value;
-
-    amount ??= 100;
-
-    if (_amountMeasurementUnit == MeasurementUnit.gram && _food!.nutritionPerGramAmount == null) {
-      _amountMeasurementUnit = MeasurementUnit.milliliter;
-    }
-
     if (_food != null) {
+      amount ??= 100;
+
+      if (_amountMeasurementUnit == MeasurementUnit.gram && _food!.nutritionPerGramAmount == null) {
+        _amountMeasurementUnit = MeasurementUnit.milliliter;
+      }
+
       _name = food!.name;
-      _kJoule = amountMeasurementUnit == MeasurementUnit.gram
-          ? (food!.kJoule * (_amount! / food!.nutritionPerGramAmount!)).round()
-          : (food!.kJoule * (_amount! / food!.nutritionPerMilliliterAmount!)).round();
-      _carbohydrates = food!.carbohydrates != null
-          ? (_amountMeasurementUnit == MeasurementUnit.gram
-                ? food!.carbohydrates! * (_amount! / food!.nutritionPerGramAmount!)
-                : food!.carbohydrates! * (_amount! / food!.nutritionPerMilliliterAmount!))
-          : null;
-      _sugar = food!.sugar != null
-          ? (_amountMeasurementUnit == MeasurementUnit.gram
-                ? food!.sugar! * (_amount! / food!.nutritionPerGramAmount!)
-                : food!.sugar! * (_amount! / food!.nutritionPerMilliliterAmount!))
-          : null;
-      _fat = food!.fat != null
-          ? (_amountMeasurementUnit == MeasurementUnit.gram
-                ? food!.fat! * (_amount! / food!.nutritionPerGramAmount!)
-                : food!.fat! * (_amount! / food!.nutritionPerMilliliterAmount!))
-          : null;
-      _saturatedFat = food!.saturatedFat != null
-          ? (_amountMeasurementUnit == MeasurementUnit.gram
-                ? food!.saturatedFat! * (_amount! / food!.nutritionPerGramAmount!)
-                : food!.saturatedFat! * (_amount! / food!.nutritionPerMilliliterAmount!))
-          : null;
-      _protein = food!.protein != null
-          ? (_amountMeasurementUnit == MeasurementUnit.gram
-                ? food!.protein! * (_amount! / food!.nutritionPerGramAmount!)
-                : food!.protein! * (_amount! / food!.nutritionPerMilliliterAmount!))
-          : null;
-      _salt = food!.salt != null
-          ? (_amountMeasurementUnit == MeasurementUnit.gram
-                ? food!.salt! * (_amount! / food!.nutritionPerGramAmount!)
-                : food!.salt! * (_amount! / food!.nutritionPerMilliliterAmount!))
-          : null;
+      _updateNutrionsValues();
     }
   }
 
@@ -219,30 +178,58 @@ class EatsJournalEntry {
   }
 
   set kJoule(int value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set kJoule manually on food entry.");
+    }
+
     _kJoule = value;
   }
 
   set carbohydrates(double? value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set carbohydrates manually on food entry.");
+    }
+
     _carbohydrates = value;
   }
 
   set sugar(double? value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set sugar manually on food entry.");
+    }
+
     _sugar = value;
   }
 
   set fat(double? value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set fat manually on food entry.");
+    }
+
     _fat = value;
   }
 
   set saturatedFat(double? value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set saturatedFat manually on food entry.");
+    }
+
     _saturatedFat = value;
   }
 
   set protein(double? value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set protein manually on food entry.");
+    }
+
     _protein = value;
   }
 
   set salt(double? value) {
+    if (_food != null) {
+      throw ArgumentError("Can't set salt manually on food entry.");
+    }
+
     _salt = value;
   }
 
@@ -263,4 +250,42 @@ class EatsJournalEntry {
   double? get saturatedFat => _saturatedFat;
   double? get protein => _protein;
   double? get salt => _salt;
+
+  _updateNutrionsValues() {
+    if (_food != null && _amount != null && _amountMeasurementUnit != null) {
+      _kJoule = _amountMeasurementUnit! == MeasurementUnit.gram
+          ? (_food!.kJoule * (_amount! / _food!.nutritionPerGramAmount!)).round()
+          : (_food!.kJoule * (_amount! / _food!.nutritionPerMilliliterAmount!)).round();
+      _carbohydrates = _food!.carbohydrates != null
+          ? (_amountMeasurementUnit! == MeasurementUnit.gram
+                ? _food!.carbohydrates! * (_amount! / _food!.nutritionPerGramAmount!)
+                : _food!.carbohydrates! * (_amount! / _food!.nutritionPerMilliliterAmount!))
+          : null;
+      _sugar = _food!.sugar != null
+          ? (_amountMeasurementUnit! == MeasurementUnit.gram
+                ? _food!.sugar! * (_amount! / _food!.nutritionPerGramAmount!)
+                : _food!.sugar! * (_amount! / _food!.nutritionPerMilliliterAmount!))
+          : null;
+      _fat = _food!.fat != null
+          ? (_amountMeasurementUnit! == MeasurementUnit.gram
+                ? _food!.fat! * (_amount! / _food!.nutritionPerGramAmount!)
+                : _food!.fat! * (_amount! / _food!.nutritionPerMilliliterAmount!))
+          : null;
+      _saturatedFat = _food!.saturatedFat != null
+          ? (_amountMeasurementUnit! == MeasurementUnit.gram
+                ? _food!.saturatedFat! * (_amount! / _food!.nutritionPerGramAmount!)
+                : _food!.saturatedFat! * (_amount! / _food!.nutritionPerMilliliterAmount!))
+          : null;
+      _protein = _food!.protein != null
+          ? (_amountMeasurementUnit! == MeasurementUnit.gram
+                ? _food!.protein! * (_amount! / _food!.nutritionPerGramAmount!)
+                : _food!.protein! * (_amount! / _food!.nutritionPerMilliliterAmount!))
+          : null;
+      _salt = _food!.salt != null
+          ? (_amountMeasurementUnit! == MeasurementUnit.gram
+                ? _food!.salt! * (_amount! / _food!.nutritionPerGramAmount!)
+                : _food!.salt! * (_amount! / _food!.nutritionPerMilliliterAmount!))
+          : null;
+    }
+  }
 }

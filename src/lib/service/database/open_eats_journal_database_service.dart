@@ -63,6 +63,7 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} TEXT,
+        ${OpenEatsJournalStrings.dbColumnBarcode} INT,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
         ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount} REAL,
@@ -86,7 +87,7 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnAmount} REAL NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnOrderNumber} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnIsDefault} BOOLEAN NOT NULL
@@ -97,7 +98,7 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnAmount} REAL,
-        ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} INT,
+        ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnKiloJoule} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
         ${OpenEatsJournalStrings.dbColumnSugar} REAL,
@@ -137,10 +138,47 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnName} TEXT
       );""");
 
-    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateIndexTableDailyNutritionTarget} ON
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexSettingTableSetting} ON
+        ${OpenEatsJournalStrings.dbTableSetting}(${OpenEatsJournalStrings.dbColumnSetting})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodSourceIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnFoodSourceIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceFoodIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexBarcodeTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnBarcode})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableFoodUnit} ON
+        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableFoodUnit} ON
+        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodUnitTypeIdRefTableFoodUnit} ON
+        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexEntryDateTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnEntryDate})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
+      ;""");
+    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexMealIdRefTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnMealIdRef})
+      ;""");
+
+    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDailyNutritionTarget} ON
         ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}(${OpenEatsJournalStrings.dbColumnEntryDate})
       ;""");
-    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateIndexTableDateInfo} ON
+    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDateInfo} ON
         ${OpenEatsJournalStrings.dbTableDateInfo}(${OpenEatsJournalStrings.dbColumnDate})
       ;""");
 
@@ -408,7 +446,7 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.dbColumnEntryDate: ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate),
       OpenEatsJournalStrings.dbColumnName: eatsJournalEntry.name,
       OpenEatsJournalStrings.dbColumnAmount: eatsJournalEntry.amount,
-      OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef: eatsJournalEntry.amountMeasurementUnit?.value,
+      OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: eatsJournalEntry.amountMeasurementUnit?.value,
       OpenEatsJournalStrings.dbColumnKiloJoule: eatsJournalEntry.kJoule,
       OpenEatsJournalStrings.dbColumnCarbohydrates: eatsJournalEntry.carbohydrates,
       OpenEatsJournalStrings.dbColumnSugar: eatsJournalEntry.sugar,
@@ -449,7 +487,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbColumnEntryDate},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryName},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryAmount},
-              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryAmountMeasurementUnitIdRef},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnCarbohydrates} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSugar} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySugar},
@@ -479,7 +517,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodUnitId},
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodUnitName},
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmount},
-              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
               ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef},
               ${OpenEatsJournalStrings.dbColumnOrderNumber},
               ${OpenEatsJournalStrings.dbColumnIsDefault}
@@ -737,7 +775,7 @@ class OpenEatsJournalDatabaseService {
         OpenEatsJournalStrings.dbColumnFoodIdRef: food.id,
         OpenEatsJournalStrings.dbColumnName: foodUnitWithOrder.object.name,
         OpenEatsJournalStrings.dbColumnAmount: foodUnitWithOrder.object.amount,
-        OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef: foodUnitWithOrder.object.amountMeasurementUnit.value,
+        OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: foodUnitWithOrder.object.amountMeasurementUnit.value,
         OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef: foodUnitWithOrder.object.foodUnitType?.value,
         OpenEatsJournalStrings.dbColumnOrderNumber: foodUnitWithOrder.order,
         OpenEatsJournalStrings.dbColumnIsDefault: foodUnitWithOrder.object == food.defaultFoodUnit,
@@ -782,7 +820,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodUnitId},
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodUnitName},
               ${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmount},
-              ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
               ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef},
               ${OpenEatsJournalStrings.dbColumnOrderNumber},
               ${OpenEatsJournalStrings.dbColumnIsDefault}
@@ -831,7 +869,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodUnitId},
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodUnitName},
               ${OpenEatsJournalStrings.dbColumnAmount} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmount},
-              ${OpenEatsJournalStrings.dbColumnamountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
+              ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} AS ${OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef},
               ${OpenEatsJournalStrings.dbColumnFoodUnitTypeIdRef},
               ${OpenEatsJournalStrings.dbColumnOrderNumber},
               ${OpenEatsJournalStrings.dbColumnIsDefault}
@@ -1147,12 +1185,12 @@ class OpenEatsJournalDatabaseService {
           entryCount: row[OpenEatsJournalStrings.dbResultDayCount] as int,
           nutritions: Nutritions(
             kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as int),
-            carbohydrates: (row[OpenEatsJournalStrings.dbResultCarbohydratesSum] as double),
-            sugar: (row[OpenEatsJournalStrings.dbResultSugarSum] as double),
-            fat: (row[OpenEatsJournalStrings.dbResultFatSum] as double),
-            saturatedFat: (row[OpenEatsJournalStrings.dbResultSaturatedFatSum] as double),
-            protein: (row[OpenEatsJournalStrings.dbResultProteinSum] as double),
-            salt: (row[OpenEatsJournalStrings.dbResultSaltSum] as double),
+            carbohydrates: (row[OpenEatsJournalStrings.dbResultCarbohydratesSum] as double?),
+            sugar: (row[OpenEatsJournalStrings.dbResultSugarSum] as double?),
+            fat: (row[OpenEatsJournalStrings.dbResultFatSum] as double?),
+            saturatedFat: (row[OpenEatsJournalStrings.dbResultSaturatedFatSum] as double?),
+            protein: (row[OpenEatsJournalStrings.dbResultProteinSum] as double?),
+            salt: (row[OpenEatsJournalStrings.dbResultSaltSum] as double?),
           ),
         );
       }

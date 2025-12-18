@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
@@ -874,6 +875,8 @@ class EatsJournalScreen extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           heroTag: "5",
                           onPressed: () {
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
+
                             Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                           },
                           label: Text(AppLocalizations.of(context)!.eats_journal_entry),
@@ -886,6 +889,8 @@ class EatsJournalScreen extends StatelessWidget {
                           heroTag: "4",
                           onPressed: () async {
                             try {
+                              _eatsJournalScreenViewModel.toggleFloatingActionButtons();
+
                               double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
                               double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
                               double weight = await _eatsJournalScreenViewModel.getLastWeightJournalEntry();
@@ -934,6 +939,8 @@ class EatsJournalScreen extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           heroTag: "3",
                           onPressed: () {
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
+
                             Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteFoodEdit,
@@ -954,7 +961,18 @@ class EatsJournalScreen extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           heroTag: "2",
                           onPressed: () {
-                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntry);
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
+
+                            Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                              arguments: EatsJournalEntry.quick(
+                                entryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                name: OpenEatsJournalStrings.emptyString,
+                                kJoule: NutritionCalculator.kJouleForOnekCal,
+                                meal: _eatsJournalScreenViewModel.currentMeal.value,
+                              ),
+                            );
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
                         ),

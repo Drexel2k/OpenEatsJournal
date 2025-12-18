@@ -9,13 +9,16 @@ class EatsJournalEntryRow extends StatelessWidget {
   const EatsJournalEntryRow({
     super.key,
     required EatsJournalEntry eatsJournalEntry,
+    required void Function({required EatsJournalEntry eatsJournalEntry}) onPressed,
     required Future<void> Function({required int eatsJournalEntryId}) onDeletePressed,
     required Color deleteIconColor,
   }) : _eatsJournalEntry = eatsJournalEntry,
+       _onPressed = onPressed,
        _onDeletePressed = onDeletePressed,
        _deleteIconColor = deleteIconColor;
 
   final EatsJournalEntry _eatsJournalEntry;
+  final void Function({required EatsJournalEntry eatsJournalEntry}) _onPressed;
   final Future<void> Function({required int eatsJournalEntryId}) _onDeletePressed;
   final Color _deleteIconColor;
 
@@ -25,7 +28,9 @@ class EatsJournalEntryRow extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              _onPressed(eatsJournalEntry: _eatsJournalEntry);
+            },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -38,7 +43,9 @@ class EatsJournalEntryRow extends StatelessWidget {
                           ? "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalEntry.amount!)}${_eatsJournalEntry.amountMeasurementUnit!.text}"
                           : AppLocalizations.of(context)!.na_amount,
                     ),
-                    Text("${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalEntry.kJoule))} ${AppLocalizations.of(context)!.kcal}"),
+                    Text(
+                      "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalEntry.kJoule))} ${AppLocalizations.of(context)!.kcal}",
+                    ),
                   ],
                 ),
                 SizedBox(width: 10),

@@ -1,6 +1,7 @@
 import "dart:ui";
 
 import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -9,10 +10,10 @@ import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_add_screen.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen.dart";
@@ -117,9 +118,9 @@ class OpenEatsJournalApp extends StatelessWidget {
               ),
             ),
             OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
-            OpenEatsJournalStrings.navigatorRouteEatsAdd: (contextBuilder) => EatsJournalFoodAddScreen(
-              eatsJournalFoodAddScreenViewModel: EatsJournalFoodAddScreenViewModel(
-                food: (ModalRoute.of(contextBuilder)!.settings.arguments as Food),
+            OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) => EatsJournalFoodEntryEditScreen(
+              eatsJournalFoodAddScreenViewModel: EatsJournalFoodEntryEditScreenViewModel(
+                foodEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
                 journalRepository: _repositories.journalRepository,
                 foodRepository: _repositories.foodRepository,
                 settingsRepository: _repositories.settingsRepository,
@@ -131,8 +132,9 @@ class OpenEatsJournalApp extends StatelessWidget {
                 foodRepository: _repositories.foodRepository,
               ),
             ),
-            OpenEatsJournalStrings.navigatorRouteQuickEntry: (contextBuilder) => EatsJournalQuickEntryAddScreen(
-              eatsJournalQuickEntryAddScreenViewModel: EatsJournalQuickEntryAddScreenViewModel(
+            OpenEatsJournalStrings.navigatorRouteQuickEntryEdit: (contextBuilder) => EatsJournalQuickEntryEditScreen(
+              eatsJournalQuickEntryAddScreenViewModel: EatsJournalQuickEntryEditScreenViewModel(
+                quickEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
                 journalRepository: _repositories.journalRepository,
                 settingsRepository: _repositories.settingsRepository,
               ),

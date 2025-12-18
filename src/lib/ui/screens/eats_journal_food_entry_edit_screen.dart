@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:openeatsjournal/domain/food.dart';
 import 'package:openeatsjournal/domain/food_unit.dart';
+import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/object_with_order.dart';
@@ -9,19 +10,21 @@ import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/global_navigator_key.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
-import 'package:openeatsjournal/ui/screens/eats_journal_food_add_screen_viewmodel.dart';
+import 'package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart';
 import 'package:openeatsjournal/ui/utils/error_handlers.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import 'package:openeatsjournal/ui/utils/localized_drop_down_entries.dart';
+import 'package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
-class EatsJournalFoodAddScreen extends StatelessWidget {
-  EatsJournalFoodAddScreen({super.key, required EatsJournalFoodAddScreenViewModel eatsJournalFoodAddScreenViewModel})
+class EatsJournalFoodEntryEditScreen extends StatelessWidget {
+  EatsJournalFoodEntryEditScreen({super.key, required EatsJournalFoodEntryEditScreenViewModel eatsJournalFoodAddScreenViewModel})
     : _eatsJournalFoodAddScreenViewModel = eatsJournalFoodAddScreenViewModel,
       _amountController = TextEditingController(),
       _eatsAmountController = TextEditingController();
 
-  final EatsJournalFoodAddScreenViewModel _eatsJournalFoodAddScreenViewModel;
+  final EatsJournalFoodEntryEditScreenViewModel _eatsJournalFoodAddScreenViewModel;
   final TextEditingController _amountController;
   final TextEditingController _eatsAmountController;
 
@@ -33,22 +36,64 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
     _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.eatsAmount.value);
 
     return MainLayout(
-      route: OpenEatsJournalStrings.navigatorRouteEatsAdd,
+      route: OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
       title: AppLocalizations.of(context)!.add_eats_journal_entry,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalFoodAddScreenViewModel.currentJournalDate,
+                  builder: (_, _, _) {
+                    return OutlinedButton(
+                      onPressed: () async {
+                        try {
+                          _selectDate(initialDate: _eatsJournalFoodAddScreenViewModel.currentJournalDate.value, context: context);
+                        } on Exception catch (exc, stack) {
+                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
+                        } on Error catch (error, stack) {
+                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                        }
+                      },
+                      child: Text(
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodAddScreenViewModel.currentJournalDate.value),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalFoodAddScreenViewModel.currentMeal,
+                  builder: (_, _, _) {
+                    return OpenEatsJournalDropdownMenu<int>(
+                      onSelected: (int? mealValue) {
+                        _eatsJournalFoodAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                      },
+                      dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
+                      initialSelection: _eatsJournalFoodAddScreenViewModel.currentMeal.value.value,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 6),
           Text(
             softWrap: true,
             style: textTheme.headlineSmall,
-            _eatsJournalFoodAddScreenViewModel.food.name != OpenEatsJournalStrings.emptyString
-                ? _eatsJournalFoodAddScreenViewModel.food.name
+            _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name != OpenEatsJournalStrings.emptyString
+                ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name
                 : AppLocalizations.of(context)!.no_name,
           ),
           Text(
             style: textTheme.labelLarge,
-            _eatsJournalFoodAddScreenViewModel.food.brands != null
-                ? _eatsJournalFoodAddScreenViewModel.food.brands!.join(", ")
+            _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands != null
+                ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands!.join(", ")
                 : AppLocalizations.of(context)!.no_brand,
           ),
           SizedBox(height: 10),
@@ -168,27 +213,28 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
+                flex: 3,
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalFoodAddScreenViewModel.amount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _amountController,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
-                    inputFormatters: [
-                      TextInputFormatter.withFunction((oldValue, newValue) {
-                        final String text = newValue.text.trim();
-                        if (text.isEmpty) {
-                          return newValue;
-                        }
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
 
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
-                        if (doubleValue != null) {
-                          return newValue;
-                        } else {
-                          return oldValue;
-                        }
-                      }),
-                    ],
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
                         _eatsJournalFoodAddScreenViewModel.amount.value = doubleValue;
@@ -205,27 +251,28 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 child: Align(alignment: AlignmentGeometry.center, child: Text("x")),
               ),
               Expanded(
+                flex: 3,
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalFoodAddScreenViewModel.eatsAmount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _eatsAmountController,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
-                    inputFormatters: [
-                      TextInputFormatter.withFunction((oldValue, newValue) {
-                        final String text = newValue.text.trim();
-                        if (text.isEmpty) {
-                          return newValue;
-                        }
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          final String text = newValue.text.trim();
+                          if (text.isEmpty) {
+                            return newValue;
+                          }
 
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
-                        if (doubleValue != null) {
-                          return newValue;
-                        } else {
-                          return oldValue;
-                        }
-                      }),
-                    ],
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          if (doubleValue != null) {
+                            return newValue;
+                          } else {
+                            return oldValue;
+                          }
+                        }),
+                      ],
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
                         _eatsJournalFoodAddScreenViewModel.eatsAmount.value = doubleValue;
@@ -239,6 +286,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
+                flex: 2,
                 child: RoundOutlinedButton(
                   onPressed: _eatsJournalFoodAddScreenViewModel.measurementSelectionEnabled
                       ? () {
@@ -262,6 +310,7 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
+                flex: 3,
                 child: OutlinedButton(
                   onPressed: () async {
                     try {
@@ -302,7 +351,8 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                       }
 
                       if (dataValid) {
-                        await _eatsJournalFoodAddScreenViewModel.addEatsJournalEntry();
+                        await _eatsJournalFoodAddScreenViewModel.setFoodEntry();
+                        Navigator.pop(navigatorKey.currentContext!);
                       }
                     } on Exception catch (exc, stack) {
                       await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
@@ -310,7 +360,9 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
                       await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
                     }
                   },
-                  child: Text("Add"),
+                  child: _eatsJournalFoodAddScreenViewModel.foodEntryId == null
+                      ? Text(AppLocalizations.of(context)!.add)
+                      : Text(AppLocalizations.of(context)!.update),
                 ),
               ),
             ],
@@ -318,38 +370,42 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           SizedBox(height: 10),
           Expanded(
             child: ListView(
-              children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.food, textTheme: textTheme, context: context),
+              children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!, textTheme: textTheme, context: context),
             ),
           ),
           Divider(thickness: 2, height: 20),
           Text(
             style: textTheme.labelSmall,
             AppLocalizations.of(context)!.per_100_measurement_unit(
-              _eatsJournalFoodAddScreenViewModel.food.nutritionPerGramAmount != null ? MeasurementUnit.gram.text : MeasurementUnit.milliliter.text,
+              _eatsJournalFoodAddScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null ? MeasurementUnit.gram.text : MeasurementUnit.milliliter.text,
             ),
           ),
           SizedBox(height: 10),
           Text(
             style: textTheme.titleMedium,
             AppLocalizations.of(context)!.amount_kcal(
-              ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodAddScreenViewModel.food.kJoule)),
+              ConvertValidate.numberFomatterInt.format(
+                NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.kJoule),
+              ),
             ),
           ),
           Row(
             children: [
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.food.carbohydrates != null
+                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.carbohydrates != null
                     ? Text(
                         AppLocalizations.of(
                           context,
-                        )!.amount_carb(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.carbohydrates!)),
+                        )!.amount_carb(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.carbohydrates!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_carb),
               ),
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.food.sugar != null
+                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.sugar != null
                     ? Text(
-                        AppLocalizations.of(context)!.amount_sugar(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.sugar!)),
+                        AppLocalizations.of(
+                          context,
+                        )!.amount_sugar(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.sugar!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_sugar),
               ),
@@ -358,16 +414,20 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.food.fat != null
-                    ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.fat!)))
-                    : Text(AppLocalizations.of(context)!.na_fat),
-              ),
-              Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.food.saturatedFat != null
+                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.fat != null
                     ? Text(
                         AppLocalizations.of(
                           context,
-                        )!.amount_saturated_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.saturatedFat!)),
+                        )!.amount_fat(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.fat!)),
+                      )
+                    : Text(AppLocalizations.of(context)!.na_fat),
+              ),
+              Expanded(
+                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.saturatedFat != null
+                    ? Text(
+                        AppLocalizations.of(context)!.amount_saturated_fat(
+                          ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.saturatedFat!),
+                        ),
                       )
                     : Text(AppLocalizations.of(context)!.na_saturated_fat),
               ),
@@ -376,18 +436,20 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.food.protein != null
+                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.protein != null
                     ? Text(
                         AppLocalizations.of(
                           context,
-                        )!.amount_prot(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.protein!)),
+                        )!.amount_prot(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.protein!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_prot),
               ),
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.food.salt != null
+                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt != null
                     ? Text(
-                        AppLocalizations.of(context)!.amount_salt(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.food.salt!)),
+                        AppLocalizations.of(
+                          context,
+                        )!.amount_salt(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt!)),
                       )
                     : Text(AppLocalizations.of(context)!.na_salt),
               ),
@@ -515,5 +577,13 @@ class EatsJournalFoodAddScreen extends StatelessWidget {
 
     return (food.kJoule *
         (foodUnit.amount / (foodUnit.amountMeasurementUnit == MeasurementUnit.gram ? food.nutritionPerGramAmount! : food.nutritionPerMilliliterAmount!)));
+  }
+
+  Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
+
+    if (date != null) {
+      _eatsJournalFoodAddScreenViewModel.currentJournalDate.value = date;
+    }
   }
 }

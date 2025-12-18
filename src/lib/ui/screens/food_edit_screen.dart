@@ -601,7 +601,7 @@ class FoodEditScreen extends StatelessWidget {
               height: 48,
               child: OutlinedButton(
                 onPressed: () async {
-                  int? originalFoodId = _foodEditScreenViewModel.foodId.value;
+                  int? originalFoodId = _foodEditScreenViewModel.foodId;
                   if (!(await _foodEditScreenViewModel.createFood())) {
                     SnackBar snackBar = SnackBar(
                       content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_food),
@@ -628,18 +628,10 @@ class FoodEditScreen extends StatelessWidget {
                       ),
                     );
                     ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
+                    Navigator.pop(navigatorKey.currentContext!);
                   }
                 },
-                child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.foodId,
-                  builder: (_, _, _) {
-                    if (_foodEditScreenViewModel.foodId.value == null) {
-                      return Text(AppLocalizations.of(context)!.create);
-                    } else {
-                      return Text(AppLocalizations.of(context)!.update);
-                    }
-                  },
-                ),
+                child: _foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),
               ),
             ),
           ),

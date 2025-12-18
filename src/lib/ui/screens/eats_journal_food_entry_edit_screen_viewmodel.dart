@@ -1,38 +1,54 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 
-class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
-  EatsJournalFoodAddScreenViewModel({
-    required Food food,
+class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
+  EatsJournalFoodEntryEditScreenViewModel({
+    required EatsJournalEntry foodEntry,
     required JournalRepository journalRepository,
     required FoodRepository foodRepository,
     required SettingsRepository settingsRepository,
-  }) : _food = food,
-       _journalRepository = journalRepository,
+  }) : _journalRepository = journalRepository,
        _foodRepository = foodRepository,
+       _foodEntry = foodEntry,
+       _foodEntryId = foodEntry.id,
        _settingsRepository = settingsRepository,
-       _eatsAmount = ValueNotifier(_getInitialFoodAmount(food)),
-       _currentMeasurementUnit = ValueNotifier(_getInitialMeasurementUnit(food)),
-       _measurementSelectionEnabled = _getInitialMeasurementSelectionEnabled(food),
-       _kJoule = ValueNotifier(_getInitialKJoule(food)),
-       _carbohydrates = ValueNotifier(_getInitialCarbohydrates(food)),
-       _sugar = ValueNotifier(_getInitialSugar(food)),
-       _fat = ValueNotifier(_getInitialFat(food)),
-       _saturatedFat = ValueNotifier(_getInitialSaturatedFat(food)),
-       _protein = ValueNotifier(_getInitialProtein(food)),
-       _salt = ValueNotifier(_getInitialSalt(food)) {
+       _eatsAmount = ValueNotifier(_getInitialFoodAmount(foodEntry.food!)),
+       _currentMeasurementUnit = ValueNotifier(_getInitialMeasurementUnit(foodEntry.food!)),
+       _measurementSelectionEnabled = _getInitialMeasurementSelectionEnabled(foodEntry.food!),
+       _kJoule = ValueNotifier(_getInitialKJoule(foodEntry.food!)),
+       _carbohydrates = ValueNotifier(_getInitialCarbohydrates(foodEntry.food!)),
+       _sugar = ValueNotifier(_getInitialSugar(foodEntry.food!)),
+       _fat = ValueNotifier(_getInitialFat(foodEntry.food!)),
+       _saturatedFat = ValueNotifier(_getInitialSaturatedFat(foodEntry.food!)),
+       _protein = ValueNotifier(_getInitialProtein(foodEntry.food!)),
+       _salt = ValueNotifier(_getInitialSalt(foodEntry.food!)) {
+    if (_foodEntry.food == null) {
+      throw StateError("Food entry must not have a food.");
+    }
+
+    _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
+    _currentMeal.value = _settingsRepository.currentMeal.value;
+
+    _currentJournalDate.addListener(_currentJournalDateChanged);
+    _currentMeal.addListener(_currentMealChanged);
     _amount.addListener(_amountsChanged);
     _eatsAmount.addListener(_amountsChanged);
   }
 
-  final Food _food;
   final JournalRepository _journalRepository;
   final FoodRepository _foodRepository;
+
+  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
+  final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
+
+  final EatsJournalEntry _foodEntry;
+  final int? _foodEntryId;
   final SettingsRepository _settingsRepository;
   final ValueNotifier<double?> _amount = ValueNotifier(1);
   final ValueNotifier<double?> _eatsAmount;
@@ -47,7 +63,11 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _protein;
   final ValueNotifier<double?> _salt;
 
-  Food get food => _food;
+  ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
+  ValueNotifier<Meal> get currentMeal => _currentMeal;
+
+  int? get foodEntryId => _foodEntryId;
+  EatsJournalEntry get foodEntry => _foodEntry;
 
   ValueNotifier<double?> get amount => _amount;
   ValueNotifier<double?> get eatsAmount => _eatsAmount;
@@ -62,30 +82,56 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get protein => _protein;
   ValueNotifier<double?> get salt => _salt;
 
+  void _currentJournalDateChanged() {
+    _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
+  }
+
+  void _currentMealChanged() {
+    _settingsRepository.currentMeal.value = _currentMeal.value;
+  }
+
   void _amountsChanged() {
     if (_amount.value != null && _eatsAmount.value != null) {
       if (currentMeasurementUnit.value == MeasurementUnit.gram) {
-        _kJoule.value = (_food.kJoule * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!)).round();
-        _carbohydrates.value = _food.carbohydrates != null
-            ? _food.carbohydrates! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!)
+        _kJoule.value = (_foodEntry.food!.kJoule * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)).round();
+        _carbohydrates.value = _foodEntry.food!.carbohydrates != null
+            ? _foodEntry.food!.carbohydrates! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)
             : null;
-        _sugar.value = _food.sugar != null ? _food.sugar! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!) : null;
-        _fat.value = _food.fat != null ? _food.fat! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!) : null;
-        _saturatedFat.value = _food.saturatedFat != null ? _food.saturatedFat! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!) : null;
-        _protein.value = _food.protein != null ? _food.protein! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!) : null;
-        _salt.value = _food.salt != null ? _food.salt! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerGramAmount!) : null;
+        _sugar.value = _foodEntry.food!.sugar != null
+            ? _foodEntry.food!.sugar! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)
+            : null;
+        _fat.value = _foodEntry.food!.fat != null
+            ? _foodEntry.food!.fat! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)
+            : null;
+        _saturatedFat.value = _foodEntry.food!.saturatedFat != null
+            ? _foodEntry.food!.saturatedFat! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)
+            : null;
+        _protein.value = _foodEntry.food!.protein != null
+            ? _foodEntry.food!.protein! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)
+            : null;
+        _salt.value = _foodEntry.food!.salt != null
+            ? _foodEntry.food!.salt! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerGramAmount!)
+            : null;
       } else {
-        _kJoule.value = (_food.kJoule * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!)).round();
-        _carbohydrates.value = _food.carbohydrates != null
-            ? _food.carbohydrates! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!)
+        _kJoule.value = (_foodEntry.food!.kJoule * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)).round();
+        _carbohydrates.value = _foodEntry.food!.carbohydrates != null
+            ? _foodEntry.food!.carbohydrates! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)
             : null;
-        _sugar.value = _food.sugar != null ? _food.sugar! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!) : null;
-        _fat.value = _food.fat != null ? _food.fat! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!) : null;
-        _saturatedFat.value = _food.saturatedFat != null
-            ? _food.saturatedFat! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!)
+        _sugar.value = _foodEntry.food!.sugar != null
+            ? _foodEntry.food!.sugar! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)
             : null;
-        _protein.value = _food.protein != null ? _food.protein! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!) : null;
-        _salt.value = _food.salt != null ? _food.salt! * ((_amount.value! * _eatsAmount.value!) / _food.nutritionPerMilliliterAmount!) : null;
+        _fat.value = _foodEntry.food!.fat != null
+            ? _foodEntry.food!.fat! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)
+            : null;
+        _saturatedFat.value = _foodEntry.food!.saturatedFat != null
+            ? _foodEntry.food!.saturatedFat! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)
+            : null;
+        _protein.value = _foodEntry.food!.protein != null
+            ? _foodEntry.food!.protein! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)
+            : null;
+        _salt.value = _foodEntry.food!.salt != null
+            ? _foodEntry.food!.salt! * ((_amount.value! * _eatsAmount.value!) / _foodEntry.food!.nutritionPerMilliliterAmount!)
+            : null;
       }
     } else {
       _kJoule.value = null;
@@ -98,24 +144,23 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addEatsJournalEntry() async {
+  Future<void> setFoodEntry() async {
     if (_amount.value != null && eatsAmount.value != null) {
-      await _foodRepository.setFoodByExternalId(food: _food);
+      //can only be the case for external food, all other foods must have an id as they come from the database
+      if (_foodEntry.food!.id == null) {
+        await _foodRepository.setFoodByExternalId(food: _foodEntry.food!);
+      }
 
       await _journalRepository.saveOnceDayNutritionTarget(
         entryDate: _settingsRepository.currentJournalDate.value,
         dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
       );
 
-      await _journalRepository.setEatsJournalEntry(
-        eatsJournalEntry: EatsJournalEntry.fromFood(
-          food: _food,
-          entryDate: _settingsRepository.currentJournalDate.value,
-          amount: _amount.value! * _eatsAmount.value!,
-          amountMeasurementUnit: _currentMeasurementUnit.value,
-          meal: _settingsRepository.currentMeal.value,
-        ),
-      );
+      _foodEntry.amount = _amount.value;
+      _foodEntry.amountMeasurementUnit = _currentMeasurementUnit.value;
+      _foodEntry.entryDate = _settingsRepository.currentJournalDate.value;
+      _foodEntry.meal = _settingsRepository.currentMeal.value;
+      await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _foodEntry);
     }
   }
 
@@ -307,6 +352,8 @@ class EatsJournalFoodAddScreenViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _currentJournalDate.dispose();
+    _currentMeal.dispose();
     _amount.dispose();
     _eatsAmount.dispose();
 

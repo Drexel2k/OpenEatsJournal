@@ -33,7 +33,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get languageCode => _settingsRepository.languageCode.value;
-  ValueListenable<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
+  ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
   ExternalTriggerChangedNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
   Future<FoodRepositoryGetDayMealSumsResult> get dayData => _dayData;
   Future<WeightJournalEntry?> get currentWeight => _currentWeight;

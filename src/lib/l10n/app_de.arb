@@ -193,7 +193,8 @@
   "na_amount": "n/a Menge",
   "amount_label": "Menge:",
   "cant_create_quick_entry": "Kann Schnelleintrag nicht erstellen, bitte korrigiere die Fehler.",
-  "quick_entry_inserted": "Schnelleintrag hinzugefügt.",
+  "quick_entry_added": "Schnelleintrag hinzugefügt.",
   "quick_entry_updated": "Schnelleintrag aktualisiert.",
-  "insert": "Hinzufügen"
+  "add": "Hzf.",
+  "add_quick_entry": "Schnelleintrag hinzufügen"
 }

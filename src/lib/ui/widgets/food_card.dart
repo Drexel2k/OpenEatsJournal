@@ -13,8 +13,8 @@ class FoodCard extends StatelessWidget {
     super.key,
     required Food food,
     required TextTheme textTheme,
-    required void Function(Food) onCardTap,
-    required void Function(Food, double, MeasurementUnit) onAddJournalEntryPressed,
+    required void Function({required Food food}) onCardTap,
+    required Future<void> Function({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) onAddJournalEntryPressed,
   }) : _textTheme = textTheme,
        _food = food,
        _onCardTap = onCardTap,
@@ -22,8 +22,8 @@ class FoodCard extends StatelessWidget {
 
   final TextTheme _textTheme;
   final Food _food;
-  final void Function(Food) _onCardTap;
-  final void Function(Food, double, MeasurementUnit) _onAddJournalEntryPressed;
+  final void Function({required Food food}) _onCardTap;
+  final Future<void> Function({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) _onAddJournalEntryPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class FoodCard extends StatelessWidget {
       child: InkWell(
         borderRadius: borderRadius,
         onTap: () {
-          _onCardTap(_food);
+          _onCardTap(food: _food);
         },
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
@@ -140,7 +140,11 @@ class FoodCard extends StatelessWidget {
                     width: 145,
                     child: OutlinedButton(
                       onPressed: () {
-                        _onAddJournalEntryPressed(_food, _food.defaultFoodUnit != null ? _food.defaultFoodUnit!.amount : 100, _getMeasurementUnit());
+                        _onAddJournalEntryPressed(
+                          food: _food,
+                          amount: _food.defaultFoodUnit != null ? _food.defaultFoodUnit!.amount : 100,
+                          amountMeasurementUnit: _getMeasurementUnit(),
+                        );
                       },
                       child: Column(
                         children: [
