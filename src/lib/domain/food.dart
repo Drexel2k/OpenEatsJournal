@@ -13,6 +13,7 @@ class Food {
     int? id,
     FoodSource? originalFoodSource,
     String? originalFoodSourceFoodId,
+    int? barcode,
     List<String>? brands,
     double? nutritionPerGramAmount,
     double? nutritionPerMilliliterAmount,
@@ -29,6 +30,7 @@ class Food {
        _id = id,
        _originalFoodSource = originalFoodSource,
        _originalFoodSourceFoodId = originalFoodSourceFoodId,
+       _barcode = barcode,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
        _kJoule = kJoule,
@@ -47,6 +49,7 @@ class Food {
       _foodSource = FoodSource.user,
       _originalFoodSource = food.originalFoodSource ?? food.foodSource,
       _originalFoodSourceFoodId = food.originalFoodSourceFoodId,
+      _barcode = food.barcode,
       _kJoule = food.kJoule,
       _nutritionPerGramAmount = food.nutritionPerGramAmount,
       _nutritionPerMilliliterAmount = food.nutritionPerMilliliterAmount,
@@ -85,6 +88,7 @@ class Food {
     List<String>? brands,
     FoodSource? originalFoodSource,
     String? originalFoodSourceFoodId,
+    int? barcode,
     double? nutritionPerGramAmount,
     double? nutritionPerMilliliterAmount,
     double? carbohydrates,
@@ -102,6 +106,7 @@ class Food {
        _kJoule = kJoule,
        _originalFoodSource = originalFoodSource,
        _originalFoodSourceFoodId = originalFoodSourceFoodId,
+       _barcode = barcode,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
        _carbohydrates = carbohydrates,
@@ -137,6 +142,7 @@ class Food {
   final FoodSource _foodSource;
   final FoodSource? _originalFoodSource;
   final String? _originalFoodSourceFoodId;
+  final int? _barcode;
   int _kJoule;
   double? _nutritionPerGramAmount;
   double? _nutritionPerMilliliterAmount;
@@ -242,6 +248,7 @@ class Food {
   List<String>? get brands => _brands;
   FoodSource get foodSource => _foodSource;
   FoodSource? get originalFoodSource => _originalFoodSource;
+  int? get barcode => _barcode;
   int? get id => _id;
   String? get originalFoodSourceFoodId => _originalFoodSourceFoodId;
   double? get nutritionPerGramAmount => _nutritionPerGramAmount;
@@ -256,6 +263,10 @@ class Food {
   String? get quantity => _quantity;
   List<ObjectWithOrder<FoodUnit>> get foodUnitsWithOrder => List.unmodifiable(_foodUnitsWithOrder);
   FoodUnit? get defaultFoodUnit => _defaultFoodUnit;
+
+  bool get isExternalFoodSource {
+    return _foodSource != FoodSource.standard && _foodSource != FoodSource.user;
+  }
 
   bool addFoodUnit({required FoodUnit foodUnit}) {
     if (foodUnit.amountMeasurementUnit == MeasurementUnit.gram) {

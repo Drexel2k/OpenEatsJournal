@@ -37,7 +37,7 @@ class OpenFoodFactsService {
     //for barcoded search
     //https://openfoodfacts.github.io/openfoodfacts-server/api/
     //https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/
-    _apiV2Endpoint = "https://world.openfoodfacts.$domain/api/v2/product/?";
+    _apiV2Endpoint = "https://world.openfoodfacts.$domain/api/v2/product/";
 
     //for text search, but not complete yet
     //https://openfoodfacts.github.io/search-a-licious/
@@ -46,16 +46,15 @@ class OpenFoodFactsService {
     // _searchALiciousEndPoint = "https://search.openfoodfacts.$domain/search?";
   }
 
-  Future<String?> getFoodByBarcode({required String barcode}) async {
+  Future<String?> getFoodByBarcode({required int barcode}) async {
     Map<String, String> headers = {HttpHeaders.userAgentHeader: "$_appName/$_appVersion ($_appContactMail)"};
 
     if (_useStaging) {
       headers[HttpHeaders.authorizationHeader] = "Basic ${base64.encode(utf8.encode("off:off"))}";
     }
 
-    barcode = OpenFoodFactsService._encodeSearchText(barcode);
     Response resp = await http.get(
-      Uri.parse("$_apiV2Endpoint${barcode}product_type=food&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}"),
+      Uri.parse("$_apiV2Endpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}"),
       headers: headers,
     );
 

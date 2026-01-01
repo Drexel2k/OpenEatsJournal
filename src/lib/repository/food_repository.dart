@@ -6,8 +6,7 @@ import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/food_unit_type.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/repository/food_repository_get_food_by_barcode_result.dart";
-import "package:openeatsjournal/repository/food_repository_get_food_by_search_text_result.dart";
+import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 import "package:openeatsjournal/service/open_food_facts/data/food_api.dart";
@@ -29,68 +28,88 @@ class FoodRepository {
     _oejDatabase = oejDatabase;
   }
 
-  Future<FoodRepositoryGetFoodByBarcodeResult> getOpenFoodFactsFoodByBarcode({required String barcode, required String languageCode}) async {
+  Future<FoodRepositoryResult> getFoodByBarcode({required int barcode, required String languageCode}) async {
+    List<Food> foods = [];
+    List<Food>? userFoods = await _oejDatabase.getUserFoodByBarcode(barcode);
+    if (userFoods != null) {
+      foods.addAll(userFoods);
+    }
+
+    FoodRepositoryResult foodRepositoryResult = await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode);
+
+    //todo: show local results if online services fail...
+    if (foodRepositoryResult.errorCode == null) {
+      foods.add(foodRepositoryResult.foods![0]);
+    }
+
+    return FoodRepositoryResult(
+      foods: foods,
+      finished: foodRepositoryResult.errorCode == null ? true : false,
+      errorCode: foodRepositoryResult.errorCode,
+      errorMessage: foodRepositoryResult.errorMessage,
+    );
+  }
+
+  Future<FoodRepositoryResult> getOpenFoodFactsFoodByBarcode({required int barcode, required String languageCode}) async {
     String? jsonString;
     try {
       jsonString = await _openFoodFactsService.getFoodByBarcode(barcode: barcode);
     } on ClientException catch (clientException) {
-      return FoodRepositoryGetFoodByBarcodeResult(errorCode: 1, errorMessage: clientException.message);
+      return FoodRepositoryResult(errorCode: 1, errorMessage: clientException.message);
     }
 
     if (jsonString != null) {
       Map<String, dynamic> json = jsonDecode(jsonString);
+
       if (json.containsKey(OpenFoodFactsApiStrings.product)) {
         Food? food = _getFoodFromFoodApiV1V2(json: json[OpenFoodFactsApiStrings.product], languageCode: languageCode);
 
         if (food != null) {
-          return FoodRepositoryGetFoodByBarcodeResult(food: food);
+          return FoodRepositoryResult(foods: [food]);
         }
 
-        return FoodRepositoryGetFoodByBarcodeResult();
+        return FoodRepositoryResult();
       } else {
-        return FoodRepositoryGetFoodByBarcodeResult(errorCode: 2);
+        //no food found for this barcode
+        return FoodRepositoryResult();
       }
     }
 
-    return FoodRepositoryGetFoodByBarcodeResult(errorCode: 3);
+    return FoodRepositoryResult(errorCode: 3);
   }
 
-  Future<FoodRepositoryGetFoodBySearchTextResult> getFoodBySearchText({required String searchText, required String languageCode}) async {
+  Future<FoodRepositoryResult> getFoodBySearchText({required String searchText, required String languageCode}) async {
     List<Food> foods = [];
     List<Food>? userFoods = await _oejDatabase.getUserFoodBySearchtext(searchText.split(" ").map((String element) => "*${element.trim()}*").join(" "));
     if (userFoods != null) {
       foods.addAll(userFoods);
     }
 
-    FoodRepositoryGetFoodBySearchTextResult foodRepositoryGetFoodBySearchTextResult = await getOpenFoodFactsFoodBySearchTextApiV1(
-      searchText: searchText,
-      languageCode: languageCode,
-      page: 1,
-    );
+    FoodRepositoryResult foodRepositoryResult = await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1);
 
     //todo: show local results if online services fail...
-    if(foodRepositoryGetFoodBySearchTextResult.errorCode == null) {
-      foods.addAll(foodRepositoryGetFoodBySearchTextResult.foods!);
-      foodRepositoryGetFoodBySearchTextResult.foods = foods;
+    if (foodRepositoryResult.errorCode == null) {
+      foods.addAll(foodRepositoryResult.foods!);
     }
 
-    return foodRepositoryGetFoodBySearchTextResult;
+    return FoodRepositoryResult(
+      foods: foods,
+      finished: foodRepositoryResult.finished,
+      errorCode: foodRepositoryResult.errorCode,
+      errorMessage: foodRepositoryResult.errorMessage,
+    );
   }
 
   Future<List<Food>?> getUserFoodBySearchText({required String searchText}) async {
     return await _oejDatabase.getUserFoodBySearchtext(searchText);
   }
 
-  Future<FoodRepositoryGetFoodBySearchTextResult> getOpenFoodFactsFoodBySearchTextApiV1({
-    required String searchText,
-    required String languageCode,
-    required int page,
-  }) async {
+  Future<FoodRepositoryResult> getOpenFoodFactsFoodBySearchTextApiV1({required String searchText, required String languageCode, required int page}) async {
     String? jsonString;
     try {
       jsonString = await _openFoodFactsService.getFoodBySearchTextApiV1(searchText: searchText, page: page, pageSize: _pageSize);
     } on ClientException catch (clientException) {
-      return FoodRepositoryGetFoodBySearchTextResult(errorCode: 1, errorMessage: clientException.message);
+      return FoodRepositoryResult(errorCode: 1, errorMessage: clientException.message);
     }
 
     List<Food> foods = [];
@@ -105,13 +124,13 @@ class FoodRepository {
           }
         }
 
-        return FoodRepositoryGetFoodBySearchTextResult(foods: foods, finished: (json[OpenFoodFactsApiStrings.products] as List<dynamic>).length < _pageSize);
+        return FoodRepositoryResult(foods: foods, finished: (json[OpenFoodFactsApiStrings.products] as List<dynamic>).length < _pageSize);
       } else {
-        return FoodRepositoryGetFoodBySearchTextResult(errorCode: 2);
+        return FoodRepositoryResult(errorCode: 2);
       }
     }
 
-    return FoodRepositoryGetFoodBySearchTextResult(errorCode: 3);
+    return FoodRepositoryResult(errorCode: 3);
   }
 
   Food? _getFoodFromFoodApiV1V2({required Map<String, dynamic> json, required String languageCode}) {
@@ -156,6 +175,7 @@ class FoodRepository {
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
           originalFoodSourceFoodId: foodApi.code,
+          barcode: int.parse(foodApi.code),
           nutritionPerGramAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? 100 : null,
           nutritionPerMilliliterAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? null : 100,
           kJoule: energyKjPer100Units,

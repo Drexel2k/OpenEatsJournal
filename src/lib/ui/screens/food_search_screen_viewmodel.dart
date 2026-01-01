@@ -5,8 +5,7 @@ import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
-import "package:openeatsjournal/repository/food_repository_get_food_by_barcode_result.dart";
-import "package:openeatsjournal/repository/food_repository_get_food_by_search_text_result.dart";
+import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
@@ -76,21 +75,31 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _settingsRepository.currentMeal.value = _currentMeal.value;
   }
 
-  Future<void> getFoodByBarcode({required String barcode, required String languageCode, required Map<String, String> localizations}) async {
+  Future<void> getFoodByBarcode({required int barcode, required String languageCode, required Map<String, String> localizations}) async {
     _initSearch();
-    _foodRepository.getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryGetFoodByBarcodeResult result) {
+    _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
-        if (result.food != null && result.food!.foodUnitsWithOrder.isNotEmpty) {
-          for (ObjectWithOrder<FoodUnit> unitWithOrder in result.food!.foodUnitsWithOrder) {
-            if (localizations.containsKey(unitWithOrder.object.name)) {
-              unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
+        List<ObjectWithOrder<Food>>? foodsWithOrder;
+        if (result.foods != null) {
+          foodsWithOrder = [];
+          int order = 0;
+          for (Food food in result.foods!) {
+            if (food.isExternalFoodSource && food.foodUnitsWithOrder.isNotEmpty) {
+              for (ObjectWithOrder<FoodUnit> unitWithOrder in result.foods![0].foodUnitsWithOrder) {
+                if (localizations.containsKey(unitWithOrder.object.name)) {
+                  unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
+                }
+              }
             }
+
+            foodsWithOrder.add(ObjectWithOrder(object: food, order: order));
+            order++;
           }
         }
 
-        _addToSearchResult(result.food != null ? [ObjectWithOrder(object: result.food!, order: 0)] : null);
+        _addToSearchResult(foodsWithOrder);
       } else {
         _errorCode.value = result.errorCode;
       }
@@ -101,7 +110,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _initSearch();
     _currentSearchText = searchText;
     _currentLanguageCode = languageCode;
-    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((FoodRepositoryGetFoodBySearchTextResult result) {
+    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((FoodRepositoryResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
@@ -151,7 +160,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _isLoading = true;
     _currentPage = _currentPage + 1;
     _foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage).then((
-      FoodRepositoryGetFoodBySearchTextResult result,
+      FoodRepositoryResult result,
     ) {
       if (result.errorCode == null) {
         List<ObjectWithOrder<Food>> foodsWithOrder = [];
@@ -235,7 +244,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
-    if (eatsJournalEntry.food != null && eatsJournalEntry.food!.foodSource != FoodSource.user && eatsJournalEntry.food!.foodSource != FoodSource.standard) {
+    if (eatsJournalEntry.food != null && eatsJournalEntry.food!.isExternalFoodSource) {
       await _foodRepository.setFoodByExternalId(food: eatsJournalEntry.food!);
     }
 

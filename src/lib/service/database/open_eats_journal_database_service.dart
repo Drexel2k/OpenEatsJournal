@@ -474,11 +474,11 @@ class OpenEatsJournalDatabaseService {
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
     String where = "WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ?";
-    List<Object?> arguments = [formattedDate];
+    List<Object?> whereArgs = [formattedDate];
 
     if (meal != null) {
       where = "$where AND  ${OpenEatsJournalStrings.dbColumnMealIdRef} = ?";
-      arguments.add(meal.value);
+      whereArgs.add(meal.value);
     }
 
     //first block of columns from dbTableEatsJournal, second from dbTableFood, third from dbTableFoodUnit
@@ -501,6 +501,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+              ${OpenEatsJournalStrings.dbColumnBarcode},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodName},
               ${OpenEatsJournalStrings.dbColumnBrands},
               ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
@@ -536,7 +537,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} ASC,
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} ASC,
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} ASC
-        """, arguments);
+        """, whereArgs);
 
     if (dbResult.isEmpty) {
       return null;
@@ -698,6 +699,7 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
       OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef: food.originalFoodSource?.value,
       OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
+      OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
       OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
       OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
       OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
@@ -804,6 +806,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+              ${OpenEatsJournalStrings.dbColumnBarcode},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName}  AS ${OpenEatsJournalStrings.dbResultFoodName},
               ${OpenEatsJournalStrings.dbColumnBrands},
               ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
@@ -844,15 +847,33 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Food>?> getUserFoodBySearchtext(String searchText) async {
+    return getUserFood(
+      """              
+              ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = 1 AND
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)""",
+      [searchText],
+    );
+  }
+
+  Future<List<Food>?> getUserFoodByBarcode(int barcode) async {
+    return getUserFood(
+      """
+              ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = 1 AND
+              ${OpenEatsJournalStrings.dbColumnBarcode} = ?""",
+      [barcode],
+    );
+  }
+
+  Future<List<Food>?> getUserFood(String whereSql, List<Object?> whereArgs) async {
     Database db = await instance.db;
 
     //first block of columns from dbTableFood, second from dbTableFoodUnit
-    final List<Map<String, Object?>> dbResult = await db.rawQuery(
-      """SELECT
+    final List<Map<String, Object?>> dbResult = await db.rawQuery("""SELECT
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultFoodId},
               ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+              ${OpenEatsJournalStrings.dbColumnBarcode},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodName},
               ${OpenEatsJournalStrings.dbColumnBrands},
               ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
@@ -880,11 +901,8 @@ class OpenEatsJournalDatabaseService {
         ON
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} = ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnFoodIdRef}
         WHERE 
-              ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = 1 AND
-              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)
-        """,
-      [searchText],
-    );
+              $whereSql
+        """, whereArgs);
 
     if (dbResult.isEmpty) {
       return null;
@@ -956,6 +974,7 @@ class OpenEatsJournalDatabaseService {
           ? FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] as int)
           : null,
       originalFoodSourceFoodId: dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef] as String?,
+      barcode: dbResult[0][OpenEatsJournalStrings.dbColumnBarcode] as int?,
       brands: dbResult[0][OpenEatsJournalStrings.dbColumnBrands] != null
           ? (dbResult[0][OpenEatsJournalStrings.dbColumnBrands] as String).split(",").map((String brand) => brand.trim()).toList()
           : null,

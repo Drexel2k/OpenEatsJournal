@@ -413,7 +413,10 @@ class FoodSearchScreen extends StatelessWidget {
       List<String> parts = cleanSearchText.split(OpenEatsJournalStrings.doublepoint);
 
       if (parts.length == 2 && parts[0].trim().toLowerCase() == OpenEatsJournalStrings.code) {
-        await _foodSearchScreenViewModel.getFoodByBarcode(barcode: parts[1], languageCode: languageCode, localizations: localilzations);
+        int? barcode = int.tryParse(parts[1]);
+        if (barcode != null) {
+          await _foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, languageCode: languageCode, localizations: localilzations);
+        }
       } else {
         await _foodSearchScreenViewModel.getFoodBySearchText(searchText: cleanSearchText, languageCode: languageCode, localizations: localilzations);
       }
