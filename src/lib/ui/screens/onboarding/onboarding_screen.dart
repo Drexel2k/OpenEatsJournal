@@ -5,7 +5,6 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_1.d
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_2.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_3.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_4.dart";
-import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
@@ -33,14 +32,8 @@ class OnboardingScreen extends StatelessWidget {
               ? AppBar(
                   leading: IconButton(
                     icon: BackButtonIcon(),
-                    onPressed: () async {
-                      try {
-                        _movePageIndex(-1);
-                      } on Exception catch (exc, stack) {
-                        await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                      } on Error catch (error, stack) {
-                        await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                      }
+                    onPressed: () {
+                      _movePageIndex(-1);
                     },
                   ),
                   title: Text(pageTitle),

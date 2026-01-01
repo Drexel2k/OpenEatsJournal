@@ -157,7 +157,7 @@ class FoodUnitEditor extends StatelessWidget {
           builder: (_, _, _) {
             if (!_foodUnitEditorViewModel.nameValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid(
+                AppLocalizations.of(context)!.input_invalid_value(
                   AppLocalizations.of(context)!.name_capital,
                   _foodUnitEditorViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
                       ? AppLocalizations.of(context)!.empty
@@ -177,7 +177,7 @@ class FoodUnitEditor extends StatelessWidget {
               return Text(
                 AppLocalizations.of(
                   context,
-                )!.input_invalid(AppLocalizations.of(context)!.kjoule, ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)),
+                )!.input_invalid_value(AppLocalizations.of(context)!.kjoule, ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)),
                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
               );
             } else {

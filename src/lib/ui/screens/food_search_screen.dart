@@ -1,5 +1,4 @@
 import "dart:async";
-
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -8,14 +7,12 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
-
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/global_navigator_key.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
@@ -51,13 +48,7 @@ class FoodSearchScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        try {
-                          _selectDate(initialDate: _foodSearchScreenViewModel.currentJournalDate.value, context: context);
-                        } on Exception catch (exc, stack) {
-                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                        } on Error catch (error, stack) {
-                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                        }
+                        await _selectDate(initialDate: _foodSearchScreenViewModel.currentJournalDate.value, context: context);
                       },
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_foodSearchScreenViewModel.currentJournalDate.value),
@@ -93,42 +84,30 @@ class FoodSearchScreen extends StatelessWidget {
               SizedBox(width: 5),
               RoundOutlinedButton(
                 onPressed: () async {
-                  try {
-                    await _search(
-                      languageCode: languageCode,
-                      localilzations: {
-                        OpenEatsJournalStrings.piece: AppLocalizations.of(context)!.piece,
-                        OpenEatsJournalStrings.serving: AppLocalizations.of(context)!.serving,
-                      },
-                    );
-                  } on Exception catch (exc, stack) {
-                    await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                  } on Error catch (error, stack) {
-                    await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                  }
+                  await _search(
+                    languageCode: languageCode,
+                    localilzations: {
+                      OpenEatsJournalStrings.piece: AppLocalizations.of(context)!.piece,
+                      OpenEatsJournalStrings.serving: AppLocalizations.of(context)!.serving,
+                    },
+                  );
                 },
                 child: Icon(Icons.search),
               ),
               SizedBox(width: 5),
               RoundOutlinedButton(
                 onPressed: () async {
-                  try {
-                    Object? barcodeScanResult = await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteBarcodeScanner);
-                    if (barcodeScanResult != null) {
-                      String barcode = barcodeScanResult as String;
-                      _searchTextController.text = "${OpenEatsJournalStrings.code}${OpenEatsJournalStrings.doublepoint}$barcode";
-                      await _search(
-                        languageCode: languageCode,
-                        localilzations: {
-                          OpenEatsJournalStrings.piece: AppLocalizations.of(navigatorKey.currentContext!)!.piece,
-                          OpenEatsJournalStrings.serving: AppLocalizations.of(navigatorKey.currentContext!)!.serving,
-                        },
-                      );
-                    }
-                  } on Exception catch (exc, stack) {
-                    await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                  } on Error catch (error, stack) {
-                    await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                  Object? barcodeScanResult = await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteBarcodeScanner);
+                  if (barcodeScanResult != null) {
+                    String barcode = barcodeScanResult as String;
+                    _searchTextController.text = "${OpenEatsJournalStrings.code}${OpenEatsJournalStrings.doublepoint}$barcode";
+                    await _search(
+                      languageCode: languageCode,
+                      localilzations: {
+                        OpenEatsJournalStrings.piece: AppLocalizations.of(navigatorKey.currentContext!)!.piece,
+                        OpenEatsJournalStrings.serving: AppLocalizations.of(navigatorKey.currentContext!)!.serving,
+                      },
+                    );
                   }
                 },
                 child: Icon(Icons.qr_code_scanner),
@@ -300,43 +279,37 @@ class FoodSearchScreen extends StatelessWidget {
                           onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
 
-                            try {
-                              double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
-                              double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
-                              double weight = await _foodSearchScreenViewModel.getLastWeightJournalEntry();
+                            double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
+                            double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
+                            double weight = await _foodSearchScreenViewModel.getLastWeightJournalEntry();
 
-                              WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
-                                initialWeight: weight,
-                              );
+                            WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
+                              initialWeight: weight,
+                            );
 
-                              if ((await showDialog<bool>(
-                                useSafeArea: true,
-                                barrierDismissible: false,
-                                context: navigatorKey.currentContext!,
-                                builder: (BuildContext contextBuilder) {
-                                  return Dialog(
-                                    insetPadding: EdgeInsets.fromLTRB(
-                                      dialogHorizontalPadding,
-                                      dialogVerticalPadding,
-                                      dialogHorizontalPadding,
-                                      dialogVerticalPadding,
-                                    ),
-                                    child: WeightJournalEntryAddScreen(
-                                      weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
-                                      date: _foodSearchScreenViewModel.currentJournalDate.value,
-                                    ),
-                                  );
-                                },
-                              ))!) {
-                                await _foodSearchScreenViewModel.setWeightJournalEntry(
-                                  date: _foodSearchScreenViewModel.currentJournalDate.value,
-                                  weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
+                            if ((await showDialog<bool>(
+                              useSafeArea: true,
+                              barrierDismissible: false,
+                              context: navigatorKey.currentContext!,
+                              builder: (BuildContext contextBuilder) {
+                                return Dialog(
+                                  insetPadding: EdgeInsets.fromLTRB(
+                                    dialogHorizontalPadding,
+                                    dialogVerticalPadding,
+                                    dialogHorizontalPadding,
+                                    dialogVerticalPadding,
+                                  ),
+                                  child: WeightJournalEntryAddScreen(
+                                    weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
+                                    date: _foodSearchScreenViewModel.currentJournalDate.value,
+                                  ),
                                 );
-                              }
-                            } on Exception catch (exc, stack) {
-                              await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                            } on Error catch (error, stack) {
-                              await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                              },
+                            ))!) {
+                              await _foodSearchScreenViewModel.setWeightJournalEntry(
+                                date: _foodSearchScreenViewModel.currentJournalDate.value,
+                                weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
+                              );
                             }
                           },
                           label: Text(AppLocalizations.of(context)!.weight_journal_entry),

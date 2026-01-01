@@ -3,8 +3,6 @@ import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
-import "package:openeatsjournal/global_navigator_key.dart";
-import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
@@ -100,14 +98,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                     children: [
                       RoundOutlinedButton(
                         onPressed: () async {
-                          try {
-                            if ((await _showRecalulateKJouleConfirmDialog(context: context))!) {
-                              await _settingsScreenViewModel.recalculateDailykJouleTargetsAndSave();
-                            }
-                          } on Exception catch (exc, stack) {
-                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                          } on Error catch (error, stack) {
-                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                          if ((await _showRecalulateKJouleConfirmDialog(context: context))!) {
+                            await _settingsScreenViewModel.recalculateDailykJouleTargetsAndSave();
                           }
                         },
                         child: Icon(Icons.calculate),
@@ -115,41 +107,35 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                       SizedBox(width: 5),
                       RoundOutlinedButton(
                         onPressed: () async {
-                          try {
-                            await showDialog<void>(
-                              useSafeArea: true,
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext contextBuilder) {
-                                double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.07;
-                                double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.05;
+                          await showDialog<void>(
+                            useSafeArea: true,
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext contextBuilder) {
+                              double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.07;
+                              double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.05;
 
-                                return Dialog(
-                                  insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                                  child: DailyCaloriesEditorScreen(
-                                    dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
-                                      kJoulePerDay: KJoulePerDay(
-                                        kJouleMonday: _settingsScreenViewModel.kJouleMonday,
-                                        kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
-                                        kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
-                                        kJouleThursday: _settingsScreenViewModel.kJouleThursday,
-                                        kJouleFriday: _settingsScreenViewModel.kJouleFriday,
-                                        kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
-                                        kJouleSunday: _settingsScreenViewModel.kJouleSunday,
-                                      ),
-                                      settingsRepository: _settingsScreenViewModel.settingsRepository,
+                              return Dialog(
+                                insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                                child: DailyCaloriesEditorScreen(
+                                  dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
+                                    kJoulePerDay: KJoulePerDay(
+                                      kJouleMonday: _settingsScreenViewModel.kJouleMonday,
+                                      kJouleTuesday: _settingsScreenViewModel.kJouleTuesday,
+                                      kJouleWednesday: _settingsScreenViewModel.kJouleWednesday,
+                                      kJouleThursday: _settingsScreenViewModel.kJouleThursday,
+                                      kJouleFriday: _settingsScreenViewModel.kJouleFriday,
+                                      kJouleSaturday: _settingsScreenViewModel.kJouleSaturday,
+                                      kJouleSunday: _settingsScreenViewModel.kJouleSunday,
                                     ),
-                                    dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
-                                    originalDailyTargetKJoule: _settingsScreenViewModel.dailyTargetKJoule.value,
+                                    settingsRepository: _settingsScreenViewModel.settingsRepository,
                                   ),
-                                );
-                              },
-                            );
-                          } on Exception catch (exc, stack) {
-                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                          } on Error catch (error, stack) {
-                            await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                          }
+                                  dailyKJoule: _settingsScreenViewModel.dailyKJoule.value,
+                                  originalDailyTargetKJoule: _settingsScreenViewModel.dailyTargetKJoule.value,
+                                ),
+                              );
+                            },
+                          );
                         },
                         child: Icon(Icons.edit),
                       ),
@@ -207,8 +193,8 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                 Flexible(
                   child: SettingsTextField(
                     controller: _birthDayController,
-                    onTap: () {
-                      _selectDate(initialDate: _settingsScreenViewModel.birthday.value, context: context, languageCode: languageCode);
+                    onTap: () async {
+                      await _selectDate(initialDate: _settingsScreenViewModel.birthday.value, context: context, languageCode: languageCode);
                     },
                     readOnly: true,
                   ),
@@ -246,7 +232,9 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                         builder: (_, _, _) {
                           if (!_settingsScreenViewModel.heightValid.value) {
                             return Text(
-                              AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.height, _settingsScreenViewModel.repositoryHeight),
+                              AppLocalizations.of(
+                                context,
+                              )!.input_invalid_value(AppLocalizations.of(context)!.height, _settingsScreenViewModel.repositoryHeight),
                               style: textTheme.labelSmall!.copyWith(color: Colors.red),
                             );
                           } else {
@@ -318,7 +306,7 @@ class SettingsScreenPagePersonal extends StatelessWidget {
                             builder: (_, _, _) {
                               if (!_settingsScreenViewModel.weightValid.value) {
                                 return Text(
-                                  AppLocalizations.of(context)!.input_invalid(
+                                  AppLocalizations.of(context)!.input_invalid_value(
                                     AppLocalizations.of(context)!.weight_capital,
                                     ConvertValidate.getCleanDoubleString(doubleValue: _settingsScreenViewModel.lastValidWeight),
                                   ),
@@ -527,26 +515,14 @@ class SettingsScreenPagePersonal extends StatelessWidget {
           actions: [
             TextButton(
               child: Text(AppLocalizations.of(context)!.cancel),
-              onPressed: () async {
-                try {
-                  Navigator.pop(contextBuilder, false);
-                } on Exception catch (exc, stack) {
-                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                } on Error catch (error, stack) {
-                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                }
+              onPressed: () {
+                Navigator.pop(contextBuilder, false);
               },
             ),
             TextButton(
               child: Text(AppLocalizations.of(context)!.ok),
-              onPressed: () async {
-                try {
-                  Navigator.pop(contextBuilder, true);
-                } on Exception catch (exc, stack) {
-                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                } on Error catch (error, stack) {
-                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                }
+              onPressed: () {
+                Navigator.pop(contextBuilder, true);
               },
             ),
           ],

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/global_navigator_key.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/utils/error_handlers.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/weight_row_viewmodel.dart';
 
@@ -100,7 +98,7 @@ class WeightRow extends StatelessWidget {
           builder: (_, _, _) {
             if (!_weightRowViewModel.weightValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeight),
+                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeight),
                 style: textTheme.labelSmall!.copyWith(color: Colors.red),
               );
             } else {
@@ -127,14 +125,8 @@ class WeightRow extends StatelessWidget {
           actions: [
             TextButton(
               child: Text(AppLocalizations.of(context)!.ok),
-              onPressed: () async {
-                try {
-                  Navigator.pop(contextBuilder, true);
-                } on Exception catch (exc, stack) {
-                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                } on Error catch (error, stack) {
-                  await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                }
+              onPressed: () {
+                Navigator.pop(contextBuilder, true);
               },
             ),
           ],

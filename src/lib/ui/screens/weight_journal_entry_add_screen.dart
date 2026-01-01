@@ -3,7 +3,6 @@ import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 
 class WeightJournalEntryAddScreen extends StatelessWidget {
@@ -75,7 +74,9 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
             builder: (_, _, _) {
               if (!_weightJournalEntryAddScreenViewModel.weightValid.value) {
                 return Text(
-                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeight),
+                  AppLocalizations.of(
+                    context,
+                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeight),
                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                 );
               } else {
@@ -88,26 +89,14 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
               Spacer(),
               TextButton(
                 child: Text(AppLocalizations.of(context)!.cancel),
-                onPressed: () async {
-                  try {
-                    Navigator.pop(context, false);
-                  } on Exception catch (exc, stack) {
-                    await ErrorHandlers.showException(context: context, exception: exc, stackTrace: stack);
-                  } on Error catch (error, stack) {
-                    await ErrorHandlers.showException(context: context, error: error, stackTrace: stack);
-                  }
+                onPressed: () {
+                  Navigator.pop(context, false);
                 },
               ),
               TextButton(
                 child: Text(AppLocalizations.of(context)!.ok),
-                onPressed: () async {
-                  try {
-                    Navigator.pop(context, true);
-                  } on Exception catch (exc, stack) {
-                    await ErrorHandlers.showException(context: context, exception: exc, stackTrace: stack);
-                  } on Error catch (error, stack) {
-                    await ErrorHandlers.showException(context: context, error: error, stackTrace: stack);
-                  }
+                onPressed: () {
+                  Navigator.pop(context, true);
                 },
               ),
             ],

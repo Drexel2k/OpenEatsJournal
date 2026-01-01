@@ -1,7 +1,6 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
-import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
@@ -77,7 +76,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   Future<void> getFoodByBarcode({required int barcode, required String languageCode, required Map<String, String> localizations}) async {
     _initSearch();
-    _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryResult result) {
+    await _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
@@ -110,7 +109,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _initSearch();
     _currentSearchText = searchText;
     _currentLanguageCode = languageCode;
-    _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((FoodRepositoryResult result) {
+    await _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((FoodRepositoryResult result) {
       _searchFinished();
 
       if (result.errorCode == null) {
@@ -156,10 +155,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     });
   }
 
-  void getFoodBySearchTextLoadMore() {
+  Future<void> getFoodBySearchTextLoadMore() async {
     _isLoading = true;
     _currentPage = _currentPage + 1;
-    _foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage).then((
+    await _foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _currentLanguageCode, page: _currentPage).then((
       FoodRepositoryResult result,
     ) {
       if (result.errorCode == null) {

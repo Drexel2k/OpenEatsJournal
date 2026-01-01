@@ -9,7 +9,6 @@ import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 import 'package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart';
-import 'package:openeatsjournal/ui/utils/error_handlers.dart';
 import 'package:openeatsjournal/ui/utils/localized_drop_down_entries.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
@@ -61,13 +60,7 @@ class EatsJournalQuickEntryEditScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        try {
-                          _selectDate(initialDate: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value, context: context);
-                        } on Exception catch (exc, stack) {
-                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                        } on Error catch (error, stack) {
-                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                        }
+                        await _selectDate(initialDate: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value, context: context);
                       },
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value),
@@ -123,7 +116,7 @@ class EatsJournalQuickEntryEditScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     if (!_eatsJournalQuickEntryAddScreenViewModel.nameValid.value) {
                       return Text(
-                        AppLocalizations.of(context)!.input_invalid(
+                        AppLocalizations.of(context)!.input_invalid_value(
                           AppLocalizations.of(context)!.name_capital,
                           _eatsJournalQuickEntryAddScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
                               ? AppLocalizations.of(context)!.empty
@@ -237,7 +230,7 @@ class EatsJournalQuickEntryEditScreen extends StatelessWidget {
             builder: (_, _, _) {
               if (!_eatsJournalQuickEntryAddScreenViewModel.kJouleValid.value) {
                 return Text(
-                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.kjoule, AppLocalizations.of(context)!.nothing),
+                  AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.kjoule, AppLocalizations.of(context)!.nothing),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                 );
               } else {

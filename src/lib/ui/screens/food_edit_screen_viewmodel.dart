@@ -15,6 +15,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _foodRepository = foodRepository,
       _name = ValueNotifier(food.name),
       _nameValid = ValueNotifier(food.name.trim() != OpenEatsJournalStrings.emptyString),
+      _barcode = ValueNotifier(food.barcode),
       _nutritionPerGramAmount = ValueNotifier(food.nutritionPerGramAmount),
       _nutritionPerMilliliterAmount = ValueNotifier(food.nutritionPerMilliliterAmount),
       _amountsValid = food.nutritionPerGramAmount != null || food.nutritionPerMilliliterAmount != null ? ValueNotifier(true) : ValueNotifier(false),
@@ -58,6 +59,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   final ValueNotifier<String> _name;
   final ValueNotifier<bool> _nameValid;
+  final ValueNotifier<int?> _barcode;
   final ValueNotifier<double?> _nutritionPerGramAmount;
   final ValueNotifier<double?> _nutritionPerMilliliterAmount;
   final ValueNotifier<bool> _amountsValid;
@@ -83,6 +85,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   ValueNotifier<String> get name => _name;
   ValueNotifier<bool> get nameValid => _nameValid;
+  ValueNotifier<int?> get barcode => _barcode;
   ValueNotifier<double?> get nutritionPerGramAmount => _nutritionPerGramAmount;
   ValueNotifier<double?> get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
   ValueNotifier<bool> get amountsValid => _amountsValid;
@@ -230,7 +233,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     _reorderableStateChanged.notify();
   }
 
-  Future<bool> createFood() async {
+  Future<bool> saveFood() async {
     bool foodValid = true;
 
     if (_name.value.trim() == OpenEatsJournalStrings.emptyString) {
@@ -272,6 +275,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
     if (foodValid) {
       _food.name = _name.value;
+      _food.barcode = _barcode.value;
       _food.nutritionPerGramAmount = _nutritionPerGramAmount.value;
       _food.nutritionPerMilliliterAmount = _nutritionPerMilliliterAmount.value;
       _food.kJoule = _kJoule.value!;

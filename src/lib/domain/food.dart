@@ -142,7 +142,7 @@ class Food {
   final FoodSource _foodSource;
   final FoodSource? _originalFoodSource;
   final String? _originalFoodSourceFoodId;
-  final int? _barcode;
+  int? _barcode;
   int _kJoule;
   double? _nutritionPerGramAmount;
   double? _nutritionPerMilliliterAmount;
@@ -174,6 +174,10 @@ class Food {
 
   set name(String value) {
     _name = value;
+  }
+
+  set barcode(int? value) {
+    _barcode = value;
   }
 
   set nutritionPerGramAmount(double? value) {

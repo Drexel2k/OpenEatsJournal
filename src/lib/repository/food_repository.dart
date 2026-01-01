@@ -1,5 +1,4 @@
 import "dart:convert";
-
 import "package:http/http.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";

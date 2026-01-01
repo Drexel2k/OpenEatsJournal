@@ -8,7 +8,7 @@ import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 class EatsJournalEditScreenViewModel extends ChangeNotifier {
   EatsJournalEditScreenViewModel({Meal? meal, required JournalRepository journalRepository, required SettingsRepository settingsRepository})
     : _meal = meal,
-    _journalRepository = journalRepository,
+      _journalRepository = journalRepository,
       _settingsRepository = settingsRepository;
 
   final JournalRepository _journalRepository;
@@ -32,7 +32,7 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
 
   Future<void> getEatsJournalEntries() async {
     _initDataLoad();
-    _journalRepository.getEatsJournalEntries(date: _settingsRepository.currentJournalDate.value, meal: _meal).then((List<EatsJournalEntry>? result) {
+    await _journalRepository.getEatsJournalEntries(date: _settingsRepository.currentJournalDate.value, meal: _meal).then((List<EatsJournalEntry>? result) {
       _loadFinished();
 
       if (result != null) {

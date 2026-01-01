@@ -75,8 +75,8 @@ class OnboardingScreenPage3 extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: SettingsTextField(
                   controller: _birthDayController,
-                  onTap: () {
-                    _selectDate(initialDate: _onboardingScreenViewModel.birthday.value ?? DateTime.now(), context: context);
+                  onTap: () async {
+                    await _selectDate(initialDate: _onboardingScreenViewModel.birthday.value ?? DateTime.now(), context: context);
                   },
                   readOnly: true,
                 ),

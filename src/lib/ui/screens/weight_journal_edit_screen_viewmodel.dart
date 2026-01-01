@@ -25,7 +25,7 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
 
   Future<void> getWeightJournalEntries() async {
     _initDataLoad();
-    _journalRepository.get10WeightJournalEntries(startIndex: _currentPage - 1).then((List<WeightJournalEntry>? result) {
+    await _journalRepository.get10WeightJournalEntries(startIndex: _currentPage - 1).then((List<WeightJournalEntry>? result) {
       _searchFinished();
 
       if (result != null) {
@@ -38,10 +38,10 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
     });
   }
 
-  void getWeightJournalEntriesLoadMore() {
+  Future<void> getWeightJournalEntriesLoadMore() async {
     _isLoading = true;
     _currentPage = _currentPage + 1;
-    _journalRepository.get10WeightJournalEntries(startIndex: _currentPage - 1).then((List<WeightJournalEntry>? result) {
+    await _journalRepository.get10WeightJournalEntries(startIndex: _currentPage - 1).then((List<WeightJournalEntry>? result) {
       if (result != null) {
         _addToResult(result);
         if (result.length < 10) {

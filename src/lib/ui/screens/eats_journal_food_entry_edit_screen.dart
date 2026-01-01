@@ -11,7 +11,6 @@ import 'package:openeatsjournal/global_navigator_key.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart';
-import 'package:openeatsjournal/ui/utils/error_handlers.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 import 'package:openeatsjournal/ui/utils/localized_drop_down_entries.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart';
@@ -49,13 +48,7 @@ class EatsJournalFoodEntryEditScreen extends StatelessWidget {
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        try {
-                          _selectDate(initialDate: _eatsJournalFoodAddScreenViewModel.currentJournalDate.value, context: context);
-                        } on Exception catch (exc, stack) {
-                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                        } on Error catch (error, stack) {
-                          await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
-                        }
+                        await _selectDate(initialDate: _eatsJournalFoodAddScreenViewModel.currentJournalDate.value, context: context);
                       },
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodAddScreenViewModel.currentJournalDate.value),
@@ -313,51 +306,45 @@ class EatsJournalFoodEntryEditScreen extends StatelessWidget {
                 flex: 3,
                 child: OutlinedButton(
                   onPressed: () async {
-                    try {
-                      bool dataValid = true;
+                    bool dataValid = true;
 
-                      if (_eatsJournalFoodAddScreenViewModel.amount.value == null) {
-                        dataValid = false;
-                        SnackBar snackBar = SnackBar(
-                          content: Text(AppLocalizations.of(context)!.enter_valid_amount),
-                          action: SnackBarAction(
-                            label: AppLocalizations.of(context)!.close,
-                            onPressed: () {
-                              //Click on SnackbarAction closes the SnackBar,
-                              //nothing else to do here...
-                            },
-                          ),
-                        );
+                    if (_eatsJournalFoodAddScreenViewModel.amount.value == null) {
+                      dataValid = false;
+                      SnackBar snackBar = SnackBar(
+                        content: Text(AppLocalizations.of(context)!.enter_valid_amount),
+                        action: SnackBarAction(
+                          label: AppLocalizations.of(context)!.close,
+                          onPressed: () {
+                            //Click on SnackbarAction closes the SnackBar,
+                            //nothing else to do here...
+                          },
+                        ),
+                      );
 
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        return;
-                      }
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
 
-                      if (_eatsJournalFoodAddScreenViewModel.eatsAmount.value == null) {
-                        dataValid = false;
-                        SnackBar snackBar = SnackBar(
-                          content: Text(AppLocalizations.of(context)!.enter_valid_eats_amount),
-                          action: SnackBarAction(
-                            label: AppLocalizations.of(context)!.close,
-                            onPressed: () {
-                              //Click on SnackbarAction closes the SnackBar,
-                              //nothing else to do here...
-                            },
-                          ),
-                        );
+                    if (_eatsJournalFoodAddScreenViewModel.eatsAmount.value == null) {
+                      dataValid = false;
+                      SnackBar snackBar = SnackBar(
+                        content: Text(AppLocalizations.of(context)!.enter_valid_eats_amount),
+                        action: SnackBarAction(
+                          label: AppLocalizations.of(context)!.close,
+                          onPressed: () {
+                            //Click on SnackbarAction closes the SnackBar,
+                            //nothing else to do here...
+                          },
+                        ),
+                      );
 
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        return;
-                      }
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
 
-                      if (dataValid) {
-                        await _eatsJournalFoodAddScreenViewModel.setFoodEntry();
-                        Navigator.pop(navigatorKey.currentContext!);
-                      }
-                    } on Exception catch (exc, stack) {
-                      await ErrorHandlers.showException(context: navigatorKey.currentContext!, exception: exc, stackTrace: stack);
-                    } on Error catch (error, stack) {
-                      await ErrorHandlers.showException(context: navigatorKey.currentContext!, error: error, stackTrace: stack);
+                    if (dataValid) {
+                      await _eatsJournalFoodAddScreenViewModel.setFoodEntry();
+                      Navigator.pop(navigatorKey.currentContext!);
                     }
                   },
                   child: _eatsJournalFoodAddScreenViewModel.foodEntryId == null

@@ -119,6 +119,7 @@
   "search_food": "Search food...",
   "popularity": "popularity",
   "name": "name",
+  "name_label": "name:",
   "no_name": "-no name-",
   "no_brand": "-no brand-",
   "per_100_measurement_unit": "per 100{measurementUnit}",
@@ -139,7 +140,8 @@
   "enter_valid_amount" : "Please enter a valid amount.",
   "enter_valid_eats_amount" : "Please enter a valid eats amount.",
   "na_kcal": "n/a kCal",
-  "input_invalid": "{name} input invalid, current value is still {value}.",
+  "input_invalid": "{name} input invalid.",
+  "input_invalid_value": "{name} input invalid, current value is still {value}.",
   "as_new_food": "As New Food",
   "eats_journal_entry": "Eats Journal Entry",
   "weight_journal_entry": "Weight Journal Entry",
@@ -196,6 +198,7 @@
   "quick_entry_added": "Quick entry added.",
   "quick_entry_updated": "Quick entry updated.",
   "add": "Add",
-  "add_quick_entry": "Add quick entry"
+  "add_quick_entry": "Add quick entry",
+  "barcode": "barcode:"
 }
 

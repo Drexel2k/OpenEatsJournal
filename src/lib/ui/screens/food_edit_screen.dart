@@ -22,6 +22,7 @@ class FoodEditScreen extends StatelessWidget {
   final FoodEditScreenViewModel _foodEditScreenViewModel;
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _gramAmountController = TextEditingController();
   final TextEditingController _milliliterAmountController = TextEditingController();
   final TextEditingController _kCalController = TextEditingController();
@@ -39,6 +40,7 @@ class FoodEditScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     _nameController.text = _foodEditScreenViewModel.name.value;
+    _barcodeController.text = _foodEditScreenViewModel.barcode.value != null ? "${_foodEditScreenViewModel.barcode.value}" : OpenEatsJournalStrings.emptyString;
     _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
         ? ConvertValidate.numberFomatterInt.format(_foodEditScreenViewModel.nutritionPerGramAmount.value)
         : OpenEatsJournalStrings.emptyString;
@@ -58,46 +60,74 @@ class FoodEditScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
-          ),
-
-          Row(
             children: [
               Expanded(
-                child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.name,
-                  builder: (_, _, _) {
-                    return OpenEatsJournalTextField(
-                      controller: _nameController,
-                      onChanged: (value) {
-                        _foodEditScreenViewModel.name.value = value;
-                      },
-                    );
-                  },
+                child: Column(
+                  children: [
+                    Row(children: [Text(AppLocalizations.of(context)!.name_label, style: textTheme.titleSmall)]),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ValueListenableBuilder(
+                            valueListenable: _foodEditScreenViewModel.name,
+                            builder: (_, _, _) {
+                              return OpenEatsJournalTextField(
+                                controller: _nameController,
+                                onChanged: (value) {
+                                  _foodEditScreenViewModel.name.value = value;
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        ValueListenableBuilder(
+                          valueListenable: _foodEditScreenViewModel.nameValid,
+                          builder: (_, _, _) {
+                            if (!_foodEditScreenViewModel.nameValid.value) {
+                              return Text(
+                                AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.name_capital),
+                                style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          Row(
-            children: [
               Expanded(
-                child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.nameValid,
-                  builder: (_, _, _) {
-                    if (!_foodEditScreenViewModel.nameValid.value) {
-                      return Text(
-                        AppLocalizations.of(context)!.input_invalid(
-                          AppLocalizations.of(context)!.name_capital,
-                          _foodEditScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
-                              ? AppLocalizations.of(context)!.empty
-                              : _foodEditScreenViewModel.name.value,
+                child: Column(
+                  children: [
+                    Row(children: [Text(AppLocalizations.of(context)!.barcode, style: textTheme.titleSmall)]),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ValueListenableBuilder(
+                            valueListenable: _foodEditScreenViewModel.barcode,
+                            builder: (_, _, _) {
+                              return OpenEatsJournalTextField(
+                                controller: _barcodeController,
+                                keyboardType: TextInputType.numberWithOptions(signed: false),
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                onChanged: (value) {
+                                  int? intValue = int.tryParse(value);
+                                  _foodEditScreenViewModel.barcode.value = intValue;
+                                },
+                              );
+                            },
+                          ),
                         ),
-                        style: textTheme.labelMedium!.copyWith(color: Colors.red),
-                      );
-                    } else {
-                      return SizedBox();
-                    }
-                  },
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -191,7 +221,7 @@ class FoodEditScreen extends StatelessWidget {
             builder: (_, _, _) {
               if (!_foodEditScreenViewModel.amountsValid.value) {
                 return Text(
-                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.gram_milliliter, AppLocalizations.of(context)!.nothing),
+                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.gram_milliliter),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                 );
               } else {
@@ -233,7 +263,7 @@ class FoodEditScreen extends StatelessWidget {
             builder: (_, _, _) {
               if (!_foodEditScreenViewModel.kJouleValid.value) {
                 return Text(
-                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.kjoule, AppLocalizations.of(context)!.nothing),
+                  AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.kjoule),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                 );
               } else {
@@ -602,7 +632,7 @@ class FoodEditScreen extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () async {
                   int? originalFoodId = _foodEditScreenViewModel.foodId;
-                  if (!(await _foodEditScreenViewModel.createFood())) {
+                  if (!(await _foodEditScreenViewModel.saveFood())) {
                     SnackBar snackBar = SnackBar(
                       content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_food),
                       action: SnackBarAction(

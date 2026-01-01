@@ -1,5 +1,4 @@
 import "dart:ui";
-
 import "package:flutter/material.dart";
 import "package:openeatsjournal/open_eats_journal_app.dart";
 import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
@@ -16,8 +15,10 @@ import "package:openeatsjournal/ui/utils/error_handlers.dart";
 
 Future<void> main() async {
   ErrorWidget.builder = ErrorHandlers.errorWidget;
+
   PlatformDispatcher.instance.onError = (error, stack) {
-    throw error;
+    ErrorHandlers.showException(error: error, stackTrace: stack);
+    return true;
   };
 
   final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
