@@ -6,6 +6,7 @@ import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
+import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
 class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
   EatsJournalFoodEntryEditScreenViewModel({
@@ -39,6 +40,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
     _currentMeal.addListener(_currentMealChanged);
     _amount.addListener(_amountsChanged);
     _eatsAmount.addListener(_amountsChanged);
+    _currentMeasurementUnit.addListener(_amountsChanged);
   }
 
   final JournalRepository _journalRepository;
@@ -54,6 +56,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _eatsAmount;
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final bool _measurementSelectionEnabled;
+  final ExternalTriggerChangedNotifier _amountRelvantChanged = ExternalTriggerChangedNotifier();
 
   final ValueNotifier<int?> _kJoule;
   final ValueNotifier<double?> _carbohydrates;
@@ -73,6 +76,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get eatsAmount => _eatsAmount;
   ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   bool get measurementSelectionEnabled => _measurementSelectionEnabled;
+  ExternalTriggerChangedNotifier get amountRelvantChanged => _amountRelvantChanged;
 
   ValueNotifier<int?> get kJoule => _kJoule;
   ValueNotifier<double?> get carbohydrates => _carbohydrates;
@@ -142,12 +146,13 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
       _protein.value = null;
       _salt.value = null;
     }
+
+    _amountRelvantChanged.notify();
   }
 
   Future<void> setFoodEntry() async {
     if (_amount.value != null && eatsAmount.value != null) {
-      //can only be the case for external food, all other foods must have an id as they come from the database
-      if (_foodEntry.food!.id == null) {
+      if (_foodEntry.food!.isExternalFoodSource) {
         await _foodRepository.setFoodByExternalId(food: _foodEntry.food!);
       }
 
@@ -156,7 +161,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
         dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
       );
 
-      _foodEntry.amount = _amount.value;
+      _foodEntry.amount = _amount.value! * _eatsAmount.value!;
       _foodEntry.amountMeasurementUnit = _currentMeasurementUnit.value;
       _foodEntry.entryDate = _settingsRepository.currentJournalDate.value;
       _foodEntry.meal = _settingsRepository.currentMeal.value;
@@ -356,6 +361,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
     _currentMeal.dispose();
     _amount.dispose();
     _eatsAmount.dispose();
+    _amountRelvantChanged.dispose();
 
     _currentMeasurementUnit.dispose();
     _kJoule.dispose();

@@ -76,4 +76,9 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
       ],
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }

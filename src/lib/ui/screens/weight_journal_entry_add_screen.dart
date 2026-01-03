@@ -5,19 +5,25 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 
-class WeightJournalEntryAddScreen extends StatelessWidget {
-  WeightJournalEntryAddScreen({super.key, required WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel, required DateTime date})
+class WeightJournalEntryAddScreen extends StatefulWidget {
+  const WeightJournalEntryAddScreen({super.key, required WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel, required DateTime date})
     : _weightJournalEntryAddScreenViewModel = weightJournalEntryAddScreenViewModel,
       _date = date;
 
   final WeightJournalEntryAddScreenViewModel _weightJournalEntryAddScreenViewModel;
   final DateTime _date;
+
+  @override
+  State<WeightJournalEntryAddScreen> createState() => _WeightJournalEntryAddScreenState();
+}
+
+class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScreen> {
   final TextEditingController _weightController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: widget._weightJournalEntryAddScreenViewModel.lastValidWeight);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -31,11 +37,11 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
           ),
           Row(
             children: [
-              Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_date), style: textTheme.titleSmall)),
+              Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._date), style: textTheme.titleSmall)),
               Expanded(
                 flex: 2,
                 child: ValueListenableBuilder(
-                  valueListenable: _weightJournalEntryAddScreenViewModel.weight,
+                  valueListenable: widget._weightJournalEntryAddScreenViewModel.weight,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _weightController,
@@ -55,9 +61,12 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                      },
                       onChanged: (value) {
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _weightJournalEntryAddScreenViewModel.weight.value = doubleValue as double?;
+                        widget._weightJournalEntryAddScreenViewModel.weight.value = doubleValue as double?;
 
                         if (doubleValue != null) {
                           _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -70,13 +79,13 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: _weightJournalEntryAddScreenViewModel.weightValid,
+            valueListenable: widget._weightJournalEntryAddScreenViewModel.weightValid,
             builder: (_, _, _) {
-              if (!_weightJournalEntryAddScreenViewModel.weightValid.value) {
+              if (!widget._weightJournalEntryAddScreenViewModel.weightValid.value) {
                 return Text(
                   AppLocalizations.of(
                     context,
-                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeight),
+                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, widget._weightJournalEntryAddScreenViewModel.lastValidWeight),
                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                 );
               } else {
@@ -104,5 +113,13 @@ class WeightJournalEntryAddScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget._weightJournalEntryAddScreenViewModel.dispose();
+    _weightController.dispose();
+
+    super.dispose();
   }
 }

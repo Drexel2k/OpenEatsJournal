@@ -1,5 +1,4 @@
 import "dart:ui";
-
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -69,8 +68,8 @@ class OpenEatsJournalApp extends StatelessWidget {
             extensions: const <ThemeExtension<dynamic>>[
               OpenEatsJournalColors(
                 userFoodColor: Color.fromARGB(255, 26, 65, 255),
-                standardFoodColor: Color.fromARGB(255, 255, 135, 20),
-                openFoodFactsFoodColor: Color.fromARGB(255, 12, 255, 0),
+                standardFoodColor: Color.fromARGB(255, 12, 255, 0),
+                openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
                 quickEntryColor: Color.fromARGB(255, 255, 0, 233),
               ),
             ],
@@ -87,8 +86,8 @@ class OpenEatsJournalApp extends StatelessWidget {
             extensions: const <ThemeExtension<dynamic>>[
               OpenEatsJournalColors(
                 userFoodColor: Color.fromARGB(255, 77, 99, 203),
-                standardFoodColor: Color.fromARGB(255, 202, 136, 73),
-                openFoodFactsFoodColor: Color.fromARGB(255, 64, 198, 57),
+                standardFoodColor: Color.fromARGB(255, 64, 198, 57),
+                openFoodFactsFoodColor: Color.fromARGB(255, 202, 136, 73),
                 quickEntryColor: Color.fromARGB(255, 198, 57, 186),
               ),
             ],
@@ -140,7 +139,7 @@ class OpenEatsJournalApp extends StatelessWidget {
               ),
             ),
           },
-          navigatorKey: navigatorKey,
+          navigatorKey: navigatorKey
         );
       },
     );

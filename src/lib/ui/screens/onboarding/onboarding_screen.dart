@@ -8,27 +8,34 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_4.d
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
-class OnboardingScreen extends StatelessWidget {
-  OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel}) : _onboardingScreenViewModel = onboardingScreenViewModel;
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel}) : _onboardingScreenViewModel = onboardingScreenViewModel;
+
   final OnboardingScreenViewModel _onboardingScreenViewModel;
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageViewController = PageController();
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: _onboardingScreenViewModel.currentPageIndex,
+      valueListenable: widget._onboardingScreenViewModel.currentPageIndex,
       builder: (_, _, _) {
         String pageTitle = OpenEatsJournalStrings.emptyString;
-        if (_onboardingScreenViewModel.currentPageIndex.value == 1) {
+        if (widget._onboardingScreenViewModel.currentPageIndex.value == 1) {
           pageTitle = AppLocalizations.of(context)!.about_this_app;
-        } else if (_onboardingScreenViewModel.currentPageIndex.value == 2) {
+        } else if (widget._onboardingScreenViewModel.currentPageIndex.value == 2) {
           pageTitle = AppLocalizations.of(context)!.tell_about_yourself;
-        } else if (_onboardingScreenViewModel.currentPageIndex.value == 3) {
+        } else if (widget._onboardingScreenViewModel.currentPageIndex.value == 3) {
           pageTitle = AppLocalizations.of(context)!.your_targets;
         }
 
         return Scaffold(
-          appBar: _onboardingScreenViewModel.currentPageIndex.value > 0
+          appBar: widget._onboardingScreenViewModel.currentPageIndex.value > 0
               ? AppBar(
                   leading: IconButton(
                     icon: BackButtonIcon(),
@@ -50,7 +57,7 @@ class OnboardingScreen extends StatelessWidget {
                     onDone: () {
                       _movePageIndex(1);
                     },
-                    darkMode: _onboardingScreenViewModel.darkMode,
+                    darkMode: widget._onboardingScreenViewModel.darkMode,
                   ),
                   OnboardingScreenPage2(
                     onDone: () {
@@ -61,14 +68,14 @@ class OnboardingScreen extends StatelessWidget {
                     onDone: () {
                       _movePageIndex(1);
                     },
-                    onboardingScreenViewModel: _onboardingScreenViewModel,
+                    onboardingScreenViewModel: widget._onboardingScreenViewModel,
                   ),
                   OnboardingScreenPage4(
                     onDone: () async {
-                      await _onboardingScreenViewModel.saveOnboardingData();
+                      await widget._onboardingScreenViewModel.saveOnboardingData();
                       Navigator.pushReplacementNamed(navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
                     },
-                    onboardingScreenViewModel: _onboardingScreenViewModel,
+                    onboardingScreenViewModel: widget._onboardingScreenViewModel,
                   ),
                 ],
               ),
@@ -80,7 +87,19 @@ class OnboardingScreen extends StatelessWidget {
   }
 
   void _movePageIndex(int steps) {
-    _onboardingScreenViewModel.currentPageIndex.value = _onboardingScreenViewModel.currentPageIndex.value + steps;
-    _pageViewController.animateToPage(_onboardingScreenViewModel.currentPageIndex.value, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+    widget._onboardingScreenViewModel.currentPageIndex.value = widget._onboardingScreenViewModel.currentPageIndex.value + steps;
+    _pageViewController.animateToPage(
+      widget._onboardingScreenViewModel.currentPageIndex.value,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    widget._onboardingScreenViewModel.dispose();
+    _pageViewController.dispose();
+    
+    super.dispose();
   }
 }

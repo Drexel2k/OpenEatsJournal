@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openeatsjournal/domain/eats_journal_entry.dart';
+import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
@@ -24,6 +25,14 @@ class EatsJournalEntryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String amountTotal = _eatsJournalEntry.amount != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalEntry.amount!)
+        : AppLocalizations.of(context)!.na;
+
+    String amountInformation = _eatsJournalEntry.amountMeasurementUnit == MeasurementUnit.gram
+        ? AppLocalizations.of(context)!.amount_gram(amountTotal)
+        : AppLocalizations.of(context)!.amount_milliliter(amountTotal);
+
     return Row(
       children: [
         Expanded(
@@ -38,11 +47,7 @@ class EatsJournalEntryRow extends StatelessWidget {
                 Spacer(),
                 Column(
                   children: [
-                    Text(
-                      _eatsJournalEntry.amount != null
-                          ? "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalEntry.amount!)}${_eatsJournalEntry.amountMeasurementUnit!.text}"
-                          : AppLocalizations.of(context)!.na_amount,
-                    ),
+                    Text(amountInformation),
                     Text(
                       "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalEntry.kJoule))} ${AppLocalizations.of(context)!.kcal}",
                     ),

@@ -16,11 +16,16 @@ import 'package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
-class FoodEditScreen extends StatelessWidget {
-  FoodEditScreen({super.key, required FoodEditScreenViewModel foodEditScreenViewModel}) : _foodEditScreenViewModel = foodEditScreenViewModel;
+class FoodEditScreen extends StatefulWidget {
+  const FoodEditScreen({super.key, required FoodEditScreenViewModel foodEditScreenViewModel}) : _foodEditScreenViewModel = foodEditScreenViewModel;
 
   final FoodEditScreenViewModel _foodEditScreenViewModel;
 
+  @override
+  State<FoodEditScreen> createState() => _FoodEditScreenState();
+}
+
+class _FoodEditScreenState extends State<FoodEditScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _gramAmountController = TextEditingController();
@@ -39,16 +44,18 @@ class FoodEditScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    _nameController.text = _foodEditScreenViewModel.name.value;
-    _barcodeController.text = _foodEditScreenViewModel.barcode.value != null ? "${_foodEditScreenViewModel.barcode.value}" : OpenEatsJournalStrings.emptyString;
-    _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_foodEditScreenViewModel.nutritionPerGramAmount.value)
+    _nameController.text = widget._foodEditScreenViewModel.name.value;
+    _barcodeController.text = widget._foodEditScreenViewModel.barcode.value != null
+        ? "${widget._foodEditScreenViewModel.barcode.value}"
         : OpenEatsJournalStrings.emptyString;
-    _milliliterAmountController.text = _foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_foodEditScreenViewModel.nutritionPerMilliliterAmount.value)
+    _gramAmountController.text = widget._foodEditScreenViewModel.nutritionPerGramAmount.value != null
+        ? ConvertValidate.numberFomatterInt.format(widget._foodEditScreenViewModel.nutritionPerGramAmount.value)
+        : OpenEatsJournalStrings.emptyString;
+    _milliliterAmountController.text = widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
+        ? ConvertValidate.numberFomatterInt.format(widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value)
         : OpenEatsJournalStrings.emptyString;
     _kCalController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _foodEditScreenViewModel.kJoule.value as int),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: widget._foodEditScreenViewModel.kJoule.value as int),
     );
 
     double inputFieldsWidth = 90;
@@ -59,6 +66,7 @@ class FoodEditScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(AppLocalizations.of(context)!.basics, style: textTheme.titleMedium),
           Row(
             children: [
               Expanded(
@@ -69,12 +77,12 @@ class FoodEditScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: ValueListenableBuilder(
-                            valueListenable: _foodEditScreenViewModel.name,
+                            valueListenable: widget._foodEditScreenViewModel.name,
                             builder: (_, _, _) {
                               return OpenEatsJournalTextField(
                                 controller: _nameController,
                                 onChanged: (value) {
-                                  _foodEditScreenViewModel.name.value = value;
+                                  widget._foodEditScreenViewModel.name.value = value;
                                 },
                               );
                             },
@@ -86,9 +94,9 @@ class FoodEditScreen extends StatelessWidget {
                     Row(
                       children: [
                         ValueListenableBuilder(
-                          valueListenable: _foodEditScreenViewModel.nameValid,
+                          valueListenable: widget._foodEditScreenViewModel.nameValid,
                           builder: (_, _, _) {
-                            if (!_foodEditScreenViewModel.nameValid.value) {
+                            if (!widget._foodEditScreenViewModel.nameValid.value) {
                               return Text(
                                 AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.name_capital),
                                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -111,7 +119,7 @@ class FoodEditScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: ValueListenableBuilder(
-                            valueListenable: _foodEditScreenViewModel.barcode,
+                            valueListenable: widget._foodEditScreenViewModel.barcode,
                             builder: (_, _, _) {
                               return OpenEatsJournalTextField(
                                 controller: _barcodeController,
@@ -119,7 +127,7 @@ class FoodEditScreen extends StatelessWidget {
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 onChanged: (value) {
                                   int? intValue = int.tryParse(value);
-                                  _foodEditScreenViewModel.barcode.value = intValue;
+                                  widget._foodEditScreenViewModel.barcode.value = intValue;
                                 },
                               );
                             },
@@ -145,7 +153,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.nutritionPerGramAmount,
+                  valueListenable: widget._foodEditScreenViewModel.nutritionPerGramAmount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _gramAmountController,
@@ -165,9 +173,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _gramAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _gramAmountController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.nutritionPerGramAmount.value = doubleValue;
+                        widget._foodEditScreenViewModel.nutritionPerGramAmount.value = doubleValue;
 
                         if (doubleValue != null) {
                           _gramAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -181,7 +192,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.nutritionPerMilliliterAmount,
+                  valueListenable: widget._foodEditScreenViewModel.nutritionPerMilliliterAmount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _milliliterAmountController,
@@ -201,9 +212,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _milliliterAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _milliliterAmountController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.nutritionPerMilliliterAmount.value = doubleValue;
+                        widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value = doubleValue;
 
                         if (doubleValue != null) {
                           _milliliterAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -217,9 +231,9 @@ class FoodEditScreen extends StatelessWidget {
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: _foodEditScreenViewModel.amountsValid,
+            valueListenable: widget._foodEditScreenViewModel.amountsValid,
             builder: (_, _, _) {
-              if (!_foodEditScreenViewModel.amountsValid.value) {
+              if (!widget._foodEditScreenViewModel.amountsValid.value) {
                 return Text(
                   AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.gram_milliliter),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -239,15 +253,18 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.kJoule,
+                  valueListenable: widget._foodEditScreenViewModel.kJoule,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _kCalController,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onTap: () {
+                        _kCalController.selection = TextSelection(baseOffset: 0, extentOffset: _kCalController.text.length);
+                      },
                       onChanged: (value) {
                         int? intValue = int.tryParse(value);
-                        _foodEditScreenViewModel.kJoule.value = intValue != null ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue) : null;
+                        widget._foodEditScreenViewModel.kJoule.value = intValue != null ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue) : null;
                         if (intValue != null) {
                           _kCalController.text = ConvertValidate.numberFomatterInt.format(intValue);
                         }
@@ -259,9 +276,9 @@ class FoodEditScreen extends StatelessWidget {
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: _foodEditScreenViewModel.kJouleValid,
+            valueListenable: widget._foodEditScreenViewModel.kJouleValid,
             builder: (_, _, _) {
-              if (!_foodEditScreenViewModel.kJouleValid.value) {
+              if (!widget._foodEditScreenViewModel.kJouleValid.value) {
                 return Text(
                   AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.kjoule),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -282,7 +299,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.carbohydrates,
+                  valueListenable: widget._foodEditScreenViewModel.carbohydrates,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _carbohydratesController,
@@ -302,9 +319,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _carbohydratesController.selection = TextSelection(baseOffset: 0, extentOffset: _carbohydratesController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.carbohydrates.value = doubleValue;
+                        widget._foodEditScreenViewModel.carbohydrates.value = doubleValue;
 
                         if (doubleValue != null) {
                           _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -318,7 +338,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.sugar,
+                  valueListenable: widget._foodEditScreenViewModel.sugar,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _sugarController,
@@ -338,9 +358,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _sugarController.selection = TextSelection(baseOffset: 0, extentOffset: _sugarController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.sugar.value = doubleValue;
+                        widget._foodEditScreenViewModel.sugar.value = doubleValue;
 
                         if (doubleValue != null) {
                           _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -364,7 +387,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.fat,
+                  valueListenable: widget._foodEditScreenViewModel.fat,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _fatController,
@@ -384,9 +407,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _fatController.selection = TextSelection(baseOffset: 0, extentOffset: _fatController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.fat.value = doubleValue;
+                        widget._foodEditScreenViewModel.fat.value = doubleValue;
 
                         if (doubleValue != null) {
                           _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -400,7 +426,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.saturatedFat,
+                  valueListenable: widget._foodEditScreenViewModel.saturatedFat,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _saturatedFatController,
@@ -420,9 +446,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _saturatedFatController.selection = TextSelection(baseOffset: 0, extentOffset: _saturatedFatController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.saturatedFat.value = doubleValue;
+                        widget._foodEditScreenViewModel.saturatedFat.value = doubleValue;
 
                         if (doubleValue != null) {
                           _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -446,7 +475,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.protein,
+                  valueListenable: widget._foodEditScreenViewModel.protein,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _proteinController,
@@ -466,9 +495,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _proteinController.selection = TextSelection(baseOffset: 0, extentOffset: _proteinController.text.length);
+                      },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.protein.value = doubleValue;
+                        widget._foodEditScreenViewModel.protein.value = doubleValue;
 
                         if (doubleValue != null) {
                           _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -482,7 +514,7 @@ class FoodEditScreen extends StatelessWidget {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.salt,
+                  valueListenable: widget._foodEditScreenViewModel.salt,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _saltController,
@@ -502,9 +534,12 @@ class FoodEditScreen extends StatelessWidget {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _saltController.selection = TextSelection(baseOffset: 0, extentOffset: _saltController.text.length);
+                      },
                       onChanged: (value) {
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        _foodEditScreenViewModel.salt.value = doubleValue as double?;
+                        widget._foodEditScreenViewModel.salt.value = doubleValue as double?;
 
                         if (doubleValue != null) {
                           _saltController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -527,10 +562,10 @@ class FoodEditScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                 child: RoundOutlinedButton(
                   onPressed: () {
-                    _foodEditScreenViewModel.addFoddUnit(
-                      measurementUnit: _foodEditScreenViewModel.nutritionPerGramAmount.value != null
+                    widget._foodEditScreenViewModel.addFoddUnit(
+                      measurementUnit: widget._foodEditScreenViewModel.nutritionPerGramAmount.value != null
                           ? MeasurementUnit.gram
-                          : _foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
+                          : widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
                           ? MeasurementUnit.milliliter
                           : MeasurementUnit.gram,
                     );
@@ -548,21 +583,21 @@ class FoodEditScreen extends StatelessWidget {
                 ),
               ),
               ValueListenableBuilder(
-                valueListenable: _foodEditScreenViewModel.foodUnitsEditMode,
+                valueListenable: widget._foodEditScreenViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
-                  if (_foodEditScreenViewModel.foodUnitsEditMode.value) {
+                  if (widget._foodEditScreenViewModel.foodUnitsEditMode.value) {
                     return RoundOutlinedButton(
                       onPressed: () {
-                        _foodEditScreenViewModel.foodUnitsEditMode.value = false;
-                        _foodEditScreenViewModel.reorderableStateChanged.notify();
+                        widget._foodEditScreenViewModel.foodUnitsEditMode.value = false;
+                        widget._foodEditScreenViewModel.reorderableStateChanged.notify();
                       },
                       child: Icon(Icons.swap_vert),
                     );
                   } else {
                     return RoundOutlinedButton(
                       onPressed: () {
-                        _foodEditScreenViewModel.foodUnitsEditMode.value = true;
-                        _foodEditScreenViewModel.reorderableStateChanged.notify();
+                        widget._foodEditScreenViewModel.foodUnitsEditMode.value = true;
+                        widget._foodEditScreenViewModel.reorderableStateChanged.notify();
                       },
                       child: Icon(Icons.mode_edit),
                     );
@@ -572,9 +607,9 @@ class FoodEditScreen extends StatelessWidget {
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: _foodEditScreenViewModel.foodUnitsCopyValid,
+            valueListenable: widget._foodEditScreenViewModel.foodUnitsCopyValid,
             builder: (_, _, _) {
-              if (!_foodEditScreenViewModel.foodUnitsCopyValid.value) {
+              if (!widget._foodEditScreenViewModel.foodUnitsCopyValid.value) {
                 return Text(AppLocalizations.of(context)!.food_units_invalid, style: textTheme.labelMedium!.copyWith(color: Colors.red));
               } else {
                 return SizedBox();
@@ -611,12 +646,12 @@ class FoodEditScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListenableBuilder(
-              listenable: _foodEditScreenViewModel.reorderableStateChanged,
+              listenable: widget._foodEditScreenViewModel.reorderableStateChanged,
               builder: (_, _) {
                 return ReorderableListView(
-                  buildDefaultDragHandles: !_foodEditScreenViewModel.foodUnitsEditMode.value,
+                  buildDefaultDragHandles: !widget._foodEditScreenViewModel.foodUnitsEditMode.value,
                   onReorder: (oldIndex, newIndex) {
-                    _foodEditScreenViewModel.reorder(oldIndex, newIndex);
+                    widget._foodEditScreenViewModel.reorder(oldIndex, newIndex);
                   },
                   scrollController: _scrollController,
                   children: _getFoodUnitEditors(textTheme: textTheme, context: context),
@@ -631,8 +666,8 @@ class FoodEditScreen extends StatelessWidget {
               height: 48,
               child: OutlinedButton(
                 onPressed: () async {
-                  int? originalFoodId = _foodEditScreenViewModel.foodId;
-                  if (!(await _foodEditScreenViewModel.saveFood())) {
+                  int? originalFoodId = widget._foodEditScreenViewModel.foodId;
+                  if (!(await widget._foodEditScreenViewModel.saveFood())) {
                     SnackBar snackBar = SnackBar(
                       content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_food),
                       action: SnackBarAction(
@@ -661,7 +696,7 @@ class FoodEditScreen extends StatelessWidget {
                     Navigator.pop(navigatorKey.currentContext!);
                   }
                 },
-                child: _foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),
+                child: widget._foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),
               ),
             ),
           ),
@@ -674,11 +709,11 @@ class FoodEditScreen extends StatelessWidget {
     List<Widget> foodUnitEditors = [];
 
     int index = 0;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodEditScreenViewModel.foodFoodUnitsWithOrderCopy) {
+    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in widget._foodEditScreenViewModel.foodFoodUnitsWithOrderCopy) {
       foodUnitEditors.add(
         FoodUnitEditor(
           key: Key("$index"),
-          foodUnitEditorViewModel: _foodEditScreenViewModel.foodUnitEditorViewModels.firstWhere(
+          foodUnitEditorViewModel: widget._foodEditScreenViewModel.foodUnitEditorViewModels.firstWhere(
             (FoodUnitEditorViewModel foodUnitEditorViewModel) => foodUnitEditorViewModel.foodUnit == foodUnitWithOrder.object,
           ),
         ),
@@ -688,5 +723,25 @@ class FoodEditScreen extends StatelessWidget {
     }
 
     return foodUnitEditors;
+  }
+
+  @override
+  void dispose() {
+    widget._foodEditScreenViewModel.dispose();
+    _nameController.dispose();
+    _barcodeController.dispose();
+    _gramAmountController.dispose();
+    _milliliterAmountController.dispose();
+    _kCalController.dispose();
+    _carbohydratesController.dispose();
+    _sugarController.dispose();
+    _fatController.dispose();
+    _saturatedFatController.dispose();
+    _proteinController.dispose();
+    _saltController.dispose();
+
+    _scrollController.dispose();
+
+    super.dispose();
   }
 }

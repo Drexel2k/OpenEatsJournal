@@ -5,8 +5,8 @@ import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/weight_row_viewmodel.dart';
 
-class WeightRow extends StatelessWidget {
-  WeightRow({
+class WeightRow extends StatefulWidget {
+  const WeightRow({
     super.key,
     required WeightRowViewModel weightRowViewModel,
     required DateTime date,
@@ -19,34 +19,40 @@ class WeightRow extends StatelessWidget {
        _onWeightEdit = onWeightEdit,
        _deleteEnabled = deleteEnabled,
        _onDeletePressed = onDeletePressed,
-       _deleteIconColor = deleteIconColor {
-    _weightRowViewModel.weightChanged = _weightChanged;
-  }
+       _deleteIconColor = deleteIconColor;
 
   final WeightRowViewModel _weightRowViewModel;
-
   final DateTime _date;
   final Future<void> Function({required DateTime date, required double weight}) _onWeightEdit;
   final bool _deleteEnabled;
   final Future<void> Function({required DateTime date}) _onDeletePressed;
   final Color _deleteIconColor;
 
+  @override
+  State<WeightRow> createState() => _WeightRowState();
+}
+
+class _WeightRowState extends State<WeightRow> {
+  _WeightRowState() {
+    widget._weightRowViewModel.weightChanged = _weightChanged;
+  }
+
   final TextEditingController _weightController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: widget._weightRowViewModel.lastValidWeight);
 
     return Column(
       children: [
         Row(
           children: [
-            Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_date), style: textTheme.titleSmall)),
+            Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._date), style: textTheme.titleSmall)),
             Expanded(
               flex: 2,
               child: ValueListenableBuilder(
-                valueListenable: _weightRowViewModel.weight,
+                valueListenable: widget._weightRowViewModel.weight,
                 builder: (_, _, _) {
                   return OpenEatsJournalTextField(
                     controller: _weightController,
@@ -66,9 +72,12 @@ class WeightRow extends StatelessWidget {
                         }
                       }),
                     ],
+                    onTap: () {
+                      _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                    },
                     onChanged: (value) {
                       num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                      _weightRowViewModel.weight.value = doubleValue as double?;
+                      widget._weightRowViewModel.weight.value = doubleValue as double?;
 
                       if (doubleValue != null) {
                         _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -80,10 +89,10 @@ class WeightRow extends StatelessWidget {
             ),
             Expanded(
               child: IconButton(
-                icon: Icon(Icons.delete, color: _deleteIconColor),
+                icon: Icon(Icons.delete, color: widget._deleteIconColor),
                 onPressed: () async {
-                  if (_deleteEnabled) {
-                    await _onDeletePressed(date: _date);
+                  if (widget._deleteEnabled) {
+                    await widget._onDeletePressed(date: widget._date);
                   } else {
                     await _showRecalulateKJouleConfirmDialog(context: context);
                   }
@@ -94,11 +103,11 @@ class WeightRow extends StatelessWidget {
           ],
         ),
         ValueListenableBuilder(
-          valueListenable: _weightRowViewModel.weightValid,
+          valueListenable: widget._weightRowViewModel.weightValid,
           builder: (_, _, _) {
-            if (!_weightRowViewModel.weightValid.value) {
+            if (!widget._weightRowViewModel.weightValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeight),
+                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, widget._weightRowViewModel.lastValidWeight),
                 style: textTheme.labelSmall!.copyWith(color: Colors.red),
               );
             } else {
@@ -111,7 +120,7 @@ class WeightRow extends StatelessWidget {
   }
 
   void _weightChanged() async {
-    await _onWeightEdit(date: _date, weight: _weightRowViewModel.lastValidWeight);
+    await widget._onWeightEdit(date: widget._date, weight: widget._weightRowViewModel.lastValidWeight);
   }
 
   Future<void> _showRecalulateKJouleConfirmDialog({required BuildContext context}) async {
@@ -133,5 +142,13 @@ class WeightRow extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    widget._weightRowViewModel.dispose();
+    _weightController.dispose();
+
+    super.dispose();
   }
 }

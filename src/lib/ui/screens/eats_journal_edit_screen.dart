@@ -7,15 +7,20 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 
-class EatsJournalEditScreen extends StatelessWidget {
+class EatsJournalEditScreen extends StatefulWidget {
   const EatsJournalEditScreen({super.key, required EatsJournalEditScreenViewModel eatsJournalEditScreenViewModel})
     : _eatsJournalEditScreenViewModel = eatsJournalEditScreenViewModel;
 
   final EatsJournalEditScreenViewModel _eatsJournalEditScreenViewModel;
 
   @override
+  State<EatsJournalEditScreen> createState() => _EatsJournalEditScreenState();
+}
+
+class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
+  @override
   Widget build(BuildContext context) {
-    _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+    widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -24,13 +29,16 @@ class EatsJournalEditScreen extends StatelessWidget {
 
       child: Column(
         children: [
-          AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.weight_journal)),
+          AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.eats_journal)),
           Row(
             children: [
-              Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalEditScreenViewModel.currentJournalDate), style: textTheme.titleMedium),
+              Text(
+                ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._eatsJournalEditScreenViewModel.currentJournalDate),
+                style: textTheme.titleMedium,
+              ),
               Spacer(),
               Text(
-                _getLocalizedMeal(meal: _eatsJournalEditScreenViewModel.meal, context: context),
+                _getLocalizedMeal(meal: widget._eatsJournalEditScreenViewModel.meal, context: context),
                 style: textTheme.titleMedium,
               ),
             ],
@@ -38,29 +46,31 @@ class EatsJournalEditScreen extends StatelessWidget {
           SizedBox(height: 5),
           Expanded(
             child: ListenableBuilder(
-              listenable: _eatsJournalEditScreenViewModel.eatsJournalEntriesChanged,
+              listenable: widget._eatsJournalEditScreenViewModel.eatsJournalEntriesChanged,
               builder: (_, _) {
                 return ListView.builder(
-                  itemCount: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length,
+                  itemCount: widget._eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length,
                   itemBuilder: (context, listViewItemIndex) {
-                    if (listViewItemIndex >= _eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length) {
+                    if (listViewItemIndex >= widget._eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length) {
                       return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                     }
 
                     return EatsJournalEntryRow(
-                      eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
-                      onPressed: ({required EatsJournalEntry eatsJournalEntry}) {
+                      eatsJournalEntry: widget._eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
+                      onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
                         if (eatsJournalEntry.food != null) {
-                          Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
+                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
                         } else {
-                          Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
+                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
                         }
+
+                        widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
                       },
                       onDeletePressed: ({required int eatsJournalEntryId}) async {
-                        bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
+                        bool deleted = await widget._eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
 
                         if (deleted) {
-                          _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                          widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
                         }
                       },
                       deleteIconColor: colorScheme.primary,
@@ -91,5 +101,12 @@ class EatsJournalEditScreen extends StatelessWidget {
     }
 
     return localized;
+  }
+
+  @override
+  void dispose() {
+    widget._eatsJournalEditScreenViewModel.dispose();
+
+    super.dispose();
   }
 }

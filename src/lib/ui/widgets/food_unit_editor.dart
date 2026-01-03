@@ -8,11 +8,16 @@ import 'package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart';
 import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
-class FoodUnitEditor extends StatelessWidget {
-  FoodUnitEditor({super.key, required FoodUnitEditorViewModel foodUnitEditorViewModel}) : _foodUnitEditorViewModel = foodUnitEditorViewModel;
+class FoodUnitEditor extends StatefulWidget {
+  const FoodUnitEditor({super.key, required FoodUnitEditorViewModel foodUnitEditorViewModel}) : _foodUnitEditorViewModel = foodUnitEditorViewModel;
 
   final FoodUnitEditorViewModel _foodUnitEditorViewModel;
 
+  @override
+  State<FoodUnitEditor> createState() => _FoodUnitEditorState();
+}
+
+class _FoodUnitEditorState extends State<FoodUnitEditor> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
@@ -20,9 +25,9 @@ class FoodUnitEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    _nameController.text = _foodUnitEditorViewModel.name.value;
-    _amountController.text = _foodUnitEditorViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)
+    _nameController.text = widget._foodUnitEditorViewModel.name.value;
+    _amountController.text = widget._foodUnitEditorViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(widget._foodUnitEditorViewModel.amount.value)
         : OpenEatsJournalStrings.emptyString;
 
     return Column(
@@ -33,9 +38,9 @@ class FoodUnitEditor extends StatelessWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
               child: ValueListenableBuilder(
-                valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
+                valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
-                  if (_foodUnitEditorViewModel.foodUnitsEditMode.value) {
+                  if (widget._foodUnitEditorViewModel.foodUnitsEditMode.value) {
                     return Icon(Icons.mode_edit);
                   } else {
                     return Icon(Icons.drag_handle);
@@ -48,13 +53,13 @@ class FoodUnitEditor extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                 child: ValueListenableBuilder(
-                  valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
+                  valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _nameController,
-                      enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
+                      enabled: widget._foodUnitEditorViewModel.foodUnitsEditMode.value,
                       onChanged: (value) {
-                        _foodUnitEditorViewModel.name.value = value;
+                        widget._foodUnitEditorViewModel.name.value = value;
                       },
                     );
                   },
@@ -64,7 +69,7 @@ class FoodUnitEditor extends StatelessWidget {
             SizedBox(
               width: 60,
               child: ValueListenableBuilder(
-                valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
+                valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
                   return OpenEatsJournalTextField(
                     controller: _amountController,
@@ -84,10 +89,13 @@ class FoodUnitEditor extends StatelessWidget {
                         }
                       }),
                     ],
-                    enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
+                    enabled: widget._foodUnitEditorViewModel.foodUnitsEditMode.value,
+                    onTap: () {
+                      _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                    },
                     onChanged: (value) {
                       double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                      _foodUnitEditorViewModel.amount.value = doubleValue;
+                      widget._foodUnitEditorViewModel.amount.value = doubleValue;
                       if (doubleValue != null) {
                         _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                       }
@@ -99,21 +107,21 @@ class FoodUnitEditor extends StatelessWidget {
             SizedBox(
               width: 50,
               child: ListenableBuilder(
-                listenable: _foodUnitEditorViewModel.measurementUnitSwitchButtonChanged,
+                listenable: widget._foodUnitEditorViewModel.measurementUnitSwitchButtonChanged,
                 builder: (_, _) {
                   return RoundOutlinedButton(
-                    onPressed: _foodUnitEditorViewModel.foodUnitsEditMode.value
-                        ? (_foodUnitEditorViewModel.measurementUnitSwitchButtonEnabled.value
+                    onPressed: widget._foodUnitEditorViewModel.foodUnitsEditMode.value
+                        ? (widget._foodUnitEditorViewModel.measurementUnitSwitchButtonEnabled.value
                               ? () {
-                                  _foodUnitEditorViewModel.currentMeasurementUnit.value =
-                                      _foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                                  widget._foodUnitEditorViewModel.currentMeasurementUnit.value =
+                                      widget._foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                                       ? MeasurementUnit.milliliter
                                       : MeasurementUnit.gram;
                                 }
                               : null)
                         : null,
                     child: Text(
-                      _foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                      widget._foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                           ? AppLocalizations.of(context)!.gram_abbreviated
                           : AppLocalizations.of(context)!.milliliter_abbreviated,
                     ),
@@ -124,12 +132,14 @@ class FoodUnitEditor extends StatelessWidget {
             SizedBox(
               width: 52,
               child: ListenableBuilder(
-                listenable: _foodUnitEditorViewModel.defaultButtonChanged,
+                listenable: widget._foodUnitEditorViewModel.defaultButtonChanged,
                 builder: (_, _) {
                   return Switch(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: _foodUnitEditorViewModel.defaultFoodUnit.value,
-                    onChanged: _foodUnitEditorViewModel.foodUnitsEditMode.value ? (value) => _foodUnitEditorViewModel.defaultFoodUnit.value = value : null,
+                    value: widget._foodUnitEditorViewModel.defaultFoodUnit.value,
+                    onChanged: widget._foodUnitEditorViewModel.foodUnitsEditMode.value
+                        ? (value) => widget._foodUnitEditorViewModel.defaultFoodUnit.value = value
+                        : null,
                   );
                 },
               ),
@@ -137,12 +147,12 @@ class FoodUnitEditor extends StatelessWidget {
             SizedBox(
               width: 50,
               child: ValueListenableBuilder(
-                valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
+                valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
                   return RoundOutlinedButton(
-                    onPressed: _foodUnitEditorViewModel.foodUnitsEditMode.value
+                    onPressed: widget._foodUnitEditorViewModel.foodUnitsEditMode.value
                         ? () {
-                            _foodUnitEditorViewModel.removeFoodUnit();
+                            widget._foodUnitEditorViewModel.removeFoodUnit();
                           }
                         : null,
                     child: Icon(Icons.delete),
@@ -153,15 +163,15 @@ class FoodUnitEditor extends StatelessWidget {
           ],
         ),
         ValueListenableBuilder(
-          valueListenable: _foodUnitEditorViewModel.nameValid,
+          valueListenable: widget._foodUnitEditorViewModel.nameValid,
           builder: (_, _, _) {
-            if (!_foodUnitEditorViewModel.nameValid.value) {
+            if (!widget._foodUnitEditorViewModel.nameValid.value) {
               return Text(
                 AppLocalizations.of(context)!.input_invalid_value(
                   AppLocalizations.of(context)!.name_capital,
-                  _foodUnitEditorViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
+                  widget._foodUnitEditorViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
                       ? AppLocalizations.of(context)!.empty
-                      : _foodUnitEditorViewModel.name.value,
+                      : widget._foodUnitEditorViewModel.name.value,
                 ),
                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
               );
@@ -171,13 +181,14 @@ class FoodUnitEditor extends StatelessWidget {
           },
         ),
         ValueListenableBuilder(
-          valueListenable: _foodUnitEditorViewModel.amountValid,
+          valueListenable: widget._foodUnitEditorViewModel.amountValid,
           builder: (_, _, _) {
-            if (!_foodUnitEditorViewModel.amountValid.value) {
+            if (!widget._foodUnitEditorViewModel.amountValid.value) {
               return Text(
-                AppLocalizations.of(
-                  context,
-                )!.input_invalid_value(AppLocalizations.of(context)!.kjoule, ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)),
+                AppLocalizations.of(context)!.input_invalid_value(
+                  AppLocalizations.of(context)!.kjoule,
+                  ConvertValidate.numberFomatterInt.format(widget._foodUnitEditorViewModel.amount.value),
+                ),
                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
               );
             } else {
@@ -187,5 +198,14 @@ class FoodUnitEditor extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    widget._foodUnitEditorViewModel.dispose();
+    _nameController.dispose();
+    _amountController.dispose();
+
+    super.dispose();
   }
 }

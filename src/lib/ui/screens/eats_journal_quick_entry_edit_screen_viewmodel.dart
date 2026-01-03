@@ -21,6 +21,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
        _amount = ValueNotifier(quickEntry.amount),
        _amountMeasurementUnit = ValueNotifier(quickEntry.amountMeasurementUnit != null ? quickEntry.amountMeasurementUnit! : MeasurementUnit.gram),
        _kJoule = ValueNotifier(quickEntry.kJoule),
+       _kJouleValid = ValueNotifier(quickEntry.kJoule > 0),
        _carbohydrates = ValueNotifier(quickEntry.carbohydrates),
        _sugar = ValueNotifier(quickEntry.sugar),
        _fat = ValueNotifier(quickEntry.fat),
@@ -54,7 +55,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _amount;
   final ValueNotifier<MeasurementUnit> _amountMeasurementUnit;
   final ValueNotifier<int?> _kJoule;
-  final ValueNotifier<bool> _kJouleValid = ValueNotifier(false);
+  final ValueNotifier<bool> _kJouleValid;
   final ValueNotifier<double?> _carbohydrates;
   final ValueNotifier<double?> _sugar;
   final ValueNotifier<double?> _fat;

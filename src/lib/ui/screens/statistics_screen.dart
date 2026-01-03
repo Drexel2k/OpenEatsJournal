@@ -9,11 +9,16 @@ import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 
-class StatisticsScreen extends StatelessWidget {
+class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key, required StatisticsScreenViewModel statisticsScreenViewModel}) : _statisticsScreenViewModel = statisticsScreenViewModel;
 
   final StatisticsScreenViewModel _statisticsScreenViewModel;
 
+  @override
+  State<StatisticsScreen> createState() => _StatisticsScreenState();
+}
+
+class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     return MainLayout(
@@ -21,31 +26,38 @@ class StatisticsScreen extends StatelessWidget {
       body: Column(
         children: [
           ValueListenableBuilder(
-            valueListenable: _statisticsScreenViewModel.currentStatistic,
+            valueListenable: widget._statisticsScreenViewModel.currentStatistic,
             builder: (_, _, _) {
               return OpenEatsJournalDropdownMenu<int>(
                 onSelected: (int? statisticValue) {
-                  _statisticsScreenViewModel.currentStatistic.value = Statistic.getByValue(statisticValue!);
+                  widget._statisticsScreenViewModel.currentStatistic.value = Statistic.getByValue(statisticValue!);
                 },
                 dropdownMenuEntries: LocalizedDropDownEntries.getStatisticDropDownMenuEntries(context: context),
-                initialSelection: _statisticsScreenViewModel.currentStatistic.value.value,
+                initialSelection: widget._statisticsScreenViewModel.currentStatistic.value.value,
               );
             },
           ),
           SizedBox(height: 20),
           ValueListenableBuilder(
-            valueListenable: _statisticsScreenViewModel.currentStatistic,
+            valueListenable: widget._statisticsScreenViewModel.currentStatistic,
             builder: (_, _, _) {
-              if (_statisticsScreenViewModel.currentStatistic.value == Statistic.weight) {
-                return StatisticsScreenPageWeight(statisticsScreenViewModel: _statisticsScreenViewModel);
+              if (widget._statisticsScreenViewModel.currentStatistic.value == Statistic.weight) {
+                return StatisticsScreenPageWeight(statisticsScreenViewModel: widget._statisticsScreenViewModel);
               }
 
-              return StatisticsScreenPageEnergy(statisticsScreenViewModel: _statisticsScreenViewModel);
+              return StatisticsScreenPageEnergy(statisticsScreenViewModel: widget._statisticsScreenViewModel);
             },
           ),
         ],
       ),
       title: AppLocalizations.of(context)!.statistics,
     );
+  }
+
+  @override
+  void dispose() {
+    widget._statisticsScreenViewModel.dispose();
+
+    super.dispose();
   }
 }

@@ -37,7 +37,7 @@ class FoodRepository {
     FoodRepositoryResult foodRepositoryResult = await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode);
 
     //todo: show local results if online services fail...
-    if (foodRepositoryResult.errorCode == null) {
+    if (foodRepositoryResult.errorCode == null && foodRepositoryResult.foods != null) {
       foods.add(foodRepositoryResult.foods![0]);
     }
 
@@ -168,13 +168,13 @@ class FoodRepository {
         double? saturatedFatPer100Units = _getSaturatedFatPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         double? proteinsPer100Units = _getProteinsPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         double? saltPer100Units = _getSaltPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
-
+        
         Food food = Food(
           name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
           originalFoodSourceFoodId: foodApi.code,
-          barcode: int.parse(foodApi.code),
+          barcode: int.tryParse(foodApi.code),
           nutritionPerGramAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? 100 : null,
           nutritionPerMilliliterAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? null : 100,
           kJoule: energyKjPer100Units,

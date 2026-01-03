@@ -6,10 +6,16 @@ import "package:openeatsjournal/ui/utils/setting_type.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_page_personal.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_page_app.dart";
 
-class SettingsScreen extends StatelessWidget {
-  SettingsScreen({super.key, required SettingsScreenViewModel settingsScreenViewModel}) : _settingsScreenViewModel = settingsScreenViewModel;
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key, required SettingsScreenViewModel settingsScreenViewModel}) : _settingsScreenViewModel = settingsScreenViewModel;
 
   final SettingsScreenViewModel _settingsScreenViewModel;
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
   final _pageViewController = PageController();
 
   @override
@@ -17,41 +23,35 @@ class SettingsScreen extends StatelessWidget {
     return Column(
       children: [
         ValueListenableBuilder(
-          valueListenable: _settingsScreenViewModel.currentPageIndex,
+          valueListenable: widget._settingsScreenViewModel.currentPageIndex,
           builder: (_, _, _) {
             String pageTitle = OpenEatsJournalStrings.emptyString;
-            if (_settingsScreenViewModel.currentPageIndex.value == 0) {
+            if (widget._settingsScreenViewModel.currentPageIndex.value == 0) {
               pageTitle = AppLocalizations.of(context)!.personal_settings;
-            } else if (_settingsScreenViewModel.currentPageIndex.value == 1) {
+            } else if (widget._settingsScreenViewModel.currentPageIndex.value == 1) {
               pageTitle = AppLocalizations.of(context)!.app_settings;
             }
-            
+
             return AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(pageTitle));
           },
         ),
         ValueListenableBuilder(
-          valueListenable: _settingsScreenViewModel.currentPageIndex,
+          valueListenable: widget._settingsScreenViewModel.currentPageIndex,
           builder: (_, _, _) {
             return SegmentedButton<SettingType>(
-              selected: <SettingType>{SettingType.getByValue(_settingsScreenViewModel.currentPageIndex.value + 1)},
+              selected: <SettingType>{SettingType.getByValue(widget._settingsScreenViewModel.currentPageIndex.value + 1)},
               showSelectedIcon: false,
               segments: [
-                ButtonSegment<SettingType>(
-                  value: SettingType.personal,
-                  label: Text(AppLocalizations.of(context)!.personal_settings_abbreviated),
-                ),
-                ButtonSegment<SettingType>(
-                  value: SettingType.app,
-                  label: Text(AppLocalizations.of(context)!.app_settings),
-                ),
+                ButtonSegment<SettingType>(value: SettingType.personal, label: Text(AppLocalizations.of(context)!.personal_settings_abbreviated)),
+                ButtonSegment<SettingType>(value: SettingType.app, label: Text(AppLocalizations.of(context)!.app_settings)),
               ],
               onSelectionChanged: (Set<SettingType> newSelection) {
                 if (newSelection.single == SettingType.app) {
-                  if (_settingsScreenViewModel.currentPageIndex.value == 0) {
+                  if (widget._settingsScreenViewModel.currentPageIndex.value == 0) {
                     _movePageIndex(1);
                   }
                 } else {
-                  if (_settingsScreenViewModel.currentPageIndex.value == 1) {
+                  if (widget._settingsScreenViewModel.currentPageIndex.value == 1) {
                     _movePageIndex(0);
                   }
                 }
@@ -65,8 +65,8 @@ class SettingsScreen extends StatelessWidget {
             controller: _pageViewController,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              SettingsScreenPagePersonal(settingsScreenViewModel: _settingsScreenViewModel),
-              SettingsScreenPageApp(settingsViewModel: _settingsScreenViewModel),
+              SettingsScreenPagePersonal(settingsScreenViewModel: widget._settingsScreenViewModel),
+              SettingsScreenPageApp(settingsViewModel: widget._settingsScreenViewModel),
             ],
           ),
         ),
@@ -75,11 +75,19 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _movePageIndex(int page) {
-    _settingsScreenViewModel.currentPageIndex.value = page;
+    widget._settingsScreenViewModel.currentPageIndex.value = page;
     _pageViewController.animateToPage(
-      _settingsScreenViewModel.currentPageIndex.value,
+      widget._settingsScreenViewModel.currentPageIndex.value,
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
+  }
+
+  @override
+  void dispose() {
+    widget._settingsScreenViewModel.dispose();
+    _pageViewController.dispose();
+
+    super.dispose();
   }
 }

@@ -125,13 +125,13 @@ class FoodCard extends StatelessWidget {
                       children: [
                         _food.carbohydrates != null
                             ? Text(AppLocalizations.of(context)!.amount_carb(ConvertValidate.getCleanDoubleString(doubleValue: _food.carbohydrates!)))
-                            : Text(AppLocalizations.of(context)!.na_carb),
+                            : Text(AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na)),
                         _food.fat != null
                             ? Text(AppLocalizations.of(context)!.amount_fat(ConvertValidate.getCleanDoubleString(doubleValue: _food.fat!)))
-                            : Text(AppLocalizations.of(context)!.na_fat),
+                            : Text(AppLocalizations.of(context)!.amount_fat(AppLocalizations.of(context)!.na)),
                         _food.protein != null
                             ? Text(AppLocalizations.of(context)!.amount_prot(ConvertValidate.getCleanDoubleString(doubleValue: _food.protein!)))
-                            : Text(AppLocalizations.of(context)!.na_prot),
+                            : Text(AppLocalizations.of(context)!.amount_prot(AppLocalizations.of(context)!.na)),
                       ],
                     ),
                   ),
