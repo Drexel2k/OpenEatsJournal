@@ -34,6 +34,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
 
+  final List<ObjectWithOrder<Food>> _foodSearchResultUser = [];
+  final List<ObjectWithOrder<Food>> _foodSearchResultStandard = [];
+  final List<ObjectWithOrder<Food>> _foodSearchResultOpenFoodFacst = [];
   final List<ObjectWithOrder<Food>> _foodSearchResult = [];
   bool _hasMore = false;
   bool _isLoading = false;
@@ -47,7 +50,8 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int?> _searchMessageCode = ValueNotifier(null);
   final ExternalTriggerChangedNotifier _sortButtonChanged = ExternalTriggerChangedNotifier();
   bool _sortButtonEnabled = true;
-  SortOrder _sortOrder = SortOrder.name;
+  SortOrder _sortOrder = SortOrder.popularity;
+  final ValueNotifier<bool> _sortDesc = ValueNotifier(true);
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
@@ -65,6 +69,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   ExternalTriggerChangedNotifier get sortButtonChanged => _sortButtonChanged;
   bool get sortButtonEnabled => _sortButtonEnabled;
   SortOrder get sortOrder => _sortOrder;
+  ValueNotifier<bool> get sortDesc => _sortDesc;
 
   void _currentJournalDateChanged() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
@@ -76,49 +81,15 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   Future<void> getFoodByBarcode({required int barcode, required String languageCode, required Map<String, String> localizations}) async {
     _initSearch();
-    await _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((FoodRepositoryResult result) {
+    await _foodRepository.getFoodByBarcode(barcode: barcode, languageCode: languageCode).then((List<FoodRepositoryResult> result) {
       _searchFinished();
 
-      if (result.errorCode == null) {
-        List<ObjectWithOrder<Food>>? foodsWithOrder;
-        if (result.foods != null) {
-          foodsWithOrder = [];
-          int order = 0;
-          for (Food food in result.foods!) {
-            if (food.isExternalFoodSource && food.foodUnitsWithOrder.isNotEmpty) {
-              for (ObjectWithOrder<FoodUnit> unitWithOrder in result.foods![0].foodUnitsWithOrder) {
-                if (localizations.containsKey(unitWithOrder.object.name)) {
-                  unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
-                }
-              }
-            }
+      if (result.any((resultInternal) => resultInternal.foods != null && resultInternal.foods!.isNotEmpty)) {
+        int order = 0;
 
-            foodsWithOrder.add(ObjectWithOrder(object: food, order: order));
-            order++;
-          }
-        }
-
-        _addToSearchResult(foodsWithOrder);
-      } else {
-        _errorCode.value = result.errorCode;
-      }
-    });
-  }
-
-  Future<void> getFoodBySearchText({required String searchText, required String languageCode, required Map<String, String> localizations}) async {
-    _initSearch();
-    _currentSearchText = searchText;
-    _currentLanguageCode = languageCode;
-    await _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((FoodRepositoryResult result) {
-      _searchFinished();
-
-      if (result.errorCode == null) {
-        List<ObjectWithOrder<Food>>? foodsWithOrder;
-        if (result.foods!.isNotEmpty) {
-          int order = 0;
-          foodsWithOrder = [];
-
-          for (Food food in result.foods!) {
+        List<ObjectWithOrder<Food>>? foodsWithOrder = [];
+        if (result[0].foods != null && result[0].foods!.isNotEmpty) {
+          for (Food food in result[0].foods!) {
             if (food.foodUnitsWithOrder.isNotEmpty) {
               for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
                 if (localizations.containsKey(unitWithOrder.object.name)) {
@@ -127,30 +98,114 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
               }
             }
 
-            foodsWithOrder.add(ObjectWithOrder(object: food, order: order++));
+            _foodSearchResultUser.add(ObjectWithOrder(object: food, order: order++));
           }
 
-          if (result.finished!) {
-            foodsWithOrder.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
-            if (_sortButtonEnabled == false || _sortOrder != SortOrder.name) {
-              _sortButtonEnabled = true;
-              _sortOrder = SortOrder.name;
-              _sortButtonChanged.notify();
+          foodsWithOrder.addAll(_foodSearchResultUser);
+        }
+
+        if (result[1].foods != null && result[1].foods!.isNotEmpty) {
+          for (Food food in result[1].foods!) {
+            if (food.foodUnitsWithOrder.isNotEmpty) {
+              for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+                if (localizations.containsKey(unitWithOrder.object.name)) {
+                  unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
+                }
+              }
             }
-          } else {
-            _searchMessageCode.value = 1;
-            _hasMore = true;
-            if (_sortButtonEnabled == true || _sortOrder != SortOrder.popularity) {
-              _sortButtonEnabled = false;
-              _sortOrder = SortOrder.popularity;
-              _sortButtonChanged.notify();
-            }
+
+            _foodSearchResultOpenFoodFacst.add(ObjectWithOrder(object: food, order: order++));
           }
+
+          foodsWithOrder.addAll(_foodSearchResultStandard);
+        }
+      }
+
+      if (result[1].errorCode != null) {
+        _errorCode.value = result[1].errorCode;
+        _errorMessage = result[1].errorMessage != null ? result[1].errorMessage! : OpenEatsJournalStrings.emptyString;
+      }
+    });
+  }
+
+  Future<void> getFoodBySearchText({required String searchText, required String languageCode, required Map<String, String> localizations}) async {
+    _initSearch();
+    _currentSearchText = searchText;
+    _currentLanguageCode = languageCode;
+    await _foodRepository.getFoodBySearchText(searchText: searchText, languageCode: languageCode).then((List<FoodRepositoryResult> result) {
+      _searchFinished();
+
+      if (result.any((resultInternal) => resultInternal.foods != null && resultInternal.foods!.isNotEmpty)) {
+        int order = 0;
+
+        List<ObjectWithOrder<Food>>? foodsWithOrder = [];
+        if (result[0].foods != null && result[0].foods!.isNotEmpty) {
+          for (Food food in result[0].foods!) {
+            if (food.foodUnitsWithOrder.isNotEmpty) {
+              for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+                if (localizations.containsKey(unitWithOrder.object.name)) {
+                  unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
+                }
+              }
+            }
+
+            _foodSearchResultUser.add(ObjectWithOrder(object: food, order: order++));
+          }
+
+          foodsWithOrder.addAll(_foodSearchResultUser);
+        }
+
+        if (result[1].foods != null && result[1].foods!.isNotEmpty) {
+          for (Food food in result[1].foods!) {
+            if (food.foodUnitsWithOrder.isNotEmpty) {
+              for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+                if (localizations.containsKey(unitWithOrder.object.name)) {
+                  unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
+                }
+              }
+            }
+
+            _foodSearchResultStandard.add(ObjectWithOrder(object: food, order: order++));
+          }
+
+          foodsWithOrder.addAll(_foodSearchResultStandard);
+        }
+
+        if (result[2].foods != null && result[2].foods!.isNotEmpty) {
+          for (Food food in result[2].foods!) {
+            if (food.foodUnitsWithOrder.isNotEmpty) {
+              for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+                if (localizations.containsKey(unitWithOrder.object.name)) {
+                  unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
+                }
+              }
+            }
+
+            _foodSearchResultOpenFoodFacst.add(ObjectWithOrder(object: food, order: order++));
+          }
+
+          foodsWithOrder.addAll(_foodSearchResultOpenFoodFacst);
         }
 
         _addToSearchResult(foodsWithOrder);
+      }
+
+      if (_foodSearchResult.length > 500) {
+        _searchMessageCode.value = 1;
+        if (_sortButtonEnabled == true || _sortOrder != SortOrder.popularity) {
+          _sortButtonEnabled = false;
+          _sortOrder = SortOrder.popularity;
+          _sortButtonChanged.notify();
+        }
+      }
+
+      if (result[2].errorCode == null) {
+        if (!result[2].finished!) {
+          _hasMore = true;
+        }
       } else {
-        _errorCode.value = result.errorCode;
+        _errorCode.value = result[2].errorCode;
+        _errorMessage = result[2].errorMessage != null ? result[2].errorMessage! : OpenEatsJournalStrings.emptyString;
       }
     });
   }
@@ -186,6 +241,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _hasMore = false;
         _clearSearchResult();
         _errorCode.value = result.errorCode;
+        _errorMessage = result.errorMessage != null ? result.errorMessage! : OpenEatsJournalStrings.emptyString;
       }
     });
   }
@@ -199,6 +255,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _searchMessageCode.value = null;
     _currentPage = 1;
     _foodSearchResult.clear();
+    _foodSearchResultUser.clear();
+    _foodSearchResultStandard.clear();
+    _foodSearchResultOpenFoodFacst.clear();
     _sortButtonChanged.notify();
     _showInitialLoading.value = true;
     _foodSearchResultChanged.notify();
@@ -224,15 +283,49 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   void setSortOrder(SortOrder sortOrder) {
+    _foodSearchResult.clear();
     _sortOrder = sortOrder;
     _sortButtonChanged.notify();
 
     if (_sortOrder == SortOrder.name) {
-      _foodSearchResult.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
+      _foodSearchResultUser.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
+      _foodSearchResultStandard.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
+      _foodSearchResultOpenFoodFacst.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
     } else if (_sortOrder == SortOrder.kcal) {
-      _foodSearchResult.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
+      _foodSearchResultUser.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
+      _foodSearchResultStandard.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
+      _foodSearchResultOpenFoodFacst.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
     } else if (_sortOrder == SortOrder.popularity) {
-      _foodSearchResult.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
+      _foodSearchResultUser.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
+      _foodSearchResultStandard.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
+      _foodSearchResultOpenFoodFacst.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
+    }
+
+    if (_sortDesc.value) {
+      _foodSearchResult.addAll(_foodSearchResultUser);
+      _foodSearchResult.addAll(_foodSearchResultStandard);
+      _foodSearchResult.addAll(_foodSearchResultOpenFoodFacst);
+    } else {
+      _foodSearchResult.addAll(_foodSearchResultUser.reversed.toList());
+      _foodSearchResult.addAll(_foodSearchResultStandard.reversed.toList());
+      _foodSearchResult.addAll(_foodSearchResultOpenFoodFacst.reversed.toList());
+    }
+
+    _foodSearchResultChanged.notify();
+  }
+
+  void changeSortDirection() {
+    _sortDesc.value = !_sortDesc.value;
+
+    _foodSearchResult.clear();
+    if (_sortDesc.value) {
+      _foodSearchResult.addAll(_foodSearchResultUser);
+      _foodSearchResult.addAll(_foodSearchResultStandard);
+      _foodSearchResult.addAll(_foodSearchResultOpenFoodFacst);
+    } else {
+      _foodSearchResult.addAll(_foodSearchResultUser.reversed.toList());
+      _foodSearchResult.addAll(_foodSearchResultStandard.reversed.toList());
+      _foodSearchResult.addAll(_foodSearchResultOpenFoodFacst.reversed.toList());
     }
 
     _foodSearchResultChanged.notify();
@@ -276,6 +369,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _errorCode.dispose();
     _searchMessageCode.dispose();
     _sortButtonChanged.dispose();
+    _sortDesc.dispose();
 
     super.dispose();
   }

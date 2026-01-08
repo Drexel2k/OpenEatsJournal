@@ -77,7 +77,7 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
   }
 
   Future<bool> deleteWeightJournalEntry({required DateTime date}) async {
-    return await _journalRepository.deleteWeightJournalEntry(date);
+    return await _journalRepository.deleteWeightJournalEntry(date: date);
   }
 
   @override

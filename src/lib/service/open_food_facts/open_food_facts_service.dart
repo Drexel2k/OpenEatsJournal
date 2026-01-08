@@ -73,6 +73,7 @@ class OpenFoodFactsService {
     }
 
     searchText = OpenFoodFactsService._encodeSearchText(searchText);
+
     Uri uri = Uri.parse(
       "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}&page=$page&page_size=$pageSize",
     );

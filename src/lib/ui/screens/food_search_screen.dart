@@ -43,6 +43,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       route: OpenEatsJournalStrings.navigatorRouteFood,
       title: AppLocalizations.of(context)!.food_management,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -183,7 +184,17 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       ),
                     ),
                     SizedBox(width: 5),
-                    Icon(Icons.sort),
+                    RoundOutlinedButton(
+                      onPressed: () {
+                        widget._foodSearchScreenViewModel.changeSortDirection();
+                      },
+                      child: ValueListenableBuilder(
+                        valueListenable: widget._foodSearchScreenViewModel.sortDesc,
+                        builder: (_, _, _) {
+                          return Transform.flip(flipY: !widget._foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort));
+                        },
+                      ),
+                    ),
                     SizedBox(width: 5),
                     Expanded(
                       child: ListenableBuilder(

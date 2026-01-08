@@ -59,7 +59,7 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
   }
 
   Future<bool> deleteEatsJournalEntry({required int id}) async {
-    return await _journalRepository.deleteEatsJournalEntry(id);
+    return await _journalRepository.deleteEatsJournalEntry(id: id);
   }
 
   @override

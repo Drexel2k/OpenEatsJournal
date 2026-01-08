@@ -28,28 +28,29 @@ class SettingsRepository extends ChangeNotifier {
   late int _kJouleFriday;
   late int _kJouleSaturday;
   late int _kJouleSunday;
+  DateTime? _lastProcessedStandardFoodDataChangeDate;
 
   set gender(Gender value) {
     _gender = value;
     _saveGender(gender: value);
   }
 
-  set birthday(value) {
+  set birthday(DateTime value) {
     _birthday = value;
     _saveBirthday(birthday: value);
   }
 
-  set height(value) {
+  set height(int value) {
     _height = value;
     _saveHeight(height: value);
   }
 
-  set activityFactor(value) {
+  set activityFactor(double value) {
     _activityFactor = value;
     _saveActivityFactor(activityFactor: value);
   }
 
-  set weightTarget(value) {
+  set weightTarget(WeightTarget value) {
     _weightTarget = value;
     _saveWeightTarget(weightTarget: value);
   }
@@ -68,13 +69,14 @@ class SettingsRepository extends ChangeNotifier {
   int get kJouleFriday => _kJouleFriday;
   int get kJouleSaturday => _kJouleSaturday;
   int get kJouleSunday => _kJouleSunday;
+  DateTime? get lastProcessedStandardFoodDataChangeDate => _lastProcessedStandardFoodDataChangeDate;
 
   //non persistand app wide settings
-  final ValueNotifier<bool> _initialized = ValueNotifier(false);
+  final ValueNotifier<bool> _onboarded = ValueNotifier(false);
   final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateUtils.dateOnly(DateTime.now()));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
 
-  ValueNotifier<bool> get initialized => _initialized;
+  ValueNotifier<bool> get onboarded => _onboarded;
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
@@ -90,7 +92,28 @@ class SettingsRepository extends ChangeNotifier {
   }
 
   Future<void> initSettings() async {
-    AllSettings allSettings = await _oejDatabase.getAllSettings();
+    Map<String, Object?> settingData = await _oejDatabase.getAllSettings();
+
+    int? gender = settingData[OpenEatsJournalStrings.settingGender] as int?;
+    int? weightTarget = settingData[OpenEatsJournalStrings.settingWeightTarget] as int?;
+
+    AllSettings allSettings = AllSettings(
+      darkMode: settingData[OpenEatsJournalStrings.settingDarkmode] as bool?,
+      languageCode: settingData[OpenEatsJournalStrings.settingLanguageCode] as String?,
+      gender: gender != null ? Gender.getByValue(gender) : null,
+      birthday: settingData[OpenEatsJournalStrings.settingBirthday] as DateTime?,
+      height: settingData[OpenEatsJournalStrings.settingHeight] as int?,
+      activityFactor: settingData[OpenEatsJournalStrings.settingActivityFactor] as double?,
+      weightTarget: weightTarget != null ? WeightTarget.getByValue(weightTarget) : null,
+      kJouleMonday: settingData[OpenEatsJournalStrings.settingKJouleMonday] as int?,
+      kJouleTuesday: settingData[OpenEatsJournalStrings.settingKJouleTuesday] as int?,
+      kJouleWednesday: settingData[OpenEatsJournalStrings.settingKJouleWednesday] as int?,
+      kJouleThursday: settingData[OpenEatsJournalStrings.settingKJouleThursday] as int?,
+      kJouleFriday: settingData[OpenEatsJournalStrings.settingKJouleFriday] as int?,
+      kJouleSaturday: settingData[OpenEatsJournalStrings.settingKJouleSaturday] as int?,
+      kJouleSunday: settingData[OpenEatsJournalStrings.settingKJouleSunday] as int?,
+      lastProcessedStandardFoodDataChangeDate: settingData[OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate] as DateTime?,
+    );
 
     if (allSettings.darkMode != null &&
         allSettings.languageCode != null &&
@@ -106,7 +129,7 @@ class SettingsRepository extends ChangeNotifier {
         allSettings.kJouleFriday != null &&
         allSettings.kJouleSaturday != null &&
         allSettings.kJouleSunday != null) {
-      _initialized.value = true;
+      _onboarded.value = true;
       _darkMode.value = allSettings.darkMode!;
       _languageCode.value = allSettings.languageCode!;
       _gender = allSettings.gender!;
@@ -121,6 +144,7 @@ class SettingsRepository extends ChangeNotifier {
       _kJouleFriday = allSettings.kJouleFriday!;
       _kJouleSaturday = allSettings.kJouleSaturday!;
       _kJouleSunday = allSettings.kJouleSunday!;
+      _lastProcessedStandardFoodDataChangeDate = allSettings.lastProcessedStandardFoodDataChangeDate;
     }
 
     _darkMode.addListener(_darkModeChanged);
@@ -128,9 +152,26 @@ class SettingsRepository extends ChangeNotifier {
   }
 
   Future<void> saveAllSettings({required AllSettings settings}) async {
-    await _oejDatabase.setAllSettings(allSettings: settings);
+    Map<String, Object> settingData = {
+      OpenEatsJournalStrings.settingDarkmode: settings.darkMode!,
+      OpenEatsJournalStrings.settingLanguageCode: settings.languageCode!,
+      OpenEatsJournalStrings.settingGender: settings.gender!.value,
+      OpenEatsJournalStrings.settingBirthday: settings.birthday!,
+      OpenEatsJournalStrings.settingHeight: settings.height!,
+      OpenEatsJournalStrings.settingActivityFactor: settings.activityFactor!,
+      OpenEatsJournalStrings.settingWeightTarget: settings.weightTarget!.value,
+      OpenEatsJournalStrings.settingKJouleMonday: settings.kJouleMonday!,
+      OpenEatsJournalStrings.settingKJouleTuesday: settings.kJouleTuesday!,
+      OpenEatsJournalStrings.settingKJouleWednesday: settings.kJouleWednesday!,
+      OpenEatsJournalStrings.settingKJouleThursday: settings.kJouleThursday!,
+      OpenEatsJournalStrings.settingKJouleFriday: settings.kJouleFriday!,
+      OpenEatsJournalStrings.settingKJouleSaturday: settings.kJouleSaturday!,
+      OpenEatsJournalStrings.settingKJouleSunday: settings.kJouleSunday!,
+    };
 
-    _initialized.value = true;
+    await _oejDatabase.setAllSettings(allSettings: settingData);
+
+    _onboarded.value = true;
     _darkMode.value = settings.darkMode!;
     _gender = settings.gender!;
     _birthday = settings.birthday!;
@@ -218,6 +259,11 @@ class SettingsRepository extends ChangeNotifier {
     await saveKJouleFriday(kJoule: dailyTargetKJoule);
     await saveKJouleSaturday(kJoule: dailyTargetKJoule);
     await saveKJouleSunday(kJoule: dailyTargetKJoule);
+  }
+
+  Future<void> saveLastProcessedStandardFoodDataChangeDate({required DateTime date}) async {
+    await _oejDatabase.setDateTimeSetting(setting: OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate, value: date);
+    _lastProcessedStandardFoodDataChangeDate = date;
   }
 
   int getCurrentJournalDayTargetKJoule() {

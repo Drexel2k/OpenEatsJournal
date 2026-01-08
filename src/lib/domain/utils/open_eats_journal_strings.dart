@@ -17,6 +17,11 @@ class OpenEatsJournalStrings {
   static const String serving = "serving";
   static const String piece = "piece";
 
+  static const String csvTrue = "true";
+  static const String csvFood = "food";
+  static const String csvFoodUnit = "foodunit";
+  static const String csvData = "---data---";
+
   static const String chartKCalIntake = "kCalIntake";
   static const String chartKCalIntakeVar = "kCalIntakeVar";
   static const String chartKCalTarget = "kCalTarget";
@@ -43,6 +48,7 @@ class OpenEatsJournalStrings {
   static const String settingKJouleSaturday = "kjoule_saturday";
   static const String settingKJouleSunday = "kjoule_sunday";
   static const String settingLanguageCode = "language_code";
+  static const String settingLastProcessedStandardFoodDataChangeDate = "last_processed_standard_food_data_change_date";
 
   static const String dbTableSetting = "t_setting";
   static const String dbTableWeightJournal = "t_weight_journal";
@@ -53,7 +59,6 @@ class OpenEatsJournalStrings {
   static const String dbTableFoodSource = "t_food_source";
   static const String dbTableMeal = "t_meal";
   static const String dbTableMeasurementUnit = "t_measurement_unit";
-  static const String dbTableFoodUnitType = "t_food_unit_type";
   static const String dbTableDailyNutritionTarget = "t_daily_nutrition_target";
   static const String dbTableDateInfo = "t_date_info";
 
@@ -81,7 +86,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnSalt = "salt";
   static const String dbColumnQuantity = "quantity";
   static const String dbColumnAmount = "amount";
-  static const String dbColumnFoodUnitTypeIdRef = "food_unit_type_id_ref";
+  static const String dbColumnOriginalFoodSourceFoodUnitIdRef = "original_food_source_food_unit_id_ref";
   static const String dbColumnOrderNumber = "order_number";
   static const String dbColumnIsDefault = "is_default";
   static const String dbColumnAmountMeasurementUnitIdRef = "amount_measurement_unit_id_ref";
@@ -134,7 +139,6 @@ class OpenEatsJournalStrings {
   static const String dbIndexBarcodeTableFood = "i_${dbColumnBarcode}_$dbTableFood";
   static const String dbIndexFoodIdRefTableFoodUnit = "i_${dbColumnFoodIdRef}_$dbTableFoodUnit";
   static const String dbIndexAmountMeasurementUnitIdRefTableFoodUnit = "i_${dbColumnAmountMeasurementUnitIdRef}_$dbTableFoodUnit";
-  static const String dbIndexFoodUnitTypeIdRefTableFoodUnit = "i_${dbColumnFoodUnitTypeIdRef}_$dbTableFoodUnit";
   static const String dbIndexFoodIdRefTableEatsJournal = "i_${dbColumnFoodIdRef}_$dbTableEatsJournal";
   static const String dbIndexEntryDateTableEatsJournal = "i_${dbColumnEntryDate}_$dbTableEatsJournal";
   static const String dbIndexAmountMeasurementUnitIdRefTableEatsJournal = "i_${dbColumnAmountMeasurementUnitIdRef}_$dbTableEatsJournal";

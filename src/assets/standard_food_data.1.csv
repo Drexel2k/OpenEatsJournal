@@ -1,0 +1,20 @@
+---header---
+last_content_update,last_file_format_change
+20260108000000,20260108000000
+---comments---
+food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,carbohydrates,sugar,fat,saturated_fat,protein,salt,quantity
+food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
+---data---
+"food","1","20260108000000","Banana (without peel)","Banane (ohne Schale)",,,"100",,"389","20","17.3","0.2","0","1.1","0",
+"foodunit","1","fruit small","Frucht klein","80","g","false"
+"foodunit","2","fruit mid sized","Frucht mittelgroß","110","g","true"
+"foodunit","3","fruit big","Frucht groß","140","g","false"
+"food","2","20260108000000","Cappuccino (whole milk 3.5%)","Cappuccino (Vollmilch 3,5%)",,,"95","100","205",".78","3.6","3.6","2.6","2.6","0.1",
+"foodunit","1","cup","Tasse","150","ml","false"
+"foodunit","2","big cup","große Tasse","225","ml","true"
+"food","3","20260108000000","Cappuccino (low-fat milk 1.5%)","Cappuccino (Fettarme Milch 1.5%)",,,"95","100","151","3.6","3.6","1.1","0.7","2.6","0.1",
+"foodunit","1","cup","Tasse","150","ml","false"
+"foodunit","2","big cup","große Tasse","225","ml","true"
+"food","4","20260108000000","Apple, raw","Apfel, roh",,,"100",,"226","14.4","10.3","0.1","0","0.3","0",
+"foodunit","1","middle","mittel","130","g","true"
+"foodunit","2","big","groß","200","g","false"

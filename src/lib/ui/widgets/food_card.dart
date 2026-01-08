@@ -68,29 +68,29 @@ class FoodCard extends StatelessWidget {
                   PopupMenuButton<String>(
                     onSelected: (selected) {},
                     itemBuilder: (BuildContext context) {
-                      if (_food.foodSource == FoodSource.openFoodFacts) {
-                        return [
-                          PopupMenuItem(
-                            onTap: () {
-                              Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.asUserFood(food: _food));
-                            },
-                            child: Text(AppLocalizations.of(context)!.as_new_food),
-                          ),
-                        ];
-                      }
+                      List<PopupMenuItem<String>> menuItems = [];
+
+                      menuItems.add(
+                        PopupMenuItem(
+                          onTap: () {
+                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.asUserFood(food: _food));
+                          },
+                          child: Text(AppLocalizations.of(context)!.as_new_food),
+                        ),
+                      );
 
                       if (_food.foodSource == FoodSource.user) {
-                        return [
+                        menuItems.add(
                           PopupMenuItem(
                             onTap: () {
                               Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: _food);
                             },
                             child: Text(AppLocalizations.of(context)!.edit),
                           ),
-                        ];
+                        );
                       }
 
-                      return [];
+                      return menuItems;
                     },
                     child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
                   ),

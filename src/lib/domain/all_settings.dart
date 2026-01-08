@@ -17,6 +17,7 @@ class AllSettings {
     int? kJouleFriday,
     int? kJouleSaturday,
     int? kJouleSunday,
+    DateTime? lastProcessedStandardFoodDataChangeDate,
   }) : _darkMode = darkMode,
        _languageCode = languageCode,
        _gender = gender,
@@ -30,7 +31,8 @@ class AllSettings {
        _kJouleThursday = kJouleThursday,
        _kJouleFriday = kJouleFriday,
        _kJouleSaturday = kJouleSaturday,
-       _kJouleSunday = kJouleSunday;
+       _kJouleSunday = kJouleSunday,
+       _lastProcessedStandardFoodDataChangeDate = lastProcessedStandardFoodDataChangeDate;
 
   final bool? _darkMode;
   final String? _languageCode;
@@ -46,6 +48,7 @@ class AllSettings {
   final int? _kJouleFriday;
   final int? _kJouleSaturday;
   final int? _kJouleSunday;
+  final DateTime? _lastProcessedStandardFoodDataChangeDate;
 
   bool? get darkMode => _darkMode;
   String? get languageCode => _languageCode;
@@ -61,4 +64,5 @@ class AllSettings {
   int? get kJouleFriday => _kJouleFriday;
   int? get kJouleSaturday => _kJouleSaturday;
   int? get kJouleSunday => _kJouleSunday;
+  DateTime? get lastProcessedStandardFoodDataChangeDate => _lastProcessedStandardFoodDataChangeDate;
 }

@@ -47,7 +47,7 @@ class Food {
     : _name = food.name,
       _brands = food.brands != null ? List.from(food.brands!) : null,
       _foodSource = FoodSource.user,
-      _originalFoodSource = food.originalFoodSource ?? food.foodSource,
+      _originalFoodSource = food.originalFoodSource ?? food.foodSource, //when set it must be a user food, keep the original source. If not set it comes from a different source, so take the orignal source.
       _originalFoodSourceFoodId = food.originalFoodSourceFoodId,
       _barcode = food.barcode,
       _kJoule = food.kJoule,
@@ -67,7 +67,7 @@ class Food {
           name: foodUnitWithOrder.object.name,
           amount: foodUnitWithOrder.object.amount,
           amountMeasurementUnit: foodUnitWithOrder.object.amountMeasurementUnit,
-          foodUnitType: foodUnitWithOrder.object.foodUnitType,
+          originalFoodSourceFoodUnitId: foodUnitWithOrder.object.originalFoodSourceFoodUnitId,
         ),
         order: foodUnitWithOrder.order,
       );
@@ -82,9 +82,9 @@ class Food {
 
   Food.fromData({
     required String name,
-    required int id,
     required FoodSource foodSource,
     required int kJoule,
+    int? id,
     List<String>? brands,
     FoodSource? originalFoodSource,
     String? originalFoodSourceFoodId,
@@ -159,10 +159,6 @@ class Food {
   set id(int? value) {
     if (value == null) {
       throw ArgumentError("Id must be set to value.");
-    }
-    
-    if (_foodSource == FoodSource.standard) {
-      throw ArgumentError("Id of standard food does always exist and can't be set after object creation.");
     }
 
     if (_id != null) {
@@ -250,6 +246,7 @@ class Food {
 
   String get name => _name;
   List<String>? get brands => _brands;
+  //food source and original food source can differ on user food.
   FoodSource get foodSource => _foodSource;
   FoodSource? get originalFoodSource => _originalFoodSource;
   int? get barcode => _barcode;
@@ -307,6 +304,10 @@ class Food {
 
     if (foodUnitWithOrderExists != null) {
       throw ArgumentError("Can't add same food unit a second time.");
+    }
+
+    if (_foodUnitsWithOrder.firstWhereOrNull((foodUnitWithOrderInteral) => foodUnitWithOrderInteral.order == foodUnitWithOrder.order) != null) {
+      throw ArgumentError("Can't add food unit with same order number a second time.");
     }
 
     _foodUnitsWithOrder.add(foodUnitWithOrder);

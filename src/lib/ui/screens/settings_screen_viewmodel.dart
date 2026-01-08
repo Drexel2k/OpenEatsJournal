@@ -137,7 +137,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
       _heightDebouncer.run(
         callback: () async {
-          _settingsRepository.height = _height.value;
+          _settingsRepository.height = _height.value!;
           _setDailyKJoule();
         },
       );

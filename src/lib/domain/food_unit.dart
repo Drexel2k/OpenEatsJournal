@@ -1,20 +1,19 @@
-import 'package:openeatsjournal/domain/food_unit_type.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 
 class FoodUnit {
-  FoodUnit({required String name, required double amount, required MeasurementUnit amountMeasurementUnit, int? id, FoodUnitType? foodUnitType})
+  FoodUnit({required String name, required double amount, required MeasurementUnit amountMeasurementUnit, int? id, String? originalFoodSourceFoodUnitId})
     : _id = id,
       _name = name,
       _amount = amount,
       _amountMeasurementUnit = amountMeasurementUnit,
-      _foodUnitType = foodUnitType;
+      _originalFoodSourceFoodUnitId = originalFoodSourceFoodUnitId;
 
   int? _id;
   String _name;
   double _amount;
   MeasurementUnit _amountMeasurementUnit;
 
-  final FoodUnitType? _foodUnitType;
+  final String? _originalFoodSourceFoodUnitId;
 
   set id(int? id) {
     if (_id != null) {
@@ -46,5 +45,5 @@ class FoodUnit {
   String get name => _name;
   double get amount => _amount;
   MeasurementUnit get amountMeasurementUnit => _amountMeasurementUnit;
-  FoodUnitType? get foodUnitType => _foodUnitType;
+  String? get originalFoodSourceFoodUnitId => _originalFoodSourceFoodUnitId;
 }
