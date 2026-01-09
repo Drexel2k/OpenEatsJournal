@@ -4,6 +4,8 @@ import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 import 'package:openeatsjournal/domain/utils/week_of_year.dart';
 
 class ConvertValidate {
+  ConvertValidate._();
+
   static void init({required String languageCode}) {
     numberFomatterInt = NumberFormat(null, languageCode);
     numberFomatterDouble = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);

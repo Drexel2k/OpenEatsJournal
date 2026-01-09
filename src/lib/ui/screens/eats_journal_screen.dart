@@ -8,7 +8,7 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_journal_entry.dart";
-import "package:openeatsjournal/global_navigator_key.dart";
+import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
@@ -384,7 +384,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: navigatorKey.currentContext!,
+                                                      context: AppGlobal.navigatorKey.currentContext!,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -454,7 +454,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: navigatorKey.currentContext!,
+                                                      context: AppGlobal.navigatorKey.currentContext!,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -524,7 +524,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: navigatorKey.currentContext!,
+                                                      context: AppGlobal.navigatorKey.currentContext!,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -594,7 +594,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: navigatorKey.currentContext!,
+                                                      context: AppGlobal.navigatorKey.currentContext!,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -662,7 +662,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                 await showDialog<void>(
                                                   useSafeArea: true,
                                                   barrierDismissible: false,
-                                                  context: navigatorKey.currentContext!,
+                                                  context: AppGlobal.navigatorKey.currentContext!,
                                                   builder: (BuildContext contextBuilder) {
                                                     double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                     double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -708,7 +708,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                         await showDialog<void>(
                                           useSafeArea: true,
                                           barrierDismissible: false,
-                                          context: navigatorKey.currentContext!,
+                                          context: AppGlobal.navigatorKey.currentContext!,
                                           builder: (BuildContext contextBuilder) {
                                             double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                             double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -750,7 +750,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                         await showDialog<void>(
                                           useSafeArea: true,
                                           barrierDismissible: false,
-                                          context: navigatorKey.currentContext!,
+                                          context: AppGlobal.navigatorKey.currentContext!,
                                           builder: (BuildContext contextBuilder) {
                                             return Dialog(
                                               insetPadding: EdgeInsets.fromLTRB(
@@ -836,7 +836,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                             if ((await showDialog<bool>(
                               useSafeArea: true,
                               barrierDismissible: false,
-                              context: navigatorKey.currentContext!,
+                              context: AppGlobal.navigatorKey.currentContext!,
                               builder: (BuildContext contextBuilder) {
                                 return Dialog(
                                   insetPadding: EdgeInsets.fromLTRB(

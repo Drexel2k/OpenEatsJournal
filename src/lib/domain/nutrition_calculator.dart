@@ -1,18 +1,15 @@
 import "package:openeatsjournal/domain/gender.dart";
 
 class NutritionCalculator {
+  NutritionCalculator._();
+
   //Deutsche Gesellschaft für Ernährung
   //https://www.dge.de/wissenschaft/referenzwerte/energie/
   static const double _kCalKJouleConversionFactor = 4.184;
   static const int kJouleForOnekCal = 4;
 
   //calculation according to Mifflin St Jeor equation
-  static double calculateBasalMetabolicRateInKJoule({
-    required double weightKg,
-    required int heightCm,
-    required int ageYear,
-    required Gender gender,
-  }) {
+  static double calculateBasalMetabolicRateInKJoule({required double weightKg, required int heightCm, required int ageYear, required Gender gender}) {
     final int genderFactor = gender == Gender.male ? 5 : -161;
     return (10 * weightKg + 6.25 * heightCm - 5 * ageYear + genderFactor) * _kCalKJouleConversionFactor;
   }
@@ -39,7 +36,7 @@ class NutritionCalculator {
   }
 
   static double calculateProteinDemandByKJoule({required int kJoule}) {
-    return kJoule / 17 * 0.15 ;
+    return kJoule / 17 * 0.15;
   }
 
   static double calculateFatDemandByKJoule({required int kJoule}) {

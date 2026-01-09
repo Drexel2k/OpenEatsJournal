@@ -1,4 +1,6 @@
 class OpenEatsJournalStrings {
+  OpenEatsJournalStrings._();
+
   static const String navigatorRouteEatsJournal = "/eatsjournal";
   static const String navigatorRouteFood = "/food";
   static const String navigatorRouteStatistics = "/stats";

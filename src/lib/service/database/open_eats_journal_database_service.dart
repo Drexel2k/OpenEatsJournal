@@ -232,7 +232,7 @@ class OpenEatsJournalDatabaseService {
   //set...Setting methos create new settings if setting does not exist or updates the existing settings.
   Future<void> setStringSetting({required String setting, required String value}) async {
     if (await _settingExists(setting: setting)) {
-      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value});
+      await _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value});
     } else {
       await _insertSetting(
         setting: {
@@ -246,7 +246,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<void> setIntSetting({required String setting, required int value}) async {
     if (await _settingExists(setting: setting)) {
-      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
+      await _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
     } else {
       await _insertSetting(
         setting: {
@@ -260,7 +260,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<void> setDoubleSetting({required String setting, required double value}) async {
     if (await _settingExists(setting: setting)) {
-      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
+      await _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
     } else {
       await _insertSetting(
         setting: {
@@ -274,7 +274,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<void> setBoolSetting({required String setting, required bool value}) async {
     if (await _settingExists(setting: setting)) {
-      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
+      await _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: value.toString()});
     } else {
       await _insertSetting(
         setting: {
@@ -290,7 +290,7 @@ class OpenEatsJournalDatabaseService {
     final String formattedDate = ConvertValidate.dateFormatterDatabaseDateAndTime.format(value);
 
     if (await _settingExists(setting: setting)) {
-      _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: formattedDate});
+      await _updateSetting(setting: {OpenEatsJournalStrings.dbColumnSetting: setting, OpenEatsJournalStrings.dbColumnvalue: formattedDate});
     } else {
       await _insertSetting(
         setting: {
@@ -322,7 +322,7 @@ class OpenEatsJournalDatabaseService {
     return dbResult[0][OpenEatsJournalStrings.dbColumnvalue];
   }
 
-  Future<void> setAllSettings({required Map<String, Object> allSettings}) async {
+  Future<void> setSettings({required Map<String, Object> allSettings}) async {
     for (MapEntry<String, Object> setting in allSettings.entries) {
       if (setting.value is bool) {
         await setBoolSetting(setting: setting.key, value: setting.value as bool);

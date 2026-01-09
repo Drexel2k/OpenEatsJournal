@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:openeatsjournal/global_navigator_key.dart';
+import 'package:openeatsjournal/app_global.dart';
 
 class ErrorHandlers {
   static Future<void> showException({required Object error, StackTrace? stackTrace}) async {
-    final BuildContext context = navigatorKey.currentContext!;
+    final BuildContext context = AppGlobal.navigatorKey.currentContext!;
 
     return showDialog(
       context: context,

@@ -7,7 +7,7 @@ import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/object_with_order.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/global_navigator_key.dart';
+import 'package:openeatsjournal/app_global.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart';
@@ -382,7 +382,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                     if (dataValid) {
                       await widget._eatsJournalFoodAddScreenViewModel.setFoodEntry();
-                      Navigator.pop(navigatorKey.currentContext!);
+                      Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
                   child: widget._eatsJournalFoodAddScreenViewModel.foodEntryId == null

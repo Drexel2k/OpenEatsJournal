@@ -4,8 +4,8 @@ import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
-import "package:openeatsjournal/global_navigator_key.dart";
+import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
+import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/barcode_scanner_screen.dart";
@@ -60,28 +60,36 @@ class OpenEatsJournalApp extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     _openEatsJournalAppViewModel.saveLastProcessedStandardFoodDataDate(snapshot.data as DateTime);
 
-                    if (!_openEatsJournalAppViewModel.onboarded) {
+                    ThemeMode themeMode = ThemeMode.light;
+                    String languageCode = OpenEatsJournalStrings.en;
+                    String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
+                    if (_openEatsJournalAppViewModel.onboarded) {
+                      _openEatsJournalAppViewModel.startListening();
+                      if (_openEatsJournalAppViewModel.darkMode) {
+                        themeMode = ThemeMode.dark;
+                      }
+
+                      languageCode = _openEatsJournalAppViewModel.languageCode;
+                    } else {
                       Brightness brightness = MediaQuery.of(context).platformBrightness;
                       if (brightness == Brightness.dark) {
-                        _openEatsJournalAppViewModel.darkMode = true;
+                        themeMode = ThemeMode.dark;
                       }
 
                       String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
                       if (AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
-                        _openEatsJournalAppViewModel.languageCode = platformLanguageCode;
+                        languageCode = platformLanguageCode;
                       }
-                    }
 
-                    String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
-                    if (!_openEatsJournalAppViewModel.onboarded) {
                       initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
                     }
 
                     ConvertValidate.init(languageCode: _openEatsJournalAppViewModel.languageCode);
+
                     return MaterialApp(
                       localizationsDelegates: AppLocalizations.localizationsDelegates,
                       supportedLocales: AppLocalizations.supportedLocales,
-                      locale: Locale(_openEatsJournalAppViewModel.languageCode),
+                      locale: Locale(languageCode),
                       theme: ThemeData(
                         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
                         pageTransitionsTheme: PageTransitionsTheme(
@@ -114,7 +122,7 @@ class OpenEatsJournalApp extends StatelessWidget {
                           ),
                         ],
                       ),
-                      themeMode: _openEatsJournalAppViewModel.darkMode ? ThemeMode.dark : ThemeMode.light,
+                      themeMode: themeMode,
                       initialRoute: initialRoute,
                       routes: {
                         OpenEatsJournalStrings.navigatorRouteEatsJournal: (contextBuilder) => EatsJournalScreen(
@@ -136,6 +144,8 @@ class OpenEatsJournalApp extends StatelessWidget {
                           onboardingScreenViewModel: OnboardingScreenViewModel(
                             settingsRepository: _repositories.settingsRepository,
                             journalRepository: _repositories.journalRepository,
+                            darkMode: themeMode == ThemeMode.dark,
+                            languageCode: languageCode,
                           ),
                         ),
                         OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
@@ -161,7 +171,7 @@ class OpenEatsJournalApp extends StatelessWidget {
                           ),
                         ),
                       },
-                      navigatorKey: navigatorKey,
+                      navigatorKey: AppGlobal.navigatorKey,
                     );
                   } else {
                     throw StateError("Something went wrong: standard foods not loaded.");

@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
@@ -22,10 +23,22 @@ class OnboardingScreenPage3 extends StatefulWidget {
 
 class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
   final TextEditingController _birthDayController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+
+    _birthDayController.text = widget._onboardingScreenViewModel.birthday.value != null
+        ? ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._onboardingScreenViewModel.birthday.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _heightController.text = widget._onboardingScreenViewModel.height.value != null
+        ? ConvertValidate.numberFomatterInt.format(widget._onboardingScreenViewModel.height.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _weightController.text = widget._onboardingScreenViewModel.weight.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: widget._onboardingScreenViewModel.weight.value!)
+        : OpenEatsJournalStrings.emptyString;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,9 +71,9 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                       return TransparentChoiceChip(
                         icon: Icons.female,
                         label: AppLocalizations.of(contextBuilder)!.female,
-                        selected: widget._onboardingScreenViewModel.gender.value == Gender.femail,
+                        selected: widget._onboardingScreenViewModel.gender.value == Gender.female,
                         onSelected: (bool selected) {
-                          widget._onboardingScreenViewModel.gender.value = Gender.femail;
+                          widget._onboardingScreenViewModel.gender.value = Gender.female;
                         },
                       );
                     },
@@ -101,25 +114,18 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                   valueListenable: widget._onboardingScreenViewModel.height,
                   builder: (_, _, _) {
                     return SettingsTextField(
+                      controller: _heightController,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          final String text = newValue.text.trim();
-                          if (text.isEmpty) {
-                            return newValue;
-                          }
-
-                          int? intValue = int.tryParse(text);
-                          if (intValue != null) {
-                            return newValue;
-                          } else {
-                            return oldValue;
-                          }
-                        }),
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onTap: () {
+                        _heightController.selection = TextSelection(baseOffset: 0, extentOffset: _heightController.text.length);
+                      },
                       onChanged: (value) {
-                        widget._onboardingScreenViewModel.height.value = int.tryParse(value);
+                        int? intValue = int.tryParse(value);
+                        widget._onboardingScreenViewModel.height.value = intValue;
+                        if (intValue != null) {
+                          _heightController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                        }
                       },
                     );
                   },
@@ -140,18 +146,16 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                   valueListenable: widget._onboardingScreenViewModel.weight,
                   builder: (_, _, _) {
                     return SettingsTextField(
+                      controller: _weightController,
                       keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                       inputFormatters: [
-                        //if filter is not matched, the value is set to empty string
-                        //which feels strange in the ui
-                        //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
                         TextInputFormatter.withFunction((oldValue, newValue) {
                           final String text = newValue.text.trim();
                           if (text.isEmpty) {
                             return newValue;
                           }
 
-                          double? doubleValue = double.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
                             return newValue;
                           } else {
@@ -159,9 +163,16 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                           }
                         }),
                       ],
+                      onTap: () {
+                        _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                      },
                       onChanged: (value) {
-                        double? doubleValue = double.tryParse(value);
+                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
                         widget._onboardingScreenViewModel.weight.value = doubleValue;
+
+                        if (doubleValue != null) {
+                          _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        }
                       },
                     );
                   },

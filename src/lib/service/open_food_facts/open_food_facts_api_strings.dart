@@ -1,4 +1,6 @@
 class OpenFoodFactsApiStrings {
+  OpenFoodFactsApiStrings._();
+
   static const product = "product";
   static const serving = "serving";
   static const hundredGram = "100g";

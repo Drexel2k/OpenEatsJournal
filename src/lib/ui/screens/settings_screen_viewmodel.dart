@@ -88,7 +88,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
             .round();
   }
 
-  double _getDailyKJoule() {
+  int _getDailyKJoule() {
     int age = 0;
     final DateTime today = DateTime.now();
     age = today.year - _settingsRepository.birthday.year;
@@ -98,7 +98,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
       age = age - 1;
     }
 
-    return NutritionCalculator.calculateTotalKJoulePerDay(
+    int dailyTargetKJoule = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _lastValidWeight,
         heightCm: _settingsRepository.height,
@@ -106,11 +106,17 @@ class SettingsScreenViewModel extends ChangeNotifier {
         gender: _settingsRepository.gender,
       ),
       activityFactor: _settingsRepository.activityFactor,
-    );
+    ).round();
+
+    if (dailyTargetKJoule < 1) {
+      dailyTargetKJoule = 1;
+    }
+
+    return dailyTargetKJoule;
   }
 
-  _setDailyKJoule() {
-    _dailyKJoule.value = _getDailyKJoule().round();
+  void _setDailyKJoule() {
+    _dailyKJoule.value = _getDailyKJoule();
   }
 
   void _darkModeChanged() {
@@ -186,7 +192,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule(), weightLossPerWeekKg: weightLossKg).round();
+    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule().toDouble(), weightLossPerWeekKg: weightLossKg).round();
+    if (dailyTargetKJoule < 1) {
+      dailyTargetKJoule = 1;
+    }
 
     await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule: dailyTargetKJoule);
 

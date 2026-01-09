@@ -1,7 +1,8 @@
 import "dart:ui";
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:openeatsjournal/open_eats_journal_app.dart";
-import "package:openeatsjournal/open_eats_journal_viewmodel.dart";
+import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
@@ -46,6 +47,7 @@ void main() {
 
   //required for database initialization
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   //debugPaintSizeEnabled=true;
 

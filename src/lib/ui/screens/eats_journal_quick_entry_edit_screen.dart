@@ -4,7 +4,7 @@ import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/global_navigator_key.dart';
+import 'package:openeatsjournal/app_global.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
@@ -526,31 +526,31 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                   if (!(await widget._eatsJournalQuickEntryAddScreenViewModel.setQuickEntry())) {
                     SnackBar snackBar = SnackBar(
-                      content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_quick_entry),
+                      content: Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.cant_create_quick_entry),
                       action: SnackBarAction(
-                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
+                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
                         onPressed: () {
                           //Click on SnackbarAction closes the SnackBar,
                           //nothing else to do here...
                         },
                       ),
                     );
-                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                   } else {
                     SnackBar snackBar = SnackBar(
                       content: originalQuickEntryId == null
-                          ? Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_added)
-                          : Text(AppLocalizations.of(navigatorKey.currentContext!)!.quick_entry_updated),
+                          ? Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added)
+                          : Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated),
                       action: SnackBarAction(
-                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
+                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
                         onPressed: () {
                           //Click on SnackbarAction closes the SnackBar,
                           //nothing else to do here...
                         },
                       ),
                     );
-                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
-                    Navigator.pop(navigatorKey.currentContext!);
+                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                   }
                 },
                 child: widget._eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null

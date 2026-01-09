@@ -17,9 +17,8 @@ Use paths for SDKs without spaces and sepcial characers.
 1. Download Android Studio from https://developer.android.com/studio and install. Keep "Android Virtual Device" checked. Start Android Studio after installation.
 2. Install the Android SDK when asked.
 3. After finishing the SDK installation you should the "Welcome to Android Studio" Screen. Click on "More Actions" -> "SDK Manager", check that Android 16.0 API Level 36.0 is installed. Switch to "SDK Tools" tab and check "Android SDK Command-line Tools (latest)", click "Apply" and install the tools. 
-4. Also in the "SDK Manager" check "Show Package Details" (bottom right), switch to "SDK Tools", in the section NDK (Side by side) check version 29.0.14206865 and click "Apply" to install it. The default NDK version that is configured with Flutter is too low for sqflite, therefore the NDK version was overriden in this project in src/android/app/build.gradle.kts (ndkVersion = "29.0.14206865"). Click "OK".
-5. Check under "More Actions" -> "Virtual Device Manager" if a virtual phone was set up, if not create one, e.g. a Medium Phone with Default Settings. To copy files from or to a virtual device with adb (see [Tips for Developing](#tips-for-developing) -> 2.) you nee a rooted virtual device, therefore create a virtual device without Google Play Store, in the "Configure virtual device" screen select Google APIs under "Services". Alternatively you can access the file system also via Android Studio, then you dont need the rooted device.
-6. Close Android Studio.
+4. Check under "More Actions" -> "Virtual Device Manager" if a virtual phone was set up, if not create one, e.g. a Medium Phone with Default Settings. To copy files from or to a virtual device with adb (see [Tips for Developing](#tips-for-developing) -> 2.) you nee a rooted virtual device, therefore create a virtual device without Google Play Store, in the "Configure virtual device" screen select Google APIs under "Services". Alternatively you can access the file system also via Android Studio, then you dont need the rooted device.
+5. Close Android Studio.
 
 #### Setup Flutter SDK
 1. Download Flutter (currently 3.38.5 is used) from https://docs.flutter.dev/install/archive and extract.

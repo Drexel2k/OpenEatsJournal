@@ -472,7 +472,7 @@ class FoodRepository {
     return saltPer100Units;
   }
 
-  _getCleanBrands(List<String>? brands) {
+  List<String>? _getCleanBrands(List<String>? brands) {
     if (brands == null) {
       return null;
     }

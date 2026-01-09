@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:openeatsjournal/global_navigator_key.dart";
+import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_1.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_2.dart";
@@ -19,23 +19,31 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageViewController = PageController();
+  late OnboardingScreenViewModel _onboardingScreenViewModel;
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _onboardingScreenViewModel = widget._onboardingScreenViewModel;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget._onboardingScreenViewModel.currentPageIndex,
+      valueListenable: _onboardingScreenViewModel.currentPageIndex,
       builder: (_, _, _) {
         String pageTitle = OpenEatsJournalStrings.emptyString;
-        if (widget._onboardingScreenViewModel.currentPageIndex.value == 1) {
+        if (_onboardingScreenViewModel.currentPageIndex.value == 1) {
           pageTitle = AppLocalizations.of(context)!.about_this_app;
-        } else if (widget._onboardingScreenViewModel.currentPageIndex.value == 2) {
+        } else if (_onboardingScreenViewModel.currentPageIndex.value == 2) {
           pageTitle = AppLocalizations.of(context)!.tell_about_yourself;
-        } else if (widget._onboardingScreenViewModel.currentPageIndex.value == 3) {
+        } else if (_onboardingScreenViewModel.currentPageIndex.value == 3) {
           pageTitle = AppLocalizations.of(context)!.your_targets;
         }
 
         return Scaffold(
-          appBar: widget._onboardingScreenViewModel.currentPageIndex.value > 0
+          appBar: _onboardingScreenViewModel.currentPageIndex.value > 0
               ? AppBar(
                   leading: IconButton(
                     icon: BackButtonIcon(),
@@ -57,7 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onDone: () {
                       _movePageIndex(1);
                     },
-                    darkMode: widget._onboardingScreenViewModel.darkMode,
+                    darkMode: _onboardingScreenViewModel.darkMode,
                   ),
                   OnboardingScreenPage2(
                     onDone: () {
@@ -68,38 +76,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onDone: () {
                       _movePageIndex(1);
                     },
-                    onboardingScreenViewModel: widget._onboardingScreenViewModel,
+                    onboardingScreenViewModel: _onboardingScreenViewModel,
                   ),
                   OnboardingScreenPage4(
                     onDone: () async {
-                      await widget._onboardingScreenViewModel.saveOnboardingData();
-                      Navigator.pushReplacementNamed(navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
+                      await _onboardingScreenViewModel.saveOnboardingData();
+                      Navigator.pushReplacementNamed(AppGlobal.navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
                     },
-                    onboardingScreenViewModel: widget._onboardingScreenViewModel,
+                    onboardingScreenViewModel: _onboardingScreenViewModel,
                   ),
                 ],
               ),
             ),
           ),
+          resizeToAvoidBottomInset: false,
         );
       },
     );
   }
 
   void _movePageIndex(int steps) {
-    widget._onboardingScreenViewModel.currentPageIndex.value = widget._onboardingScreenViewModel.currentPageIndex.value + steps;
-    _pageViewController.animateToPage(
-      widget._onboardingScreenViewModel.currentPageIndex.value,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
+    _onboardingScreenViewModel.currentPageIndex.value = _onboardingScreenViewModel.currentPageIndex.value + steps;
+    _pageViewController.animateToPage(_onboardingScreenViewModel.currentPageIndex.value, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
   }
 
   @override
   void dispose() {
     widget._onboardingScreenViewModel.dispose();
+    _onboardingScreenViewModel.dispose();
     _pageViewController.dispose();
-    
+
     super.dispose();
   }
 }

@@ -46,6 +46,7 @@ class MainLayout extends StatelessWidget {
         ],
       ),
       floatingActionButton: _floatingActionButton,
+      resizeToAvoidBottomInset: false,
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/object_with_order.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/global_navigator_key.dart';
+import 'package:openeatsjournal/app_global.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/main_layout.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
@@ -49,13 +49,13 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
         ? "${widget._foodEditScreenViewModel.barcode.value}"
         : OpenEatsJournalStrings.emptyString;
     _gramAmountController.text = widget._foodEditScreenViewModel.nutritionPerGramAmount.value != null
-        ? ConvertValidate.numberFomatterInt.format(widget._foodEditScreenViewModel.nutritionPerGramAmount.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: widget._foodEditScreenViewModel.nutritionPerGramAmount.value!)
         : OpenEatsJournalStrings.emptyString;
     _milliliterAmountController.text = widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
-        ? ConvertValidate.numberFomatterInt.format(widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: widget._foodEditScreenViewModel.nutritionPerMilliliterAmount.value!)
         : OpenEatsJournalStrings.emptyString;
     _kCalController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: widget._foodEditScreenViewModel.kJoule.value as int),
+      NutritionCalculator.getKCalsFromKJoules(kJoules: widget._foodEditScreenViewModel.kJoule.value!),
     );
 
     double inputFieldsWidth = 90;
@@ -669,31 +669,31 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                   int? originalFoodId = widget._foodEditScreenViewModel.foodId;
                   if (!(await widget._foodEditScreenViewModel.saveFood())) {
                     SnackBar snackBar = SnackBar(
-                      content: Text(AppLocalizations.of(navigatorKey.currentContext!)!.cant_create_food),
+                      content: Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.cant_create_food),
                       action: SnackBarAction(
-                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
+                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
                         onPressed: () {
                           //Click on SnackbarAction closes the SnackBar,
                           //nothing else to do here...
                         },
                       ),
                     );
-                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                   } else {
                     SnackBar snackBar = SnackBar(
                       content: originalFoodId == null
-                          ? Text(AppLocalizations.of(navigatorKey.currentContext!)!.food_created)
-                          : Text(AppLocalizations.of(navigatorKey.currentContext!)!.food_updated),
+                          ? Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created)
+                          : Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated),
                       action: SnackBarAction(
-                        label: AppLocalizations.of(navigatorKey.currentContext!)!.close,
+                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
                         onPressed: () {
                           //Click on SnackbarAction closes the SnackBar,
                           //nothing else to do here...
                         },
                       ),
                     );
-                    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(snackBar);
-                    Navigator.pop(navigatorKey.currentContext!);
+                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                   }
                 },
                 child: widget._foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),

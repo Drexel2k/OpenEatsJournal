@@ -7,10 +7,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   OpenEatsJournalAppViewModel({required SettingsRepository settingsRepository, required FoodRepository foodRepository})
     : _settingsRepository = settingsRepository,
       _foodRepository = foodRepository,
-      _settingsLoaded = settingsRepository.initSettings() {
-    _settingsRepository.darkMode.addListener(_settingsDarkModeChanged);
-    _settingsRepository.languageCode.addListener(_settingsLanguageCodeChanged);
-  }
+      _settingsLoaded = settingsRepository.initSettings();
 
   final SettingsRepository _settingsRepository;
   final FoodRepository _foodRepository;
@@ -27,6 +24,14 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   ExternalTriggerChangedNotifier get darkModeOrLanguageCodeChanged => _darkModeOrLanguageCodeChanged;
   Future<void> get settingsLoaded => _settingsLoaded;
   Future<DateTime>? get dataInitialized => _dataInitialized;
+
+  //During app startup listeners can't be set always, on first app startup they must be regesitered after onboarding, otherwise there may be timing
+  //during navigation from onboarding to the home screen. Changing darkmode e.g. triggers rebuild of the main widget and the context and state of the
+  //navigatorKey may be null, that that will fail the navigation.
+  void startListening() {
+    _settingsRepository.darkMode.addListener(_settingsDarkModeChanged);
+    _settingsRepository.languageCode.addListener(_settingsLanguageCodeChanged);
+  }
 
   void _settingsDarkModeChanged() {
     _darkModeOrLanguageCodeChanged.notify();

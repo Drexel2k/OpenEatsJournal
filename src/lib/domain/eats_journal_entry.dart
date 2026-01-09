@@ -251,7 +251,7 @@ class EatsJournalEntry {
   double? get protein => _protein;
   double? get salt => _salt;
 
-  _updateNutrionsValues() {
+  void _updateNutrionsValues() {
     if (_food != null && _amount != null && _amountMeasurementUnit != null) {
       _kJoule = _amountMeasurementUnit! == MeasurementUnit.gram
           ? (_food!.kJoule * (_amount! / _food!.nutritionPerGramAmount!)).round()

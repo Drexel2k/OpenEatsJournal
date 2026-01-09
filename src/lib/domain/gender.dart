@@ -1,6 +1,6 @@
 enum Gender {
   male(1),
-  femail(2);
+  female(2);
 
   final int value;
 

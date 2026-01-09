@@ -7,17 +7,23 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 
 class OnboardingScreenViewModel extends ChangeNotifier {
-  OnboardingScreenViewModel({required SettingsRepository settingsRepository, required JournalRepository journalRepository})
-    : _settingsRepository = settingsRepository,
-      _journalRepository = journalRepository,
-      _gender = ValueNotifier(null),
-      _birthday = ValueNotifier(null),
-      _height = ValueNotifier(null),
-      _weight = ValueNotifier(null),
-      _activityFactor = ValueNotifier(null),
-      _weightTarget = ValueNotifier(null),
-      _dailyNeedKJoule = ValueNotifier(0),
-      _dailyTargetKJoule = ValueNotifier(0) {
+  OnboardingScreenViewModel({
+    required SettingsRepository settingsRepository,
+    required JournalRepository journalRepository,
+    required bool darkMode,
+    required String languageCode,
+  }) : _settingsRepository = settingsRepository,
+       _journalRepository = journalRepository,
+       _gender = ValueNotifier(null),
+       _birthday = ValueNotifier(null),
+       _height = ValueNotifier(null),
+       _weight = ValueNotifier(null),
+       _activityFactor = ValueNotifier(null),
+       _weightTarget = ValueNotifier(null),
+       _dailyNeedKJoule = ValueNotifier(0),
+       _dailyTargetKJoule = ValueNotifier(0),
+       _darkMode = darkMode,
+       _languagaCode = languageCode {
     _weightTarget.addListener(_calculateKJoule);
   }
 
@@ -33,9 +39,11 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   final ValueNotifier<WeightTarget?> _weightTarget;
   final ValueNotifier<int> _dailyNeedKJoule;
   final ValueNotifier<int> _dailyTargetKJoule;
+  final bool _darkMode;
+  final String _languagaCode;
 
   ValueNotifier<int> get currentPageIndex => _currentPageIndex;
-  bool get darkMode => _settingsRepository.darkMode.value;
+  bool get darkMode => _darkMode;
   ValueNotifier<Gender?> get gender => _gender;
   ValueNotifier<DateTime?> get birthday => _birthday;
   ValueNotifier<int?> get height => _height;
@@ -68,7 +76,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    double dailyKCaloriesD = NutritionCalculator.calculateTotalKJoulePerDay(
+    double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _weight.value!,
         heightCm: _height.value!,
@@ -78,11 +86,18 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       activityFactor: _activityFactor.value!,
     );
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyKCaloriesD, weightLossPerWeekKg: weightLossKg).round();
+    if (dailyNeedKJouleDouble < 1) {
+      dailyNeedKJouleDouble = 1;
+    }
 
-    await _settingsRepository.saveAllSettings(
+    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg).round();
+    if (dailyTargetKJoule < 1) {
+      dailyTargetKJoule = 1;
+    }
+
+    await _settingsRepository.saveAllOnboardingSettings(
       settings: AllSettings(
-        darkMode: _settingsRepository.darkMode.value,
+        darkMode: _darkMode,
         gender: _gender.value!,
         birthday: _birthday.value!,
         height: _height.value!,
@@ -95,7 +110,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         kJouleFriday: dailyTargetKJoule,
         kJouleSaturday: dailyTargetKJoule,
         kJouleSunday: dailyTargetKJoule,
-        languageCode: _settingsRepository.languageCode.value,
+        languageCode: _languagaCode,
       ),
     );
 
@@ -135,7 +150,14 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       activityFactor: _activityFactor.value!,
     );
 
+    if (dailyNeedKJouleDouble < 1) {
+      dailyNeedKJouleDouble = 1;
+    }
+
     double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg);
+    if (dailyTargetKJouleDouble < 1) {
+      dailyTargetKJouleDouble = 1;
+    }
 
     _dailyNeedKJoule.value = dailyNeedKJouleDouble.round();
     _dailyTargetKJoule.value = dailyTargetKJouleDouble.round();

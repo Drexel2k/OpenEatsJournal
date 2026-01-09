@@ -145,13 +145,20 @@ class SettingsRepository extends ChangeNotifier {
       _kJouleSaturday = allSettings.kJouleSaturday!;
       _kJouleSunday = allSettings.kJouleSunday!;
       _lastProcessedStandardFoodDataChangeDate = allSettings.lastProcessedStandardFoodDataChangeDate;
-    }
 
+      //don't need to save when settings were just loaded, there listeners are set only now
+      //need saving only when onboarded
+      _addListeners();
+    }
+  }
+
+  //listeners save the value, as the settings edit screen has no save button
+  void _addListeners() {
     _darkMode.addListener(_darkModeChanged);
     _languageCode.addListener(_languageCodeChanged);
   }
 
-  Future<void> saveAllSettings({required AllSettings settings}) async {
+  Future<void> saveAllOnboardingSettings({required AllSettings settings}) async {
     Map<String, Object> settingData = {
       OpenEatsJournalStrings.settingDarkmode: settings.darkMode!,
       OpenEatsJournalStrings.settingLanguageCode: settings.languageCode!,
@@ -169,7 +176,7 @@ class SettingsRepository extends ChangeNotifier {
       OpenEatsJournalStrings.settingKJouleSunday: settings.kJouleSunday!,
     };
 
-    await _oejDatabase.setAllSettings(allSettings: settingData);
+    await _oejDatabase.setSettings(allSettings: settingData);
 
     _onboarded.value = true;
     _darkMode.value = settings.darkMode!;
@@ -186,6 +193,10 @@ class SettingsRepository extends ChangeNotifier {
     _kJouleSaturday = settings.kJouleSaturday!;
     _kJouleSunday = settings.kJouleSunday!;
     _languageCode.value = settings.languageCode!;
+
+    //add listeners when onboarding finished
+    //need saving only when onboarded
+    _addListeners();
   }
 
   Future<void> _darkModeChanged() async {

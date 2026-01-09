@@ -313,7 +313,7 @@ class Food {
     _foodUnitsWithOrder.add(foodUnitWithOrder);
   }
 
-  removeFoodUnit({required FoodUnit foodUnit}) {
+  void removeFoodUnit({required FoodUnit foodUnit}) {
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit);
     _ensureDefaultFoodUnit();
   }

@@ -8,7 +8,7 @@ import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/global_navigator_key.dart";
+import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
@@ -109,8 +109,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     await _search(
                       languageCode: languageCode,
                       localilzations: {
-                        OpenEatsJournalStrings.piece: AppLocalizations.of(navigatorKey.currentContext!)!.piece,
-                        OpenEatsJournalStrings.serving: AppLocalizations.of(navigatorKey.currentContext!)!.serving,
+                        OpenEatsJournalStrings.piece: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.piece,
+                        OpenEatsJournalStrings.serving: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.serving,
                       },
                     );
                   }
@@ -305,7 +305,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             if ((await showDialog<bool>(
                               useSafeArea: true,
                               barrierDismissible: false,
-                              context: navigatorKey.currentContext!,
+                              context: AppGlobal.navigatorKey.currentContext!,
                               builder: (BuildContext contextBuilder) {
                                 return Dialog(
                                   insetPadding: EdgeInsets.fromLTRB(

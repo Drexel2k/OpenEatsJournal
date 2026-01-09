@@ -5,6 +5,7 @@ import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/ui/utils/open_eats_journal_colors.dart';
 
 class FoodSourceFormat {
+  FoodSourceFormat._();
   static Color getFoodSourceColor({Food? food, required BuildContext context}) {
     final OpenEatsJournalColors openEatsJournalColors = Theme.of(context).extension<OpenEatsJournalColors>()!;
 

@@ -263,7 +263,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _foodSearchResultChanged.notify();
   }
 
-  _searchFinished() {
+  void _searchFinished() {
     _isLoading = false;
     _showInitialLoading.value = false;
   }

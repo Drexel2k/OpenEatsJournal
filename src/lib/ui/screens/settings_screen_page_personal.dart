@@ -175,9 +175,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                           return TransparentChoiceChip(
                             icon: Icons.female,
                             label: AppLocalizations.of(contextBuilder)!.female,
-                            selected: widget._settingsScreenViewModel.gender.value == Gender.femail,
+                            selected: widget._settingsScreenViewModel.gender.value == Gender.female,
                             onSelected: (bool selected) {
-                              widget._settingsScreenViewModel.gender.value = Gender.femail;
+                              widget._settingsScreenViewModel.gender.value = Gender.female;
                             },
                           );
                         },
