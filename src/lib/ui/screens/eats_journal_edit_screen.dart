@@ -18,6 +18,14 @@ class EatsJournalEditScreen extends StatefulWidget {
 }
 
 class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
+  late EatsJournalEditScreenViewModel _eatsJournalEditScreenViewModel;
+
+  @override
+  void initState() {
+    _eatsJournalEditScreenViewModel = widget._eatsJournalEditScreenViewModel;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
@@ -33,12 +41,12 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
           Row(
             children: [
               Text(
-                ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._eatsJournalEditScreenViewModel.currentJournalDate),
+                ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalEditScreenViewModel.currentJournalDate),
                 style: textTheme.titleMedium,
               ),
               Spacer(),
               Text(
-                _getLocalizedMeal(meal: widget._eatsJournalEditScreenViewModel.meal, context: context),
+                _getLocalizedMeal(meal: _eatsJournalEditScreenViewModel.meal, context: context),
                 style: textTheme.titleMedium,
               ),
             ],
@@ -46,17 +54,17 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
           SizedBox(height: 5),
           Expanded(
             child: ListenableBuilder(
-              listenable: widget._eatsJournalEditScreenViewModel.eatsJournalEntriesChanged,
+              listenable: _eatsJournalEditScreenViewModel.eatsJournalEntriesChanged,
               builder: (_, _) {
                 return ListView.builder(
-                  itemCount: widget._eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length,
+                  itemCount: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length,
                   itemBuilder: (context, listViewItemIndex) {
-                    if (listViewItemIndex >= widget._eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length) {
+                    if (listViewItemIndex >= _eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length) {
                       return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                     }
 
                     return EatsJournalEntryRow(
-                      eatsJournalEntry: widget._eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
+                      eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
                       onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
                         if (eatsJournalEntry.food != null) {
                           await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
@@ -64,13 +72,13 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                           await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
                         }
 
-                        widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                        _eatsJournalEditScreenViewModel.getEatsJournalEntries();
                       },
                       onDeletePressed: ({required int eatsJournalEntryId}) async {
-                        bool deleted = await widget._eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
+                        bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
 
                         if (deleted) {
-                          widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                          _eatsJournalEditScreenViewModel.getEatsJournalEntries();
                         }
                       },
                       deleteIconColor: colorScheme.primary,
@@ -106,6 +114,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
   @override
   void dispose() {
     widget._eatsJournalEditScreenViewModel.dispose();
+    if (widget._eatsJournalEditScreenViewModel != _eatsJournalEditScreenViewModel) {
+      _eatsJournalEditScreenViewModel.dispose();
+    }
 
     super.dispose();
   }

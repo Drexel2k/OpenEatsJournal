@@ -40,6 +40,14 @@ class EatsJournalScreen extends StatefulWidget {
 }
 
 class _EatsJournalScreenState extends State<EatsJournalScreen> {
+  late EatsJournalScreenViewModel _eatsJournalScreenViewModel;
+
+  @override
+  void initState() {
+    _eatsJournalScreenViewModel = widget._eatsJournalScreenViewModel;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -60,14 +68,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalScreenViewModel.currentJournalDate,
+                  valueListenable: _eatsJournalScreenViewModel.currentJournalDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        await _selectDate(initialDate: widget._eatsJournalScreenViewModel.currentJournalDate.value, context: context);
+                        await _selectDate(initialDate: _eatsJournalScreenViewModel.currentJournalDate.value, context: context);
                       },
                       child: Text(
-                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._eatsJournalScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -77,14 +85,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
               SizedBox(width: 5),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalScreenViewModel.currentMeal,
+                  valueListenable: _eatsJournalScreenViewModel.currentMeal,
                   builder: (_, _, _) {
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
-                        widget._eatsJournalScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                        _eatsJournalScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
-                      initialSelection: widget._eatsJournalScreenViewModel.currentMeal.value.value,
+                      initialSelection: _eatsJournalScreenViewModel.currentMeal.value.value,
                     );
                   },
                 ),
@@ -96,10 +104,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
           //Through the stack widgets can be placed closer together by overlapping the free space of the
           //pie chart.
           ListenableBuilder(
-            listenable: widget._eatsJournalScreenViewModel.eatsJournalDataChanged,
+            listenable: _eatsJournalScreenViewModel.eatsJournalDataChanged,
             builder: (_, _) {
               return FutureBuilder<FoodRepositoryGetDayMealSumsResult>(
-                future: widget._eatsJournalScreenViewModel.dayData,
+                future: _eatsJournalScreenViewModel.dayData,
                 builder: (BuildContext context, AsyncSnapshot<FoodRepositoryGetDayMealSumsResult> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -183,14 +191,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                             ),
                             SizedBox(height: 10),
                             ValueListenableBuilder(
-                              valueListenable: widget._eatsJournalScreenViewModel.currentJournalDate,
+                              valueListenable: _eatsJournalScreenViewModel.currentJournalDate,
                               builder: (_, _, _) {
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: _getLast8DaysIncludingToday().map((DateTime date) {
                                     return RoundTransparentChoiceChip(
-                                      selected: widget._eatsJournalScreenViewModel.currentJournalDate.value == date,
-                                      onSelected: (bool selected) => {widget._eatsJournalScreenViewModel.currentJournalDate.value = date},
+                                      selected: _eatsJournalScreenViewModel.currentJournalDate.value == date,
+                                      onSelected: (bool selected) => {_eatsJournalScreenViewModel.currentJournalDate.value = date},
                                       label: Text(DateFormat("EEEE").format(date).substring(0, 1)),
                                     );
                                   }).toList(),
@@ -338,10 +346,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               children: [
                                                 Text(AppLocalizations.of(context)!.weight),
                                                 ListenableBuilder(
-                                                  listenable: widget._eatsJournalScreenViewModel.currentWeightChanged,
+                                                  listenable: _eatsJournalScreenViewModel.currentWeightChanged,
                                                   builder: (_, _) {
                                                     return FutureBuilder<WeightJournalEntry?>(
-                                                      future: widget._eatsJournalScreenViewModel.currentWeight,
+                                                      future: _eatsJournalScreenViewModel.currentWeight,
                                                       builder: (BuildContext context, AsyncSnapshot<WeightJournalEntry?> snapshot) {
                                                         if (snapshot.connectionState == ConnectionState.waiting) {
                                                           return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -398,8 +406,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                           ),
                                                           child: EatsJournalEditScreen(
                                                             eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
-                                                              journalRepository: widget._eatsJournalScreenViewModel.journalRepository,
-                                                              settingsRepository: widget._eatsJournalScreenViewModel.settingsRepository,
+                                                              journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                              settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
                                                               meal: Meal.breakfast,
                                                             ),
                                                           ),
@@ -407,7 +415,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                       },
                                                     );
 
-                                                    widget._eatsJournalScreenViewModel.refreshNutritionData();
+                                                    _eatsJournalScreenViewModel.refreshNutritionData();
                                                   },
                                                   child: null,
                                                 ),
@@ -420,14 +428,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
                                                 Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                               },
                                               icon: Icon(Icons.add),
@@ -468,8 +476,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                           ),
                                                           child: EatsJournalEditScreen(
                                                             eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
-                                                              journalRepository: widget._eatsJournalScreenViewModel.journalRepository,
-                                                              settingsRepository: widget._eatsJournalScreenViewModel.settingsRepository,
+                                                              journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                              settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
                                                               meal: Meal.lunch,
                                                             ),
                                                           ),
@@ -477,7 +485,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                       },
                                                     );
 
-                                                    widget._eatsJournalScreenViewModel.refreshNutritionData();
+                                                    _eatsJournalScreenViewModel.refreshNutritionData();
                                                   },
                                                   child: null,
                                                 ),
@@ -490,14 +498,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
                                                 Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                               },
                                               icon: Icon(Icons.add),
@@ -538,8 +546,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                           ),
                                                           child: EatsJournalEditScreen(
                                                             eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
-                                                              journalRepository: widget._eatsJournalScreenViewModel.journalRepository,
-                                                              settingsRepository: widget._eatsJournalScreenViewModel.settingsRepository,
+                                                              journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                              settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
                                                               meal: Meal.dinner,
                                                             ),
                                                           ),
@@ -547,7 +555,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                       },
                                                     );
 
-                                                    widget._eatsJournalScreenViewModel.refreshNutritionData();
+                                                    _eatsJournalScreenViewModel.refreshNutritionData();
                                                   },
                                                   child: null,
                                                 ),
@@ -560,14 +568,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
                                                 Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                               },
                                               icon: Icon(Icons.add),
@@ -608,8 +616,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                           ),
                                                           child: EatsJournalEditScreen(
                                                             eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
-                                                              journalRepository: widget._eatsJournalScreenViewModel.journalRepository,
-                                                              settingsRepository: widget._eatsJournalScreenViewModel.settingsRepository,
+                                                              journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                              settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
                                                               meal: Meal.snacks,
                                                             ),
                                                           ),
@@ -617,7 +625,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                       },
                                                     );
 
-                                                    widget._eatsJournalScreenViewModel.refreshNutritionData();
+                                                    _eatsJournalScreenViewModel.refreshNutritionData();
                                                   },
                                                   child: null,
                                                 ),
@@ -630,14 +638,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () {
-                                                widget._eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
+                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
                                                 Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                                               },
                                               icon: Icon(Icons.add),
@@ -671,14 +679,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                       insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
                                                       child: WeightJournalEditScreen(
                                                         weightEditScreenViewModel: WeightJournalEditScreenViewModel(
-                                                          journalRepository: widget._eatsJournalScreenViewModel.journalRepository,
+                                                          journalRepository: _eatsJournalScreenViewModel.journalRepository,
                                                         ),
                                                       ),
                                                     );
                                                   },
                                                 );
 
-                                                widget._eatsJournalScreenViewModel.refreshCurrentWeight();
+                                                _eatsJournalScreenViewModel.refreshCurrentWeight();
                                               },
                                               child: null,
                                             ),
@@ -717,15 +725,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
                                               child: EatsJournalEditScreen(
                                                 eatsJournalEditScreenViewModel: EatsJournalEditScreenViewModel(
-                                                  journalRepository: widget._eatsJournalScreenViewModel.journalRepository,
-                                                  settingsRepository: widget._eatsJournalScreenViewModel.settingsRepository,
+                                                  journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                  settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
                                                 ),
                                               ),
                                             );
                                           },
                                         );
 
-                                        widget._eatsJournalScreenViewModel.refreshNutritionData();
+                                        _eatsJournalScreenViewModel.refreshNutritionData();
                                       },
                                       child: null,
                                     ),
@@ -746,7 +754,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                     //settings button
                                     child: IconButton(
                                       onPressed: () async {
-                                        double weight = await widget._eatsJournalScreenViewModel.getLastWeightJournalEntry();
+                                        double weight = await _eatsJournalScreenViewModel.getLastWeightJournalEntry();
                                         await showDialog<void>(
                                           useSafeArea: true,
                                           barrierDismissible: false,
@@ -761,7 +769,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               ),
                                               child: SettingsScreen(
                                                 settingsScreenViewModel: SettingsScreenViewModel(
-                                                  settingsRepository: widget._eatsJournalScreenViewModel.settingsRepository,
+                                                  settingsRepository: _eatsJournalScreenViewModel.settingsRepository,
                                                   weight: weight,
                                                 ),
                                               ),
@@ -769,7 +777,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           },
                                         );
 
-                                        widget._eatsJournalScreenViewModel.refreshWeightTarget();
+                                        _eatsJournalScreenViewModel.refreshWeightTarget();
                                       },
                                       icon: Icon(Icons.settings),
                                       iconSize: 36,
@@ -799,9 +807,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ValueListenableBuilder(
-              valueListenable: widget._eatsJournalScreenViewModel.floatingActionMenuElapsed,
+              valueListenable: _eatsJournalScreenViewModel.floatingActionMenuElapsed,
               builder: (_, _, _) {
-                if (widget._eatsJournalScreenViewModel.floatingActionMenuElapsed.value) {
+                if (_eatsJournalScreenViewModel.floatingActionMenuElapsed.value) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -810,7 +818,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "5",
                           onPressed: () {
-                            widget._eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
                             Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
                           },
@@ -823,11 +831,11 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "4",
                           onPressed: () async {
-                            widget._eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
                             double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
                             double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
-                            double weight = await widget._eatsJournalScreenViewModel.getLastWeightJournalEntry();
+                            double weight = await _eatsJournalScreenViewModel.getLastWeightJournalEntry();
 
                             WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
                               initialWeight: weight,
@@ -847,16 +855,16 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                   ),
                                   child: WeightJournalEntryAddScreen(
                                     weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
-                                    date: widget._eatsJournalScreenViewModel.currentJournalDate.value,
+                                    date: _eatsJournalScreenViewModel.currentJournalDate.value,
                                   ),
                                 );
                               },
                             ))!) {
-                              await widget._eatsJournalScreenViewModel.setWeightJournalEntry(
-                                date: widget._eatsJournalScreenViewModel.currentJournalDate.value,
+                              await _eatsJournalScreenViewModel.setWeightJournalEntry(
+                                date: _eatsJournalScreenViewModel.currentJournalDate.value,
                                 weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
                               );
-                              widget._eatsJournalScreenViewModel.refreshCurrentWeight();
+                              _eatsJournalScreenViewModel.refreshCurrentWeight();
                             }
                           },
                           label: Text(AppLocalizations.of(context)!.weight_journal_entry),
@@ -868,7 +876,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "3",
                           onPressed: () {
-                            widget._eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
                             Navigator.pushNamed(
                               context,
@@ -890,16 +898,16 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "2",
                           onPressed: () {
-                            widget._eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                            _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
                             Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
                               arguments: EatsJournalEntry.quick(
-                                entryDate: widget._eatsJournalScreenViewModel.currentJournalDate.value,
+                                entryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                 name: OpenEatsJournalStrings.emptyString,
                                 kJoule: NutritionCalculator.kJouleForOnekCal,
-                                meal: widget._eatsJournalScreenViewModel.currentMeal.value,
+                                meal: _eatsJournalScreenViewModel.currentMeal.value,
                               ),
                             );
                           },
@@ -917,7 +925,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
             FloatingActionButton(
               heroTag: "1",
               onPressed: () {
-                widget._eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                _eatsJournalScreenViewModel.toggleFloatingActionButtons();
               },
               child: Icon(Icons.add),
             ),
@@ -931,7 +939,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
-      widget._eatsJournalScreenViewModel.currentJournalDate.value = date;
+      _eatsJournalScreenViewModel.currentJournalDate.value = date;
     }
   }
 
@@ -951,7 +959,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   GaugeData _getKJouleGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     int dayTargetKJoule = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.kJoule
-        : widget._eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule();
+        : _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule();
     int daySumKJoule = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.kJoule)
@@ -964,7 +972,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   GaugeData _getCarbohydratesGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetCarbohydrates = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.carbohydrates!
-        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: widget._eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
+        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumCarbohydrates = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.carbohydrates != null ? mealNutritionsEntry.value.carbohydrates! : 0.0)
@@ -977,7 +985,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   GaugeData _getProteinGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetProtein = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.protein!
-        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: widget._eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
+        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumProtein = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.protein != null ? mealNutritionsEntry.value.protein! : 0.0)
@@ -990,7 +998,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   GaugeData _getFatGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetFat = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.fat!
-        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: widget._eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
+        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumFat = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.fat != null ? mealNutritionsEntry.value.fat! : 0.0)
@@ -1039,6 +1047,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   @override
   void dispose() {
     widget._eatsJournalScreenViewModel.dispose();
+    if (widget._eatsJournalScreenViewModel != _eatsJournalScreenViewModel) {
+      _eatsJournalScreenViewModel.dispose();
+    }
     super.dispose();
   }
 }

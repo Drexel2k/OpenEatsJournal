@@ -16,19 +16,28 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  late SettingsScreenViewModel _settingsScreenViewModel;
+
   final _pageViewController = PageController();
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _settingsScreenViewModel = widget._settingsScreenViewModel;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ValueListenableBuilder(
-          valueListenable: widget._settingsScreenViewModel.currentPageIndex,
+          valueListenable: _settingsScreenViewModel.currentPageIndex,
           builder: (_, _, _) {
             String pageTitle = OpenEatsJournalStrings.emptyString;
-            if (widget._settingsScreenViewModel.currentPageIndex.value == 0) {
+            if (_settingsScreenViewModel.currentPageIndex.value == 0) {
               pageTitle = AppLocalizations.of(context)!.personal_settings;
-            } else if (widget._settingsScreenViewModel.currentPageIndex.value == 1) {
+            } else if (_settingsScreenViewModel.currentPageIndex.value == 1) {
               pageTitle = AppLocalizations.of(context)!.app_settings;
             }
 
@@ -36,10 +45,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           },
         ),
         ValueListenableBuilder(
-          valueListenable: widget._settingsScreenViewModel.currentPageIndex,
+          valueListenable: _settingsScreenViewModel.currentPageIndex,
           builder: (_, _, _) {
             return SegmentedButton<SettingType>(
-              selected: <SettingType>{SettingType.getByValue(widget._settingsScreenViewModel.currentPageIndex.value + 1)},
+              selected: <SettingType>{SettingType.getByValue(_settingsScreenViewModel.currentPageIndex.value + 1)},
               showSelectedIcon: false,
               segments: [
                 ButtonSegment<SettingType>(value: SettingType.personal, label: Text(AppLocalizations.of(context)!.personal_settings_abbreviated)),
@@ -47,11 +56,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
               onSelectionChanged: (Set<SettingType> newSelection) {
                 if (newSelection.single == SettingType.app) {
-                  if (widget._settingsScreenViewModel.currentPageIndex.value == 0) {
+                  if (_settingsScreenViewModel.currentPageIndex.value == 0) {
                     _movePageIndex(1);
                   }
                 } else {
-                  if (widget._settingsScreenViewModel.currentPageIndex.value == 1) {
+                  if (_settingsScreenViewModel.currentPageIndex.value == 1) {
                     _movePageIndex(0);
                   }
                 }
@@ -65,8 +74,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             controller: _pageViewController,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              SettingsScreenPagePersonal(settingsScreenViewModel: widget._settingsScreenViewModel),
-              SettingsScreenPageApp(settingsViewModel: widget._settingsScreenViewModel),
+              SettingsScreenPagePersonal(settingsScreenViewModel: _settingsScreenViewModel),
+              SettingsScreenPageApp(settingsViewModel: _settingsScreenViewModel),
             ],
           ),
         ),
@@ -75,17 +84,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _movePageIndex(int page) {
-    widget._settingsScreenViewModel.currentPageIndex.value = page;
-    _pageViewController.animateToPage(
-      widget._settingsScreenViewModel.currentPageIndex.value,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
+    _settingsScreenViewModel.currentPageIndex.value = page;
+    _pageViewController.animateToPage(_settingsScreenViewModel.currentPageIndex.value, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
   }
 
   @override
   void dispose() {
     widget._settingsScreenViewModel.dispose();
+    if (widget._settingsScreenViewModel != _settingsScreenViewModel) {
+      _settingsScreenViewModel.dispose();
+    }
     _pageViewController.dispose();
 
     super.dispose();

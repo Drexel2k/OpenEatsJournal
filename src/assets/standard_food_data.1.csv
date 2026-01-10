@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-20260108000000,20260108000000
+20260110000000,20260108000000
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,carbohydrates,sugar,fat,saturated_fat,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -18,3 +18,5 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","4","20260108000000","Apple, raw","Apfel, roh",,,"100",,"226","14.4","10.3","0.1","0","0.3","0",
 "foodunit","1","middle","mittel","130","g","true"
 "foodunit","2","big","groß","200","g","false"
+"food","5","20260110000000","Dinner Rolls, wheat","Brötchen, Semmel, Weizen",,,"100",,"1142","46","1.6","6.3","1.5","8.6","0.9",
+"foodunit","1","Roll","Brötchen","80","g","true"

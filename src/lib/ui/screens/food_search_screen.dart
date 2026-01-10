@@ -31,7 +31,16 @@ class FoodSearchScreen extends StatefulWidget {
 }
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
+  late FoodSearchScreenViewModel _foodSearchScreenViewModel;
+
   final TextEditingController _searchTextController = TextEditingController();
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _foodSearchScreenViewModel = widget._foodSearchScreenViewModel;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +58,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._foodSearchScreenViewModel.currentJournalDate,
+                  valueListenable: _foodSearchScreenViewModel.currentJournalDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        await _selectDate(initialDate: widget._foodSearchScreenViewModel.currentJournalDate.value, context: context);
+                        await _selectDate(initialDate: _foodSearchScreenViewModel.currentJournalDate.value, context: context);
                       },
                       child: Text(
-                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._foodSearchScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_foodSearchScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -66,14 +75,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               SizedBox(width: 5),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._foodSearchScreenViewModel.currentMeal,
+                  valueListenable: _foodSearchScreenViewModel.currentMeal,
                   builder: (_, _, _) {
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
-                        widget._foodSearchScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                        _foodSearchScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
-                      initialSelection: widget._foodSearchScreenViewModel.currentMeal.value.value,
+                      initialSelection: _foodSearchScreenViewModel.currentMeal.value.value,
                     );
                   },
                 ),
@@ -121,9 +130,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
           ),
           SizedBox(height: 10),
           ValueListenableBuilder(
-            valueListenable: widget._foodSearchScreenViewModel.showInitialLoading,
+            valueListenable: _foodSearchScreenViewModel.showInitialLoading,
             builder: (_, _, _) {
-              if (widget._foodSearchScreenViewModel.showInitialLoading.value) {
+              if (_foodSearchScreenViewModel.showInitialLoading.value) {
                 return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
               } else {
                 return SizedBox();
@@ -131,9 +140,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             },
           ),
           ValueListenableBuilder(
-            valueListenable: widget._foodSearchScreenViewModel.errorCode,
+            valueListenable: _foodSearchScreenViewModel.errorCode,
             builder: (_, _, _) {
-              if (widget._foodSearchScreenViewModel.errorCode.value != null) {
+              if (_foodSearchScreenViewModel.errorCode.value != null) {
                 TextStyle? style = textTheme.bodySmall;
                 if (style != null) {
                   style = style.copyWith(color: Colors.red);
@@ -141,11 +150,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   style = TextStyle(color: Colors.red);
                 }
 
-                if (widget._foodSearchScreenViewModel.errorCode.value == 1) {
-                  return Text(AppLocalizations.of(context)!.open_food_facts_exception(widget._foodSearchScreenViewModel.errorMessage), style: style);
-                } else if (widget._foodSearchScreenViewModel.errorCode.value == 2) {
+                if (_foodSearchScreenViewModel.errorCode.value == 1) {
+                  return Text(AppLocalizations.of(context)!.open_food_facts_exception(_foodSearchScreenViewModel.errorMessage), style: style);
+                } else if (_foodSearchScreenViewModel.errorCode.value == 2) {
                   return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_response, style: style);
-                } else if (widget._foodSearchScreenViewModel.errorCode.value == 3) {
+                } else if (_foodSearchScreenViewModel.errorCode.value == 3) {
                   return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_status, style: style);
                 } else {
                   return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_error, style: style);
@@ -156,23 +165,23 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             },
           ),
           ListenableBuilder(
-            listenable: widget._foodSearchScreenViewModel.foodSearchResultChanged,
+            listenable: _foodSearchScreenViewModel.foodSearchResultChanged,
             builder: (_, _) {
-              if (widget._foodSearchScreenViewModel.foodSearchResult.isNotEmpty) {
+              if (_foodSearchScreenViewModel.foodSearchResult.isNotEmpty) {
                 return Row(
                   children: [
                     Expanded(
                       child: ValueListenableBuilder(
-                        valueListenable: widget._foodSearchScreenViewModel.searchMessageCode,
+                        valueListenable: _foodSearchScreenViewModel.searchMessageCode,
                         builder: (_, _, _) {
-                          if (widget._foodSearchScreenViewModel.searchMessageCode.value != null) {
+                          if (_foodSearchScreenViewModel.searchMessageCode.value != null) {
                             TextStyle? style = textTheme.bodySmall;
                             if (style != null) {
                               style = style.copyWith(color: Colors.red);
                             } else {
                               style = TextStyle(color: Colors.red);
                             }
-                            if (widget._foodSearchScreenViewModel.searchMessageCode.value == 1) {
+                            if (_foodSearchScreenViewModel.searchMessageCode.value == 1) {
                               return Text(AppLocalizations.of(context)!.too_many_results_for_sorting, style: style);
                             } else {
                               return Text(AppLocalizations.of(context)!.unknow_sorting_message, style: style);
@@ -186,19 +195,19 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     SizedBox(width: 5),
                     RoundOutlinedButton(
                       onPressed: () {
-                        widget._foodSearchScreenViewModel.changeSortDirection();
+                        _foodSearchScreenViewModel.changeSortDirection();
                       },
                       child: ValueListenableBuilder(
-                        valueListenable: widget._foodSearchScreenViewModel.sortDesc,
+                        valueListenable: _foodSearchScreenViewModel.sortDesc,
                         builder: (_, _, _) {
-                          return Transform.flip(flipY: !widget._foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort));
+                          return Transform.flip(flipY: !_foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort));
                         },
                       ),
                     ),
                     SizedBox(width: 5),
                     Expanded(
                       child: ListenableBuilder(
-                        listenable: widget._foodSearchScreenViewModel.sortButtonChanged,
+                        listenable: _foodSearchScreenViewModel.sortButtonChanged,
                         builder: (_, _) {
                           return OpenEatsJournalDropdownMenu<SortOrder>(
                             dropdownMenuEntries: [
@@ -206,11 +215,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               DropdownMenuEntry<SortOrder>(value: SortOrder.name, label: AppLocalizations.of(context)!.name),
                               DropdownMenuEntry<SortOrder>(value: SortOrder.kcal, label: AppLocalizations.of(context)!.kcal),
                             ],
-                            initialSelection: widget._foodSearchScreenViewModel.sortOrder,
+                            initialSelection: _foodSearchScreenViewModel.sortOrder,
                             onSelected: (SortOrder? sortOrder) {
-                              widget._foodSearchScreenViewModel.setSortOrder(sortOrder!);
+                              _foodSearchScreenViewModel.setSortOrder(sortOrder!);
                             },
-                            enabled: widget._foodSearchScreenViewModel.sortButtonEnabled,
+                            enabled: _foodSearchScreenViewModel.sortButtonEnabled,
                           );
                         },
                       ),
@@ -223,45 +232,45 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             },
           ),
           ListenableBuilder(
-            listenable: widget._foodSearchScreenViewModel.foodSearchResultChanged,
+            listenable: _foodSearchScreenViewModel.foodSearchResultChanged,
             builder: (contextBuilder, _) {
               return Expanded(
                 child: ListView.builder(
-                  itemCount: widget._foodSearchScreenViewModel.hasMore
-                      ? widget._foodSearchScreenViewModel.foodSearchResult.length + 1
-                      : widget._foodSearchScreenViewModel.foodSearchResult.length,
+                  itemCount: _foodSearchScreenViewModel.hasMore
+                      ? _foodSearchScreenViewModel.foodSearchResult.length + 1
+                      : _foodSearchScreenViewModel.foodSearchResult.length,
                   itemBuilder: (context, listViewItemIndex) {
-                    if (listViewItemIndex >= widget._foodSearchScreenViewModel.foodSearchResult.length) {
-                      if (!widget._foodSearchScreenViewModel.isLoading) {
-                        widget._foodSearchScreenViewModel.getFoodBySearchTextLoadMore();
+                    if (listViewItemIndex >= _foodSearchScreenViewModel.foodSearchResult.length) {
+                      if (!_foodSearchScreenViewModel.isLoading) {
+                        _foodSearchScreenViewModel.getFoodBySearchTextLoadMore();
                       }
                       return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                     }
 
                     return FoodCard(
-                      food: widget._foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object,
+                      food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object,
                       textTheme: textTheme,
                       onCardTap: ({required Food food}) {
                         Navigator.pushNamed(
                           context,
                           OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
                           arguments: EatsJournalEntry.fromFood(
-                            entryDate: widget._foodSearchScreenViewModel.currentJournalDate.value,
+                            entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                             food: food,
                             amount: 100,
                             amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
-                            meal: widget._foodSearchScreenViewModel.currentMeal.value,
+                            meal: _foodSearchScreenViewModel.currentMeal.value,
                           ),
                         );
                       },
                       onAddJournalEntryPressed: ({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) async {
-                        await widget._foodSearchScreenViewModel.addEatsJournalEntry(
+                        await _foodSearchScreenViewModel.addEatsJournalEntry(
                           EatsJournalEntry.fromFood(
                             food: food,
-                            entryDate: widget._foodSearchScreenViewModel.currentJournalDate.value,
+                            entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                             amount: amount,
                             amountMeasurementUnit: amountMeasurementUnit,
-                            meal: widget._foodSearchScreenViewModel.currentMeal.value,
+                            meal: _foodSearchScreenViewModel.currentMeal.value,
                           ),
                         );
                       },
@@ -281,9 +290,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ValueListenableBuilder(
-              valueListenable: widget._foodSearchScreenViewModel.floatingActionMenuElapsed,
+              valueListenable: _foodSearchScreenViewModel.floatingActionMenuElapsed,
               builder: (_, _, _) {
-                if (widget._foodSearchScreenViewModel.floatingActionMenuElapsed.value) {
+                if (_foodSearchScreenViewModel.floatingActionMenuElapsed.value) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -292,11 +301,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "4",
                           onPressed: () async {
-                            widget._foodSearchScreenViewModel.toggleFloatingActionButtons();
+                            _foodSearchScreenViewModel.toggleFloatingActionButtons();
 
                             double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
                             double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
-                            double weight = await widget._foodSearchScreenViewModel.getLastWeightJournalEntry();
+                            double weight = await _foodSearchScreenViewModel.getLastWeightJournalEntry();
 
                             WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
                               initialWeight: weight,
@@ -316,13 +325,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                   ),
                                   child: WeightJournalEntryAddScreen(
                                     weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
-                                    date: widget._foodSearchScreenViewModel.currentJournalDate.value,
+                                    date: _foodSearchScreenViewModel.currentJournalDate.value,
                                   ),
                                 );
                               },
                             ))!) {
-                              await widget._foodSearchScreenViewModel.setWeightJournalEntry(
-                                date: widget._foodSearchScreenViewModel.currentJournalDate.value,
+                              await _foodSearchScreenViewModel.setWeightJournalEntry(
+                                date: _foodSearchScreenViewModel.currentJournalDate.value,
                                 weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
                               );
                             }
@@ -336,7 +345,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "3",
                           onPressed: () {
-                            widget._foodSearchScreenViewModel.toggleFloatingActionButtons();
+                            _foodSearchScreenViewModel.toggleFloatingActionButtons();
 
                             Navigator.pushNamed(
                               context,
@@ -358,16 +367,16 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         child: FloatingActionButton.extended(
                           heroTag: "2",
                           onPressed: () {
-                            widget._foodSearchScreenViewModel.toggleFloatingActionButtons();
+                            _foodSearchScreenViewModel.toggleFloatingActionButtons();
 
                             Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
                               arguments: EatsJournalEntry.quick(
-                                entryDate: widget._foodSearchScreenViewModel.currentJournalDate.value,
+                                entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                                 name: OpenEatsJournalStrings.emptyString,
                                 kJoule: NutritionCalculator.kJouleForOnekCal,
-                                meal: widget._foodSearchScreenViewModel.currentMeal.value,
+                                meal: _foodSearchScreenViewModel.currentMeal.value,
                               ),
                             );
                           },
@@ -385,7 +394,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             FloatingActionButton(
               heroTag: "1",
               onPressed: () {
-                widget._foodSearchScreenViewModel.toggleFloatingActionButtons();
+                _foodSearchScreenViewModel.toggleFloatingActionButtons();
               },
               child: Icon(Icons.add),
             ),
@@ -403,10 +412,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       if (parts.length == 2 && parts[0].trim().toLowerCase() == OpenEatsJournalStrings.code) {
         int? barcode = int.tryParse(parts[1]);
         if (barcode != null) {
-          await widget._foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, languageCode: languageCode, localizations: localilzations);
+          await _foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, languageCode: languageCode, localizations: localilzations);
         }
       } else {
-        await widget._foodSearchScreenViewModel.getFoodBySearchText(searchText: cleanSearchText, languageCode: languageCode, localizations: localilzations);
+        await _foodSearchScreenViewModel.getFoodBySearchText(searchText: cleanSearchText, languageCode: languageCode, localizations: localilzations);
       }
     }
   }
@@ -415,13 +424,17 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
-      widget._foodSearchScreenViewModel.currentJournalDate.value = date;
+      _foodSearchScreenViewModel.currentJournalDate.value = date;
     }
   }
 
   @override
   void dispose() {
     widget._foodSearchScreenViewModel.dispose();
+    if (widget._foodSearchScreenViewModel != _foodSearchScreenViewModel) {
+      _foodSearchScreenViewModel.dispose();
+    }
+
     _searchTextController.dispose();
 
     super.dispose();

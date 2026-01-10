@@ -25,6 +25,8 @@ class EatsJournalQuickEntryEditScreen extends StatefulWidget {
 }
 
 class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryEditScreen> {
+  late EatsJournalQuickEntryEditScreenViewModel _eatsJournalQuickEntryAddScreenViewModel;
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _kCalController = TextEditingController();
@@ -36,16 +38,22 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
   final TextEditingController _saltController = TextEditingController();
 
   @override
+  void initState() {
+    _eatsJournalQuickEntryAddScreenViewModel = widget._eatsJournalQuickEntryAddScreenViewModel;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    _nameController.text = widget._eatsJournalQuickEntryAddScreenViewModel.name.value;
-    _amountController.text = widget._eatsJournalQuickEntryAddScreenViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(widget._eatsJournalQuickEntryAddScreenViewModel.amount.value)
+    _nameController.text = _eatsJournalQuickEntryAddScreenViewModel.name.value;
+    _amountController.text = _eatsJournalQuickEntryAddScreenViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalQuickEntryAddScreenViewModel.amount.value)
         : OpenEatsJournalStrings.emptyString;
-    _kCalController.text = widget._eatsJournalQuickEntryAddScreenViewModel.kJoule.value != null
+    _kCalController.text = _eatsJournalQuickEntryAddScreenViewModel.kJoule.value != null
         ? ConvertValidate.numberFomatterInt.format(
-            NutritionCalculator.getKCalsFromKJoules(kJoules: widget._eatsJournalQuickEntryAddScreenViewModel.kJoule.value as int),
+            NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalQuickEntryAddScreenViewModel.kJoule.value as int),
           )
         : OpenEatsJournalStrings.emptyString;
 
@@ -53,7 +61,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-      title: widget._eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
+      title: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
           ? AppLocalizations.of(context)!.add_quick_entry
           : AppLocalizations.of(context)!.edit_quick_entry,
       body: Column(
@@ -63,14 +71,14 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.currentJournalDate,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        await _selectDate(initialDate: widget._eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value, context: context);
+                        await _selectDate(initialDate: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value, context: context);
                       },
                       child: Text(
-                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -80,14 +88,14 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(width: 5),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.currentMeal,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentMeal,
                   builder: (_, _, _) {
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
-                        widget._eatsJournalQuickEntryAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                        _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
-                      initialSelection: widget._eatsJournalQuickEntryAddScreenViewModel.currentMeal.value.value,
+                      initialSelection: _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value.value,
                     );
                   },
                 ),
@@ -102,12 +110,12 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.name,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.name,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _nameController,
                       onChanged: (value) {
-                        widget._eatsJournalQuickEntryAddScreenViewModel.name.value = value;
+                        _eatsJournalQuickEntryAddScreenViewModel.name.value = value;
                       },
                     );
                   },
@@ -119,15 +127,15 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.nameValid,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.nameValid,
                   builder: (_, _, _) {
-                    if (!widget._eatsJournalQuickEntryAddScreenViewModel.nameValid.value) {
+                    if (!_eatsJournalQuickEntryAddScreenViewModel.nameValid.value) {
                       return Text(
                         AppLocalizations.of(context)!.input_invalid_value(
                           AppLocalizations.of(context)!.name_capital,
-                          widget._eatsJournalQuickEntryAddScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
+                          _eatsJournalQuickEntryAddScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
                               ? AppLocalizations.of(context)!.empty
-                              : widget._eatsJournalQuickEntryAddScreenViewModel.name.value,
+                              : _eatsJournalQuickEntryAddScreenViewModel.name.value,
                         ),
                         style: textTheme.labelMedium!.copyWith(color: Colors.red),
                       );
@@ -152,7 +160,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.kJoule,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.kJoule,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _kCalController,
@@ -163,7 +171,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         int? intValue = int.tryParse(value);
-                        widget._eatsJournalQuickEntryAddScreenViewModel.kJoule.value = intValue != null
+                        _eatsJournalQuickEntryAddScreenViewModel.kJoule.value = intValue != null
                             ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
                             : null;
                         if (intValue != null) {
@@ -178,7 +186,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.amount,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.amount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _amountController,
@@ -203,7 +211,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        widget._eatsJournalQuickEntryAddScreenViewModel.amount.value = doubleValue;
+                        _eatsJournalQuickEntryAddScreenViewModel.amount.value = doubleValue;
 
                         if (doubleValue != null) {
                           _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -217,17 +225,17 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                 child: SizedBox(
                   width: 50,
                   child: ListenableBuilder(
-                    listenable: widget._eatsJournalQuickEntryAddScreenViewModel.measurementUnitSwitchButtonChanged,
+                    listenable: _eatsJournalQuickEntryAddScreenViewModel.measurementUnitSwitchButtonChanged,
                     builder: (_, _) {
                       return RoundOutlinedButton(
                         onPressed: () {
-                          widget._eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value =
-                              widget._eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                          _eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value =
+                              _eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                               ? MeasurementUnit.milliliter
                               : MeasurementUnit.gram;
                         },
                         child: Text(
-                          widget._eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                          _eatsJournalQuickEntryAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                               ? AppLocalizations.of(context)!.gram_abbreviated
                               : AppLocalizations.of(context)!.milliliter_abbreviated,
                         ),
@@ -239,9 +247,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.kJouleValid,
+            valueListenable: _eatsJournalQuickEntryAddScreenViewModel.kJouleValid,
             builder: (_, _, _) {
-              if (!widget._eatsJournalQuickEntryAddScreenViewModel.kJouleValid.value) {
+              if (!_eatsJournalQuickEntryAddScreenViewModel.kJouleValid.value) {
                 return Text(
                   AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.kjoule, AppLocalizations.of(context)!.nothing),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -262,7 +270,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.carbohydrates,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.carbohydrates,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _carbohydratesController,
@@ -287,7 +295,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        widget._eatsJournalQuickEntryAddScreenViewModel.carbohydrates.value = doubleValue;
+                        _eatsJournalQuickEntryAddScreenViewModel.carbohydrates.value = doubleValue;
 
                         if (doubleValue != null) {
                           _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -301,7 +309,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.sugar,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.sugar,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _sugarController,
@@ -326,7 +334,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        widget._eatsJournalQuickEntryAddScreenViewModel.sugar.value = doubleValue;
+                        _eatsJournalQuickEntryAddScreenViewModel.sugar.value = doubleValue;
 
                         if (doubleValue != null) {
                           _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -350,7 +358,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.fat,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.fat,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _fatController,
@@ -375,7 +383,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        widget._eatsJournalQuickEntryAddScreenViewModel.fat.value = doubleValue;
+                        _eatsJournalQuickEntryAddScreenViewModel.fat.value = doubleValue;
 
                         if (doubleValue != null) {
                           _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -389,7 +397,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.saturatedFat,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.saturatedFat,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _saturatedFatController,
@@ -414,7 +422,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        widget._eatsJournalQuickEntryAddScreenViewModel.saturatedFat.value = doubleValue;
+                        _eatsJournalQuickEntryAddScreenViewModel.saturatedFat.value = doubleValue;
 
                         if (doubleValue != null) {
                           _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -438,7 +446,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.protein,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.protein,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _proteinController,
@@ -463,7 +471,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        widget._eatsJournalQuickEntryAddScreenViewModel.protein.value = doubleValue;
+                        _eatsJournalQuickEntryAddScreenViewModel.protein.value = doubleValue;
 
                         if (doubleValue != null) {
                           _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -477,7 +485,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._eatsJournalQuickEntryAddScreenViewModel.salt,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.salt,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _saltController,
@@ -502,7 +510,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       },
                       onChanged: (value) {
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        widget._eatsJournalQuickEntryAddScreenViewModel.salt.value = doubleValue as double?;
+                        _eatsJournalQuickEntryAddScreenViewModel.salt.value = doubleValue as double?;
 
                         if (doubleValue != null) {
                           _saltController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -522,9 +530,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               height: 48,
               child: OutlinedButton(
                 onPressed: () async {
-                  int? originalQuickEntryId = widget._eatsJournalQuickEntryAddScreenViewModel.quickEntryId;
+                  int? originalQuickEntryId = _eatsJournalQuickEntryAddScreenViewModel.quickEntryId;
 
-                  if (!(await widget._eatsJournalQuickEntryAddScreenViewModel.setQuickEntry())) {
+                  if (!(await _eatsJournalQuickEntryAddScreenViewModel.setQuickEntry())) {
                     SnackBar snackBar = SnackBar(
                       content: Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.cant_create_quick_entry),
                       action: SnackBarAction(
@@ -553,7 +561,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                     Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                   }
                 },
-                child: widget._eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
+                child: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
                     ? Text(AppLocalizations.of(context)!.add)
                     : Text(AppLocalizations.of(context)!.update),
               ),
@@ -568,12 +576,17 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
-      widget._eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value = date;
+      _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value = date;
     }
   }
 
   @override
   void dispose() {
+    widget._eatsJournalQuickEntryAddScreenViewModel.dispose();
+    if (widget._eatsJournalQuickEntryAddScreenViewModel != _eatsJournalQuickEntryAddScreenViewModel) {
+      _eatsJournalQuickEntryAddScreenViewModel.dispose();
+    }
+
     _nameController.dispose();
     _amountController.dispose();
     _kCalController.dispose();

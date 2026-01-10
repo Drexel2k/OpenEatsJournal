@@ -87,6 +87,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       if (result.any((resultInternal) => resultInternal.foods != null && resultInternal.foods!.isNotEmpty)) {
         int order = 0;
 
+        //result[0] = user food results
         List<ObjectWithOrder<Food>>? foodsWithOrder = [];
         if (result[0].foods != null && result[0].foods!.isNotEmpty) {
           for (Food food in result[0].foods!) {
@@ -104,6 +105,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           foodsWithOrder.addAll(_foodSearchResultUser);
         }
 
+        //result[1] = open food facts food results
         if (result[1].foods != null && result[1].foods!.isNotEmpty) {
           for (Food food in result[1].foods!) {
             if (food.foodUnitsWithOrder.isNotEmpty) {
@@ -117,8 +119,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
             _foodSearchResultOpenFoodFacst.add(ObjectWithOrder(object: food, order: order++));
           }
 
-          foodsWithOrder.addAll(_foodSearchResultStandard);
+          foodsWithOrder.addAll(_foodSearchResultOpenFoodFacst);
         }
+
+        _addToSearchResult(foodsWithOrder);
       }
 
       if (result[1].errorCode != null) {

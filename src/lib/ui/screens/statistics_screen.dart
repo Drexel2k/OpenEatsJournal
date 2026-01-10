@@ -19,6 +19,15 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
+  late StatisticsScreenViewModel _statisticsScreenViewModel;
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _statisticsScreenViewModel = widget._statisticsScreenViewModel;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainLayout(
@@ -26,26 +35,26 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       body: Column(
         children: [
           ValueListenableBuilder(
-            valueListenable: widget._statisticsScreenViewModel.currentStatistic,
+            valueListenable: _statisticsScreenViewModel.currentStatistic,
             builder: (_, _, _) {
               return OpenEatsJournalDropdownMenu<int>(
                 onSelected: (int? statisticValue) {
-                  widget._statisticsScreenViewModel.currentStatistic.value = Statistic.getByValue(statisticValue!);
+                  _statisticsScreenViewModel.currentStatistic.value = Statistic.getByValue(statisticValue!);
                 },
                 dropdownMenuEntries: LocalizedDropDownEntries.getStatisticDropDownMenuEntries(context: context),
-                initialSelection: widget._statisticsScreenViewModel.currentStatistic.value.value,
+                initialSelection: _statisticsScreenViewModel.currentStatistic.value.value,
               );
             },
           ),
           SizedBox(height: 20),
           ValueListenableBuilder(
-            valueListenable: widget._statisticsScreenViewModel.currentStatistic,
+            valueListenable: _statisticsScreenViewModel.currentStatistic,
             builder: (_, _, _) {
-              if (widget._statisticsScreenViewModel.currentStatistic.value == Statistic.weight) {
-                return StatisticsScreenPageWeight(statisticsScreenViewModel: widget._statisticsScreenViewModel);
+              if (_statisticsScreenViewModel.currentStatistic.value == Statistic.weight) {
+                return StatisticsScreenPageWeight(statisticsScreenViewModel: _statisticsScreenViewModel);
               }
 
-              return StatisticsScreenPageEnergy(statisticsScreenViewModel: widget._statisticsScreenViewModel);
+              return StatisticsScreenPageEnergy(statisticsScreenViewModel: _statisticsScreenViewModel);
             },
           ),
         ],
@@ -57,6 +66,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   void dispose() {
     widget._statisticsScreenViewModel.dispose();
+    if (widget._statisticsScreenViewModel != _statisticsScreenViewModel) {
+      _statisticsScreenViewModel.dispose();
+    }
 
     super.dispose();
   }

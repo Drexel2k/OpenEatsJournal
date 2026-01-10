@@ -12,32 +12,35 @@ class Convert {
       throw ArgumentError("Food result must not be empty.");
     }
 
-    List<OrderedDefaultFoodUnit> orderedDefaultFoodUnits = [];
+    List<OrderedDefaultFoodUnit>? orderedDefaultFoodUnits;
 
-    int currentRowFoodUnitId = -1;
-    int currentFoodUnitId = -1;
+    if (dbResult[0][OpenEatsJournalStrings.dbResultFoodUnitId] != null) {
+      orderedDefaultFoodUnits = [];
+      int currentRowFoodUnitId = -1;
+      int currentFoodUnitId = -1;
 
-    Map<String, Object?>? foodUnitRow;
-    OrderedDefaultFoodUnit? orderedDefaultFoodUnit;
-    for (Map<String, Object?> foodUnitRowInternal in dbResult) {
-      currentRowFoodUnitId = foodUnitRowInternal[OpenEatsJournalStrings.dbResultFoodUnitId] as int;
-      if (currentFoodUnitId != currentRowFoodUnitId) {
-        if (currentFoodUnitId != -1) {
-          orderedDefaultFoodUnit = _getOrderedDefaultFoodUnit(foodUnitRow: foodUnitRow!);
-          if (orderedDefaultFoodUnit != null) {
-            orderedDefaultFoodUnits.add(orderedDefaultFoodUnit);
+      Map<String, Object?>? foodUnitRow;
+      OrderedDefaultFoodUnit? orderedDefaultFoodUnit;
+      for (Map<String, Object?> foodUnitRowInternal in dbResult) {
+        currentRowFoodUnitId = foodUnitRowInternal[OpenEatsJournalStrings.dbResultFoodUnitId] as int;
+        if (currentFoodUnitId != currentRowFoodUnitId) {
+          if (currentFoodUnitId != -1) {
+            orderedDefaultFoodUnit = _getOrderedDefaultFoodUnit(foodUnitRow: foodUnitRow!);
+            if (orderedDefaultFoodUnit != null) {
+              orderedDefaultFoodUnits.add(orderedDefaultFoodUnit);
+            }
           }
+
+          currentFoodUnitId = currentRowFoodUnitId;
         }
 
-        currentFoodUnitId = currentRowFoodUnitId;
+        foodUnitRow = foodUnitRowInternal;
       }
 
-      foodUnitRow = foodUnitRowInternal;
-    }
-
-    orderedDefaultFoodUnit = _getOrderedDefaultFoodUnit(foodUnitRow: foodUnitRow!);
-    if (orderedDefaultFoodUnit != null) {
-      orderedDefaultFoodUnits.add(orderedDefaultFoodUnit);
+      orderedDefaultFoodUnit = _getOrderedDefaultFoodUnit(foodUnitRow: foodUnitRow!);
+      if (orderedDefaultFoodUnit != null) {
+        orderedDefaultFoodUnits.add(orderedDefaultFoodUnit);
+      }
     }
 
     Food food = Food.fromData(
@@ -62,7 +65,7 @@ class Convert {
       protein: dbResult[0][OpenEatsJournalStrings.dbResultFoodProtein] as double?,
       salt: dbResult[0][OpenEatsJournalStrings.dbResultFoodSalt] as double?,
       quantity: dbResult[0][OpenEatsJournalStrings.dbColumnQuantity] as String?,
-      orderedDefaultFoodUnits: orderedDefaultFoodUnits.isNotEmpty ? orderedDefaultFoodUnits : null,
+      orderedDefaultFoodUnits: orderedDefaultFoodUnits,
     );
 
     return food;

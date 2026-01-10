@@ -18,8 +18,9 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _pageViewController = PageController();
   late OnboardingScreenViewModel _onboardingScreenViewModel;
+
+  final PageController _pageViewController = PageController();
 
   //only called once even if the widget is recreated on opening the virtual keyboard e.g.
   @override
@@ -103,7 +104,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void dispose() {
     widget._onboardingScreenViewModel.dispose();
-    _onboardingScreenViewModel.dispose();
+    if (widget._onboardingScreenViewModel != _onboardingScreenViewModel) {
+      _onboardingScreenViewModel.dispose();
+    }
+
     _pageViewController.dispose();
 
     super.dispose();

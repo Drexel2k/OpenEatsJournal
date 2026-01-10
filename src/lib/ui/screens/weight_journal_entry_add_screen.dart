@@ -18,12 +18,21 @@ class WeightJournalEntryAddScreen extends StatefulWidget {
 }
 
 class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScreen> {
+  late WeightJournalEntryAddScreenViewModel _weightJournalEntryAddScreenViewModel;
+
   final TextEditingController _weightController = TextEditingController();
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _weightJournalEntryAddScreenViewModel = widget._weightJournalEntryAddScreenViewModel;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: widget._weightJournalEntryAddScreenViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeight);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -41,7 +50,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
               Expanded(
                 flex: 2,
                 child: ValueListenableBuilder(
-                  valueListenable: widget._weightJournalEntryAddScreenViewModel.weight,
+                  valueListenable: _weightJournalEntryAddScreenViewModel.weight,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _weightController,
@@ -66,7 +75,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                       },
                       onChanged: (value) {
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                        widget._weightJournalEntryAddScreenViewModel.weight.value = doubleValue as double?;
+                        _weightJournalEntryAddScreenViewModel.weight.value = doubleValue as double?;
 
                         if (doubleValue != null) {
                           _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -79,13 +88,13 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: widget._weightJournalEntryAddScreenViewModel.weightValid,
+            valueListenable: _weightJournalEntryAddScreenViewModel.weightValid,
             builder: (_, _, _) {
-              if (!widget._weightJournalEntryAddScreenViewModel.weightValid.value) {
+              if (!_weightJournalEntryAddScreenViewModel.weightValid.value) {
                 return Text(
                   AppLocalizations.of(
                     context,
-                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, widget._weightJournalEntryAddScreenViewModel.lastValidWeight),
+                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeight),
                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                 );
               } else {
@@ -118,6 +127,10 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
   @override
   void dispose() {
     widget._weightJournalEntryAddScreenViewModel.dispose();
+    if (widget._weightJournalEntryAddScreenViewModel != _weightJournalEntryAddScreenViewModel) {
+      _weightJournalEntryAddScreenViewModel.dispose();
+    }
+
     _weightController.dispose();
 
     super.dispose();

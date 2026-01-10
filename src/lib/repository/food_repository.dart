@@ -43,6 +43,9 @@ class FoodRepository {
     if (dbResult != null) {
       result.add(FoodRepositoryResult(foods: Convert.getFoodsFromDbResult(dbResult: dbResult)));
     }
+    else{
+      result.add(FoodRepositoryResult());
+    }
 
     result.add(await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode));
 
