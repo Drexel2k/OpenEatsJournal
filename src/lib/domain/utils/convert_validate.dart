@@ -6,13 +6,14 @@ import 'package:openeatsjournal/domain/utils/week_of_year.dart';
 class ConvertValidate {
   ConvertValidate._();
 
-  static void init({required String languageCode}) {
+  static void init({required String languageCode}) async {
     numberFomatterInt = NumberFormat(null, languageCode);
     numberFomatterDouble = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);
     _decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
-    initializeDateFormatting(languageCode);
+    await initializeDateFormatting(languageCode);
     dateFormatterDisplayLongDateOnly = DateFormat.yMMMMd(languageCode);
+    dateFormatterDisplayMediumDateOnly = DateFormat.yMMMd(languageCode);
   }
 
   static late NumberFormat numberFomatterInt;
@@ -20,6 +21,7 @@ class ConvertValidate {
   static final DateFormat dateformatterDatabaseDateOnly = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
   static final DateFormat dateFormatterDatabaseDateAndTime = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
   static late DateFormat dateFormatterDisplayLongDateOnly;
+  static late DateFormat dateFormatterDisplayMediumDateOnly;
   static late String _decimalSeparator;
 
   // static double? convertLocalStringToDouble({required String numberString, required String languageCode}) {

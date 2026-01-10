@@ -9,9 +9,12 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmode
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel}) : _onboardingScreenViewModel = onboardingScreenViewModel;
+  const OnboardingScreen({super.key, required OnboardingScreenViewModel onboardingScreenViewModel, required VoidCallback onboardingFinishedCallback})
+    : _onboardingScreenViewModel = onboardingScreenViewModel,
+      _onboardingFinishedCallback = onboardingFinishedCallback;
 
   final OnboardingScreenViewModel _onboardingScreenViewModel;
+  final VoidCallback _onboardingFinishedCallback;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -19,6 +22,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late OnboardingScreenViewModel _onboardingScreenViewModel;
+  late VoidCallback _onboardingFinishedCallback;
 
   final PageController _pageViewController = PageController();
 
@@ -26,6 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     _onboardingScreenViewModel = widget._onboardingScreenViewModel;
+    _onboardingFinishedCallback = widget._onboardingFinishedCallback;
     super.initState();
   }
 
@@ -82,6 +87,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingScreenPage4(
                     onDone: () async {
                       await _onboardingScreenViewModel.saveOnboardingData();
+                      _onboardingFinishedCallback();
                       Navigator.pushReplacementNamed(AppGlobal.navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
                     },
                     onboardingScreenViewModel: _onboardingScreenViewModel,
@@ -90,7 +96,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ),
-          resizeToAvoidBottomInset: false,
         );
       },
     );

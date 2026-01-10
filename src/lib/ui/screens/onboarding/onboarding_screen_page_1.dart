@@ -24,56 +24,63 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
       logoPath = "assets/openeatsjournal_logo_darkmode.svg";
     }
 
-    return Column(
-      children: [
-        SvgPicture.asset(logoPath, semanticsLabel: "App Logo", height: 150, width: 150),
-        Text(style: textTheme.headlineMedium, "Open Eats Journal"),
-        SizedBox(height: 10),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(AppLocalizations.of(context)!.welcome, style: textTheme.headlineSmall),
-            Icon(Icons.waving_hand_outlined),
-          ],
-        ),
-        SizedBox(height: 12),
-        Text(AppLocalizations.of(context)!.welcome_message_1, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-        Spacer(),
-        Text(AppLocalizations.of(context)!.welcome_message_7, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-        SizedBox(height: 12),
-        CheckboxListTile(
-          controlAffinity: ListTileControlAffinity.leading,
-          title: Text(AppLocalizations.of(context)!.license_agree, style: textTheme.labelLarge, textAlign: TextAlign.center),
-          value: _licenseAgreed,
-          onChanged: (value) {
-            setState(() {
-              _licenseAgreed = value ?? false;
-            });
-          },
-        ),
-        FilledButton(
-          onPressed: () {
-            if (!_licenseAgreed) {
-              SnackBar snackBar = SnackBar(
-                content: Text(AppLocalizations.of(context)!.license_must_agree),
-                action: SnackBarAction(
-                  label: AppLocalizations.of(context)!.close,
-                  onPressed: () {
-                    //Click on SnackbarAction closes the SnackBar,
-                    //nothing else to do here...
-                  },
-                ),
-              );
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.92),
+        child: IntrinsicHeight(
+          child: Column(
+            children: [
+              SvgPicture.asset(logoPath, semanticsLabel: "App Logo", height: 150, width: 150),
+              Text(style: textTheme.headlineMedium, "Open Eats Journal"),
+              SizedBox(height: 10),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(AppLocalizations.of(context)!.welcome, style: textTheme.headlineSmall),
+                  Icon(Icons.waving_hand_outlined),
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(AppLocalizations.of(context)!.welcome_message_1, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+              Spacer(),
+              Text(AppLocalizations.of(context)!.welcome_message_7, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+              SizedBox(height: 12),
+              CheckboxListTile(
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Text(AppLocalizations.of(context)!.license_agree, style: textTheme.labelLarge, textAlign: TextAlign.center),
+                value: _licenseAgreed,
+                onChanged: (value) {
+                  setState(() {
+                    _licenseAgreed = value ?? false;
+                  });
+                },
+              ),
+              FilledButton(
+                onPressed: () {
+                  if (!_licenseAgreed) {
+                    SnackBar snackBar = SnackBar(
+                      content: Text(AppLocalizations.of(context)!.license_must_agree),
+                      action: SnackBarAction(
+                        label: AppLocalizations.of(context)!.close,
+                        onPressed: () {
+                          //Click on SnackbarAction closes the SnackBar,
+                          //nothing else to do here...
+                        },
+                      ),
+                    );
 
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              return;
-            }
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
 
-            widget._onDone();
-          },
-          child: Text(AppLocalizations.of(context)!.agree_proceed),
+                  widget._onDone();
+                },
+                child: Text(AppLocalizations.of(context)!.agree_proceed),
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 

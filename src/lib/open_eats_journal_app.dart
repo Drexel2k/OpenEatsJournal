@@ -47,7 +47,33 @@ class OpenEatsJournalApp extends StatelessWidget {
             } else if (snapshot.hasError) {
               throw StateError("Something went wrong: ${snapshot.error}");
             } else {
-              _openEatsJournalAppViewModel.initStandardFoodData();
+              ThemeMode themeMode = ThemeMode.light;
+              String languageCode = OpenEatsJournalStrings.en;
+              String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
+
+              if (_openEatsJournalAppViewModel.onboarded) {
+                _openEatsJournalAppViewModel.startListening();
+                if (_openEatsJournalAppViewModel.darkMode) {
+                  themeMode = ThemeMode.dark;
+                }
+
+                languageCode = _openEatsJournalAppViewModel.languageCode;
+              } else {
+                Brightness brightness = MediaQuery.of(context).platformBrightness;
+                if (brightness == Brightness.dark) {
+                  themeMode = ThemeMode.dark;
+                }
+
+                String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
+                if (AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
+                  languageCode = platformLanguageCode;
+                }
+
+                initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
+              }
+
+              ConvertValidate.init(languageCode: languageCode);
+              _openEatsJournalAppViewModel.initStandardFoodData(languageCode: languageCode);
 
               //we need a second future to ensure sequence of loading settings and loading standard food data that changes settings.
               return FutureBuilder<void>(
@@ -59,32 +85,6 @@ class OpenEatsJournalApp extends StatelessWidget {
                     throw StateError("Something went wrong: ${snapshot.error}");
                   } else if (snapshot.hasData) {
                     _openEatsJournalAppViewModel.saveLastProcessedStandardFoodDataDate(snapshot.data as DateTime);
-
-                    ThemeMode themeMode = ThemeMode.light;
-                    String languageCode = OpenEatsJournalStrings.en;
-                    String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
-                    if (_openEatsJournalAppViewModel.onboarded) {
-                      _openEatsJournalAppViewModel.startListening();
-                      if (_openEatsJournalAppViewModel.darkMode) {
-                        themeMode = ThemeMode.dark;
-                      }
-
-                      languageCode = _openEatsJournalAppViewModel.languageCode;
-                    } else {
-                      Brightness brightness = MediaQuery.of(context).platformBrightness;
-                      if (brightness == Brightness.dark) {
-                        themeMode = ThemeMode.dark;
-                      }
-
-                      String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
-                      if (AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
-                        languageCode = platformLanguageCode;
-                      }
-
-                      initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
-                    }
-
-                    ConvertValidate.init(languageCode: _openEatsJournalAppViewModel.languageCode);
 
                     return MaterialApp(
                       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -147,6 +147,7 @@ class OpenEatsJournalApp extends StatelessWidget {
                             darkMode: themeMode == ThemeMode.dark,
                             languageCode: languageCode,
                           ),
+                          onboardingFinishedCallback: _onboardingFinished,
                         ),
                         OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
                         OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) => EatsJournalFoodEntryEditScreen(
@@ -183,5 +184,9 @@ class OpenEatsJournalApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _onboardingFinished() {
+    _openEatsJournalAppViewModel.startListening();
   }
 }

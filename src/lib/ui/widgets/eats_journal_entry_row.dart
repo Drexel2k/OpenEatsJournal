@@ -43,8 +43,7 @@ class EatsJournalEntryRow extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(_eatsJournalEntry.name),
-                Spacer(),
+                Expanded(child: Text(_eatsJournalEntry.name)),
                 Column(
                   children: [
                     Text(amountInformation),

@@ -155,6 +155,7 @@ class FoodCard extends StatelessWidget {
                           Text(
                             style: _textTheme.labelSmall,
                             _getKJoulesToAddText(measurementUnit: measurementUnit, context: context),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),

@@ -62,6 +62,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteEatsJournal,
       title: AppLocalizations.of(context)!.eats_journal,
+      addScroll: true,
+      mainNavigationCallback: () {
+        _eatsJournalScreenViewModel.refreshNutritionData();
+      },
       body: Column(
         children: [
           Row(
@@ -434,9 +438,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             ),
 
                                             IconButton.outlined(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 _eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
-                                                Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
                                             ),
@@ -504,9 +509,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             ),
 
                                             IconButton.outlined(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 _eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
-                                                Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
                                             ),
@@ -574,9 +580,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             ),
 
                                             IconButton.outlined(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 _eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
-                                                Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
                                             ),
@@ -644,9 +651,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             ),
 
                                             IconButton.outlined(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 _eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
-                                                Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
                                             ),
@@ -817,10 +825,11 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         width: fabMenuWidth,
                         child: FloatingActionButton.extended(
                           heroTag: "5",
-                          onPressed: () {
+                          onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                            await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                            _eatsJournalScreenViewModel.refreshNutritionData();
                           },
                           label: Text(AppLocalizations.of(context)!.eats_journal_entry),
                         ),
@@ -897,10 +906,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         width: fabMenuWidth,
                         child: FloatingActionButton.extended(
                           heroTag: "2",
-                          onPressed: () {
+                          onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                            Navigator.pushNamed(
+                            await Navigator.pushNamed(
                               context,
                               OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
                               arguments: EatsJournalEntry.quick(
@@ -910,6 +919,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 meal: _eatsJournalScreenViewModel.currentMeal.value,
                               ),
                             );
+
+                            _eatsJournalScreenViewModel.refreshNutritionData();
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
                         ),

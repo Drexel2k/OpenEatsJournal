@@ -24,6 +24,11 @@ class OnboardingScreenViewModel extends ChangeNotifier {
        _dailyTargetKJoule = ValueNotifier(0),
        _darkMode = darkMode,
        _languagaCode = languageCode {
+    _gender.addListener(_calculateKJoule);
+    _birthday.addListener(_calculateKJoule);
+    _height.addListener(_calculateKJoule);
+    _weight.addListener(_calculateKJoule);
+    _activityFactor.addListener(_calculateKJoule);
     _weightTarget.addListener(_calculateKJoule);
   }
 
@@ -37,8 +42,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _weight;
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget?> _weightTarget;
-  final ValueNotifier<int> _dailyNeedKJoule;
-  final ValueNotifier<int> _dailyTargetKJoule;
+  final ValueNotifier<int?> _dailyNeedKJoule;
+  final ValueNotifier<int?> _dailyTargetKJoule;
   final bool _darkMode;
   final String _languagaCode;
 
@@ -50,8 +55,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<double?> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget?> get weightTarget => _weightTarget;
-  ValueNotifier<int> get dailyNeedKJoule => _dailyNeedKJoule;
-  ValueNotifier<int> get dailyTargetKJoule => _dailyTargetKJoule;
+  ValueNotifier<int?> get dailyNeedKJoule => _dailyNeedKJoule;
+  ValueNotifier<int?> get dailyTargetKJoule => _dailyTargetKJoule;
 
   Future<void> saveOnboardingData() async {
     int age = 0;
@@ -118,49 +123,69 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   }
 
   void _calculateKJoule() {
-    int age = 0;
-    final DateTime today = DateTime.now();
-    age = today.year - _birthday.value!.year;
-    final month = today.month - _birthday.value!.month;
-
-    if (month < 0) {
-      age = age - 1;
+    bool dailyNeedKJouleCalculationPossible = true;
+    bool dailyTargetKJouleCalculationPossible = true;
+    if (_gender.value == null || _birthday.value == null || _height.value == null || _weight.value == null || _activityFactor.value == null) {
+      _dailyNeedKJoule.value = null;
+      dailyNeedKJouleCalculationPossible = false;
     }
 
-    double weightLossKg = 0;
-    if (_weightTarget.value == WeightTarget.lose025) {
-      weightLossKg = 0.25;
+    if (_weightTarget.value == null) {
+      _dailyTargetKJoule.value = null;
+      dailyTargetKJouleCalculationPossible = false;
     }
 
-    if (_weightTarget.value == WeightTarget.lose05) {
-      weightLossKg = 0.5;
+    if (dailyNeedKJouleCalculationPossible) {
+      int age = 0;
+      final DateTime today = DateTime.now();
+      age = today.year - _birthday.value!.year;
+      final month = today.month - _birthday.value!.month;
+
+      if (month < 0) {
+        age = age - 1;
+      }
+
+      double weightLossKg = 0;
+      if (_weightTarget.value == WeightTarget.lose025) {
+        weightLossKg = 0.25;
+      }
+
+      if (_weightTarget.value == WeightTarget.lose05) {
+        weightLossKg = 0.5;
+      }
+
+      if (_weightTarget.value == WeightTarget.lose075) {
+        weightLossKg = 0.75;
+      }
+
+      double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
+        kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
+          weightKg: _weight.value!,
+          heightCm: _height.value!,
+          ageYear: age,
+          gender: _gender.value!,
+        ),
+        activityFactor: _activityFactor.value!,
+      );
+
+      if (dailyNeedKJouleDouble < 1) {
+        dailyNeedKJouleDouble = 1;
+      }
+
+      _dailyNeedKJoule.value = dailyNeedKJouleDouble.round();
+
+      if (dailyTargetKJouleCalculationPossible) {
+        double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(
+          kJoulePerDay: dailyNeedKJouleDouble,
+          weightLossPerWeekKg: weightLossKg,
+        );
+        if (dailyTargetKJouleDouble < 1) {
+          dailyTargetKJouleDouble = 1;
+        }
+
+        _dailyTargetKJoule.value = dailyTargetKJouleDouble.round();
+      }
     }
-
-    if (_weightTarget.value == WeightTarget.lose075) {
-      weightLossKg = 0.75;
-    }
-
-    double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
-      kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-        weightKg: _weight.value!,
-        heightCm: _height.value!,
-        ageYear: age,
-        gender: _gender.value!,
-      ),
-      activityFactor: _activityFactor.value!,
-    );
-
-    if (dailyNeedKJouleDouble < 1) {
-      dailyNeedKJouleDouble = 1;
-    }
-
-    double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg);
-    if (dailyTargetKJouleDouble < 1) {
-      dailyTargetKJouleDouble = 1;
-    }
-
-    _dailyNeedKJoule.value = dailyNeedKJouleDouble.round();
-    _dailyTargetKJoule.value = dailyTargetKJouleDouble.round();
   }
 
   @override

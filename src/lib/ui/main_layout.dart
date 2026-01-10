@@ -3,16 +3,28 @@ import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
 class MainLayout extends StatelessWidget {
-  const MainLayout({super.key, required String route, required Widget body, required String title, Widget? floatingActionButton})
-    : _route = route,
-      _body = body,
-      _title = title,
-      _floatingActionButton = floatingActionButton;
+  const MainLayout({
+    super.key,
+    required String route,
+    required Widget body,
+    required String title,
+    required bool addScroll,
+    Widget? floatingActionButton,
+    VoidCallback? mainNavigationCallback,
+  }) : _route = route,
+       _body = body,
+       _title = title,
+       _addScroll = addScroll,
+       _floatingActionButton = floatingActionButton,
+       _mainNavigationCallback = mainNavigationCallback;
 
   final Widget _body;
   final String _title;
   final String _route;
+  //add scrollable area for small screens or virtual keyboard present e.g., if the conten itself isn't scrollable
+  final bool _addScroll;
   final Widget? _floatingActionButton;
+  final VoidCallback? _mainNavigationCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +38,28 @@ class MainLayout extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       body: SafeArea(
-        child: Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 5), child: _body),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+          child: _addScroll ? SingleChildScrollView(child: _body) : _body,
+        ),
       ),
       bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int targetNavigationIndex) {
+        onDestinationSelected: (int targetNavigationIndex) async {
           if (targetNavigationIndex == 0) {
-            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+            await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+            if (_mainNavigationCallback != null) {
+              _mainNavigationCallback();
+            }
           } else if (targetNavigationIndex == 1) {
-            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsJournal);
+            await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteEatsJournal);
+            if (_mainNavigationCallback != null) {
+              _mainNavigationCallback();
+            }
           } else if (targetNavigationIndex == 2) {
-            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteStatistics);
+            await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteStatistics);
+            if (_mainNavigationCallback != null) {
+              _mainNavigationCallback();
+            }
           }
         },
         selectedIndex: currentNavigationIndex,
@@ -46,7 +70,6 @@ class MainLayout extends StatelessWidget {
         ],
       ),
       floatingActionButton: _floatingActionButton,
-      resizeToAvoidBottomInset: false,
     );
   }
 }

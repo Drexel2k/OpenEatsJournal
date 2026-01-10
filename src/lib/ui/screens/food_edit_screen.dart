@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:openeatsjournal/domain/food_unit.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
@@ -40,8 +39,6 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   final TextEditingController _proteinController = TextEditingController();
   final TextEditingController _saltController = TextEditingController();
 
-  final ScrollController _scrollController = ScrollController();
-
   //only called once even if the widget is recreated on opening the virtual keyboard e.g.
   @override
   void initState() {
@@ -54,24 +51,21 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     _nameController.text = _foodEditScreenViewModel.name.value;
-    _barcodeController.text = _foodEditScreenViewModel.barcode.value != null
-        ? "${_foodEditScreenViewModel.barcode.value}"
-        : OpenEatsJournalStrings.emptyString;
+    _barcodeController.text = _foodEditScreenViewModel.barcode.value != null ? "${_foodEditScreenViewModel.barcode.value}" : OpenEatsJournalStrings.emptyString;
     _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
         ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerGramAmount.value!)
         : OpenEatsJournalStrings.emptyString;
     _milliliterAmountController.text = _foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
         ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerMilliliterAmount.value!)
         : OpenEatsJournalStrings.emptyString;
-    _kCalController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _foodEditScreenViewModel.kJoule.value!),
-    );
+    _kCalController.text = ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _foodEditScreenViewModel.kJoule.value!));
 
     double inputFieldsWidth = 90;
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEdit,
       title: AppLocalizations.of(context)!.edit_food,
+      addScroll: true,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -579,15 +573,6 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           ? MeasurementUnit.milliliter
                           : MeasurementUnit.gram,
                     );
-
-                    //Jump to end after rendering the ListView, see comment below.
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
-                      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                    });
-
-                    //ListView ist not rendered here, so maxScrollExtent is the value before adding the new item and the list view is only scrolled to the item
-                    //before the last item.
-                    //_scrollController.jumpTo(_scrollController.position.maxScrollExtent);
                   },
                   child: Icon(Icons.add),
                 ),
@@ -654,20 +639,19 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
               ),
             ],
           ),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: _foodEditScreenViewModel.reorderableStateChanged,
-              builder: (_, _) {
-                return ReorderableListView(
-                  buildDefaultDragHandles: !_foodEditScreenViewModel.foodUnitsEditMode.value,
-                  onReorder: (oldIndex, newIndex) {
-                    _foodEditScreenViewModel.reorder(oldIndex, newIndex);
-                  },
-                  scrollController: _scrollController,
-                  children: _getFoodUnitEditors(textTheme: textTheme, context: context),
-                );
-              },
-            ),
+
+          ListenableBuilder(
+            listenable: _foodEditScreenViewModel.reorderableStateChanged,
+            builder: (_, _) {
+              return ReorderableListView(
+                buildDefaultDragHandles: !_foodEditScreenViewModel.foodUnitsEditMode.value,
+                onReorder: (oldIndex, newIndex) {
+                  _foodEditScreenViewModel.reorder(oldIndex, newIndex);
+                },
+                shrinkWrap: true,
+                children: _getFoodUnitEditors(textTheme: textTheme, context: context),
+              );
+            },
           ),
           SizedBox(height: 10),
           Align(
@@ -753,8 +737,6 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _saturatedFatController.dispose();
     _proteinController.dispose();
     _saltController.dispose();
-
-    _scrollController.dispose();
 
     super.dispose();
   }

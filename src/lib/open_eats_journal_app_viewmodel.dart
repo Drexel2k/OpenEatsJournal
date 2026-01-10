@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
@@ -25,7 +26,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   Future<void> get settingsLoaded => _settingsLoaded;
   Future<DateTime>? get dataInitialized => _dataInitialized;
 
-  //During app startup listeners can't be set always, on first app startup they must be regesitered after onboarding, otherwise there may be timing
+  //During app startup listeners can't be set always, on first app startup they must be regesitered after onboarding, otherwise there may be timing issues
   //during navigation from onboarding to the home screen. Changing darkmode e.g. triggers rebuild of the main widget and the context and state of the
   //navigatorKey may be null, that that will fail the navigation.
   void startListening() {
@@ -38,13 +39,14 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   }
 
   void _settingsLanguageCodeChanged() {
-    _dataInitialized = _foodRepository.initializeStandardFoodDataChangeDate(languageCode: _settingsRepository.languageCode.value);
+    _dataInitialized = _foodRepository.initializeStandardFoodData(languageCode: _settingsRepository.languageCode.value);
+    ConvertValidate.init(languageCode: _settingsRepository.languageCode.value);
     _darkModeOrLanguageCodeChanged.notify();
   }
 
-  Future<void> initStandardFoodData() async {
-    _dataInitialized ??= _foodRepository.initializeStandardFoodDataChangeDate(
-      languageCode: _settingsRepository.languageCode.value,
+  Future<void> initStandardFoodData({required String languageCode}) async {
+    _dataInitialized ??= _foodRepository.initializeStandardFoodData(
+      languageCode: languageCode,
       lastProcessedStandardFoodDataChangeDate: _settingsRepository.lastProcessedStandardFoodDataChangeDate,
     );
   }

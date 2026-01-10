@@ -1,5 +1,6 @@
 import "dart:convert";
 import "package:http/http.dart";
+import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
@@ -24,6 +25,7 @@ class FoodRepository {
   late OpenEatsJournalAssetsService _oejAssetsService;
 
   final int _pageSize = 100;
+  final DateFormat _csvDateFormat = DateFormat("yyyy-MM-dd HH-mm-ss");
 
   //must be called once before the singleton is used
   void init({
@@ -42,8 +44,7 @@ class FoodRepository {
 
     if (dbResult != null) {
       result.add(FoodRepositoryResult(foods: Convert.getFoodsFromDbResult(dbResult: dbResult)));
-    }
-    else{
+    } else {
       result.add(FoodRepositoryResult());
     }
 
@@ -584,7 +585,7 @@ class FoodRepository {
     }
   }
 
-  Future<DateTime> initializeStandardFoodDataChangeDate({required String languageCode, DateTime? lastProcessedStandardFoodDataChangeDate}) async {
+  Future<DateTime> initializeStandardFoodData({required String languageCode, DateTime? lastProcessedStandardFoodDataChangeDate}) async {
     List<String> standardFoodDataAssetsassets = await _oejAssetsService.getStandardFoodFiles();
 
     List<List<String>> standardFoodDataCsv;
@@ -600,14 +601,7 @@ class FoodRepository {
       standardFoodDataCsv = await _oejAssetsService.getCsvContent("assets/standard_food_data.$fileIndex.csv");
 
       if (fileIndex == 1) {
-        lastStandardFoodDataChangeDate = DateTime(
-          int.parse(standardFoodDataCsv[2][0].substring(0, 4)),
-          int.parse(standardFoodDataCsv[2][0].substring(4, 6)),
-          int.parse(standardFoodDataCsv[2][0].substring(6, 8)),
-          int.parse(standardFoodDataCsv[2][0].substring(8, 10)),
-          int.parse(standardFoodDataCsv[2][0].substring(10, 12)),
-          int.parse(standardFoodDataCsv[2][0].substring(12, 14)),
-        );
+        lastStandardFoodDataChangeDate = _csvDateFormat.parse(standardFoodDataCsv[2][0]);
       }
 
       if (lastProcessedStandardFoodDataChangeDate == null || lastStandardFoodDataChangeDate!.isAfter(lastProcessedStandardFoodDataChangeDate)) {
@@ -617,21 +611,14 @@ class FoodRepository {
               if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvFood) {
                 if (int.parse(standardFoodDataCsv[csvLineIndex][1]) != currentFoodId) {
                   if (currentFoodId != -1 && foodRelevant) {
-                    await _setStandardFood(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
+                    await _setStandardFoodFromCsvData(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
                   }
                 }
 
                 currentFoodId = int.parse(standardFoodDataCsv[csvLineIndex][1]);
 
                 if (lastProcessedStandardFoodDataChangeDate == null ||
-                    DateTime(
-                      int.parse(standardFoodDataCsv[csvLineIndex][2].substring(0, 4)),
-                      int.parse(standardFoodDataCsv[csvLineIndex][2].substring(4, 6)),
-                      int.parse(standardFoodDataCsv[csvLineIndex][2].substring(6, 8)),
-                      int.parse(standardFoodDataCsv[csvLineIndex][2].substring(8, 10)),
-                      int.parse(standardFoodDataCsv[csvLineIndex][2].substring(10, 12)),
-                      int.parse(standardFoodDataCsv[csvLineIndex][2].substring(12, 14)),
-                    ).isAfter(lastProcessedStandardFoodDataChangeDate)) {
+                    _csvDateFormat.parse(standardFoodDataCsv[csvLineIndex][2]).isAfter(lastProcessedStandardFoodDataChangeDate)) {
                   foodRelevant = true;
                   foodData = standardFoodDataCsv[csvLineIndex];
                   foodUnitsData.clear();
@@ -656,13 +643,13 @@ class FoodRepository {
     }
 
     if (currentFoodId != -1 && foodRelevant) {
-      await _setStandardFood(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
+      await _setStandardFoodFromCsvData(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
     }
 
     return lastStandardFoodDataChangeDate!;
   }
 
-  Future<void> _setStandardFood({required List<String> foodDataCsv, required List<List<String>> foodUnitsCsv, required String languageCode}) async {
+  Future<void> _setStandardFoodFromCsvData({required List<String> foodDataCsv, required List<List<String>> foodUnitsCsv, required String languageCode}) async {
     List<OrderedDefaultFoodUnit> foodUnitsWithOrder = [];
 
     int order = 1;
