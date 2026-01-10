@@ -9,21 +9,15 @@ class WeightRow extends StatefulWidget {
   const WeightRow({
     super.key,
     required WeightRowViewModel weightRowViewModel,
-    required DateTime date,
-    required Future<void> Function({required DateTime date, required double weight}) onWeightEdit,
     required bool deleteEnabled,
     required Future<void> Function({required DateTime date}) onDeletePressed,
     required Color deleteIconColor,
   }) : _weightRowViewModel = weightRowViewModel,
-       _date = date,
-       _onWeightEdit = onWeightEdit,
        _deleteEnabled = deleteEnabled,
        _onDeletePressed = onDeletePressed,
        _deleteIconColor = deleteIconColor;
 
   final WeightRowViewModel _weightRowViewModel;
-  final DateTime _date;
-  final Future<void> Function({required DateTime date, required double weight}) _onWeightEdit;
   final bool _deleteEnabled;
   final Future<void> Function({required DateTime date}) _onDeletePressed;
   final Color _deleteIconColor;
@@ -33,26 +27,37 @@ class WeightRow extends StatefulWidget {
 }
 
 class _WeightRowState extends State<WeightRow> {
-  _WeightRowState() {
-    widget._weightRowViewModel.weightChanged = _weightChanged;
-  }
+  late WeightRowViewModel _weightRowViewModel;
+  late bool _deleteEnabled;
+  late Future<void> Function({required DateTime date}) _onDeletePressed;
+  late Color _deleteIconColor;
 
   final TextEditingController _weightController = TextEditingController();
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _weightRowViewModel = widget._weightRowViewModel;
+    _deleteEnabled = widget._deleteEnabled;
+    _onDeletePressed = widget._onDeletePressed;
+    _deleteIconColor = widget._deleteIconColor;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: widget._weightRowViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
 
     return Column(
       children: [
         Row(
           children: [
-            Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._date), style: textTheme.titleSmall)),
+            Expanded(flex: 3, child: Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_weightRowViewModel.date), style: textTheme.titleSmall)),
             Expanded(
               flex: 2,
               child: ValueListenableBuilder(
-                valueListenable: widget._weightRowViewModel.weight,
+                valueListenable: _weightRowViewModel.weight,
                 builder: (_, _, _) {
                   return OpenEatsJournalTextField(
                     controller: _weightController,
@@ -77,7 +82,7 @@ class _WeightRowState extends State<WeightRow> {
                     },
                     onChanged: (value) {
                       num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                      widget._weightRowViewModel.weight.value = doubleValue as double?;
+                      _weightRowViewModel.weight.value = doubleValue as double?;
 
                       if (doubleValue != null) {
                         _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -89,12 +94,12 @@ class _WeightRowState extends State<WeightRow> {
             ),
             Expanded(
               child: IconButton(
-                icon: Icon(Icons.delete, color: widget._deleteIconColor),
+                icon: Icon(Icons.delete, color: _deleteIconColor),
                 onPressed: () async {
-                  if (widget._deleteEnabled) {
-                    await widget._onDeletePressed(date: widget._date);
+                  if (_deleteEnabled) {
+                    await _onDeletePressed(date: _weightRowViewModel.date);
                   } else {
-                    await _showRecalulateKJouleConfirmDialog(context: context);
+                    await _showCantDeleteConfirmDialog(context: context);
                   }
                 },
                 tooltip: AppLocalizations.of(context)!.cant_delete_last_weight_journal_entry,
@@ -103,11 +108,11 @@ class _WeightRowState extends State<WeightRow> {
           ],
         ),
         ValueListenableBuilder(
-          valueListenable: widget._weightRowViewModel.weightValid,
+          valueListenable: _weightRowViewModel.weightValid,
           builder: (_, _, _) {
-            if (!widget._weightRowViewModel.weightValid.value) {
+            if (!_weightRowViewModel.weightValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, widget._weightRowViewModel.lastValidWeight),
+                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeight),
                 style: textTheme.labelSmall!.copyWith(color: Colors.red),
               );
             } else {
@@ -119,11 +124,7 @@ class _WeightRowState extends State<WeightRow> {
     );
   }
 
-  void _weightChanged() async {
-    await widget._onWeightEdit(date: widget._date, weight: widget._weightRowViewModel.lastValidWeight);
-  }
-
-  Future<void> _showRecalulateKJouleConfirmDialog({required BuildContext context}) async {
+  Future<void> _showCantDeleteConfirmDialog({required BuildContext context}) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -147,6 +148,9 @@ class _WeightRowState extends State<WeightRow> {
   @override
   void dispose() {
     widget._weightRowViewModel.dispose();
+    if (widget._weightRowViewModel != _weightRowViewModel) {
+      _weightRowViewModel.dispose();
+    }
     _weightController.dispose();
 
     super.dispose();

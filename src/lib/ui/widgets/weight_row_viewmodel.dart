@@ -2,22 +2,25 @@ import "package:flutter/foundation.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class WeightRowViewModel extends ChangeNotifier {
-  WeightRowViewModel({required double weight}) : _weight = ValueNotifier(weight), _lastValidWeight = weight {
+  WeightRowViewModel({required double weight, required DateTime date, required Function({required DateTime date, required double weight}) onWeightChange})
+    : _weight = ValueNotifier(weight),
+      _date = date,
+      _onWeightChange = onWeightChange,
+      _lastValidWeight = weight {
     _weight.addListener(_weightChangedInternal);
   }
 
   final ValueNotifier<double?> _weight;
+  final DateTime _date;
+  final Function({required DateTime date, required double weight}) _onWeightChange;
+
   double _lastValidWeight;
   final ValueNotifier<bool> _weightValid = ValueNotifier(true);
 
   final Debouncer _weightDebouncer = Debouncer();
-  VoidCallback? _weightChanged;
-
-  set weightChanged(VoidCallback value) {
-    _weightChanged = value;
-  }
 
   ValueNotifier<double?> get weight => _weight;
+  DateTime get date => _date;
   double get lastValidWeight => _lastValidWeight;
   ValueNotifier<bool> get weightValid => _weightValid;
 
@@ -28,9 +31,7 @@ class WeightRowViewModel extends ChangeNotifier {
       _weightDebouncer.run(
         callback: () async {
           _lastValidWeight = _weight.value!;
-          if (_weightChanged != null) {
-            _weightChanged!();
-          }
+          _onWeightChange(date: _date, weight: _lastValidWeight);
         },
       );
     } else {

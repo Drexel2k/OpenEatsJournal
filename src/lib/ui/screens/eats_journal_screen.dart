@@ -396,7 +396,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: AppGlobal.navigatorKey.currentContext!,
+                                                      context: context,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -467,7 +467,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: AppGlobal.navigatorKey.currentContext!,
+                                                      context: context,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -538,7 +538,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: AppGlobal.navigatorKey.currentContext!,
+                                                      context: context,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -609,7 +609,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                     await showDialog<void>(
                                                       useSafeArea: true,
                                                       barrierDismissible: false,
-                                                      context: AppGlobal.navigatorKey.currentContext!,
+                                                      context: context,
                                                       builder: (BuildContext contextBuilder) {
                                                         double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                         double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -678,7 +678,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                 await showDialog<void>(
                                                   useSafeArea: true,
                                                   barrierDismissible: false,
-                                                  context: AppGlobal.navigatorKey.currentContext!,
+                                                  context: context,
                                                   builder: (BuildContext contextBuilder) {
                                                     double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                                     double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
@@ -724,7 +724,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                         await showDialog<void>(
                                           useSafeArea: true,
                                           barrierDismissible: false,
-                                          context: AppGlobal.navigatorKey.currentContext!,
+                                          context: context,
                                           builder: (BuildContext contextBuilder) {
                                             double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
                                             double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;

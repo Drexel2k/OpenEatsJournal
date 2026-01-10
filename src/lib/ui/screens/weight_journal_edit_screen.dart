@@ -52,11 +52,14 @@ class _WeightJournalEditScreenState extends State<WeightJournalEditScreen> {
                     }
 
                     return WeightRow(
-                      weightRowViewModel: WeightRowViewModel(weight: _weightEditScreenViewModel.weightEntriesResult[listViewItemIndex].weight),
-                      date: _weightEditScreenViewModel.weightEntriesResult[listViewItemIndex].date,
-                      onWeightEdit: ({required DateTime date, required double weight}) async {
-                        await _weightEditScreenViewModel.setWeightJournalEntry(date: date, weight: weight);
-                      },
+                      weightRowViewModel: WeightRowViewModel(
+                        weight: _weightEditScreenViewModel.weightEntriesResult[listViewItemIndex].weight,
+                        date: _weightEditScreenViewModel.weightEntriesResult[listViewItemIndex].date,
+                        onWeightChange: ({required DateTime date, required double weight}) async {
+                          await _weightEditScreenViewModel.setWeightJournalEntry(date: date, weight: weight);
+                        },
+                      ),
+
                       deleteEnabled: _weightEditScreenViewModel.weightEntriesResult.length > 1,
                       onDeletePressed: ({required DateTime date}) async {
                         bool deleted = await _weightEditScreenViewModel.deleteWeightJournalEntry(date: date);
