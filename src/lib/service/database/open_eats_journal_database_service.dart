@@ -399,10 +399,10 @@ class OpenEatsJournalDatabaseService {
 
   Future<int> setEatsJournalEntry({required Map<String, Object?> eatsJournalEntryData, int? id}) async {
     Database db = await instance.db;
-
-    if (eatsJournalEntryData[OpenEatsJournalStrings.dbColumnFoodIdRef] == null) {
-      throw StateError("Food for eats journal entry must have an id.");
-    }
+    //quick entries don't have food id reference.
+    // if (eatsJournalEntryData[OpenEatsJournalStrings.dbColumnFoodIdRef] == null) {
+    //   throw StateError("Food for eats journal entry must have an id.");
+    // }
 
     if (id != null) {
       final List<Map<String, Object?>> dbResult = await db.query(
