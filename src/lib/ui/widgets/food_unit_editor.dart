@@ -18,8 +18,17 @@ class FoodUnitEditor extends StatefulWidget {
 }
 
 class _FoodUnitEditorState extends State<FoodUnitEditor> {
+  late FoodUnitEditorViewModel _foodUnitEditorViewModel;
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
+
+  //only called once even if the widget is recreated on opening the virtual keyboard e.g.
+  @override
+  void initState() {
+    _foodUnitEditorViewModel = widget._foodUnitEditorViewModel;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +212,10 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
   @override
   void dispose() {
     widget._foodUnitEditorViewModel.dispose();
+    if (widget._foodUnitEditorViewModel != _foodUnitEditorViewModel) {
+      _foodUnitEditorViewModel.dispose();
+    }
+
     _nameController.dispose();
     _amountController.dispose();
 

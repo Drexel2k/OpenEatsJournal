@@ -64,7 +64,6 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
       title: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
           ? AppLocalizations.of(context)!.add_quick_entry
           : AppLocalizations.of(context)!.edit_quick_entry,
-      addScroll: true,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

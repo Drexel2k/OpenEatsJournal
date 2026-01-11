@@ -51,7 +51,6 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
       title: _eatsJournalFoodAddScreenViewModel.foodEntryId == null
           ? AppLocalizations.of(context)!.add_eats_journal_entry
           : AppLocalizations.of(context)!.edit_eats_journal_entry,
-      addScroll: true,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

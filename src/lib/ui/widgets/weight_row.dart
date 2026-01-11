@@ -151,6 +151,7 @@ class _WeightRowState extends State<WeightRow> {
     if (widget._weightRowViewModel != _weightRowViewModel) {
       _weightRowViewModel.dispose();
     }
+    
     _weightController.dispose();
 
     super.dispose();

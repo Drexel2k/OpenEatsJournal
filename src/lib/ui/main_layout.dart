@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openeatsjournal/app_global.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
 
@@ -8,21 +9,17 @@ class MainLayout extends StatelessWidget {
     required String route,
     required Widget body,
     required String title,
-    required bool addScroll,
     Widget? floatingActionButton,
     VoidCallback? mainNavigationCallback,
   }) : _route = route,
        _body = body,
        _title = title,
-       _addScroll = addScroll,
        _floatingActionButton = floatingActionButton,
        _mainNavigationCallback = mainNavigationCallback;
 
   final Widget _body;
   final String _title;
   final String _route;
-  //add scrollable area for small screens or virtual keyboard present e.g., if the conten itself isn't scrollable
-  final bool _addScroll;
   final Widget? _floatingActionButton;
   final VoidCallback? _mainNavigationCallback;
 
@@ -40,7 +37,10 @@ class MainLayout extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
-          child: _addScroll ? SingleChildScrollView(child: _body) : _body,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: AppGlobal.safeHeigtWithAppbar),
+            child: _body,
+          ),
         ),
       ),
       bottomNavigationBar: NavigationBar(

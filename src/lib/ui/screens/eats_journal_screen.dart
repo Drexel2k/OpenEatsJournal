@@ -62,7 +62,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteEatsJournal,
       title: AppLocalizations.of(context)!.eats_journal,
-      addScroll: true,
       mainNavigationCallback: () {
         _eatsJournalScreenViewModel.refreshNutritionData();
       },

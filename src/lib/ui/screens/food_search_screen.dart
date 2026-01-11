@@ -51,7 +51,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFood,
       title: AppLocalizations.of(context)!.food_management,
-      addScroll: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

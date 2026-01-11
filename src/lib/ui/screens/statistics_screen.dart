@@ -32,7 +32,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Widget build(BuildContext context) {
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteStatistics,
-      addScroll: true,
       body: Column(
         children: [
           ValueListenableBuilder(

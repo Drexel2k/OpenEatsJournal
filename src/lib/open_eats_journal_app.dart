@@ -36,6 +36,11 @@ class OpenEatsJournalApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    EdgeInsets padding = MediaQuery.of(context).padding;
+    AppGlobal.paddingTop = padding.top;
+    AppGlobal.safeHeight = MediaQuery.sizeOf(context).height - padding.top - padding.bottom;
+    AppGlobal.safeHeigtWithAppbar = AppGlobal.safeHeight - kToolbarHeight;
+
     return ListenableBuilder(
       listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
       builder: (contextBuilder, _) {
