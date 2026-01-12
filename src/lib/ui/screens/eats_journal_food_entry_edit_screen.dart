@@ -48,7 +48,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
-      title: _eatsJournalFoodAddScreenViewModel.foodEntryId == null
+      title: _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
           ? AppLocalizations.of(context)!.add_eats_journal_entry
           : AppLocalizations.of(context)!.edit_eats_journal_entry,
       body: Column(
@@ -58,14 +58,18 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.currentJournalDate,
+                  valueListenable: _eatsJournalFoodAddScreenViewModel.currentEntryDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        await _selectDate(initialDate: _eatsJournalFoodAddScreenViewModel.currentJournalDate.value, context: context);
+                        //for creating entries take value from setting, for editing entries take value from entry
+                        DateTime initialDate = _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
+                            ? _eatsJournalFoodAddScreenViewModel.currentEntryDate.value
+                            : _eatsJournalFoodAddScreenViewModel.foodEntry.entryDate;
+                        await _selectDate(initialDate: initialDate, context: context);
                       },
                       child: Text(
-                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodAddScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodAddScreenViewModel.currentEntryDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -77,12 +81,17 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalFoodAddScreenViewModel.currentMeal,
                   builder: (_, _, _) {
+                    //for creating entries take value from setting, for editing entries take value from entry
+                    int initialSelection = _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
+                        ? _eatsJournalFoodAddScreenViewModel.currentMeal.value.value
+                        : _eatsJournalFoodAddScreenViewModel.foodEntry.meal.value;
+
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
                         _eatsJournalFoodAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
-                      initialSelection: _eatsJournalFoodAddScreenViewModel.currentMeal.value.value,
+                      initialSelection: initialSelection,
                     );
                   },
                 ),
@@ -231,9 +240,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                   builder: (_, _, _) {
                     return _eatsJournalFoodAddScreenViewModel.salt.value != null
                         ? Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.amount_salt("${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.salt.value!)}${AppLocalizations.of(context)!.gram_abbreviated}"),
+                            AppLocalizations.of(context)!.amount_salt(
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.salt.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                            ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_salt(AppLocalizations.of(context)!.na));
                   },
@@ -392,9 +401,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
-                  child: _eatsJournalFoodAddScreenViewModel.foodEntryId == null
+                  child: _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
                       ? Text(AppLocalizations.of(context)!.add)
-                      : Text(AppLocalizations.of(context)!.update),
+                      : Text(AppLocalizations.of(context)!.update_abbreviated),
                 ),
               ),
             ],
@@ -479,9 +488,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               Expanded(
                 child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt != null
                     ? Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.amount_salt("${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt!)}${AppLocalizations.of(context)!.gram_abbreviated}"),
+                        AppLocalizations.of(context)!.amount_salt(
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                        ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_salt(AppLocalizations.of(context)!.na)),
               ),
@@ -615,7 +624,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
-      _eatsJournalFoodAddScreenViewModel.currentJournalDate.value = date;
+      _eatsJournalFoodAddScreenViewModel.currentEntryDate.value = date;
     }
   }
 

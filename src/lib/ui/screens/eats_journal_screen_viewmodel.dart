@@ -14,9 +14,6 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
       _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value) {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
-
-    _currentJournalDate.addListener(_currentJournalDateChanged);
-    _currentMeal.addListener(_currentMealChanged);
   }
 
   final JournalRepository _journalRepository;
@@ -42,15 +39,38 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
 
   ExternalTriggerChangedNotifier get currentWeightChanged => _currentWeightChanged;
 
-  void _currentJournalDateChanged() {
+  void updateCurrentJournalDateInSettingsRepository() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
-    _dayData = _journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value);
-    _currentWeight = _journalRepository.getWeightJournalEntryFor(_settingsRepository.currentJournalDate.value);
+  }
+
+  void updateCurrentMealInSettingsRepository() {
+    _settingsRepository.currentMeal.value = _currentMeal.value;
+  }
+
+  void refreshNutritionData() {
+    _dayData = _journalRepository.getDayMealSums(date: _settingsRepository.currentJournalDate.value);
     _eatsJournalDataChanged.notify();
   }
 
-  void _currentMealChanged() {
-    _settingsRepository.currentMeal.value = _currentMeal.value;
+  void refreshCurrentJournalDateAndMeal() {
+    if (_settingsRepository.currentJournalDate.value != _currentJournalDate.value) {
+      _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
+    }
+
+    if (_settingsRepository.currentMeal.value != _currentMeal.value) {
+      _currentMeal.value = _settingsRepository.currentMeal.value;
+    }
+  }
+
+  void refreshWeightTarget() {
+    //no need to refresh data _dayData, either the screen was opened with saved day targets then they remain the same,
+    //or the screen was opened without saved day targets then the target is requeried in EatsJournalScreen._getKJouleGaugeData e.g.
+    _eatsJournalDataChanged.notify();
+  }
+
+  void refreshCurrentWeight() {
+    _currentWeight = _journalRepository.getWeightJournalEntryFor(_settingsRepository.currentJournalDate.value);
+    _currentWeightChanged.notify();
   }
 
   void toggleFloatingActionButtons() {
@@ -71,23 +91,6 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
 
   int getCurrentJournalDayTargetFat() {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
-  }
-
-  void refreshWeightTarget() {
-    //no need to refresh data _dayData, either the screen was opened with saved day targets then they remain the same,
-    //or the screen was opened without saved day targets then the target is requeried in EatsJournalScreen._getKJouleGaugeData e.g.
-    //requery may be required when quick entries are implemented.
-    _eatsJournalDataChanged.notify();
-  }
-
-  void refreshNutritionData() {
-    _dayData = _journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value);
-    _eatsJournalDataChanged.notify();
-  }
-
-  void refreshCurrentWeight() {
-    _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value);
-    _currentWeightChanged.notify();
   }
 
   Future<double> getLastWeightJournalEntry() async {

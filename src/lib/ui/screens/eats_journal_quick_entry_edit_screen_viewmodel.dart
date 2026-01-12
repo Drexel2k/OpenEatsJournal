@@ -15,7 +15,6 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   }) : _journalRepository = journalRepository,
        _settingsRepository = settingsRepository,
        _quickEntry = quickEntry,
-       _quickEntryId = quickEntry.id,
        _name = ValueNotifier(quickEntry.name),
        _nameValid = ValueNotifier(false),
        _amount = ValueNotifier(quickEntry.amount),
@@ -32,10 +31,10 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
       throw StateError("Quick entry must not have a food.");
     }
 
-    _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
+    _currentEntryDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
 
-    _currentJournalDate.addListener(_currentJournalDateChanged);
+    _currentEntryDate.addListener(_currentJournalDateChanged);
     _currentMeal.addListener(_currentMealChanged);
     _name.addListener(_nameChanged);
     _kJoule.addListener(_kJouleChanged);
@@ -45,11 +44,10 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
 
-  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
+  final ValueNotifier<DateTime> _currentEntryDate = ValueNotifier(DateTime(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
 
   final EatsJournalEntry _quickEntry;
-  final int? _quickEntryId;
   final ValueNotifier<String> _name;
   final ValueNotifier<bool> _nameValid;
   final ValueNotifier<double?> _amount;
@@ -66,10 +64,11 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit = ValueNotifier(MeasurementUnit.gram);
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
-  ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
+  ValueNotifier<DateTime> get currentEntryDate => _currentEntryDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
-  int? get quickEntryId => _quickEntryId;
+  EatsJournalEntry get quickEntry => _quickEntry;
+
   ValueNotifier<String> get name => _name;
   ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<double?> get amount => _amount;
@@ -87,11 +86,17 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   ExternalTriggerChangedNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
 
   void _currentJournalDateChanged() {
-    _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
+    //set value back to global settings onyl when creating new entries not on editing existing ones
+    if (_quickEntry.id == null) {
+      _settingsRepository.currentJournalDate.value = _currentEntryDate.value;
+    }
   }
 
   void _currentMealChanged() {
-    _settingsRepository.currentMeal.value = _currentMeal.value;
+    //set value back to global settings onyl when creating new entries not on editing existing ones
+    if (_quickEntry.id == null) {
+      _settingsRepository.currentMeal.value = _currentMeal.value;
+    }
   }
 
   void _nameChanged() {
@@ -122,10 +127,15 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
     }
 
     if (quickEntryValid) {
-      _quickEntry.entryDate = _settingsRepository.currentJournalDate.value;
+      await _journalRepository.saveOnceDayNutritionTarget(
+        entryDate: _currentEntryDate.value,
+        dayTargetKJoule: _settingsRepository.getTargetKJouleForDay(day: _currentEntryDate.value),
+      );
+
+      _quickEntry.entryDate = _currentEntryDate.value;
+      _quickEntry.meal = _currentMeal.value;
       _quickEntry.name = _name.value;
       _quickEntry.kJoule = _kJoule.value!;
-      _quickEntry.meal = _settingsRepository.currentMeal.value;
       _quickEntry.amount = _amount.value;
       _quickEntry.amountMeasurementUnit = _amount.value != null ? _amountMeasurementUnit.value : null;
       _quickEntry.carbohydrates = _carbohydrates.value;
@@ -134,11 +144,6 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
       _quickEntry.saturatedFat = _saturatedFat.value;
       _quickEntry.protein = _protein.value;
       _quickEntry.salt = _salt.value;
-
-      await _journalRepository.saveOnceDayNutritionTarget(
-        entryDate: _settingsRepository.currentJournalDate.value,
-        dayTargetKJoule: _settingsRepository.getCurrentJournalDayTargetKJoule(),
-      );
 
       await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _quickEntry);
     }
@@ -152,7 +157,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _currentJournalDate.dispose();
+    _currentEntryDate.dispose();
     _currentMeal.dispose();
     _name.dispose();
     _nameValid.dispose();

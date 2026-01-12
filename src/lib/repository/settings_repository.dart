@@ -278,8 +278,12 @@ class SettingsRepository extends ChangeNotifier {
   }
 
   int getCurrentJournalDayTargetKJoule() {
+    return getTargetKJouleForDay(day: currentJournalDate.value);
+  }
+
+  int getTargetKJouleForDay({required DateTime day}) {
     int dayTargetKJoule = 0;
-    switch (currentJournalDate.value.weekday) {
+    switch (day.weekday) {
       case 1:
         dayTargetKJoule = _kJouleMonday;
       case 2:

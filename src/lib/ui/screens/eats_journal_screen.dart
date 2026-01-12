@@ -75,7 +75,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        await _selectDate(initialDate: _eatsJournalScreenViewModel.currentJournalDate.value, context: context);
+                        DateTime? date = await _selectDate(initialDate: _eatsJournalScreenViewModel.currentJournalDate.value, context: context);
+                        if (date != null) {
+                          _changeDate(date: date);
+                        }
                       },
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalScreenViewModel.currentJournalDate.value),
@@ -92,7 +95,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                   builder: (_, _, _) {
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
-                        _eatsJournalScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                        _changeMeal(meal: Meal.getByValue(mealValue!));
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
                       initialSelection: _eatsJournalScreenViewModel.currentMeal.value.value,
@@ -201,7 +204,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                   children: _getLast8DaysIncludingToday().map((DateTime date) {
                                     return RoundTransparentChoiceChip(
                                       selected: _eatsJournalScreenViewModel.currentJournalDate.value == date,
-                                      onSelected: (bool selected) => {_eatsJournalScreenViewModel.currentJournalDate.value = date},
+                                      onSelected: (bool selected) {
+                                        _changeDate(date: date);
+                                      },
                                       label: Text(DateFormat("EEEE").format(date).substring(0, 1)),
                                     );
                                   }).toList(),
@@ -431,15 +436,16 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
+                                                _changeMeal(meal: Meal.breakfast);
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () async {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.breakfast;
+                                                _changeMeal(meal: Meal.breakfast);
                                                 await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
@@ -502,15 +508,16 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
+                                                _changeMeal(meal: Meal.lunch);
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () async {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.lunch;
+                                                _changeMeal(meal: Meal.lunch);
                                                 await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
@@ -573,15 +580,16 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
+                                                _changeMeal(meal: Meal.dinner);
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () async {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.dinner;
+                                                _changeMeal(meal: Meal.dinner);
                                                 await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
@@ -644,15 +652,16 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           children: [
                                             IconButton.outlined(
                                               onPressed: () {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
+                                                _changeMeal(meal: Meal.snacks);
                                               },
                                               icon: Icon(Icons.check),
                                             ),
 
                                             IconButton.outlined(
                                               onPressed: () async {
-                                                _eatsJournalScreenViewModel.currentMeal.value = Meal.snacks;
+                                                _changeMeal(meal: Meal.snacks);
                                                 await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
                                               },
                                               icon: Icon(Icons.add),
@@ -828,6 +837,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
                             await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
+                            _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                             _eatsJournalScreenViewModel.refreshNutritionData();
                           },
                           label: Text(AppLocalizations.of(context)!.eats_journal_entry),
@@ -918,7 +928,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 meal: _eatsJournalScreenViewModel.currentMeal.value,
                               ),
                             );
-
+                            _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                             _eatsJournalScreenViewModel.refreshNutritionData();
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
@@ -945,12 +955,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     );
   }
 
-  Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
-    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
-
-    if (date != null) {
-      _eatsJournalScreenViewModel.currentJournalDate.value = date;
-    }
+  Future<DateTime?> _selectDate({required DateTime initialDate, required BuildContext context}) async {
+    return await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
   }
 
   List<DateTime> _getLast8DaysIncludingToday() {
@@ -1052,6 +1058,18 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     }
 
     return percent;
+  }
+
+  void _changeMeal({required Meal meal}) {
+    _eatsJournalScreenViewModel.currentMeal.value = meal;
+    _eatsJournalScreenViewModel.updateCurrentMealInSettingsRepository();
+  }
+
+  void _changeDate({required DateTime date}) {
+    _eatsJournalScreenViewModel.currentJournalDate.value = date;
+    _eatsJournalScreenViewModel.updateCurrentJournalDateInSettingsRepository();
+    _eatsJournalScreenViewModel.refreshCurrentWeight();
+    _eatsJournalScreenViewModel.refreshNutritionData();
   }
 
   @override

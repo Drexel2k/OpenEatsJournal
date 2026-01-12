@@ -64,7 +64,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEdit,
-      title: AppLocalizations.of(context)!.edit_food,
+      title: _foodEditScreenViewModel.foodId == null
+          ? AppLocalizations.of(context)!.create_food
+          : AppLocalizations.of(context)!.edit_food,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -61,7 +61,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-      title: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
+      title: _eatsJournalQuickEntryAddScreenViewModel.quickEntry.id == null
           ? AppLocalizations.of(context)!.add_quick_entry
           : AppLocalizations.of(context)!.edit_quick_entry,
       body: Column(
@@ -71,14 +71,19 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate,
+                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentEntryDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
-                        await _selectDate(initialDate: _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value, context: context);
+                        //for creating entries take value from setting, for editing entries take value from entry
+                        DateTime initialDate = _eatsJournalQuickEntryAddScreenViewModel.quickEntry.id == null
+                            ? _eatsJournalQuickEntryAddScreenViewModel.currentEntryDate.value
+                            : _eatsJournalQuickEntryAddScreenViewModel.quickEntry.entryDate;
+
+                        await _selectDate(initialDate: initialDate, context: context);
                       },
                       child: Text(
-                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalQuickEntryAddScreenViewModel.currentEntryDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -90,12 +95,17 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                 child: ValueListenableBuilder(
                   valueListenable: _eatsJournalQuickEntryAddScreenViewModel.currentMeal,
                   builder: (_, _, _) {
+                    //for creating entries take value from setting, for editing entries take value from entry
+                    int initialSelection = _eatsJournalQuickEntryAddScreenViewModel.quickEntry.id == null
+                        ? _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value.value
+                        : _eatsJournalQuickEntryAddScreenViewModel.quickEntry.meal.value;
+
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
                         _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
-                      initialSelection: _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value.value,
+                      initialSelection: initialSelection,
                     );
                   },
                 ),
@@ -530,7 +540,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               height: 48,
               child: OutlinedButton(
                 onPressed: () async {
-                  int? originalQuickEntryId = _eatsJournalQuickEntryAddScreenViewModel.quickEntryId;
+                  int? originalQuickEntryId = _eatsJournalQuickEntryAddScreenViewModel.quickEntry.id;
 
                   if (!(await _eatsJournalQuickEntryAddScreenViewModel.setQuickEntry())) {
                     SnackBar snackBar = SnackBar(
@@ -561,7 +571,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                     Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                   }
                 },
-                child: _eatsJournalQuickEntryAddScreenViewModel.quickEntryId == null
+                child: _eatsJournalQuickEntryAddScreenViewModel.quickEntry.id == null
                     ? Text(AppLocalizations.of(context)!.add)
                     : Text(AppLocalizations.of(context)!.update),
               ),
@@ -576,7 +586,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
-      _eatsJournalQuickEntryAddScreenViewModel.currentJournalDate.value = date;
+      _eatsJournalQuickEntryAddScreenViewModel.currentEntryDate.value = date;
     }
   }
 
