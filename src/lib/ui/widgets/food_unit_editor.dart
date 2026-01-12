@@ -34,9 +34,9 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    _nameController.text = widget._foodUnitEditorViewModel.name.value;
-    _amountController.text = widget._foodUnitEditorViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(widget._foodUnitEditorViewModel.amount.value)
+    _nameController.text = _foodUnitEditorViewModel.name.value;
+    _amountController.text = _foodUnitEditorViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)
         : OpenEatsJournalStrings.emptyString;
 
     return Column(
@@ -47,9 +47,9 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
             Padding(
               padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
               child: ValueListenableBuilder(
-                valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
+                valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
-                  if (widget._foodUnitEditorViewModel.foodUnitsEditMode.value) {
+                  if (_foodUnitEditorViewModel.foodUnitsEditMode.value) {
                     return Icon(Icons.mode_edit);
                   } else {
                     return Icon(Icons.drag_handle);
@@ -62,13 +62,13 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                 child: ValueListenableBuilder(
-                  valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
+                  valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _nameController,
-                      enabled: widget._foodUnitEditorViewModel.foodUnitsEditMode.value,
+                      enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
                       onChanged: (value) {
-                        widget._foodUnitEditorViewModel.name.value = value;
+                        _foodUnitEditorViewModel.name.value = value;
                       },
                     );
                   },
@@ -78,7 +78,7 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
             SizedBox(
               width: 60,
               child: ValueListenableBuilder(
-                valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
+                valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
                   return OpenEatsJournalTextField(
                     controller: _amountController,
@@ -98,13 +98,13 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                         }
                       }),
                     ],
-                    enabled: widget._foodUnitEditorViewModel.foodUnitsEditMode.value,
+                    enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
                     onTap: () {
                       _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
                     },
                     onChanged: (value) {
                       double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                      widget._foodUnitEditorViewModel.amount.value = doubleValue;
+                      _foodUnitEditorViewModel.amount.value = doubleValue;
                       if (doubleValue != null) {
                         _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                       }
@@ -116,21 +116,21 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
             SizedBox(
               width: 50,
               child: ListenableBuilder(
-                listenable: widget._foodUnitEditorViewModel.measurementUnitSwitchButtonChanged,
+                listenable: _foodUnitEditorViewModel.measurementUnitSwitchButtonChanged,
                 builder: (_, _) {
                   return RoundOutlinedButton(
-                    onPressed: widget._foodUnitEditorViewModel.foodUnitsEditMode.value
-                        ? (widget._foodUnitEditorViewModel.measurementUnitSwitchButtonEnabled.value
+                    onPressed: _foodUnitEditorViewModel.foodUnitsEditMode.value
+                        ? (_foodUnitEditorViewModel.measurementUnitSwitchButtonEnabled.value
                               ? () {
-                                  widget._foodUnitEditorViewModel.currentMeasurementUnit.value =
-                                      widget._foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                                  _foodUnitEditorViewModel.currentMeasurementUnit.value =
+                                      _foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                                       ? MeasurementUnit.milliliter
                                       : MeasurementUnit.gram;
                                 }
                               : null)
                         : null,
                     child: Text(
-                      widget._foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                      _foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                           ? AppLocalizations.of(context)!.gram_abbreviated
                           : AppLocalizations.of(context)!.milliliter_abbreviated,
                     ),
@@ -141,13 +141,23 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
             SizedBox(
               width: 52,
               child: ListenableBuilder(
-                listenable: widget._foodUnitEditorViewModel.defaultButtonChanged,
+                listenable: _foodUnitEditorViewModel.defaultButtonChanged,
                 builder: (_, _) {
                   return Switch(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: widget._foodUnitEditorViewModel.defaultFoodUnit.value,
-                    onChanged: widget._foodUnitEditorViewModel.foodUnitsEditMode.value
-                        ? (value) => widget._foodUnitEditorViewModel.defaultFoodUnit.value = value
+                    value: _foodUnitEditorViewModel.defaultFoodUnit.value,
+                    onChanged: _foodUnitEditorViewModel.foodUnitsEditMode.value
+                        ? (value) {
+                            if (value) {
+                              //Calback must only triggered from ui change, because it then changes the default flag of other food units which causes a stack
+                              //overflow if any change from the model trigger the callback, too. Order is important, first remove default flag from the existing
+                              //default food unit, then set default flag on the current food unit. Otherwise the callback may remove the default on the current
+                              //food unit immediately again.
+                              _foodUnitEditorViewModel.triggerDefaultChangedCallback();
+
+                              _foodUnitEditorViewModel.defaultFoodUnit.value = value;
+                            }
+                          }
                         : null,
                   );
                 },
@@ -156,12 +166,12 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
             SizedBox(
               width: 50,
               child: ValueListenableBuilder(
-                valueListenable: widget._foodUnitEditorViewModel.foodUnitsEditMode,
+                valueListenable: _foodUnitEditorViewModel.foodUnitsEditMode,
                 builder: (_, _, _) {
                   return RoundOutlinedButton(
-                    onPressed: widget._foodUnitEditorViewModel.foodUnitsEditMode.value
+                    onPressed: _foodUnitEditorViewModel.foodUnitsEditMode.value
                         ? () {
-                            widget._foodUnitEditorViewModel.removeFoodUnit();
+                            _foodUnitEditorViewModel.removeFoodUnit();
                           }
                         : null,
                     child: Icon(Icons.delete),
@@ -172,15 +182,15 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
           ],
         ),
         ValueListenableBuilder(
-          valueListenable: widget._foodUnitEditorViewModel.nameValid,
+          valueListenable: _foodUnitEditorViewModel.nameValid,
           builder: (_, _, _) {
-            if (!widget._foodUnitEditorViewModel.nameValid.value) {
+            if (!_foodUnitEditorViewModel.nameValid.value) {
               return Text(
                 AppLocalizations.of(context)!.input_invalid_value(
                   AppLocalizations.of(context)!.name_capital,
-                  widget._foodUnitEditorViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
+                  _foodUnitEditorViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
                       ? AppLocalizations.of(context)!.empty
-                      : widget._foodUnitEditorViewModel.name.value,
+                      : _foodUnitEditorViewModel.name.value,
                 ),
                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
               );
@@ -190,14 +200,13 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
           },
         ),
         ValueListenableBuilder(
-          valueListenable: widget._foodUnitEditorViewModel.amountValid,
+          valueListenable: _foodUnitEditorViewModel.amountValid,
           builder: (_, _, _) {
-            if (!widget._foodUnitEditorViewModel.amountValid.value) {
+            if (!_foodUnitEditorViewModel.amountValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid_value(
-                  AppLocalizations.of(context)!.kjoule,
-                  ConvertValidate.numberFomatterInt.format(widget._foodUnitEditorViewModel.amount.value),
-                ),
+                AppLocalizations.of(
+                  context,
+                )!.input_invalid(AppLocalizations.of(context)!.amount),
                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
               );
             } else {

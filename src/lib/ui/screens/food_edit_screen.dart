@@ -1,9 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:openeatsjournal/domain/food_unit.dart';
+import 'package:openeatsjournal/domain/food_unit_editor_data.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/object_with_order.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/app_global.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
@@ -602,9 +602,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
               ],
             ),
             ValueListenableBuilder(
-              valueListenable: _foodEditScreenViewModel.foodUnitsCopyValid,
+              valueListenable: _foodEditScreenViewModel.foodUnitEditorsDataValid,
               builder: (_, _, _) {
-                if (!_foodEditScreenViewModel.foodUnitsCopyValid.value) {
+                if (!_foodEditScreenViewModel.foodUnitEditorsDataValid.value) {
                   return Text(AppLocalizations.of(context)!.food_units_invalid, style: textTheme.labelMedium!.copyWith(color: Colors.red));
                 } else {
                   return SizedBox();
@@ -643,13 +643,15 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
             ListenableBuilder(
               listenable: _foodEditScreenViewModel.reorderableStateChanged,
               builder: (_, _) {
+                List<Widget> children = _getFoodUnitEditors(textTheme: textTheme, context: context);
+
                 return ReorderableListView(
                   buildDefaultDragHandles: !_foodEditScreenViewModel.foodUnitsEditMode.value,
                   onReorder: (oldIndex, newIndex) {
                     _foodEditScreenViewModel.reorder(oldIndex, newIndex);
                   },
                   shrinkWrap: true,
-                  children: _getFoodUnitEditors(textTheme: textTheme, context: context),
+                  children: children,
                 );
               },
             ),
@@ -703,18 +705,26 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   List<Widget> _getFoodUnitEditors({required TextTheme textTheme, required BuildContext context}) {
     List<Widget> foodUnitEditors = [];
 
-    int index = 0;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodEditScreenViewModel.foodFoodUnitsWithOrderCopy) {
-      foodUnitEditors.add(
-        FoodUnitEditor(
-          key: Key("$index"),
-          foodUnitEditorViewModel: _foodEditScreenViewModel.foodUnitEditorViewModels.firstWhere(
-            (FoodUnitEditorViewModel foodUnitEditorViewModel) => foodUnitEditorViewModel.foodUnit == foodUnitWithOrder.object,
-          ),
-        ),
-      );
+    for (FoodUnitEditorData foodUnitEditorData in _foodEditScreenViewModel.foodUnitEditorsData) {
+      FoodUnitEditorViewModel? foodUnitEditorViewModel = _foodEditScreenViewModel.foodUnitEditorViewModels.firstWhereOrNull((foodUnitEditorViewModelInternal) {
+        return foodUnitEditorViewModelInternal.foodUnitEditorData == foodUnitEditorData;
+      });
 
-      index++;
+      if (foodUnitEditorViewModel == null) {
+        foodUnitEditorViewModel = FoodUnitEditorViewModel(
+          foodUnitEditorData: foodUnitEditorData,
+          changeMeasurementUnit: _foodEditScreenViewModel.checkFoodUnitsCopyValid,
+          changeDefaultCallback: _foodEditScreenViewModel.changeDefaultFoodUnit,
+          removeFoodUnitCallback: _foodEditScreenViewModel.removeFoodUnit,
+          foodUnitsEditMode: _foodEditScreenViewModel.foodUnitsEditMode,
+          foodNutritionPerGram: _foodEditScreenViewModel.nutritionPerGramAmount,
+          foodNutritionPerMilliliter: _foodEditScreenViewModel.nutritionPerMilliliterAmount,
+        );
+
+        _foodEditScreenViewModel.foodUnitEditorViewModels.add(foodUnitEditorViewModel);
+      }
+
+      foodUnitEditors.add(FoodUnitEditor(key: ObjectKey(foodUnitEditorData), foodUnitEditorViewModel: foodUnitEditorViewModel));
     }
 
     return foodUnitEditors;

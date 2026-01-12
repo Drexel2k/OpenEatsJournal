@@ -2,6 +2,7 @@ import "package:collection/collection.dart";
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/food_unit_editor_data.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -26,28 +27,19 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _saturatedFat = ValueNotifier(food.saturatedFat),
       _protein = ValueNotifier(food.protein),
       _salt = ValueNotifier(food.salt),
-      _foodUnitsWithOrderCopy = food.foodUnitsWithOrder
-          .map((ObjectWithOrder<FoodUnit> foodUnitWithOrder) => ObjectWithOrder(object: foodUnitWithOrder.object, order: foodUnitWithOrder.order))
-          .toList(),
-      _foodId = food.id {
-    _foodUnitsWithOrderCopy.sort((ObjectWithOrder<FoodUnit> unit1, ObjectWithOrder<FoodUnit> unit2) => unit1.order - unit2.order);
-    _foodUnitEditorViewModels.addAll(
-      food.foodUnitsWithOrder
+      _foodUnitEditorsData = food.foodUnitsWithOrder
           .map(
-            (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => FoodUnitEditorViewModel(
+            (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => FoodUnitEditorData(
+              name: foodUnitWithOrder.object.name,
+              amountMeasurementUnit: foodUnitWithOrder.object.amountMeasurementUnit,
+              isDefault: foodUnitWithOrder.object == food.defaultFoodUnit,
               foodUnit: foodUnitWithOrder.object,
-              defaultFoodUnit: food.defaultFoodUnit == foodUnitWithOrder.object,
-              changeMeasurementUnit: checkFoodUnitsCopyValid,
-              changeDefault: changeDefaultFoodUnit,
-              removeFoodUnit: removeFoodUnit,
-              foodUnitsEditMode: _foodUnitsEditMode,
-              foodNutritionPerGram: _nutritionPerGramAmount,
-              foodNutritionPerMilliliter: _nutritionPerMilliliterAmount,
+              amount: foodUnitWithOrder.object.amount,
+              originalFoodSourceFoodUnitId: foodUnitWithOrder.object.originalFoodSourceFoodUnitId,
             ),
           )
           .toList(),
-    );
-
+      _foodId = food.id {
     _name.addListener(_nameChanged);
     _nutritionPerGramAmount.addListener(_amountsChanged);
     _nutritionPerMilliliterAmount.addListener(_amountsChanged);
@@ -73,14 +65,16 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _salt;
 
   final ExternalTriggerChangedNotifier _reorderableStateChanged = ExternalTriggerChangedNotifier();
-  final ValueNotifier<bool> _foodUnitsCopyValid = ValueNotifier(true);
+  final ValueNotifier<bool> _foodUnitEditorsDataValid = ValueNotifier(true);
   final ValueNotifier<bool> _foodUnitsEditMode = ValueNotifier(true);
   final int? _foodId;
 
-  //Work on a copy to remain invalid states during editing by the user, e.g. when gram amount is set to null while milliliter amount is not null all food units
-  //with unit grams are removed from the food object. That might be annoying for the user as he maybe sets the gram amount to null to immediately enter a new
-  //value.
-  final List<ObjectWithOrder<FoodUnit>> _foodUnitsWithOrderCopy;
+  //Work on a temporary data to remain invalid states during editing by the user, e.g. when gram amount is set to null while milliliter amount is not null all
+  //food units with unit grams are removed from the food object. That might be annoying for the user as he maybe sets the gram amount to null to immediately
+  //enter a new value. A change in one food unit viewmodel may have effect on other food unit view models, e.g. changind the default food unit. Therefore we
+  //need the viewmodels to update the defautl food unit and reflect the change in the ui. And we need the data of the viewmodels, because the food unit editor
+  //widgets and viewmodels gets disposed when changing from edit to sort view.
+  final List<FoodUnitEditorData> _foodUnitEditorsData;
   final List<FoodUnitEditorViewModel> _foodUnitEditorViewModels = [];
 
   ValueNotifier<String> get name => _name;
@@ -99,29 +93,28 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get salt => _salt;
 
   ExternalTriggerChangedNotifier get reorderableStateChanged => _reorderableStateChanged;
-  ValueNotifier<bool> get foodUnitsCopyValid => _foodUnitsCopyValid;
+  ValueNotifier<bool> get foodUnitEditorsDataValid => _foodUnitEditorsDataValid;
   ValueNotifier<bool> get foodUnitsEditMode => _foodUnitsEditMode;
 
-  List<ObjectWithOrder<FoodUnit>> get foodFoodUnitsWithOrderCopy => _foodUnitsWithOrderCopy;
+  List<FoodUnitEditorData> get foodUnitEditorsData => _foodUnitEditorsData;
   List<FoodUnitEditorViewModel> get foodUnitEditorViewModels => _foodUnitEditorViewModels;
   int? get foodId => _foodId;
 
   void addFoddUnit({required MeasurementUnit measurementUnit}) {
-    FoodUnit foodUnit = FoodUnit(name: "", amount: 100, amountMeasurementUnit: measurementUnit);
-    int order = 1;
-    if (_foodUnitsWithOrderCopy.isNotEmpty) {
-      order = _foodUnitsWithOrderCopy.last.order + 1;
-    }
+    FoodUnitEditorData foodUnitEditorData = FoodUnitEditorData(
+      name: OpenEatsJournalStrings.emptyString,
+      amountMeasurementUnit: measurementUnit,
+      isDefault: _foodUnitEditorsData.isEmpty,
+    );
 
-    ObjectWithOrder<FoodUnit> foodUnitWithOrder = ObjectWithOrder(object: foodUnit, order: order);
-    _foodUnitsWithOrderCopy.add(foodUnitWithOrder);
+    _foodUnitEditorsData.add(foodUnitEditorData);
+
     _foodUnitEditorViewModels.add(
       FoodUnitEditorViewModel(
-        foodUnit: foodUnit,
-        defaultFoodUnit: _foodUnitEditorViewModels.isEmpty,
+        foodUnitEditorData: foodUnitEditorData,
         changeMeasurementUnit: checkFoodUnitsCopyValid,
-        changeDefault: changeDefaultFoodUnit,
-        removeFoodUnit: removeFoodUnit,
+        changeDefaultCallback: changeDefaultFoodUnit,
+        removeFoodUnitCallback: removeFoodUnit,
         foodUnitsEditMode: _foodUnitsEditMode,
         foodNutritionPerGram: _nutritionPerGramAmount,
         foodNutritionPerMilliliter: _nutritionPerMilliliterAmount,
@@ -131,26 +124,21 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     _reorderableStateChanged.notify();
   }
 
-  void removeFoodUnit(FoodUnit foodUnit) {
-    _foodUnitsWithOrderCopy.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrder) {
-      return foodUnitWithOrder.object == foodUnit;
+  void removeFoodUnit(FoodUnitEditorData foodUnitEditorData) {
+    _foodUnitEditorsData.removeWhere((FoodUnitEditorData foodUnitEditorDataInternal) {
+      return foodUnitEditorDataInternal == foodUnitEditorData;
     });
 
     FoodUnitEditorViewModel foodUnitEditorViewModel = _foodUnitEditorViewModels.firstWhere(
-      (FoodUnitEditorViewModel foodUnitEditorViewModelInteral) => foodUnitEditorViewModelInteral.foodUnit == foodUnit,
+      (FoodUnitEditorViewModel foodUnitEditorViewModelInteral) => foodUnitEditorViewModelInteral.foodUnitEditorData == foodUnitEditorData,
     );
+
     _foodUnitEditorViewModels.remove(foodUnitEditorViewModel);
 
-    if (foodUnitEditorViewModel.defaultFoodUnit.value) {
+    if (foodUnitEditorData.isDefault) {
       if (_foodUnitEditorViewModels.isNotEmpty) {
         _foodUnitEditorViewModels.first.defaultFoodUnit.value = true;
       }
-    }
-
-    int order = 1;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodUnitsWithOrderCopy) {
-      foodUnitWithOrder.order = order;
-      order++;
     }
 
     checkFoodUnitsCopyValid();
@@ -176,36 +164,33 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   void checkFoodUnitsCopyValid() {
     bool foodUnitsValid = true;
-    ObjectWithOrder<FoodUnit>? foodUnitWithOrder = _foodUnitsWithOrderCopy.firstWhereOrNull(
-      (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object.amountMeasurementUnit == MeasurementUnit.gram,
-    );
-    if (_nutritionPerGramAmount.value == null && foodUnitWithOrder != null) {
-      foodUnitsValid = false;
+    if (_nutritionPerGramAmount.value == null) {
+      FoodUnitEditorData? foodUnitEditorData = _foodUnitEditorsData.firstWhereOrNull(
+        (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.amountMeasurementUnit == MeasurementUnit.gram,
+      );
+      if (foodUnitEditorData != null) {
+        foodUnitsValid = false;
+      }
     }
 
-    foodUnitWithOrder = null;
-    foodUnitWithOrder = _foodUnitsWithOrderCopy.firstWhereOrNull(
-      (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object.amountMeasurementUnit == MeasurementUnit.milliliter,
-    );
-    if (_nutritionPerMilliliterAmount.value == null && foodUnitWithOrder != null) {
-      foodUnitsValid = false;
+    if (_nutritionPerMilliliterAmount.value == null) {
+      FoodUnitEditorData? foodUnitEditorData = _foodUnitEditorsData.firstWhereOrNull(
+        (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.amountMeasurementUnit == MeasurementUnit.milliliter,
+      );
+      if (foodUnitEditorData != null) {
+        foodUnitsValid = false;
+      }
     }
 
-    _foodUnitsCopyValid.value = foodUnitsValid;
+    _foodUnitEditorsDataValid.value = foodUnitsValid;
   }
 
-  void changeDefaultFoodUnit(FoodUnit foodUnit) {
+  void changeDefaultFoodUnit(FoodUnitEditorData foodUnitEditorData) {
     FoodUnitEditorViewModel foodUnitEditorViewModel = _foodUnitEditorViewModels.firstWhere(
       (FoodUnitEditorViewModel foodUnitEditorViewModelInteral) => foodUnitEditorViewModelInteral.defaultFoodUnit.value,
     );
 
     foodUnitEditorViewModel.defaultFoodUnit.value = false;
-
-    foodUnitEditorViewModel = _foodUnitEditorViewModels.firstWhere(
-      (FoodUnitEditorViewModel foodUnitEditorViewModelInteral) => foodUnitEditorViewModelInteral.foodUnit == foodUnit,
-    );
-
-    foodUnitEditorViewModel.defaultFoodUnit.value = true;
   }
 
   void _kJouleChanged() {
@@ -221,14 +206,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       newIndex -= 1;
     }
 
-    final ObjectWithOrder<FoodUnit> foodUnitWithorder = _foodUnitsWithOrderCopy.removeAt(oldIndex);
-    _foodUnitsWithOrderCopy.insert(newIndex, foodUnitWithorder);
-
-    int order = 0;
-    for (ObjectWithOrder<FoodUnit> foodUnitWithorderInteral in _foodUnitsWithOrderCopy) {
-      foodUnitWithorderInteral.order = order;
-      order++;
-    }
+    final FoodUnitEditorData foodUnitEditorData = _foodUnitEditorsData.removeAt(oldIndex);
+    _foodUnitEditorsData.insert(newIndex, foodUnitEditorData);
 
     _reorderableStateChanged.notify();
   }
@@ -249,7 +228,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     }
 
     if (foodValid) {
-      if (_foodUnitsWithOrderCopy.isNotEmpty) {
+      if (_foodUnitEditorsData.isNotEmpty) {
         //check if one food unit has defaultFoodUnit set to true
         if (_foodUnitEditorViewModels
                 .where((FoodUnitEditorViewModel foodUnitEditorViewModel) => foodUnitEditorViewModel.defaultFoodUnit.value)
@@ -262,8 +241,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     }
 
     if (foodValid) {
-      for (FoodUnitEditorViewModel foodUnitEditorViewModel in _foodUnitEditorViewModels) {
-        if (!foodUnitEditorViewModel.isValid(
+      for (FoodUnitEditorData foodUnitEditorData in _foodUnitEditorsData) {
+        if (!foodUnitEditorData.isValid(
           foodNutritionPerGramAmount: _nutritionPerGramAmount.value,
           foodNutritionPerMilliliterAmount: _nutritionPerMilliliterAmount.value,
         )) {
@@ -286,42 +265,48 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _food.protein = _protein.value;
       _food.salt = salt.value;
 
-      for (FoodUnitEditorViewModel foodUnitEditorViewModel in _foodUnitEditorViewModels) {
-        ObjectWithOrder<FoodUnit>? foodUnitWithorder = _food.foodUnitsWithOrder.firstWhereOrNull(
-          (ObjectWithOrder<FoodUnit> foodUnitWithorderInternal) => foodUnitWithorderInternal.object == foodUnitEditorViewModel.foodUnit,
-        );
-
-        //update if exists already
-        foodUnitEditorViewModel.foodUnit.name = foodUnitEditorViewModel.name.value;
-        foodUnitEditorViewModel.foodUnit.amount = foodUnitEditorViewModel.amount.value!;
-        foodUnitEditorViewModel.foodUnit.amountMeasurementUnit = foodUnitEditorViewModel.currentMeasurementUnit.value;
-
-        //add to food's unit if not exists
-        if (foodUnitWithorder == null) {
-          _food.addFoodUnit(foodUnit: foodUnitEditorViewModel.foodUnit);
-        }
-      }
-
+      //remove deleted food units from food
       List<FoodUnit> foodUnitsToRemove = [];
       for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _food.foodUnitsWithOrder) {
-        FoodUnitEditorViewModel? foodUnitEditorViewModel = _foodUnitEditorViewModels.firstWhereOrNull(
-          (FoodUnitEditorViewModel foodUnitEditorViewModel) => foodUnitEditorViewModel.foodUnit == foodUnitWithOrder.object,
+        FoodUnitEditorData? foodUnitEditorData = _foodUnitEditorsData.firstWhereOrNull(
+          (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.foodUnit == foodUnitWithOrder.object,
         );
 
-        if (foodUnitEditorViewModel == null) {
+        if (foodUnitEditorData == null) {
           foodUnitsToRemove.add(foodUnitWithOrder.object);
+        }
+
+        for (FoodUnit foodUnit in foodUnitsToRemove) {
+          _food.removeFoodUnit(foodUnit: foodUnit);
         }
       }
 
-      for (FoodUnit foodUnit in foodUnitsToRemove) {
-        _food.removeFoodUnit(foodUnit: foodUnit);
-      }
+      //updating food units in food and removing deleted ones, editors work only on temporary datra and dont change the food.
+      int order = 1;
+      for (FoodUnitEditorData foodUnitEditorData in _foodUnitEditorsData) {
+        //get food unit if it already existed and update
+        if (foodUnitEditorData.foodUnit != null) {
+          //update if exists already, other properties are noit editable in ui
+          foodUnitEditorData.foodUnit!.name = foodUnitEditorData.name;
+          foodUnitEditorData.foodUnit!.amount = foodUnitEditorData.amount!;
+          foodUnitEditorData.foodUnit!.amountMeasurementUnit = foodUnitEditorData.amountMeasurementUnit;
+          _food.upadteFoodUnitOrder(foodUnit: foodUnitEditorData.foodUnit!, newOrder: order);
+        } else {
+          //add to food's unit if not exists, other properties are not editable in ui
+          FoodUnit foodUnit = FoodUnit(
+            name: foodUnitEditorData.name,
+            amount: foodUnitEditorData.amount!,
+            amountMeasurementUnit: foodUnitEditorData.amountMeasurementUnit,
+          );
 
-      if (_foodUnitsWithOrderCopy.isNotEmpty) {
-        FoodUnitEditorViewModel foodUnitEditorViewModel = _foodUnitEditorViewModels.firstWhere(
-          (FoodUnitEditorViewModel foodUnitEditorViewModelInternal) => foodUnitEditorViewModelInternal.defaultFoodUnit.value,
-        );
-        _food.defaultFoodUnit = foodUnitEditorViewModel.foodUnit;
+          _food.addFoodUnit(foodUnit: foodUnit, order: order);
+
+          if (foodUnitEditorData.isDefault) {
+            _food.defaultFoodUnit = foodUnit;
+          }
+        }
+
+        order++;
       }
 
       await _foodRepository.setFood(food: _food);
@@ -346,7 +331,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     _protein.dispose();
     _salt.dispose();
     _reorderableStateChanged.dispose();
-    _foodUnitsCopyValid.dispose();
+    _foodUnitEditorsDataValid.dispose();
     _foodUnitsEditMode.dispose();
 
     super.dispose();

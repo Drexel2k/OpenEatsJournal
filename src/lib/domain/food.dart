@@ -47,7 +47,9 @@ class Food {
     : _name = food.name,
       _brands = food.brands != null ? List.from(food.brands!) : null,
       _foodSource = FoodSource.user,
-      _originalFoodSource = food.originalFoodSource ?? food.foodSource, //when set it must be a user food, keep the original source. If not set it comes from a different source, so take the orignal source.
+      _originalFoodSource =
+          food.originalFoodSource ??
+          food.foodSource, //when set it must be a user food, keep the original source. If not set it comes from a different source, so take the orignal source.
       _originalFoodSourceFoodId = food.originalFoodSourceFoodId,
       _barcode = food.barcode,
       _kJoule = food.kJoule,
@@ -269,7 +271,7 @@ class Food {
     return _foodSource != FoodSource.standard && _foodSource != FoodSource.user;
   }
 
-  bool addFoodUnit({required FoodUnit foodUnit}) {
+  bool addFoodUnit({required FoodUnit foodUnit, int? order}) {
     if (foodUnit.amountMeasurementUnit == MeasurementUnit.gram) {
       if (_nutritionPerGramAmount == null) {
         return false;
@@ -280,14 +282,29 @@ class Food {
       }
     }
 
+    ObjectWithOrder<FoodUnit> foodUnitWithOrder;
     //ensure list ist sorted by sort order to generate the new order value.
-    int order = 1;
-    if (_foodUnitsWithOrder.isNotEmpty) {
+    _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+    if (order == null) {
+      foodUnitWithOrder = ObjectWithOrder(
+        object: foodUnit,
+        order:
+            _foodUnitsWithOrder.fold(
+              0,
+              (maxOrder, foodUnitWithOrderInternal) => foodUnitWithOrderInternal.order > maxOrder ? foodUnitWithOrderInternal.order : maxOrder,
+            ) +
+            1,
+      );
+    } else {
       _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
-      order = _foodUnitsWithOrder.last.order + 1;
+
+      for (int foodUnitIndex = order - 1; foodUnitIndex < _foodUnitsWithOrder.length; foodUnitIndex++) {
+        _foodUnitsWithOrder[foodUnitIndex].order = _foodUnitsWithOrder[foodUnitIndex].order + 1;
+      }
+
+      foodUnitWithOrder = ObjectWithOrder(object: foodUnit, order: order);
     }
 
-    ObjectWithOrder<FoodUnit> foodUnitWithOrder = ObjectWithOrder(object: foodUnit, order: order);
     _addFoodUnitWithOrder(foodUnitWithOrder);
 
     if (_foodUnitsWithOrder.length <= 1) {
@@ -295,6 +312,32 @@ class Food {
     }
 
     return true;
+  }
+
+  void upadteFoodUnitOrder({required FoodUnit foodUnit, required int newOrder}) {
+    ObjectWithOrder<FoodUnit> foodUnitWithOrder = _foodUnitsWithOrder.firstWhere(
+      (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit,
+    );
+
+    if (foodUnitWithOrder.order != newOrder) {
+      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+
+      int currentIndex = foodUnitWithOrder.order - 1;
+      int newIndex = newOrder - 1;
+      if (newIndex < currentIndex) {
+        for (int foodUnitIndex = newIndex; foodUnitIndex < currentIndex; foodUnitIndex++) {
+          _foodUnitsWithOrder[foodUnitIndex].order = _foodUnitsWithOrder[foodUnitIndex].order + 1;
+        }
+      }
+
+      if (newIndex > currentIndex) {
+        for (int foodUnitIndex = currentIndex + 1; foodUnitIndex <= newIndex; foodUnitIndex++) {
+          _foodUnitsWithOrder[foodUnitIndex].order = _foodUnitsWithOrder[foodUnitIndex].order - 1;
+        }
+      }
+
+      foodUnitWithOrder.order = newOrder;
+    }
   }
 
   void _addFoodUnitWithOrder(ObjectWithOrder<FoodUnit> foodUnitWithOrder) {
@@ -320,6 +363,16 @@ class Food {
 
   void _removeFoodUnitWithMeasurementUnit({required MeasurementUnit measurementUnit}) {
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object.amountMeasurementUnit == measurementUnit);
+
+    int order = 1;
+    if (_foodUnitsWithOrder.isNotEmpty) {
+      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+      for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodUnitsWithOrder) {
+        foodUnitWithOrder.order = order;
+      }
+
+      order++;
+    }
     _ensureDefaultFoodUnit();
   }
 
