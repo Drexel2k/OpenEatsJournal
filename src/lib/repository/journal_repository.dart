@@ -1,4 +1,5 @@
 import "package:collection/collection.dart";
+import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
@@ -661,6 +662,30 @@ class JournalRepository {
     } else {
       return JournalRepositoryGetWeightMaxResult(from: before12monthsStartDate, until: thisMonthStartDate);
     }
+  }
+
+  Future<Map<int, bool>> getEatsJournalEntriesAvailableForLast8Days() async {
+    Map<int, bool> result = {};
+
+    DateTime today = DateUtils.dateOnly(DateTime.now());
+    DateTime currentDay = today.subtract(Duration(days: 7));
+
+    List<Map<String, Object?>>? dbResult = await _oejDatabase.getEatsJournalEntriesAvailable(from: currentDay, until: today);
+
+    Map<DateTime, bool> dbData = {};
+    if (dbResult != null) {
+      for (Map<String, Object?> row in dbResult) {
+        dbData[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbColumnEntryDate] as String)] =
+            (row[OpenEatsJournalStrings.dbResultEntryCount] as int) > 0;
+      }
+    }
+
+    for (int dayIndex = -7; dayIndex <= 0; dayIndex++) {
+      result[dayIndex] = dbData.containsKey(currentDay);
+      currentDay = currentDay.add(Duration(days: 1));
+    }
+
+    return result;
   }
 
   Map<DateTime, int> _getKJouleTargets({required List<Map<String, Object?>> dbResult}) {

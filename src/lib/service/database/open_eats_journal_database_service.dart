@@ -1131,4 +1131,18 @@ class OpenEatsJournalDatabaseService {
 
     return null;
   }
+
+  Future<List<Map<String, Object?>>?> getEatsJournalEntriesAvailable({required DateTime from, required DateTime until}) async {
+    Database db = await instance.db;
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableEatsJournal,
+      columns: [OpenEatsJournalStrings.dbColumnEntryDate, "COUNT(${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultEntryCount}"],
+      groupBy: OpenEatsJournalStrings.dbColumnEntryDate,
+      where: "${OpenEatsJournalStrings.dbColumnEntryDate} BETWEEN ? AND ?",
+      whereArgs: [ConvertValidate.dateformatterDatabaseDateOnly.format(from), ConvertValidate.dateformatterDatabaseDateOnly.format(until)],
+    );
+
+    return dbResult;
+  }
 }

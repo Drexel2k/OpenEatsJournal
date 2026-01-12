@@ -100,6 +100,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnWeekStartDate = "week_start_date";
   static const String dbColumnRowId = "rowid";
   static const String dbResultDayCount = "day_count";
+  static const String dbResultEntryCount = "entry_count";
   static const String dbResultKJouleSum = "kilo_joule_sum";
   static const String dbResultCarbohydratesSum = "carbohydrates_sum";
   static const String dbResultSugarSum = "sugar_sum";

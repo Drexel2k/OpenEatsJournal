@@ -10,8 +10,9 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   EatsJournalScreenViewModel({required JournalRepository journalRepository, required SettingsRepository settingsRepository})
     : _journalRepository = journalRepository,
       _settingsRepository = settingsRepository,
-      _dayData = journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value),
-      _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value) {
+      _dayNutritionDataPerMeal = journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value),
+      _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value),
+      _eatsJournalEntriesAvailableForLast8Days = journalRepository.getEatsJournalEntriesAvailableForLast8Days() {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
   }
@@ -22,8 +23,9 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
   final ExternalTriggerChangedNotifier _eatsJournalDataChanged = ExternalTriggerChangedNotifier();
-  Future<FoodRepositoryGetDayMealSumsResult> _dayData;
+  Future<FoodRepositoryGetDayMealSumsResult> _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> _currentWeight;
+  Future<Map<int, bool>> _eatsJournalEntriesAvailableForLast8Days;
   final ExternalTriggerChangedNotifier _currentWeightChanged = ExternalTriggerChangedNotifier();
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
@@ -32,8 +34,9 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   String get languageCode => _settingsRepository.languageCode.value;
   ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
   ExternalTriggerChangedNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
-  Future<FoodRepositoryGetDayMealSumsResult> get dayData => _dayData;
+  Future<FoodRepositoryGetDayMealSumsResult> get dayNutritionDataPerMeal => _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> get currentWeight => _currentWeight;
+  Future<Map<int, bool>> get eatsJournalEntriesAvailableForLast8Days => _eatsJournalEntriesAvailableForLast8Days;
   SettingsRepository get settingsRepository => _settingsRepository;
   JournalRepository get journalRepository => _journalRepository;
 
@@ -48,7 +51,8 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   }
 
   void refreshNutritionData() {
-    _dayData = _journalRepository.getDayMealSums(date: _settingsRepository.currentJournalDate.value);
+    _eatsJournalEntriesAvailableForLast8Days = _journalRepository.getEatsJournalEntriesAvailableForLast8Days();
+    _dayNutritionDataPerMeal = _journalRepository.getDayMealSums(date: _settingsRepository.currentJournalDate.value);
     _eatsJournalDataChanged.notify();
   }
 

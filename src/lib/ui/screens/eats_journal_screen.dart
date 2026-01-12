@@ -113,7 +113,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
             listenable: _eatsJournalScreenViewModel.eatsJournalDataChanged,
             builder: (_, _) {
               return FutureBuilder<FoodRepositoryGetDayMealSumsResult>(
-                future: _eatsJournalScreenViewModel.dayData,
+                future: _eatsJournalScreenViewModel.dayNutritionDataPerMeal,
                 builder: (BuildContext context, AsyncSnapshot<FoodRepositoryGetDayMealSumsResult> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -196,21 +196,36 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               ],
                             ),
                             SizedBox(height: 10),
-                            ValueListenableBuilder(
-                              valueListenable: _eatsJournalScreenViewModel.currentJournalDate,
-                              builder: (_, _, _) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: _getLast8DaysIncludingToday().map((DateTime date) {
-                                    return RoundTransparentChoiceChip(
-                                      selected: _eatsJournalScreenViewModel.currentJournalDate.value == date,
-                                      onSelected: (bool selected) {
-                                        _changeDate(date: date);
-                                      },
-                                      label: Text(DateFormat("EEEE").format(date).substring(0, 1)),
-                                    );
-                                  }).toList(),
-                                );
+                            FutureBuilder<Map<int, bool>>(
+                              future: _eatsJournalScreenViewModel.eatsJournalEntriesAvailableForLast8Days,
+                              builder: (BuildContext context, AsyncSnapshot<Map<int, bool>> snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
+                                } else if (snapshot.hasError) {
+                                  throw StateError("Something went wrong: ${snapshot.error}");
+                                } else if (snapshot.hasData) {
+                                  DateTime currentDate = DateUtils.dateOnly(DateTime.now()).subtract(Duration(days: 8));
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [-7, -6, -5, -4, -3, -2, -1, 0].map((int dayIndex) {
+                                      currentDate = currentDate.add(Duration(days: 1));
+                                      DateTime chipDate = currentDate;
+                                      TextStyle? style = snapshot.data![dayIndex]!
+                                          ? TextStyle(color: colorScheme.inversePrimary, fontWeight: FontWeight.w900)
+                                          : null;
+
+                                      return RoundTransparentChoiceChip(
+                                        selected: _eatsJournalScreenViewModel.currentJournalDate.value == chipDate,
+                                        onSelected: (bool selected) {
+                                          _changeDate(date: chipDate);
+                                        },
+                                        label: Text(DateFormat("EEEE").format(chipDate).substring(0, 1), style: style),
+                                      );
+                                    }).toList(),
+                                  );
+                                } else {
+                                  return Text("No Data Available");
+                                }
                               },
                             ),
                             SizedBox(height: 6),
@@ -957,19 +972,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
   Future<DateTime?> _selectDate({required DateTime initialDate, required BuildContext context}) async {
     return await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
-  }
-
-  List<DateTime> _getLast8DaysIncludingToday() {
-    DateTime date = DateUtils.dateOnly(DateTime.now());
-    date = date.subtract(Duration(days: 7));
-
-    List<DateTime> days = [];
-    for (var i = 0; i <= 7; i++) {
-      days.add(date);
-      date = date.add(Duration(days: 1));
-    }
-
-    return days;
   }
 
   GaugeData _getKJouleGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
