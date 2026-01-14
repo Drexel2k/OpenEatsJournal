@@ -917,6 +917,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               arguments: Food(
                                 name: OpenEatsJournalStrings.emptyString,
                                 foodSource: FoodSource.user,
+                                fromDb: true,
                                 kJoule: NutritionCalculator.kJouleForOnekCal,
                                 nutritionPerGramAmount: 100,
                               ),

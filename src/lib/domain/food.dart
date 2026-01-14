@@ -10,6 +10,7 @@ class Food {
     required String name,
     required FoodSource foodSource,
     required int kJoule,
+    required bool fromDb,
     int? id,
     FoodSource? originalFoodSource,
     String? originalFoodSourceFoodId,
@@ -29,6 +30,7 @@ class Food {
        _foodSource = foodSource,
        _id = id,
        _originalFoodSource = originalFoodSource,
+       _fromDb = fromDb,
        _originalFoodSourceFoodId = originalFoodSourceFoodId,
        _barcode = barcode,
        _nutritionPerGramAmount = nutritionPerGramAmount,
@@ -47,6 +49,7 @@ class Food {
     : _name = food.name,
       _brands = food.brands != null ? List.from(food.brands!) : null,
       _foodSource = FoodSource.user,
+      _fromDb = true,
       _originalFoodSource =
           food.originalFoodSource ??
           food.foodSource, //when set it must be a user food, keep the original source. If not set it comes from a different source, so take the orignal source.
@@ -86,6 +89,7 @@ class Food {
     required String name,
     required FoodSource foodSource,
     required int kJoule,
+    required bool fromDb,
     int? id,
     List<String>? brands,
     FoodSource? originalFoodSource,
@@ -107,6 +111,7 @@ class Food {
        _foodSource = foodSource,
        _kJoule = kJoule,
        _originalFoodSource = originalFoodSource,
+       _fromDb = fromDb,
        _originalFoodSourceFoodId = originalFoodSourceFoodId,
        _barcode = barcode,
        _nutritionPerGramAmount = nutritionPerGramAmount,
@@ -142,6 +147,8 @@ class Food {
   final List<String>? _brands;
   int? _id;
   final FoodSource _foodSource;
+  //to distinguish between data from objects from online services or cached versions which wer loaded from database
+  final bool _fromDb;
   final FoodSource? _originalFoodSource;
   final String? _originalFoodSourceFoodId;
   int? _barcode;
@@ -250,6 +257,7 @@ class Food {
   List<String>? get brands => _brands;
   //food source and original food source can differ on user food.
   FoodSource get foodSource => _foodSource;
+  bool get fromDb => _fromDb;
   FoodSource? get originalFoodSource => _originalFoodSource;
   int? get barcode => _barcode;
   int? get id => _id;

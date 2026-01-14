@@ -13,7 +13,11 @@ class FoodSourceFormat {
     Color color = openEatsJournalColors.userFoodColor!;
     if (food != null) {
       if (food.foodSource == FoodSource.openFoodFacts) {
-        color = openEatsJournalColors.openFoodFactsFoodColor!;
+        if (food.fromDb) {
+          color = openEatsJournalColors.cacheFoodColor!;
+        } else {
+          color = openEatsJournalColors.openFoodFactsFoodColor!;
+        }
       }
 
       if (food.foodSource == FoodSource.standard) {
@@ -32,7 +36,11 @@ class FoodSourceFormat {
 
     if (food != null) {
       if (food.foodSource == FoodSource.openFoodFacts) {
-        label = AppLocalizations.of(context)!.off;
+        if (food.fromDb) {
+          label = AppLocalizations.of(context)!.cch;
+        } else {
+          label = AppLocalizations.of(context)!.off;
+        }
       }
 
       if (food.foodSource == FoodSource.standard) {

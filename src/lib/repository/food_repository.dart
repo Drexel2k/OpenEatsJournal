@@ -15,6 +15,7 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_stri
 import "package:openeatsjournal/service/open_food_facts/data/food_api.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/search_mode.dart";
 
 class FoodRepository {
   FoodRepository._singleton();
@@ -38,17 +39,37 @@ class FoodRepository {
     _oejAssetsService = oejAssetsService;
   }
 
-  Future<List<FoodRepositoryResult>> getFoodByBarcode({required int barcode, required String languageCode}) async {
+  //result list must always contain exactly 3 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, index 3 = open food facts results
+  Future<List<FoodRepositoryResult>> getFoodsByBarcode({required int barcode, required String languageCode, required SearchMode searchMode}) async {
     List<FoodRepositoryResult> result = [];
-    List<Map<String, Object?>>? dbResult = await _oejDatabaseService.getUserFoodsByBarcode(barcode);
 
-    if (dbResult != null) {
-      result.add(FoodRepositoryResult(foods: Convert.getFoodsFromDbResult(dbResult: dbResult)));
+    List<int> localFoodSources;
+    if (searchMode == SearchMode.online) {
+      localFoodSources = [FoodSource.user.value];
     } else {
+      localFoodSources = [FoodSource.user.value, FoodSource.openFoodFacts.value];
+    }
+
+    List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
+        ? await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources)
+        : await _oejDatabaseService.getFoodIdsByBarcodeBy3MonthUsage(barcode: barcode, foodSourceIds: localFoodSources);
+
+    List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : null;
+    if (foods != null) {
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()));
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
+    } else {
+      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult());
       result.add(FoodRepositoryResult());
     }
 
-    result.add(await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode));
+    if (searchMode == SearchMode.online) {
+      result.add(await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode));
+    } else {
+      result.add(FoodRepositoryResult());
+    }
 
     return result;
   }
@@ -81,21 +102,42 @@ class FoodRepository {
     return FoodRepositoryResult(errorCode: 3);
   }
 
-  Future<List<FoodRepositoryResult>> getFoodBySearchText({required String searchText, required String languageCode}) async {
+  //result list must always contain exactly 3 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, index 3 = open food facts results
+  Future<List<FoodRepositoryResult>> getFoodsBySearchText({required String searchText, required String languageCode, required SearchMode searchMode}) async {
     List<FoodRepositoryResult> result = [];
 
-    List<Map<String, Object?>>? dbResultUser = await _oejDatabaseService.getUserFoodsBySearchtext(
-      searchText: searchText.split(" ").map((String element) => "*${element.trim()}*").join(" "),
-    );
+    List<int> localFoodSources;
+    if (searchMode == SearchMode.online) {
+      localFoodSources = [FoodSource.user.value, FoodSource.standard.value];
+    } else {
+      localFoodSources = [FoodSource.user.value, FoodSource.openFoodFacts.value, FoodSource.standard.value];
+    }
 
-    result.add(FoodRepositoryResult(foods: dbResultUser != null ? Convert.getFoodsFromDbResult(dbResult: dbResultUser) : null));
+    searchText = searchText.trim();
+    if (searchText != OpenEatsJournalStrings.emptyString) {
+      searchText = searchText.split(" ").map((String element) => "*${element.trim()}*").join(" ");
+    }
 
-    List<Map<String, Object?>>? dbResultStandard = await _oejDatabaseService.getStandardFoodBySearchtext(
-      searchText.split(" ").map((String element) => "*${element.trim()}*").join(" "),
-    );
-    result.add(FoodRepositoryResult(foods: dbResultStandard != null ? Convert.getFoodsFromDbResult(dbResult: dbResultStandard) : null));
+    List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
+        ? await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources)
+        : await _oejDatabaseService.getFoodIdsBySearchtextBy3MonthUsage(searchText: searchText, foodSourceIds: localFoodSources);
 
-    result.add(await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1));
+    List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : null;
+    if (foods != null) {
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()));
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
+    } else {
+      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult());
+    }
+
+    if (searchMode == SearchMode.online) {
+      result.add(await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1));
+    } else {
+      result.add(FoodRepositoryResult());
+    }
 
     return result;
   }
@@ -170,6 +212,7 @@ class FoodRepository {
           name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
+          fromDb: false,
           originalFoodSourceFoodId: foodApi.code,
           barcode: int.tryParse(foodApi.code),
           nutritionPerGramAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? 100 : null,
@@ -677,6 +720,7 @@ class FoodRepository {
     Food food = Food.fromData(
       name: languageCode == OpenEatsJournalStrings.en ? foodDataCsv[3] : foodDataCsv[4],
       foodSource: FoodSource.standard,
+      fromDb: true,
       kJoule: int.parse(foodDataCsv[9]),
       brands: brands == OpenEatsJournalStrings.emptyString ? null : foodDataCsv[4].split(","),
       originalFoodSourceFoodId: foodDataCsv[1],

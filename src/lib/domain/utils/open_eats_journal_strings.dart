@@ -63,6 +63,8 @@ class OpenEatsJournalStrings {
   static const String dbTableMeasurementUnit = "t_measurement_unit";
   static const String dbTableDailyNutritionTarget = "t_daily_nutrition_target";
   static const String dbTableDateInfo = "t_date_info";
+  static const String dbTablTempTable = "t_temp_table";
+  static const String dbTableFoodByUsage = "t_food_by_usage";
 
   static const String dbColumnId = "id";
   static const String dbColumnSetting = "setting";
@@ -77,8 +79,8 @@ class OpenEatsJournalStrings {
   static const String dbColumnBarcode = "barcode";
   static const String dbColumnFoodIdRef = "food_id_ref";
   static const String dbColumnName = "name";
-  static const String dbColumnNutritionPerGramAmount = "nutrition_per_gram_mount";
-  static const String dbColumnNutritionPerMilliliterAmount = "nutrition_per_milliliter_mount";
+  static const String dbColumnNutritionPerGramAmount = "nutrition_per_gram_amount";
+  static const String dbColumnNutritionPerMilliliterAmount = "nutrition_per_milliliter_amount";
   static const String dbColumnKiloJoule = "kilo_joule";
   static const String dbColumnCarbohydrates = "carbohydrates";
   static const String dbColumnSugar = "sugar";
@@ -112,14 +114,24 @@ class OpenEatsJournalStrings {
   static const String dbResultGroupColumn = "group_column";
   static const String dbResultEatsJournalEntryId = "eats_journal_entry_id";
   static const String dbResultFoodId = "food_id";
+  static const String dbResultFoodFoodSourceIdRef = "food_food_source_id_ref";
+  static const String dbResultFoodOriginalFoodSourceIdRef = "food_original_food_source_id_ref";
+  static const String dbResultFoodOriginalFoodSourceFoodIdRef = "food_original_food_source_food_id_ref";
+  static const String dbResultFoodBarcode = "food_barcode";
   static const String dbResultFoodUnitId = "food_unit_id";
   static const String dbResultEatsJournalEntryName = "eats_journal_entry_name";
   static const String dbResultFoodName = "food_name";
+  static const String dbResultFoodBrands = "food_brands";
+  static const String dbResultFoodNutritionPerGramAmount = "food_nutrition_per_gram_amount";
+  static const String dbResultFoodNutritionPerMilliliterAmount = "food_nutrition_per_milliliter_amount";
   static const String dbResultFoodUnitName = "food_unit_name";
   static const String dbResultEatsJournalEntryAmount = "eats_journal_entry_amount";
   static const String dbResultFoodUnitAmount = "food_unit_amount";
   static const String dbResultEatsJournalEntryAmountMeasurementUnitIdRef = "eats_journal_entry_amount_measurement_unit_id_ref";
   static const String dbResultFoodUnitAmountMeasurementUnitIdRef = "food_unit_amount_measurement_unit_id_ref";
+  static const String dbResultFoodUnitOriginalFoodSourceFoodUnitIdRef = "food_unit_original_food_source_food_unit_id_ref";
+  static const String dbResultFoodUnitOrderNumber = "food_unit_order_number";
+  static const String dbResultFoodUnitIsDefault = "food_unit_is_default";
   static const String dbResultFoodKiloJoule = "food_kilo_joule";
   static const String dbResultEatsJournalEntryKiloJoule = "eats_journal_entry_kilo_joule";
   static const String dbResultFoodCarbohydrates = "food_carbohydrates";
@@ -133,6 +145,7 @@ class OpenEatsJournalStrings {
   static const String dbResultFoodProtein = "food_protein";
   static const String dbResultEatsJournalEntryProtein = "eats_journal_entry_protein";
   static const String dbResultFoodSalt = "food_salt";
+  static const String dbResultFoodQuantity = "food_quantity";
   static const String dbResultEatsJournalEntrySalt = "eats_journal_entry_salt";
 
   static const String dbIndexSettingTableSetting = "i_${dbColumnEntryDate}_$dbTableSetting";

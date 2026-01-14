@@ -46,25 +46,26 @@ class Convert {
     Food food = Food.fromData(
       id: dbResult[0][OpenEatsJournalStrings.dbResultFoodId] as int,
       name: dbResult[0][OpenEatsJournalStrings.dbResultFoodName] as String,
-      foodSource: FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbColumnFoodSourceIdRef] as int),
+      foodSource: FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbResultFoodFoodSourceIdRef] as int),
+      fromDb: true,
       kJoule: dbResult[0][OpenEatsJournalStrings.dbResultFoodKiloJoule] as int,
-      originalFoodSource: dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] != null
-          ? FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef] as int)
+      originalFoodSource: dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceIdRef] != null
+          ? FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceIdRef] as int)
           : null,
-      originalFoodSourceFoodId: dbResult[0][OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef] as String?,
-      barcode: dbResult[0][OpenEatsJournalStrings.dbColumnBarcode] as int?,
-      brands: dbResult[0][OpenEatsJournalStrings.dbColumnBrands] != null
-          ? (dbResult[0][OpenEatsJournalStrings.dbColumnBrands] as String).split(",").map((String brand) => brand.trim()).toList()
+      originalFoodSourceFoodId: dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceFoodIdRef] as String?,
+      barcode: dbResult[0][OpenEatsJournalStrings.dbResultFoodBarcode] as int?,
+      brands: dbResult[0][OpenEatsJournalStrings.dbResultFoodBrands] != null
+          ? (dbResult[0][OpenEatsJournalStrings.dbResultFoodBrands] as String).split(",").map((String brand) => brand.trim()).toList()
           : null,
-      nutritionPerGramAmount: dbResult[0][OpenEatsJournalStrings.dbColumnNutritionPerGramAmount] as double?,
-      nutritionPerMilliliterAmount: dbResult[0][OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount] as double?,
+      nutritionPerGramAmount: dbResult[0][OpenEatsJournalStrings.dbResultFoodNutritionPerGramAmount] as double?,
+      nutritionPerMilliliterAmount: dbResult[0][OpenEatsJournalStrings.dbResultFoodNutritionPerMilliliterAmount] as double?,
       carbohydrates: dbResult[0][OpenEatsJournalStrings.dbResultFoodCarbohydrates] as double?,
       sugar: dbResult[0][OpenEatsJournalStrings.dbResultFoodSugar] as double?,
       fat: dbResult[0][OpenEatsJournalStrings.dbResultFoodFat] as double?,
       saturatedFat: dbResult[0][OpenEatsJournalStrings.dbResultFoodSaturatedFat] as double?,
       protein: dbResult[0][OpenEatsJournalStrings.dbResultFoodProtein] as double?,
       salt: dbResult[0][OpenEatsJournalStrings.dbResultFoodSalt] as double?,
-      quantity: dbResult[0][OpenEatsJournalStrings.dbColumnQuantity] as String?,
+      quantity: dbResult[0][OpenEatsJournalStrings.dbResultFoodQuantity] as String?,
       orderedDefaultFoodUnits: orderedDefaultFoodUnits,
     );
 
@@ -80,11 +81,11 @@ class Convert {
             name: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitName] as String,
             amount: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitAmount] as double,
             amountMeasurementUnit: MeasurementUnit.getByValue(foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitAmountMeasurementUnitIdRef] as int),
-            originalFoodSourceFoodUnitId: foodUnitRow[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef] as String?,
+            originalFoodSourceFoodUnitId: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitOriginalFoodSourceFoodUnitIdRef] as String?,
           ),
-          order: foodUnitRow[OpenEatsJournalStrings.dbColumnOrderNumber] as int,
+          order: foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitOrderNumber] as int,
         ),
-        isDefault: (foodUnitRow[OpenEatsJournalStrings.dbColumnIsDefault] as int) == 1,
+        isDefault: (foodUnitRow[OpenEatsJournalStrings.dbResultFoodUnitIsDefault] as int) == 1,
       );
     }
 

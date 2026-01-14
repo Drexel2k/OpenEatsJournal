@@ -174,6 +174,7 @@
   "std": "STD",
   "off": "OFF",
   "qck": "QCK",
+  "cch": "CCH",
   "edit": "Edit",
   "update": "Update",
   "update_abbreviated": "Update",
@@ -200,5 +201,8 @@
   "barcode": "barcode:",
   "amount_gram": "{amount} gram",
   "amount_milliliter": "{amount} milliliter",
-  "basics": "Basics"
+  "basics": "Basics",
+  "online": "Online",
+  "offline": "Offline",
+  "recent": "Recent"
 }
