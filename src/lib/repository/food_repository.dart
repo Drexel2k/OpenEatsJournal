@@ -26,6 +26,7 @@ class FoodRepository {
   late OpenEatsJournalAssetsService _oejAssetsService;
 
   final int _pageSize = 100;
+  final int _dayForFoodUsage = 43;
   final DateFormat _csvDateFormat = DateFormat("yyyy-MM-dd HH-mm-ss");
 
   //must be called once before the singleton is used
@@ -52,7 +53,7 @@ class FoodRepository {
 
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources)
-        : await _oejDatabaseService.getFoodIdsByBarcodeBy3MonthUsage(barcode: barcode, foodSourceIds: localFoodSources);
+        : await _oejDatabaseService.getFoodsByBarcodeByUsage(barcode: barcode, foodSourceIds: localFoodSources, days: _dayForFoodUsage);
 
     List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : null;
     if (foods != null) {
@@ -113,14 +114,9 @@ class FoodRepository {
       localFoodSources = [FoodSource.user.value, FoodSource.openFoodFacts.value, FoodSource.standard.value];
     }
 
-    searchText = searchText.trim();
-    if (searchText != OpenEatsJournalStrings.emptyString) {
-      searchText = searchText.split(" ").map((String element) => "*${element.trim()}*").join(" ");
-    }
-
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources)
-        : await _oejDatabaseService.getFoodIdsBySearchtextBy3MonthUsage(searchText: searchText, foodSourceIds: localFoodSources);
+        : await _oejDatabaseService.getFoodsBySearchtextByUsage(searchText: searchText, foodSourceIds: localFoodSources, days: _dayForFoodUsage);
 
     List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : null;
     if (foods != null) {
@@ -144,6 +140,12 @@ class FoodRepository {
 
   Future<FoodRepositoryResult> getOpenFoodFactsFoodBySearchTextApiV1({required String searchText, required String languageCode, required int page}) async {
     String? jsonString;
+
+    searchText = searchText.trim();
+    if (searchText != OpenEatsJournalStrings.emptyString) {
+      searchText = searchText.split(" ").map((String word) => "*${word.trim()}*").join(" ");
+    }
+
     try {
       jsonString = await _openFoodFactsService.getFoodBySearchTextApiV1(searchText: searchText, page: page, pageSize: _pageSize);
     } on ClientException catch (clientException) {
@@ -208,7 +210,51 @@ class FoodRepository {
         double? proteinsPer100Units = _getProteinsPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         double? saltPer100Units = _getSaltPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
 
-        Food food = Food(
+        int order = 1;
+        List<OrderedDefaultFoodUnit> orderedDefaultFoodUnits = [];
+        if (_getMeasurementUnitFromApiString(value: foodApi.servingQuantityUnit) == nutrimentsMeasurementUnit) {
+          if (foodApi.servingQuantity != null && double.parse(foodApi.servingQuantity!) > 0) {
+            orderedDefaultFoodUnits.add(
+              OrderedDefaultFoodUnit(
+                foodUnitWithOrder: ObjectWithOrder(
+                  object: FoodUnit(
+                    name: OpenEatsJournalStrings.serving,
+                    amount: double.parse(foodApi.servingQuantity!),
+                    amountMeasurementUnit: nutrimentsMeasurementUnit,
+                    //dummy id, as serving/quantity info has no id in open food facts data
+                    originalFoodSourceFoodUnitId: "2",
+                  ),
+                  order: order,
+                ),
+                isDefault: true,
+              ),
+            );
+
+            order++;
+          }
+        }
+
+        if (_getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit) == nutrimentsMeasurementUnit) {
+          if (foodApi.productQuantity != null && double.parse(foodApi.productQuantity!) > 0) {
+            orderedDefaultFoodUnits.add(
+              OrderedDefaultFoodUnit(
+                foodUnitWithOrder: ObjectWithOrder(
+                  object: FoodUnit(
+                    name: OpenEatsJournalStrings.piece,
+                    amount: double.parse(foodApi.productQuantity!),
+                    amountMeasurementUnit: nutrimentsMeasurementUnit,
+                    //dummy id, as serving/quantity info has no id in open food facts data
+                    originalFoodSourceFoodUnitId: "1",
+                  ),
+                  order: order,
+                ),
+                isDefault: orderedDefaultFoodUnits.isEmpty,
+              ),
+            );
+          }
+        }
+
+        Food food = Food.fromData(
           name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
@@ -225,35 +271,8 @@ class FoodRepository {
           protein: proteinsPer100Units,
           salt: saltPer100Units,
           quantity: foodApi.quantity,
+          orderedDefaultFoodUnits: orderedDefaultFoodUnits,
         );
-
-        if (_getMeasurementUnitFromApiString(value: foodApi.servingQuantityUnit) == nutrimentsMeasurementUnit) {
-          if (foodApi.servingQuantity != null) {
-            food.addFoodUnit(
-              foodUnit: FoodUnit(
-                name: OpenEatsJournalStrings.serving,
-                amount: double.parse(foodApi.servingQuantity!),
-                amountMeasurementUnit: nutrimentsMeasurementUnit,
-                //dummy id, as serving/quantity info has no id in open food facts data
-                originalFoodSourceFoodUnitId: "2",
-              ),
-            );
-          }
-        }
-
-        if (_getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit) == nutrimentsMeasurementUnit) {
-          if (foodApi.productQuantity != null) {
-            food.addFoodUnit(
-              foodUnit: FoodUnit(
-                name: OpenEatsJournalStrings.piece,
-                amount: double.parse(foodApi.productQuantity!),
-                amountMeasurementUnit: nutrimentsMeasurementUnit,
-                //dummy id, as serving/quantity info has no id in open food facts data
-                originalFoodSourceFoodUnitId: "1",
-              ),
-            );
-          }
-        }
 
         return food;
       }
@@ -276,118 +295,7 @@ class FoodRepository {
     return null;
   }
 
-  // Future<FoodRepositoryGetFoodBySearchTextResult> getFoodBySearchTextSearchALicous({
-  //   required String searchText,
-  //   required String languageCode,
-  //   required int page,
-  // }) async {
-  //   String? jsonString;
-  //   try {
-  //     jsonString = await _openFoodFactsService.getFoodBySearchTextSearchALicous(searchText: searchText, languageCode: languageCode, page: page);
-  //   } on ClientException catch (clientException) {
-  //     return FoodRepositoryGetFoodBySearchTextResult(errorCode: 1, errorMessage: clientException.message);
-  //   }
-
-  //   if (jsonString != null) {
-  //     //server responed with status 200
-  //     List<Food> foods = [];
-  //     Map<String, dynamic> json = jsonDecode(jsonString);
-  //     if (json.containsKey(OpenFoodFactsApiStrings.hits)) {
-  //       int amount = 0;
-  //       num parsedNumber = 0;
-  //       Match? match;
-  //       String? numberPart;
-  //       String? alphabetPart;
-
-  //       RegExp regex = RegExp(r'^([\d., ]+)([a-zA-Z]+)$');
-
-  //       for (Map<String, dynamic> hit in json[OpenFoodFactsApiStrings.hits]) {
-  //         FoodApi foodApi = FoodApi.fromJsonSearALiciousApi(hit);
-
-  //         MeasurementUnit measurementUnit = MeasurementUnit.gram;
-  //         if (foodApi.quantity != null) {
-  //           List<String> parts = foodApi.quantity!.split(" ");
-  //           if (parts.length > 1) {
-  //             if (parts[1].trim().toLowerCase() == OpenFoodFactsApiStrings.liter || parts[1].trim().toLowerCase() == OpenFoodFactsApiStrings.milliliter) {
-  //               measurementUnit = MeasurementUnit.milliliter;
-  //             }
-  //           }
-  //         }
-
-  //         if (foodApi.nutriments != null && foodApi.nutriments!.energyKj100g != null) {
-  //           Food food = Food(
-  //             name: _getFoodName(foodApi: foodApi, languageCode: languageCode),
-  //             brands: _getCleanBrands(foodApi.brandsTags),
-  //             foodSource: FoodSource.openFoodFacts,
-  //             foodSourceId: foodApi.code,
-  //             measurementUnit: measurementUnit,
-  //             energyKjPer100Units: foodApi.nutriments!.energyKj100g!,
-  //             carbohydratesPer100Units: foodApi.nutriments!.carbohydrates100g,
-  //             sugarsPer100Units: foodApi.nutriments!.sugars100g,
-  //             fatPer100Units: foodApi.nutriments!.fat100g,
-  //             saturatedFatPer100Units: foodApi.nutriments!.saturatedFat100g,
-  //             proteinsPer100Units: foodApi.nutriments!.proteins100g,
-  //             saltPer100Units: foodApi.nutriments!.salt100g,
-  //           );
-
-  //           if (foodApi.quantity != null) {
-  //             amount = 0;
-  //             parsedNumber = 0;
-  //             numberPart = null;
-  //             alphabetPart = null;
-
-  //             match = regex.firstMatch(foodApi.quantity!) as Match?;
-
-  //             if (match != null) {
-  //               numberPart = match.group(1)!.trim();
-  //               alphabetPart = match.group(2)!;
-  //             }
-
-  //             if (alphabetPart != null && numberPart != null) {
-  //               parsedNumber = NumberFormat(null, foodApi.lang).parse(numberPart);
-  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.gram) {
-  //                 amount = parsedNumber.round();
-  //               }
-
-  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.milliGram) {
-  //                 amount = (parsedNumber / 1000).round();
-  //               }
-
-  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.kiloGram) {
-  //                 amount = (parsedNumber * 1000).round();
-  //               }
-
-  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.milliliter) {
-  //                 amount = parsedNumber.round();
-  //               }
-
-  //               if (alphabetPart.toLowerCase() == OpenFoodFactsApiStrings.liter) {
-  //                 amount = (parsedNumber * 1000).round();
-  //               }
-
-  //               if (amount > 0) {
-  //                 food.addFoodUnit(name: OpenEatsJournalStrings.piece, amount: amount);
-  //               }
-  //             }
-  //           }
-
-  //           foods.add(food);
-  //         }
-  //       }
-
-  //       return FoodRepositoryGetFoodBySearchTextResult(
-  //         page: json[OpenFoodFactsApiStrings.page],
-  //         pageCount: json[OpenFoodFactsApiStrings.pageCount],
-  //         foods: foods,
-  //       );
-  //     } else {
-  //       return FoodRepositoryGetFoodBySearchTextResult(errorCode: 2);
-  //     }
-  //   }
-
-  //   //server responded, but not status 200
-  //   return FoodRepositoryGetFoodBySearchTextResult(errorCode: 3);
-  // }
+  //removed searchAlicious / search a licious code on 16th January 2026
 
   String _getFoodName({required FoodApi foodApi, required String languageCode}) {
     String name = OpenEatsJournalStrings.emptyString;
@@ -550,7 +458,7 @@ class FoodRepository {
         OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
         OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
         OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
-        OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
+        OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,
         OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
         OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
         OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
@@ -561,12 +469,14 @@ class FoodRepository {
         OpenEatsJournalStrings.dbColumnProtein: food.protein,
         OpenEatsJournalStrings.dbColumnSalt: food.salt,
         OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
+        OpenEatsJournalStrings.dbColumnSearchText: getFoodSearchText(food: food),
       },
       id: food.id,
     );
 
     food.id ??= foodId;
 
+    List<int> foodUnitIds = [];
     for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
       int foodUnitId = await _oejDatabaseService.setFoodUnit(
         foodUnitData: {
@@ -582,7 +492,10 @@ class FoodRepository {
       );
 
       foodUnitWithOrder.object.id ??= foodUnitId;
+      foodUnitIds.add(foodUnitId);
     }
+
+    await _oejDatabaseService.deleteFoodUnits(foodId: foodId, exceptIds: foodUnitIds);
   }
 
   Future<void> setFood({required Food food}) async {
@@ -593,7 +506,7 @@ class FoodRepository {
         OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
         OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
         OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
-        OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
+        OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,
         OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
         OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
         OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
@@ -604,12 +517,14 @@ class FoodRepository {
         OpenEatsJournalStrings.dbColumnProtein: food.protein,
         OpenEatsJournalStrings.dbColumnSalt: food.salt,
         OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
+        OpenEatsJournalStrings.dbColumnSearchText: getFoodSearchText(food: food),
       },
       id: food.id,
     );
 
     food.id ??= foodId;
 
+    List<int> foodUnitIds = [];
     for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
       int foodUnitId = await _oejDatabaseService.setFoodUnit(
         foodUnitData: {
@@ -625,7 +540,10 @@ class FoodRepository {
       );
 
       foodUnitWithOrder.object.id ??= foodUnitId;
+      foodUnitIds.add(foodUnitId);
     }
+
+    await _oejDatabaseService.deleteFoodUnits(foodId: foodId, exceptIds: foodUnitIds);
   }
 
   Future<DateTime> initializeStandardFoodData({required String languageCode, DateTime? lastProcessedStandardFoodDataChangeDate}) async {
@@ -726,10 +644,10 @@ class FoodRepository {
       originalFoodSourceFoodId: foodDataCsv[1],
       nutritionPerGramAmount: foodDataCsv[7] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[7]),
       nutritionPerMilliliterAmount: foodDataCsv[8] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[8]),
-      carbohydrates: foodDataCsv[10] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[10]),
-      sugar: foodDataCsv[11] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[11]),
-      fat: foodDataCsv[12] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[12]),
-      saturatedFat: foodDataCsv[13] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[13]),
+      carbohydrates: foodDataCsv[12] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[12]),
+      sugar: foodDataCsv[13] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[13]),
+      fat: foodDataCsv[10] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[10]),
+      saturatedFat: foodDataCsv[11] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[11]),
       protein: foodDataCsv[14] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[14]),
       salt: foodDataCsv[15] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[15]),
       quantity: foodDataCsv[16],
@@ -743,7 +661,7 @@ class FoodRepository {
         OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
         OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
         OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
-        OpenEatsJournalStrings.dbColumnBrands: (food.brands != null && food.brands!.isNotEmpty) ? food.brands!.join(",") : null,
+        OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,
         OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
         OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
         OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
@@ -754,6 +672,7 @@ class FoodRepository {
         OpenEatsJournalStrings.dbColumnProtein: food.protein,
         OpenEatsJournalStrings.dbColumnSalt: food.salt,
         OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
+        OpenEatsJournalStrings.dbColumnSearchText: getFoodSearchText(food: food),
       },
       id: food.id,
     );
@@ -776,5 +695,14 @@ class FoodRepository {
 
       foodUnitWithOrder.object.id ??= foodUnitId;
     }
+  }
+
+  String getFoodSearchText({required Food food}) {
+    String searchText = food.name.trim();
+    if (food.brands.isNotEmpty) {
+      searchText = " $searchText ${food.brands.map((brand) => brand.trim()).join(" ")}";
+    }
+
+    return searchText;
   }
 }

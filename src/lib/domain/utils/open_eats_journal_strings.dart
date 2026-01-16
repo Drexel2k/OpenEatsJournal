@@ -55,7 +55,6 @@ class OpenEatsJournalStrings {
   static const String dbTableSetting = "t_setting";
   static const String dbTableWeightJournal = "t_weight_journal";
   static const String dbTableFood = "t_food";
-  static const String dbTableFoodTextSearch = "t_food_text_search";
   static const String dbTableFoodUnit = "t_food_unit";
   static const String dbTableEatsJournal = "t_eats_journal";
   static const String dbTableFoodSource = "t_food_source";
@@ -89,6 +88,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnProtein = "protein";
   static const String dbColumnSalt = "salt";
   static const String dbColumnQuantity = "quantity";
+  static const String dbColumnSearchText = "search_text";
   static const String dbColumnAmount = "amount";
   static const String dbColumnOriginalFoodSourceFoodUnitIdRef = "original_food_source_food_unit_id_ref";
   static const String dbColumnOrderNumber = "order_number";
@@ -100,7 +100,6 @@ class OpenEatsJournalStrings {
   static const String dbColumnBrands = "brands";
   static const String dbColumnMonthStartDate = "month_start_date";
   static const String dbColumnWeekStartDate = "week_start_date";
-  static const String dbColumnRowId = "rowid";
   static const String dbResultDayCount = "day_count";
   static const String dbResultEntryCount = "entry_count";
   static const String dbResultKJouleSum = "kilo_joule_sum";

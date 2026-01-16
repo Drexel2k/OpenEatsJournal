@@ -28,6 +28,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   late FoodEditScreenViewModel _foodEditScreenViewModel;
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _brandsController = TextEditingController();
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _gramAmountController = TextEditingController();
   final TextEditingController _milliliterAmountController = TextEditingController();
@@ -51,6 +52,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     _nameController.text = _foodEditScreenViewModel.name.value;
+    _brandsController.text = _foodEditScreenViewModel.brands.value;
     _barcodeController.text = _foodEditScreenViewModel.barcode.value != null ? "${_foodEditScreenViewModel.barcode.value}" : OpenEatsJournalStrings.emptyString;
     _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
         ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerGramAmount.value!)
@@ -59,14 +61,30 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
         ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerMilliliterAmount.value!)
         : OpenEatsJournalStrings.emptyString;
     _kCalController.text = ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _foodEditScreenViewModel.kJoule.value!));
+    _carbohydratesController.text = _foodEditScreenViewModel.carbohydrates.value != null
+        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.carbohydrates.value)
+        : OpenEatsJournalStrings.emptyString;
+    _sugarController.text = _foodEditScreenViewModel.sugar.value != null
+        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.sugar.value)
+        : OpenEatsJournalStrings.emptyString;
+    _fatController.text = _foodEditScreenViewModel.fat.value != null
+        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.fat.value)
+        : OpenEatsJournalStrings.emptyString;
+    _saturatedFatController.text = _foodEditScreenViewModel.saturatedFat.value != null
+        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.saturatedFat.value)
+        : OpenEatsJournalStrings.emptyString;
+    _proteinController.text = _foodEditScreenViewModel.protein.value != null
+        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.protein.value)
+        : OpenEatsJournalStrings.emptyString;
+    _saltController.text = _foodEditScreenViewModel.salt.value != null
+        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.salt.value)
+        : OpenEatsJournalStrings.emptyString;
 
     double inputFieldsWidth = 90;
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEdit,
-      title: _foodEditScreenViewModel.foodId == null
-          ? AppLocalizations.of(context)!.create_food
-          : AppLocalizations.of(context)!.edit_food,
+      title: _foodEditScreenViewModel.foodId == null ? AppLocalizations.of(context)!.create_food : AppLocalizations.of(context)!.edit_food,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,6 +162,37 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     ],
                   ),
                 ),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Row(children: [Text(AppLocalizations.of(context)!.brands_label, style: textTheme.titleSmall)]),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ValueListenableBuilder(
+                              valueListenable: _foodEditScreenViewModel.brands,
+                              builder: (_, _, _) {
+                                return OpenEatsJournalTextField(
+                                  controller: _brandsController,
+                                  onChanged: (value) {
+                                    _foodEditScreenViewModel.brands.value = value;
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
               ],
             ),
             Divider(thickness: 2, height: 20),
@@ -348,7 +397,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
                         controller: _sugarController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                         inputFormatters: [
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             final String text = newValue.text.trim();
@@ -397,7 +446,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
                         controller: _fatController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                         inputFormatters: [
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             final String text = newValue.text.trim();
@@ -436,7 +485,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
                         controller: _saturatedFatController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                         inputFormatters: [
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             final String text = newValue.text.trim();
@@ -485,7 +534,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
                         controller: _proteinController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                         inputFormatters: [
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             final String text = newValue.text.trim();
@@ -524,7 +573,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
                         controller: _saltController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                         inputFormatters: [
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             final String text = newValue.text.trim();

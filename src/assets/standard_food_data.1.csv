@@ -1,34 +1,99 @@
 ---header---
 last_content_update,last_file_format_change
-2026-01-10 00-00-00,2026-01-10 00-00-00
+2026-01-16 00-00-00,2026-01-15 00-00-00
 ---comments---
-food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,carbohydrates,sugar,fat,saturated_fat,protein,salt,quantity
+food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
 ---data---
-"food","1","2026-01-10 00-00-00","Banana (without peel)","Banane (ohne Schale)",,,"100",,"389","20","17.3","0.2","0","1.1","0",
+"food","1","2026-01-10 00-00-00","Banana (without peel)","Banane (ohne Schale)",,,"100",,"389","0.2","0","20","17.3","1.1","0",
 "foodunit","1","fruit small","Frucht klein","80","g","false"
 "foodunit","2","fruit mid sized","Frucht mittelgroß","110","g","true"
 "foodunit","3","fruit big","Frucht groß","140","g","false"
-"food","2","2026-01-10 00-00-00","Cappuccino (whole milk 3.5%)","Cappuccino (Vollmilch 3,5%)",,,"95","100","205",".78","3.6","3.6","2.6","2.6","0.1",
+"food","2","2026-01-10 00-00-00","Cappuccino (whole milk 3.5%)","Cappuccino (Vollmilch 3,5%)",,,"95","100","205","2.7","1.8","3.6","3.6","2.7","0.1",
 "foodunit","1","cup","Tasse","150","ml","false"
 "foodunit","2","big cup","große Tasse","225","ml","true"
-"food","3","2026-01-10 00-00-00","Cappuccino (low-fat milk 1.5%)","Cappuccino (Fettarme Milch 1.5%)",,,"95","100","151","3.6","3.6","1.1","0.7","2.6","0.1",
+"food","3","2026-01-10 00-00-00","Cappuccino (low-fat milk 1.5%)","Cappuccino (Fettarme Milch 1.5%)",,,"95","100","151","1.1","0.8","3.7","3.7","2.7","0.1",
 "foodunit","1","cup","Tasse","150","ml","false"
 "foodunit","2","big cup","große Tasse","225","ml","true"
-"food","4","2026-01-10 00-00-00","Apple, raw","Apfel, roh",,,"100",,"226","14.4","10.3","0.1","0","0.3","0",
+"food","4","2026-01-10 00-00-00","Apple, raw","Apfel, roh",,,"100",,"226","0.1","0","14.4","10.3","0.3","0",
 "foodunit","1","middle","mittel","130","g","true"
 "foodunit","2","big","groß","200","g","false"
-"food","5","2026-01-10 00-00-00","Dinner rolls, wheat","Brötchen, Semmel, Weizen",,,"100",,"1142","46","1.6","6.3","1.5","8.6","0.9",
+"food","5","2026-01-10 00-00-00","Dinner rolls, wheat","Brötchen, Semmel, Weizen",,,"100",,"1142","6.3","1.5","46","1.6","8.6","0.9",
 "foodunit","1","Roll","Brötchen","80","g","true"
-"food","6","2026-01-10 00-00-00","Onion mince","Zwiebelmett",,,"100",,"828","1","1","14","5.7","17","3.2",
+"food","6","2026-01-10 00-00-00","Onion mince","Zwiebelmett",,,"100",,"828","14","5.7","1","1","17","3.2",
 "foodunit","1","Serving","Portion","40","g","true"
-"food","7","2026-01-10 00-00-00","Cream Cheese","Frischkäse",,,"100",,"984","3","3","22.5","15.7","5.5","0.7",
+"food","7","2026-01-10 00-00-00","Cream Cheese","Frischkäse",,,"100",,"984","22.5","15.7","3","3","5.5","0.7",
 "foodunit","1","Serving","Portion","40","g","true"
-"food","8","2026-01-10 00-00-00","Fried egg","Spiegelei",,,"100",,"772","1.5","1.5","15.4","6.6","12.3","0.3",
+"food","8","2026-01-10 00-00-00","Fried egg","Spiegelei",,,"100",,"772","15.4","6.6","1.5","1.5","12.3","0.3",
 "foodunit","1","1 egg","1 Ei","65","g","true"
-"food","9","2026-01-10 00-00-00","Scrambled egg","Rührei",,,"100",,"669","1.5","1.5","13","5.2","11","0.4",
+"food","9","2026-01-10 00-00-00","Scrambled egg","Rührei",,,"100",,"669","13","5.2","1.5","1.5","11","0.4",
 "foodunit","1","Serving","Portion","125","g","true"
-"food","10","2026-01-10 00-00-00","Eggs","Eier",,,"100",,"572","1.6","1.6","10","2","12",,
+"food","10","2026-01-10 00-00-00","Eggs","Eier",,,"100",,"572","10","2","1.6","1.6","12",,
 "foodunit","1","Size M","Größe M","58","g","false"
 "foodunit","2","Size L","Größe L","68","g","true"
-"food","11","2026-01-10 00-00-00","Butter","Butter",,,"100",,"3102","0.6","0.6","83","53.8","0.7",,
+"food","11","2026-01-14 00-00-00","Butter","Butter",,,"100",,"3102","83","53.8","0.6","0.6","0.7",,
+"foodunit","1","Serving","Portion","10","g","true"
+"food","12","2026-01-14 00-00-00","Roast pork (lunch meats, cold cuts)","Schweinebraten (Aufschnitt)",,,"100",,"740","10.6","4.3","0.8","0.6","19.5","1.17",
+"foodunit","1","Slice","Scheibe","12","g","true"
+"food","13","2026-01-14 00-00-00","Mozzarella","Mozzarella",,,"100",,"1035","19","13","1.5","1.5","18","0.5",
+"foodunit","1","Ball","Kugel","125","g","true"
+"food","14","2026-01-14 00-00-00","Gugelhupf (Sponge cake, bundt cake, batter)","Gugelhupf (Rührkuchen, Napfkuchen, Rührteig)",,,"100",,"1674","18.8","11.6","49","26","6.5","0.5",
+"food","15","2026-01-14 00-00-00","Genoise/Genoese/Genovese cake","Biskuit",,,"100",,"1462","5.4","1.9","68.8","35.9","5.9","0.8",
+"foodunit","1","Cake base","Tortenboden","250","g","false"
+"foodunit","2","Piece of cake base (eighth)","Stück Tortenboden (Achtel)","31.25","g","true"
+"food","16","2026-01-14 00-00-00","Fruit soft/chewy candy, soft caramels","Frucht-/Weichkaramelle, Kaubonbon",,,"100",,"1715","5.8","4.7","88","63","0.3",,
+"foodunit","1","Small piece","Kleines Stück","2.2","g","false"
+"foodunit","2","Normal piece","Normales Stück","5","g","true"
+"food","17","2026-01-15 00-00-00","Chocolate bar","Schokoriegel",,,"100",,"2070","23.9","13.8","64.6","48.6","4.5","0.4",
+"foodunit","1","Bar small","Riegel klein","25","g","false"
+"foodunit","2","Bar big","Riegel groß","50","g","true"
+"food","18","2026-01-15 00-00-00","Gouda cheese","Gouda Käse",,,"100",,"1464","28","19","0.5","0.5","24","1.7",
+"foodunit","1","Slice","Scheibe","36","g","true"
+"food","19","2026-01-15 00-00-00","Milk chocolate","Schokolade Vollmilch",,,"100",,"2251","31","19","57","55","6.5","0.3",
+"foodunit","1","Slice","Tafel","100","g","false"
+"foodunit","2","Slice","Riegel","16.7","g","true"
+"food","20","2026-01-15 00-00-00","Dark chocolate 70%","Schokolade dunkel/bitter 70%",,,"100",,"2353","43.1","26.4","29.7","27.4","9.0",,
+"foodunit","1","Slice","Tafel","100","g","false"
+"foodunit","2","Slice","Riegel","16.7","g","true"
+"food","21","2026-01-15 00-00-00","Muesli/granola/cereal bar chocolate","Müsliriegel Schoko",,,"100",,"1764","13.8","9.4","66.8","31.2","5","0.4",
+"foodunit","1","Bar","Riegel","50","g","true"
+"food","22","2026-01-15 00-00-00","Rye mixed bread","Roggenmischbrot, Graubrot",,,"100",,"1047","1","0.2","50","0.6","7.6","1.6",
+"foodunit","1","Slice","Scheibe","50","g","true"
+"food","23","2026-01-15 00-00-00","Wheat mixed bread","Weizenmischbrot, Graubrot",,,"100",,"1026","0.8","0.1","49","0.6","7.4","1.7",
+"foodunit","1","Slice","Scheibe","50","g","true"
+"food","24","2026-01-15 00-00-00","Wholemeal/whole-grain bread","Vollkornbrot",,,"100",,"995","7","0.8","32","3.5","7.5","1.1",
+"foodunit","1","Slice","Scheibe","50","g","true"
+"food","25","2026-01-15 00-00-00","Noodles durum wheat semolina boiled","Nudeln Hartweizengries gekocht",,,"100",,"599","0.5",,"28.1","0.2","5","0.1",
+"food","26","2026-01-15 00-00-00","Noodles durum wheat semolina dry","Nudeln Hartweizengries trocken",,,"100",,"1525","1.3","0.2","73","3","12.5","0.1",
+"food","27","2026-01-15 00-00-00","Rice boiled","Reis gekocht",,,"100",,"544","0.2","0.1","28.7",,"2.4",,
+"food","28","2026-01-15 00-00-00","Rice dry","Reis trocken",,,"100",,"1505","0.9","0.2","77.1","0.1","8.5","0.1",
+"food","29","2026-01-15 00-00-00","Lemonade (Cola etc.)","Limonade (Cola etc.)",,,,"100","180",,,"10.6","10.6",,,
+"foodunit","1","Glas","Glas","200","ml","true"
+"foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
+"foodunit","3","0.5l bottle","0,5l Flasche","500","ml","false"
+"foodunit","4","1l bottle","1l Flasche","1000","ml","false"
+"foodunit","5","1.5l bottle","1,5l Flasche","1500","ml","false"
+"foodunit","6","2l bottle","2l Flasche","2000","ml","false"
+"food","30","2026-01-15 01-00-00","Patatoe boiled/fresh","Kartoffel gekocht/frisch",,,"100",,"320",,,"15.6","0.7","1.9",,
+"foodunit","1","Piece","Stück","125","g","true"
+"food","31","2026-01-15 01-00-00","Strawberry","Erdbeere",,,"100",,"151","0.4",,"5.5","5.5","0.8",,
+"foodunit","1","Piece","Stück","15","g","true"
+"food","32","2026-01-15 01-00-00","French Fries fried","Pommes Frites fritiert",,,"100",,"1210","14","1.3","36","0.3","3.4","0.5",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","32","2026-01-15 01-00-00","French Fries Air Fryier","Pommes Frites Heißluftfriteuse",,,"100",,"729","4.4","0.5","29","0.6","3.1","0.5",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","33","2026-01-15 01-00-00","Fried patatoes","Bratkartoffeln",,,"100",,"502","5.9","0.7","14.1","0.6","1.8","0.2",
+"foodunit","1","Serving","Portion","200","g","true"
+"food","34","2026-01-15 01-00-00","Tomato","Tomate",,,"100",,"75","0.2",,"3.9","2.6","0.9",,
+"foodunit","1","Piece","Stück","120","g","true"
+"food","35","2026-01-15 01-00-00","Sweet patato Fries fried","Süßkartoffelpommes fritiert",,,"100",,"1360","9.9","1.5","52.6","11","3.1","0.5",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","36","2026-01-15 01-00-00","Sweet patato Air Fryier","Süßkartoffelpommes Heißluftfriteuse",,,"100",,"838","7.1","1.1","29","14","2.3","0.6",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","37","2026-01-16 00-00-00","Lemonade (Fanta/Sprite etc.)","Limonade (Fanta/Sprite etc.)",,,,"100","136",,,"7.7","7.7",,,
+"foodunit","1","Glas","Glas","200","ml","true"
+"foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
+"foodunit","3","0.5l bottle","0,5l Flasche","500","ml","false"
+"foodunit","4","1l bottle","1l Flasche","1000","ml","false"
+"foodunit","5","1.5l bottle","1,5l Flasche","1500","ml","false"
+"foodunit","6","2l bottle","2l Flasche","2000","ml","false"

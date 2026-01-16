@@ -156,7 +156,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
 
   Future<void> setFoodEntry() async {
     if (_amount.value != null && eatsAmount.value != null) {
-      if (_foodEntry.food!.isExternalFoodSource) {
+      if (_foodEntry.food!.isExternalFoodSource && _foodEntry.food!.id != null && !_foodEntry.food!.fromDb) {
         await _foodRepository.setFoodByExternalId(food: _foodEntry.food!);
       }
 

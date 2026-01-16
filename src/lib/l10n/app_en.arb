@@ -115,6 +115,7 @@
   "popularity": "popularity",
   "name": "name",
   "name_label": "name:",
+  "brands_label": "brands:",
   "no_name": "-no name-",
   "no_brand": "-no brand-",
   "per_100_measurement_unit": "per 100{measurementUnit}",

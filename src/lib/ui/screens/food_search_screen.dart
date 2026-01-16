@@ -101,8 +101,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     ],
 
                     onTap: (int tabIndex) {
-                      _foodSearchScreenViewModel.clearSearchResult();
-                      
+                      _foodSearchScreenViewModel.finishSearchAndClearSearchResult();
+
                       if (tabIndex == 2) {
                         _foodSearchScreenViewModel.getFoodBySearchText(
                           searchText: OpenEatsJournalStrings.emptyString,

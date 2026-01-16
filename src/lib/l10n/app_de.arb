@@ -115,6 +115,7 @@
   "popularity": "Popularität",
   "name": "Name",
   "name_label": "Name:",
+  "brands_label": "Hersteller:",
   "no_name": "-kein Name-",
   "no_brand": "-keine Marke-",
   "per_100_measurement_unit": "pro 100{measurementUnit}",

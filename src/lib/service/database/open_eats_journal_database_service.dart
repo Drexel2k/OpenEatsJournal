@@ -97,13 +97,11 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
         ${OpenEatsJournalStrings.dbColumnProtein} REAL,
         ${OpenEatsJournalStrings.dbColumnSalt} REAL,
-        ${OpenEatsJournalStrings.dbColumnQuantity} Text
+        ${OpenEatsJournalStrings.dbColumnQuantity} Text,
+        ${OpenEatsJournalStrings.dbColumnSearchText} Text
       );""");
-    batch.execute("""CREATE VIRTUAL TABLE ${OpenEatsJournalStrings.dbTableFoodTextSearch} USING fts4(
-        content="${OpenEatsJournalStrings.dbTableFood}",
-        ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnBrands} TEXT
-      );""");
+    //removed fts4 table, as fts4 can only search in the beginning of words, not if a word contains a search text.
+    //fts5 would be able to search within words, but is not available on Android...
     batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUnit} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
@@ -548,29 +546,46 @@ class OpenEatsJournalDatabaseService {
       throw ArgumentError("Food update by external id required an external food source id.");
     }
 
-    final List<Map<String, Object?>> dbResult = await db.query(
+    final List<Map<String, Object?>> dbResultExternalId = await db.query(
       OpenEatsJournalStrings.dbTableFood,
       columns: [OpenEatsJournalStrings.dbColumnId],
       where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} = ?",
       whereArgs: [foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef], foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]],
     );
 
-    if (dbResult.length > 1) {
+    if (dbResultExternalId.length > 1) {
       throw StateError(
         "Only one food entry may exist for a given external food id and food source, multiple entries found for ${foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]}, food source ${foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef]}.",
       );
     }
 
     if (id != null) {
-      if (dbResult.isEmpty) {
+      if (dbResultExternalId.isEmpty) {
         throw StateError("No record for a given external id and food source, food id was not null, a food entry should exist.");
       }
     }
 
-    //If food comes from external API and is used for the first time in the food search result screen e.g. it has id null.
-    //If we know already the food in the food table, the id from the food table is assigned here.
-    if (id == null && dbResult.isNotEmpty) {
-      id = dbResult[0][OpenEatsJournalStrings.dbColumnId] as int;
+    if (id != null) {
+      final List<Map<String, Object?>> dbResultId = await db.query(
+        OpenEatsJournalStrings.dbTableFood,
+        columns: [OpenEatsJournalStrings.dbColumnId],
+        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+        whereArgs: [id],
+      );
+
+      if (dbResultId.length > 1) {
+        throw StateError("Only one food entry may exist for a given food id, multiple entries found for $id.");
+      }
+
+      if (dbResultId.isEmpty) {
+        throw StateError("No record for a given food id, food id was not null, a food entry should exist.");
+      }
+    } else {
+      //If food comes from external API and is used for the first time in the food search result screen e.g. it has id null.
+      //If we know already the food in the food table, the id from the food table is assigned here.
+      if (dbResultExternalId.isNotEmpty) {
+        id = dbResultExternalId[0][OpenEatsJournalStrings.dbColumnId] as int;
+      }
     }
 
     id = await _setFoodInternal(foodData: foodData, id: id);
@@ -578,6 +593,7 @@ class OpenEatsJournalDatabaseService {
     return id;
   }
 
+  //todo: maybe merge setFood and setFoodByExternalId as done in setFoodUnit
   Future<int> setFood({required Map<String, Object?> foodData, int? id}) async {
     Database db = await instance.db;
     if (foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] == 2) {
@@ -611,20 +627,8 @@ class OpenEatsJournalDatabaseService {
     if (id == null) {
       id = await db.insert(OpenEatsJournalStrings.dbTableFood, foodData);
     } else {
-      //can't update in fts4 table, need to delete and insert
-      await db.delete(OpenEatsJournalStrings.dbTableFoodTextSearch, where: "${OpenEatsJournalStrings.dbColumnRowId} = ?", whereArgs: [id]);
-
       await db.update(OpenEatsJournalStrings.dbTableFood, foodData, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [id]);
     }
-
-    //we must provide a rowid for contentless fts tables
-    Map<String, Object?> foodTextSearchData = {
-      OpenEatsJournalStrings.dbColumnRowId: id,
-      OpenEatsJournalStrings.dbColumnName: foodData[OpenEatsJournalStrings.dbColumnName],
-      OpenEatsJournalStrings.dbColumnBrands: foodData[OpenEatsJournalStrings.dbColumnBrands],
-    };
-
-    await db.insert(OpenEatsJournalStrings.dbTableFoodTextSearch, foodTextSearchData);
 
     return id;
   }
@@ -671,47 +675,64 @@ class OpenEatsJournalDatabaseService {
     return id;
   }
 
-  Future<List<Map<String, Object?>>?> getFoodsBySearchtext({required String searchText, List<int>? foodSourceIds}) async {
+  Future<List<Map<String, Object?>>?> getFoodsBySearchtext({required String searchText, required List<int> foodSourceIds}) async {
+    searchText = searchText.trim();
+
     List<Object?> whereArgs = [];
     String foodSourceWhereSql = OpenEatsJournalStrings.emptyString;
 
-    if (foodSourceIds != null && foodSourceIds.isNotEmpty) {
+    if (foodSourceIds.isNotEmpty) {
       String placeholders = "?, " * foodSourceIds.length;
       placeholders = placeholders.substring(0, placeholders.length - 2);
       foodSourceWhereSql = "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders) AND ";
       whereArgs.addAll(foodSourceIds);
     }
 
-    whereArgs.add(searchText);
+    List<String> searchWords = _getSearchWord(searchText: searchText);
+
+    String searchTextWhereSql = OpenEatsJournalStrings.emptyString;
+    if (searchWords.isNotEmpty) {
+      for (String word in searchWords) {
+        searchTextWhereSql = "${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSearchText} LIKE ? AND ";
+        whereArgs.add("%$word%");
+      }
+
+      searchTextWhereSql = searchTextWhereSql.substring(0, searchTextWhereSql.length - 5);
+    } else {
+      if (foodSourceIds.isNotEmpty) {
+        foodSourceWhereSql = foodSourceWhereSql.substring(0, foodSourceWhereSql.length - 5);
+      }
+    }
 
     return _getFoods(
       whereSql:
           """              
               $foodSourceWhereSql
-              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)""",
+              $searchTextWhereSql
+              """,
       whereArgs: whereArgs,
     );
   }
 
   Future<List<Map<String, Object?>>?> getFoodsByBarcode({required int barcode, List<int>? foodSourceIds}) async {
-    List<Object?> whereArgs = [];
+    List<Object?> arguments = [];
     String foodSourceWhereSql = OpenEatsJournalStrings.emptyString;
 
     if (foodSourceIds != null) {
       String placeholders = "?, " * foodSourceIds.length;
       placeholders = placeholders.substring(0, placeholders.length - 2);
       foodSourceWhereSql = "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders) AND ";
-      whereArgs.addAll(foodSourceIds);
+      arguments.addAll(foodSourceIds);
     }
 
-    whereArgs.add(barcode);
+    arguments.add(barcode);
 
     return _getFoods(
       whereSql:
           """
               $foodSourceWhereSql
               ${OpenEatsJournalStrings.dbColumnBarcode} = ?""",
-      whereArgs: whereArgs,
+      whereArgs: arguments,
     );
   }
 
@@ -734,6 +755,91 @@ class OpenEatsJournalDatabaseService {
     }
 
     return dbResult;
+  }
+
+  Future<List<Map<String, Object?>>?> getFoodsBySearchtextByUsage({required String searchText, required List<int> foodSourceIds, required int days}) async {
+    List<Object?> arguments = [];
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: days)));
+    arguments.add(formattedDate);
+
+    List<String> wheres = [];
+    if (foodSourceIds.isNotEmpty) {
+      String placeholders = "?, " * foodSourceIds.length;
+      placeholders = placeholders.substring(0, placeholders.length - 2);
+      wheres.add("${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders)");
+      arguments.addAll(foodSourceIds);
+    }
+
+    List<String> searchWords = _getSearchWord(searchText: searchText);
+
+    if (searchWords.isNotEmpty) {
+      for (String word in searchWords) {
+        wheres.add("${OpenEatsJournalStrings.dbColumnSearchText} LIKE ?");
+        arguments.add("%$word%");
+      }
+    }
+
+    List<Map<String, Object?>> dbResult = await _getFoodIdsByBarcodeByUsageInternal(wheres: wheres, arguments: arguments);
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    return dbResult;
+  }
+
+  Future<List<Map<String, Object?>>?> getFoodsByBarcodeByUsage({required int barcode, required List<int> foodSourceIds, required int days}) async {
+    List<Object?> arguments = [];
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: days)));
+    arguments.add(formattedDate);
+
+    List<String> wheres = [];
+    if (foodSourceIds.isNotEmpty) {
+      String placeholders = "?, " * foodSourceIds.length;
+      placeholders = placeholders.substring(0, placeholders.length - 2);
+      wheres.add("${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders)");
+      arguments.addAll(foodSourceIds);
+    }
+
+    wheres.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
+    arguments.add(barcode);
+
+    List<Map<String, Object?>> dbResult = await _getFoodIdsByBarcodeByUsageInternal(wheres: wheres, arguments: arguments);
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    return dbResult;
+  }
+
+  Future<List<Map<String, Object?>>> _getFoodIdsByBarcodeByUsageInternal({required List<String> wheres, required List<Object?> arguments}) async {
+    Database db = await instance.db;
+    return db.rawQuery("""
+        SELECT
+                $_sqlFoodColumns
+        FROM
+                (
+                      SELECT
+                              ${OpenEatsJournalStrings.dbColumnFoodIdRef},
+                              COUNT(${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultEntryCount}
+                      FROM
+                              ${OpenEatsJournalStrings.dbTableEatsJournal}
+                      WHERE
+                              ${OpenEatsJournalStrings.dbColumnEntryDate} >= ? AND ${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NOT NULL
+                      GROUP BY
+                              ${OpenEatsJournalStrings.dbColumnFoodIdRef}
+                      ORDER BY
+                              ${OpenEatsJournalStrings.dbResultEntryCount} DESC
+                ) AS ${OpenEatsJournalStrings.dbTableFoodByUsage}
+        JOIN 
+                ${OpenEatsJournalStrings.dbTableFood}
+        ON
+                ${OpenEatsJournalStrings.dbTableFoodByUsage}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
+                $_sqlFoodUnitJoin
+        WHERE 
+                ${wheres.join(" AND ")}
+        """, arguments);
   }
 
   Future<void> insertOnceDayNutritionTarget({required DateTime day, required int dayTargetKJoule}) async {
@@ -1152,89 +1258,25 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
-  Future<List<Map<String, Object?>>?> getFoodIdsBySearchtextBy3MonthUsage({required String searchText, required List<int> foodSourceIds}) async {
+  Future<void> deleteFoodUnits({required int foodId, required List<int> exceptIds}) async {
     Database db = await instance.db;
 
-    searchText = searchText.trim();
-    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: 90)));
+    List<String> wheres = [];
+    List<Object> whereArgs = [];
+    wheres.add("${OpenEatsJournalStrings.dbColumnFoodIdRef} = ?");
+    whereArgs.add(foodId);
 
-    List<Object?> arguments = [];
-    arguments.add(formattedDate);
-    String sqlSearchText = OpenEatsJournalStrings.emptyString;
-    if (searchText != OpenEatsJournalStrings.emptyString) {
-      sqlSearchText =
-          """AND ${OpenEatsJournalStrings.dbColumnFoodIdRef} IN (SELECT ${OpenEatsJournalStrings.dbColumnRowId} FROM ${OpenEatsJournalStrings.dbTableFoodTextSearch} WHERE ${OpenEatsJournalStrings.dbTableFoodTextSearch} MATCH ?)""";
-
-      arguments.add(searchText);
+    if (exceptIds.isNotEmpty) {
+      String placeholders = "?, " * exceptIds.length;
+      placeholders = placeholders.substring(0, placeholders.length - 2);
+      wheres.add("${OpenEatsJournalStrings.dbColumnId} NOT IN ($placeholders)");
+      whereArgs.addAll(exceptIds);
     }
 
-    List<Map<String, Object?>> dbResult = await db.rawQuery("""
-        SELECT
-                $_sqlFoodColumns
-        FROM
-                (
-                      SELECT
-                              ${OpenEatsJournalStrings.dbColumnFoodIdRef},
-                              COUNT(${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultEntryCount}
-                      FROM
-                              ${OpenEatsJournalStrings.dbTableEatsJournal}
-                      WHERE
-                              ${OpenEatsJournalStrings.dbColumnEntryDate} >= ? AND ${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NOT NULL $sqlSearchText
-                      GROUP BY
-                              ${OpenEatsJournalStrings.dbColumnFoodIdRef}
-                      ORDER BY
-                              ${OpenEatsJournalStrings.dbResultEntryCount} DESC
-                ) AS ${OpenEatsJournalStrings.dbTableFoodByUsage}
-        LEFT JOIN 
-                ${OpenEatsJournalStrings.dbTableFood}
-        ON
-                ${OpenEatsJournalStrings.dbTableFoodByUsage}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
-        $_sqlFoodUnitJoin
-        """, arguments);
-
-    if (dbResult.isEmpty) {
-      return null;
-    }
-
-    return dbResult;
+    await db.delete(OpenEatsJournalStrings.dbTableFoodUnit, where: wheres.join(" AND "), whereArgs: whereArgs);
   }
 
-  Future<List<Map<String, Object?>>?> getFoodIdsByBarcodeBy3MonthUsage({required int barcode, required List<int> foodSourceIds}) async {
-    Database db = await instance.db;
-
-    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: 43)));
-
-    List<Map<String, Object?>> dbResult = await db.rawQuery(
-      """
-        SELECT
-                $_sqlFoodColumns
-        FROM
-                (
-                      SELECT
-                              ${OpenEatsJournalStrings.dbColumnFoodIdRef},
-                              COUNT(${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultEntryCount}
-                      FROM
-                              ${OpenEatsJournalStrings.dbTableEatsJournal}
-                      WHERE
-                              ${OpenEatsJournalStrings.dbColumnEntryDate} >= ? AND ${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NOT NULL AND ${OpenEatsJournalStrings.dbColumnFoodIdRef} IN (SELECT ${OpenEatsJournalStrings.dbColumnId} FROM ${OpenEatsJournalStrings.dbTableFood} WHERE ${OpenEatsJournalStrings.dbColumnBarcode} = ?)
-                      GROUP BY
-                              ${OpenEatsJournalStrings.dbColumnFoodIdRef}
-                      ORDER BY
-                              ${OpenEatsJournalStrings.dbResultEntryCount} DESC
-                ) AS ${OpenEatsJournalStrings.dbTableFoodByUsage}
-        LEFT JOIN 
-                ${OpenEatsJournalStrings.dbTableFood}
-        ON
-                ${OpenEatsJournalStrings.dbTableFoodByUsage}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
-        $_sqlFoodUnitJoin
-        """,
-      [formattedDate, barcode],
-    );
-
-    if (dbResult.isEmpty) {
-      return null;
-    }
-
-    return dbResult;
+  List<String> _getSearchWord({required String searchText}) {
+    return searchText.split(" ").map((word) => word.trim()).toList();
   }
 }

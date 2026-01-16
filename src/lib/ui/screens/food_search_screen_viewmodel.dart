@@ -100,7 +100,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   void _processInitialResult({required List<FoodRepositoryResult> result, required Map<String, String> localizations}) {
-    _searchFinished();
+    _initialSearchFinished();
 
     if (result.any((resultInternal) => resultInternal.foods != null && resultInternal.foods!.isNotEmpty)) {
       int order = 0;
@@ -221,7 +221,6 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           } else {
             _isLoading = false;
             _hasMore = false;
-            clearSearchResult();
             _errorCode.value = result.errorCode;
             _errorMessage = result.errorMessage != null ? result.errorMessage! : OpenEatsJournalStrings.emptyString;
           }
@@ -236,17 +235,13 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _errorCode.value = null;
     _searchMessageCode.value = null;
     _currentPage = 1;
-    _foodSearchResult.clear();
-    _foodSearchResultUser.clear();
-    _foodSearchResultStandard.clear();
-    _foodSearchResultCache.clear();
-    _foodSearchResultOpenFoodFacst.clear();
+    _clearAllSearchResults();
     _sortButtonChanged.notify();
     _showInitialLoading.value = true;
     _foodSearchResultChanged.notify();
   }
 
-  void _searchFinished() {
+  void _initialSearchFinished() {
     _isLoading = false;
     _showInitialLoading.value = false;
   }
@@ -257,12 +252,6 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     }
 
     _foodSearchResultChanged.notify();
-  }
-
-  void clearSearchResult() {
-    _foodSearchResult.clear();
-    _foodSearchResultChanged.notify();
-    _sortButtonChanged.notify();
   }
 
   void setSortOrder(SortOrder sortOrder) {
@@ -347,6 +336,21 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   Future<void> setWeightJournalEntry({required DateTime date, required double weight}) async {
     await _journalRepository.setWeightJournalEntry(date: date, weight: weight);
+  }
+
+  void finishSearchAndClearSearchResult() {
+    _isLoading = false;
+    _hasMore = false;
+    _clearAllSearchResults();
+    _foodSearchResultChanged.notify();
+  }
+
+  void _clearAllSearchResults() {
+    _foodSearchResult.clear();
+    _foodSearchResultUser.clear();
+    _foodSearchResultStandard.clear();
+    _foodSearchResultCache.clear();
+    _foodSearchResultOpenFoodFacst.clear();
   }
 
   @override

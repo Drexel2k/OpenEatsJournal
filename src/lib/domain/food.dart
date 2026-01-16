@@ -26,7 +26,7 @@ class Food {
     double? salt,
     String? quantity,
   }) : _name = name,
-       _brands = brands,
+       _brands = brands ?? [],
        _foodSource = foodSource,
        _id = id,
        _originalFoodSource = originalFoodSource,
@@ -47,7 +47,7 @@ class Food {
 
   Food.asUserFood({required Food food})
     : _name = food.name,
-      _brands = food.brands != null ? List.from(food.brands!) : null,
+      _brands = List.from(food.brands),
       _foodSource = FoodSource.user,
       _fromDb = true,
       _originalFoodSource =
@@ -106,7 +106,7 @@ class Food {
     String? quantity,
     List<OrderedDefaultFoodUnit>? orderedDefaultFoodUnits,
   }) : _name = name,
-       _brands = brands,
+       _brands = brands ?? [],
        _id = id,
        _foodSource = foodSource,
        _kJoule = kJoule,
@@ -124,7 +124,7 @@ class Food {
        _salt = salt,
        _quantity = quantity,
        _foodUnitsWithOrder = [] {
-    if (orderedDefaultFoodUnits != null) {
+    if (orderedDefaultFoodUnits != null && orderedDefaultFoodUnits.isNotEmpty) {
       for (OrderedDefaultFoodUnit orderedDefaultFoodUnit in orderedDefaultFoodUnits) {
         _addFoodUnitWithOrder(orderedDefaultFoodUnit.foodUnitWithOrder);
 
@@ -144,7 +144,7 @@ class Food {
   }
 
   String _name;
-  final List<String>? _brands;
+  final List<String> _brands;
   int? _id;
   final FoodSource _foodSource;
   //to distinguish between data from objects from online services or cached versions which wer loaded from database
@@ -178,14 +178,20 @@ class Food {
   }
 
   set name(String value) {
+    _checkUserFood();
+
     _name = value;
   }
 
   set barcode(int? value) {
+    _checkUserFood();
+
     _barcode = value;
   }
 
   set nutritionPerGramAmount(double? value) {
+    _checkUserFood();
+
     if (value != null || _nutritionPerMilliliterAmount != null) {
       if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.gram);
@@ -198,6 +204,8 @@ class Food {
   }
 
   set nutritionPerMilliliterAmount(double? value) {
+    _checkUserFood();
+
     if (value != null || _nutritionPerGramAmount != null) {
       if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.milliliter);
@@ -210,34 +218,50 @@ class Food {
   }
 
   set kJoule(int value) {
+    _checkUserFood();
+
     _kJoule = value;
   }
 
   set carbohydrates(double? value) {
+    _checkUserFood();
+
     _carbohydrates = value;
   }
 
   set sugar(double? value) {
+    _checkUserFood();
+
     _sugar = value;
   }
 
   set fat(double? value) {
+    _checkUserFood();
+
     _fat = value;
   }
 
   set saturatedFat(double? value) {
+    _checkUserFood();
+
     _saturatedFat = value;
   }
 
   set protein(double? value) {
+    _checkUserFood();
+
     _protein = value;
   }
 
   set salt(double? value) {
+    _checkUserFood();
+
     _salt = value;
   }
 
   set defaultFoodUnit(FoodUnit? value) {
+    _checkUserFood();
+
     if (value == null) {
       throw ArgumentError("Default food unit must not be null.");
     }
@@ -254,7 +278,7 @@ class Food {
   }
 
   String get name => _name;
-  List<String>? get brands => _brands;
+  List<String> get brands => _brands;
   //food source and original food source can differ on user food.
   FoodSource get foodSource => _foodSource;
   bool get fromDb => _fromDb;
@@ -280,6 +304,8 @@ class Food {
   }
 
   bool addFoodUnit({required FoodUnit foodUnit, int? order}) {
+    _checkUserFood();
+
     if (foodUnit.amountMeasurementUnit == MeasurementUnit.gram) {
       if (_nutritionPerGramAmount == null) {
         return false;
@@ -323,6 +349,8 @@ class Food {
   }
 
   void upadteFoodUnitOrder({required FoodUnit foodUnit, required int newOrder}) {
+    _checkUserFood();
+
     ObjectWithOrder<FoodUnit> foodUnitWithOrder = _foodUnitsWithOrder.firstWhere(
       (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit,
     );
@@ -361,10 +389,21 @@ class Food {
       throw ArgumentError("Can't add food unit with same order number a second time.");
     }
 
+    if (foodUnitWithOrder.object.amountMeasurementUnit == MeasurementUnit.gram && (_nutritionPerGramAmount == null || _nutritionPerGramAmount! <= 0)) {
+      throw ArgumentError("Can't add food unit measurementunit gram when food's nutritionPerGramAmount is null or 0.");
+    }
+
+    if (foodUnitWithOrder.object.amountMeasurementUnit == MeasurementUnit.milliliter &&
+        (_nutritionPerMilliliterAmount == null || _nutritionPerMilliliterAmount! <= 0)) {
+      throw ArgumentError("Can't add food unit measurementunit milliliter when food's nutritionPerMilliliterAmount is null or 0.");
+    }
+
     _foodUnitsWithOrder.add(foodUnitWithOrder);
   }
 
   void removeFoodUnit({required FoodUnit foodUnit}) {
+    _checkUserFood();
+
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit);
     _ensureDefaultFoodUnit();
   }
@@ -395,6 +434,12 @@ class Food {
       if (foodUnitWithOrder == null) {
         _defaultFoodUnit = _foodUnitsWithOrder[0].object;
       }
+    }
+  }
+
+  void _checkUserFood() {
+    if (_foodSource != FoodSource.user) {
+      throw StateError("Only user foods can be updated.");
     }
   }
 }

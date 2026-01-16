@@ -1,6 +1,7 @@
 import "package:collection/collection.dart";
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/food_unit_editor_data.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
@@ -15,6 +16,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     : _food = food,
       _foodRepository = foodRepository,
       _name = ValueNotifier(food.name),
+      _brands = ValueNotifier(food.brands.join(", ")),
       _nameValid = ValueNotifier(food.name.trim() != OpenEatsJournalStrings.emptyString),
       _barcode = ValueNotifier(food.barcode),
       _nutritionPerGramAmount = ValueNotifier(food.nutritionPerGramAmount),
@@ -40,6 +42,10 @@ class FoodEditScreenViewModel extends ChangeNotifier {
           )
           .toList(),
       _foodId = food.id {
+    if (food.foodSource != FoodSource.user) {
+      throw ArgumentError("Only user foods can be edited");
+    }
+
     _name.addListener(_nameChanged);
     _nutritionPerGramAmount.addListener(_amountsChanged);
     _nutritionPerMilliliterAmount.addListener(_amountsChanged);
@@ -50,6 +56,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final FoodRepository _foodRepository;
 
   final ValueNotifier<String> _name;
+  final ValueNotifier<String> _brands;
   final ValueNotifier<bool> _nameValid;
   final ValueNotifier<int?> _barcode;
   final ValueNotifier<double?> _nutritionPerGramAmount;
@@ -78,6 +85,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final List<FoodUnitEditorViewModel> _foodUnitEditorViewModels = [];
 
   ValueNotifier<String> get name => _name;
+  ValueNotifier<String> get brands => _brands;
   ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<int?> get barcode => _barcode;
   ValueNotifier<double?> get nutritionPerGramAmount => _nutritionPerGramAmount;
@@ -254,6 +262,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
     if (foodValid) {
       _food.name = _name.value;
+      _food.brands.clear();
+      _food.brands.addAll(_brands.value.split(",").map((brand) => brand.trim()));
       _food.barcode = _barcode.value;
       _food.nutritionPerGramAmount = _nutritionPerGramAmount.value;
       _food.nutritionPerMilliliterAmount = _nutritionPerMilliliterAmount.value;

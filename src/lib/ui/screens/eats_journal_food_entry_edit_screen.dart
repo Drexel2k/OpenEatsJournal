@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:openeatsjournal/domain/food.dart';
+import 'package:openeatsjournal/domain/food_source.dart';
 import 'package:openeatsjournal/domain/food_unit.dart';
 import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
@@ -99,18 +100,67 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             ],
           ),
           SizedBox(height: 6),
-          Text(
-            softWrap: true,
-            style: textTheme.headlineSmall,
-            _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name != OpenEatsJournalStrings.emptyString
-                ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name
-                : AppLocalizations.of(context)!.no_name,
-          ),
-          Text(
-            style: textTheme.labelLarge,
-            _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands != null
-                ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands!.join(", ")
-                : AppLocalizations.of(context)!.no_brand,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      softWrap: true,
+                      style: textTheme.headlineSmall,
+                      _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name != OpenEatsJournalStrings.emptyString
+                          ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name
+                          : AppLocalizations.of(context)!.no_name,
+                    ),
+                    Text(
+                      style: textTheme.labelLarge,
+                      _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands.isNotEmpty
+                          ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands.join(", ")
+                          : AppLocalizations.of(context)!.no_brand,
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuButton<String>(
+                onSelected: (selected) {},
+                itemBuilder: (BuildContext context) {
+                  List<PopupMenuItem<String>> menuItems = [];
+
+                  menuItems.add(
+                    PopupMenuItem(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                          arguments: Food.asUserFood(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!),
+                        );
+                      },
+                      child: Text(AppLocalizations.of(context)!.as_new_food),
+                    ),
+                  );
+
+                  if (_eatsJournalFoodAddScreenViewModel.foodEntry.food!.foodSource == FoodSource.user) {
+                    menuItems.add(
+                      PopupMenuItem(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                            arguments: _eatsJournalFoodAddScreenViewModel.foodEntry.food!,
+                          );
+                        },
+                        child: Text(AppLocalizations.of(context)!.edit),
+                      ),
+                    );
+                  }
+
+                  return menuItems;
+                },
+                child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+              ),
+            ],
           ),
           SizedBox(height: 10),
 

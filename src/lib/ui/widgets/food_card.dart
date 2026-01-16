@@ -57,7 +57,7 @@ class FoodCard extends StatelessWidget {
                           style: _textTheme.headlineSmall,
                           _food.name != OpenEatsJournalStrings.emptyString ? _food.name : AppLocalizations.of(context)!.no_name,
                         ),
-                        Text(style: _textTheme.labelLarge, _food.brands != null ? _food.brands!.join(", ") : AppLocalizations.of(context)!.no_brand),
+                        Text(style: _textTheme.labelLarge, _food.brands.isNotEmpty ? _food.brands.join(", ") : AppLocalizations.of(context)!.no_brand),
                       ],
                     ),
                   ),
