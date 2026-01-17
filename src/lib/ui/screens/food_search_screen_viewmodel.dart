@@ -315,9 +315,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
-    if (eatsJournalEntry.food != null && eatsJournalEntry.food!.isExternalFoodSource) {
-      await _foodRepository.setFoodByExternalId(food: eatsJournalEntry.food!);
-    }
+    await _foodRepository.setFoodByExternalIdIfNecessary(food: eatsJournalEntry.food!);
 
     await _journalRepository.saveOnceDayNutritionTarget(
       entryDate: eatsJournalEntry.entryDate,
