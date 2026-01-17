@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
-import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
@@ -19,10 +18,9 @@ import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
@@ -310,7 +308,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           width: 80,
                                           child: Align(
                                             alignment: Alignment.centerRight,
-                                            child: GaugeDistribution(startValue: dinnerEndpoint, endValue: dinnerStartPoint),
+                                            child: GaugeDistribution(startValue: dinnerStartPoint, endValue: dinnerEndpoint),
                                           ),
                                         ),
                                         Expanded(
@@ -467,7 +465,19 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               },
                                               icon: Icon(Icons.check),
                                             ),
-
+                                            IconButton.outlined(
+                                              onPressed: () async {
+                                                _changeMeal(meal: Meal.breakfast);
+                                                await UiHelpers.pushQuickEntryRoute(
+                                                  context: (context),
+                                                  initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                                  initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
+                                                );
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
+                                              },
+                                              icon: Icon(Icons.speed),
+                                            ),
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.breakfast);
@@ -539,7 +549,19 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               },
                                               icon: Icon(Icons.check),
                                             ),
-
+                                            IconButton.outlined(
+                                              onPressed: () async {
+                                                _changeMeal(meal: Meal.lunch);
+                                                await UiHelpers.pushQuickEntryRoute(
+                                                  context: (context),
+                                                  initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                                  initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
+                                                );
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
+                                              },
+                                              icon: Icon(Icons.speed),
+                                            ),
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.lunch);
@@ -611,7 +633,19 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               },
                                               icon: Icon(Icons.check),
                                             ),
-
+                                            IconButton.outlined(
+                                              onPressed: () async {
+                                                _changeMeal(meal: Meal.dinner);
+                                                await UiHelpers.pushQuickEntryRoute(
+                                                  context: (context),
+                                                  initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                                  initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
+                                                );
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
+                                              },
+                                              icon: Icon(Icons.speed),
+                                            ),
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.dinner);
@@ -683,7 +717,19 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               },
                                               icon: Icon(Icons.check),
                                             ),
-
+                                            IconButton.outlined(
+                                              onPressed: () async {
+                                                _changeMeal(meal: Meal.snacks);
+                                                await UiHelpers.pushQuickEntryRoute(
+                                                  context: (context),
+                                                  initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                                  initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
+                                                );
+                                                _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
+                                                _eatsJournalScreenViewModel.refreshNutritionData();
+                                              },
+                                              icon: Icon(Icons.speed),
+                                            ),
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.snacks);
@@ -702,40 +748,66 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 Column(
                                   children: [
                                     SizedBox(height: 207),
-                                    Row(
+                                    Stack(
                                       children: [
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 48,
-                                            //weight button
-                                            child: OutlinedButton(
-                                              onPressed: () async {
-                                                await showDialog<void>(
-                                                  useSafeArea: true,
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder: (BuildContext contextBuilder) {
-                                                    double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                                    double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: SizedBox(
+                                                height: 48,
+                                                //weight button
+                                                child: OutlinedButton(
+                                                  onPressed: () async {
+                                                    await showDialog<void>(
+                                                      useSafeArea: true,
+                                                      barrierDismissible: false,
+                                                      context: context,
+                                                      builder: (BuildContext contextBuilder) {
+                                                        double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                                        double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
 
-                                                    return Dialog(
-                                                      insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                                                      child: WeightJournalEditScreen(
-                                                        weightEditScreenViewModel: WeightJournalEditScreenViewModel(
-                                                          journalRepository: _eatsJournalScreenViewModel.journalRepository,
-                                                        ),
-                                                      ),
+                                                        return Dialog(
+                                                          insetPadding: EdgeInsets.fromLTRB(
+                                                            horizontalPadding,
+                                                            verticalPadding,
+                                                            horizontalPadding,
+                                                            verticalPadding,
+                                                          ),
+                                                          child: WeightJournalEditScreen(
+                                                            weightEditScreenViewModel: WeightJournalEditScreenViewModel(
+                                                              journalRepository: _eatsJournalScreenViewModel.journalRepository,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
                                                     );
-                                                  },
-                                                );
 
-                                                _eatsJournalScreenViewModel.refreshCurrentWeight();
-                                              },
-                                              child: null,
+                                                    _eatsJournalScreenViewModel.refreshCurrentWeight();
+                                                  },
+                                                  child: null,
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                        Expanded(child: SizedBox()),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            IconButton.outlined(
+                                              onPressed: () async {
+                                                if (await UiHelpers.showAddWeightDialog(
+                                                  context: AppGlobal.navigatorKey.currentContext!,
+                                                  initialDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                                                  initialWeight: await _eatsJournalScreenViewModel.getLastWeightJournalEntry(),
+                                                  saveCallback: _setWeightJournalEntry,
+                                                )) {
+                                                  _eatsJournalScreenViewModel.refreshCurrentWeight();
+                                                }
+                                              },
+                                              icon: Icon(Icons.add),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -878,37 +950,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                            double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
-                            double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
-                            double weight = await _eatsJournalScreenViewModel.getLastWeightJournalEntry();
-
-                            WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
-                              initialWeight: weight,
-                            );
-
-                            if ((await showDialog<bool>(
-                              useSafeArea: true,
-                              barrierDismissible: false,
+                            if (await UiHelpers.showAddWeightDialog(
                               context: AppGlobal.navigatorKey.currentContext!,
-                              builder: (BuildContext contextBuilder) {
-                                return Dialog(
-                                  insetPadding: EdgeInsets.fromLTRB(
-                                    dialogHorizontalPadding,
-                                    dialogVerticalPadding,
-                                    dialogHorizontalPadding,
-                                    dialogVerticalPadding,
-                                  ),
-                                  child: WeightJournalEntryAddScreen(
-                                    weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
-                                    date: _eatsJournalScreenViewModel.currentJournalDate.value,
-                                  ),
-                                );
-                              },
-                            ))!) {
-                              await _eatsJournalScreenViewModel.setWeightJournalEntry(
-                                date: _eatsJournalScreenViewModel.currentJournalDate.value,
-                                weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
-                              );
+                              initialDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                              initialWeight: await _eatsJournalScreenViewModel.getLastWeightJournalEntry(),
+                              saveCallback: _setWeightJournalEntry,
+                            )) {
                               _eatsJournalScreenViewModel.refreshCurrentWeight();
                             }
                           },
@@ -945,16 +992,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           heroTag: "2",
                           onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
-
-                            await Navigator.pushNamed(
-                              context,
-                              OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                              arguments: EatsJournalEntry.quick(
-                                entryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
-                                name: OpenEatsJournalStrings.emptyString,
-                                kJoule: NutritionCalculator.kJouleForOnekCal,
-                                meal: _eatsJournalScreenViewModel.currentMeal.value,
-                              ),
+                            await UiHelpers.pushQuickEntryRoute(
+                              context: (context),
+                              initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
+                              initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
                             );
                             _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                             _eatsJournalScreenViewModel.refreshNutritionData();
@@ -981,6 +1022,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _setWeightJournalEntry(double weight) async {
+    await _eatsJournalScreenViewModel.setWeightJournalEntry(date: _eatsJournalScreenViewModel.currentJournalDate.value, weight: weight);
   }
 
   Future<DateTime?> _selectDate({required DateTime initialDate, required BuildContext context}) async {

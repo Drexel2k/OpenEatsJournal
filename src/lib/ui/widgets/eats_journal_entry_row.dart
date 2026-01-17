@@ -4,7 +4,7 @@ import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/utils/food_source_format.dart';
+import 'package:openeatsjournal/ui/utils/ui_helpers.dart';
 import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
 
 class EatsJournalEntryRow extends StatelessWidget {
@@ -69,8 +69,8 @@ class EatsJournalEntryRow extends StatelessWidget {
                 ),
                 SizedBox(width: 10),
                 Badge(
-                  label: Text(FoodSourceFormat.getFoodSourceLabel(food: _eatsJournalEntry.food, context: context)),
-                  backgroundColor: FoodSourceFormat.getFoodSourceColor(food: _eatsJournalEntry.food, context: context),
+                  label: Text(UiHelpers.getFoodSourceLabel(food: _eatsJournalEntry.food, context: context)),
+                  backgroundColor: UiHelpers.getFoodSourceColor(food: _eatsJournalEntry.food, context: context),
                 ),
               ],
             ),

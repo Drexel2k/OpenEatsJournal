@@ -6,7 +6,7 @@ import 'package:openeatsjournal/domain/nutrition_calculator.dart';
 import 'package:openeatsjournal/domain/utils/convert_validate.dart';
 import 'package:openeatsjournal/l10n/app_localizations.dart';
 import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/ui/utils/food_source_format.dart';
+import 'package:openeatsjournal/ui/utils/ui_helpers.dart';
 
 class FoodCard extends StatelessWidget {
   const FoodCard({
@@ -30,8 +30,8 @@ class FoodCard extends StatelessWidget {
     final borderRadius = BorderRadius.circular(8);
 
     MeasurementUnit measurementUnit = _getMeasurementUnit();
-    String foodSourceLabel = FoodSourceFormat.getFoodSourceLabel(food: _food, context: context);
-    Color foodSourceColor = FoodSourceFormat.getFoodSourceColor(food: _food, context: context);
+    String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: _food, context: context);
+    Color foodSourceColor = UiHelpers.getFoodSourceColor(food: _food, context: context);
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),

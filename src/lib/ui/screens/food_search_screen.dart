@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
@@ -10,11 +9,10 @@ import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_tab.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 
 class FoodSearchScreen extends StatefulWidget {
@@ -160,39 +158,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           heroTag: "4",
                           onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
-
-                            double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
-                            double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
-                            double weight = await _foodSearchScreenViewModel.getLastWeightJournalEntry();
-
-                            WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
-                              initialWeight: weight,
-                            );
-
-                            if ((await showDialog<bool>(
-                              useSafeArea: true,
-                              barrierDismissible: false,
+                            await UiHelpers.showAddWeightDialog(
                               context: AppGlobal.navigatorKey.currentContext!,
-                              builder: (BuildContext contextBuilder) {
-                                return Dialog(
-                                  insetPadding: EdgeInsets.fromLTRB(
-                                    dialogHorizontalPadding,
-                                    dialogVerticalPadding,
-                                    dialogHorizontalPadding,
-                                    dialogVerticalPadding,
-                                  ),
-                                  child: WeightJournalEntryAddScreen(
-                                    weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel,
-                                    date: _foodSearchScreenViewModel.currentJournalDate.value,
-                                  ),
-                                );
-                              },
-                            ))!) {
-                              await _foodSearchScreenViewModel.setWeightJournalEntry(
-                                date: _foodSearchScreenViewModel.currentJournalDate.value,
-                                weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
-                              );
-                            }
+                              initialDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                              initialWeight: await _foodSearchScreenViewModel.getLastWeightJournalEntry(),
+                              saveCallback: _addWeightJournalEntry,
+                            );
                           },
                           label: Text(AppLocalizations.of(context)!.weight_journal_entry),
                         ),
@@ -225,18 +196,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         width: fabMenuWidth,
                         child: FloatingActionButton.extended(
                           heroTag: "2",
-                          onPressed: () {
+                          onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
-
-                            Navigator.pushNamed(
-                              context,
-                              OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                              arguments: EatsJournalEntry.quick(
-                                entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
-                                name: OpenEatsJournalStrings.emptyString,
-                                kJoule: NutritionCalculator.kJouleForOnekCal,
-                                meal: _foodSearchScreenViewModel.currentMeal.value,
-                              ),
+                            await UiHelpers.pushQuickEntryRoute(
+                              context: context,
+                              initialEntryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                              initialMeal: _foodSearchScreenViewModel.currentMeal.value,
                             );
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
@@ -261,6 +226,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _addWeightJournalEntry(double weight) async {
+    await _foodSearchScreenViewModel.setWeightJournalEntry(date: _foodSearchScreenViewModel.currentJournalDate.value, weight: weight);
   }
 
   Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
