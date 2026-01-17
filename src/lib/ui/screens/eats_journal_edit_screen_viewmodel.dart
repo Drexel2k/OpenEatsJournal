@@ -62,6 +62,10 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
     return await _journalRepository.deleteEatsJournalEntry(id: id);
   }
 
+  Future<void> duplicateEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
+    await _journalRepository.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+  }  
+
   @override
   void dispose() {
     _showInitialLoading.dispose();

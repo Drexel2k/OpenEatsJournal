@@ -208,7 +208,6 @@ class _FoodSearchScreenTabState extends State<FoodSearchScreenTab> {
                         arguments: EatsJournalEntry.fromFood(
                           entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                           food: food,
-                          amount: 100,
                           amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
                           meal: _foodSearchScreenViewModel.currentMeal.value,
                         ),

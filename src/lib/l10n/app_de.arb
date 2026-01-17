@@ -201,9 +201,12 @@
   "edit_quick_entry": "Schnelleintrag bearbeiten",
   "barcode": "Barcode:",
   "amount_gram": "{amount} Gramm",
+  "amount_g": "{amount}g",
   "amount_milliliter": "{amount} Milliliter",
+  "amount_ml": "{amount}g",
   "basics": "Basisinformationen",
   "online": "Online",
   "offline": "Offline",
-  "recent": "Zuletzt"
+  "recent": "Zuletzt",
+  "as_new_eats_journal_entry": "Als neuer Essenstagebucheintrag"
 }

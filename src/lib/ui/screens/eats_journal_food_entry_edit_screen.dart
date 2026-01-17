@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:openeatsjournal/domain/eats_journal_entry.dart';
 import 'package:openeatsjournal/domain/food.dart';
 import 'package:openeatsjournal/domain/food_source.dart';
 import 'package:openeatsjournal/domain/food_unit.dart';
@@ -44,8 +45,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    _amountController.text = ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.amount.value);
-    _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.eatsAmount.value);
+    _amountController.text = _eatsJournalFoodAddScreenViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.amount.value)
+        : OpenEatsJournalStrings.emptyString;
+    _eatsAmountController.text = _eatsJournalFoodAddScreenViewModel.eatsAmount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.eatsAmount.value)
+        : OpenEatsJournalStrings.emptyString;
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
@@ -134,12 +139,33 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                         Navigator.pushNamed(
                           context,
                           OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                          arguments: Food.asUserFood(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!),
+                          arguments: Food.copyAsNewUserFood(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!),
                         );
                       },
                       child: Text(AppLocalizations.of(context)!.as_new_food),
                     ),
                   );
+
+                  if (_eatsJournalFoodAddScreenViewModel.foodEntry.id != null) {
+                    menuItems.add(
+                      PopupMenuItem(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                            arguments: EatsJournalEntry.fromFood(
+                              entryDate: _eatsJournalFoodAddScreenViewModel.currentEntryDate.value,
+                              food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!,
+                              amount: _eatsJournalFoodAddScreenViewModel.eatsAmount.value,
+                              amountMeasurementUnit: _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value,
+                              meal: _eatsJournalFoodAddScreenViewModel.currentMeal.value,
+                            ),
+                          );
+                        },
+                        child: Text(AppLocalizations.of(context)!.as_new_eats_journal_entry),
+                      ),
+                    );
+                  }
 
                   if (_eatsJournalFoodAddScreenViewModel.foodEntry.food!.foodSource == FoodSource.user) {
                     menuItems.add(

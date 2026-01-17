@@ -53,6 +53,10 @@ class JournalRepository {
     );
   }
 
+  Future<void> duplicateEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
+    await setEatsJournalEntry(eatsJournalEntry: EatsJournalEntry.copyAsNew(eatsJournalEntry: eatsJournalEntry));
+  }
+
   Future<List<EatsJournalEntry>?> getEatsJournalEntries({required DateTime date, Meal? meal}) async {
     List<Map<String, Object?>>? dbResult = await _oejDatabase.getEatsJournalEntries(date: date, mealValue: meal?.value);
     if (dbResult == null) {
@@ -100,7 +104,7 @@ class JournalRepository {
         carbohydrates: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates] as double?,
         sugar: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySugar] as double?,
         fat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryFat] as double?,
-        satureatedFat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat] as double?,
+        saturatedFat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat] as double?,
         protein: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryProtein] as double?,
         salt: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySalt] as double?,
       );
@@ -118,7 +122,7 @@ class JournalRepository {
         carbohydrates: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates] as double?,
         sugar: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySugar] as double?,
         fat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryFat] as double?,
-        satureatedFat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat] as double?,
+        saturatedFat: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat] as double?,
         protein: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryProtein] as double?,
         salt: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntrySalt] as double?,
       );

@@ -45,7 +45,7 @@ class Food {
        _quantity = quantity,
        _foodUnitsWithOrder = [];
 
-  Food.asUserFood({required Food food})
+  Food.copyAsNewUserFood({required Food food})
     : _name = food.name,
       _brands = List.from(food.brands),
       _foodSource = FoodSource.user,

@@ -4,19 +4,26 @@ import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 
 class EatsJournalEntry {
-  EatsJournalEntry.fromFood({
-    required DateTime entryDate,
-    required Food food,
-    required double amount,
-    required MeasurementUnit amountMeasurementUnit,
-    required Meal meal,
-  }) : _entryDate = entryDate,
-       _meal = meal,
-       _food = food,
-       _name = food.name,
-       _kJoule = 1, //dummy value, recalculated in constructor
-       _amount = amount,
-       _amountMeasurementUnit = amountMeasurementUnit {
+  EatsJournalEntry.fromFood({required DateTime entryDate, required Food food, required Meal meal, double? amount, MeasurementUnit? amountMeasurementUnit})
+    : _entryDate = entryDate,
+      _meal = meal,
+      _food = food,
+      _name = food.name,
+      _kJoule = 1, //dummy value, recalculated in constructor
+      _amount = amount ?? _getInitialFoodAmount(food),
+      _amountMeasurementUnit = amountMeasurementUnit ?? _getInitialMeasurementUnit(food) {
+    if (_amountMeasurementUnit! == MeasurementUnit.gram) {
+      if (food.nutritionPerGramAmount == null) {
+        throw StateError("No nutrition per info for mearurement unit gram.");
+      }
+    }
+
+    if (_amountMeasurementUnit! == MeasurementUnit.milliliter) {
+      if (food.nutritionPerMilliliterAmount == null) {
+        throw StateError("No nutrition per info for mearurement unit milliliter.");
+      }
+    }
+    
     _updateNutrionsValues();
   }
 
@@ -30,7 +37,7 @@ class EatsJournalEntry {
     double? carbohydrates,
     double? sugar,
     double? fat,
-    double? satureatedFat,
+    double? saturatedFat,
     double? protein,
     double? salt,
   }) : _entryDate = entryDate,
@@ -43,7 +50,7 @@ class EatsJournalEntry {
        _carbohydrates = carbohydrates,
        _sugar = sugar,
        _fat = fat,
-       _saturatedFat = satureatedFat,
+       _saturatedFat = saturatedFat,
        _protein = protein,
        _salt = salt;
 
@@ -59,7 +66,7 @@ class EatsJournalEntry {
     double? carbohydrates,
     double? sugar,
     double? fat,
-    double? satureatedFat,
+    double? saturatedFat,
     double? protein,
     double? salt,
   }) : _id = id,
@@ -73,9 +80,24 @@ class EatsJournalEntry {
        _carbohydrates = carbohydrates,
        _sugar = sugar,
        _fat = fat,
-       _saturatedFat = satureatedFat,
+       _saturatedFat = saturatedFat,
        _protein = protein,
        _salt = salt;
+
+  EatsJournalEntry.copyAsNew({required EatsJournalEntry eatsJournalEntry})
+    : _entryDate = eatsJournalEntry.entryDate,
+      _meal = eatsJournalEntry.meal,
+      _food = eatsJournalEntry.food,
+      _name = eatsJournalEntry.name,
+      _amount = eatsJournalEntry.amount,
+      _amountMeasurementUnit = eatsJournalEntry.amountMeasurementUnit,
+      _kJoule = eatsJournalEntry.kJoule,
+      _carbohydrates = eatsJournalEntry.carbohydrates,
+      _sugar = eatsJournalEntry.sugar,
+      _fat = eatsJournalEntry.fat,
+      _saturatedFat = eatsJournalEntry.saturatedFat,
+      _protein = eatsJournalEntry.protein,
+      _salt = eatsJournalEntry.salt;
 
   int? _id;
   DateTime _entryDate;
@@ -92,6 +114,26 @@ class EatsJournalEntry {
   double? _saturatedFat;
   double? _protein;
   double? _salt;
+
+  static double _getInitialFoodAmount(Food food) {
+    if (food.defaultFoodUnit != null) {
+      return food.defaultFoodUnit!.amount;
+    } else if (food.foodUnitsWithOrder.isNotEmpty) {
+      return food.foodUnitsWithOrder[0].object.amount;
+    } else {
+      return 100;
+    }
+  }
+
+  static MeasurementUnit _getInitialMeasurementUnit(Food food) {
+    if (food.defaultFoodUnit != null) {
+      return food.defaultFoodUnit!.amountMeasurementUnit;
+    } else if (food.foodUnitsWithOrder.isNotEmpty) {
+      return food.foodUnitsWithOrder[0].object.amountMeasurementUnit;
+    } else {
+      return food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter;
+    }
+  }
 
   set id(int? value) {
     if (value == null) {

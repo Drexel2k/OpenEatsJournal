@@ -829,8 +829,6 @@ class OpenEatsJournalDatabaseService {
                               ${OpenEatsJournalStrings.dbColumnEntryDate} >= ? AND ${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NOT NULL
                       GROUP BY
                               ${OpenEatsJournalStrings.dbColumnFoodIdRef}
-                      ORDER BY
-                              ${OpenEatsJournalStrings.dbResultEntryCount} DESC
                 ) AS ${OpenEatsJournalStrings.dbTableFoodByUsage}
         JOIN 
                 ${OpenEatsJournalStrings.dbTableFood}
@@ -839,6 +837,8 @@ class OpenEatsJournalDatabaseService {
                 $_sqlFoodUnitJoin
         WHERE 
                 ${wheres.join(" AND ")}
+        ORDER BY
+                ${OpenEatsJournalStrings.dbResultEntryCount} DESC
         """, arguments);
   }
 

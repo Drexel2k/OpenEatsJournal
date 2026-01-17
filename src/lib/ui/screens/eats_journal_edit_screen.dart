@@ -40,10 +40,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
           AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.eats_journal)),
           Row(
             children: [
-              Text(
-                ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalEditScreenViewModel.currentJournalDate),
-                style: textTheme.titleMedium,
-              ),
+              Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalEditScreenViewModel.currentJournalDate), style: textTheme.titleMedium),
               Spacer(),
               Text(
                 _getLocalizedMeal(meal: _eatsJournalEditScreenViewModel.meal, context: context),
@@ -80,6 +77,12 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                         if (deleted) {
                           _eatsJournalEditScreenViewModel.getEatsJournalEntries();
                         }
+                      },
+
+                      onDuplicatePressed: ({required EatsJournalEntry eatsJournalEntry}) async {
+                        await _eatsJournalEditScreenViewModel.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+
+                        _eatsJournalEditScreenViewModel.getEatsJournalEntries();
                       },
                       deleteIconColor: colorScheme.primary,
                     );

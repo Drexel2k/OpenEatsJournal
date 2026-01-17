@@ -162,7 +162,7 @@ class OpenEatsJournalApp extends StatelessWidget {
                             foodEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
                             journalRepository: _repositories.journalRepository,
                             foodRepository: _repositories.foodRepository,
-                            settingsRepository: _repositories.settingsRepository,
+                            settingsRepository: _repositories.settingsRepository
                           ),
                         ),
                         OpenEatsJournalStrings.navigatorRouteFoodEdit: (contextBuilder) => FoodEditScreen(

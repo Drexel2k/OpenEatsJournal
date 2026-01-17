@@ -2,20 +2,43 @@ import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 
 class GaugeDistribution extends StatelessWidget {
-  GaugeDistribution({super.key, required double value, required double startValue})
-    : _startValue = startValue,
-      _value = value {
-    if (_value < 0 || _value > 100) {
-      throw ArgumentError("Value must be greater 0 and max 100.");
+  GaugeDistribution({super.key, required double startValue, required endValue})
+    : _startValue = _getStartValue(startValue: startValue),
+      _endValue = _getEndValue(startValue: startValue, endValue: endValue);
+
+  final double _startValue;
+  final double _endValue;
+
+  static double _getStartValue({required double startValue}) {
+    if (startValue < 0) {
+      startValue = 0;
     }
 
-    if (_value + _startValue > 100) {
-      throw ArgumentError("Value + startValue must not be greater than 100.");
+    if (startValue > 100) {
+      startValue = 100;
     }
+
+    return startValue;
   }
 
-  final double _value;
-  final double _startValue;
+  static double _getEndValue({required double startValue, required double endValue}) {
+    if (startValue < 0) {
+      startValue = 0;
+    }
+
+    if (startValue > 100) {
+      startValue = 100;
+    }
+
+    if (endValue < startValue) {
+      endValue = startValue;
+    }
+
+    if (endValue > 100) {
+      endValue = 100;
+    }
+    return endValue;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +55,7 @@ class GaugeDistribution extends StatelessWidget {
       child: Chart(
         data: [
           {"type": "100Percent", "min": 0, "max": 100},
-          {"type": "currentRange", "min": _startValue, "max": _startValue + _value},
+          {"type": "currentRange", "min": _startValue, "max": _endValue},
         ],
         variables: {
           "type": Variable(accessor: (Map map) => map["type"] as String),

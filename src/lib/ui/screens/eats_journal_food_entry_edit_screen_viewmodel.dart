@@ -18,16 +18,16 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
        _foodRepository = foodRepository,
        _foodEntry = foodEntry,
        _settingsRepository = settingsRepository,
-       _eatsAmount = ValueNotifier(_getInitialFoodAmount(foodEntry.food!)),
-       _currentMeasurementUnit = ValueNotifier(_getInitialMeasurementUnit(foodEntry.food!)),
+       _eatsAmount = ValueNotifier(foodEntry.amount),
+       _currentMeasurementUnit = ValueNotifier(foodEntry.amountMeasurementUnit!),
        _measurementSelectionEnabled = _getInitialMeasurementSelectionEnabled(foodEntry.food!),
-       _kJoule = ValueNotifier(_getInitialKJoule(foodEntry.food!)),
-       _carbohydrates = ValueNotifier(_getInitialCarbohydrates(foodEntry.food!)),
-       _sugar = ValueNotifier(_getInitialSugar(foodEntry.food!)),
-       _fat = ValueNotifier(_getInitialFat(foodEntry.food!)),
-       _saturatedFat = ValueNotifier(_getInitialSaturatedFat(foodEntry.food!)),
-       _protein = ValueNotifier(_getInitialProtein(foodEntry.food!)),
-       _salt = ValueNotifier(_getInitialSalt(foodEntry.food!)) {
+       _kJoule = ValueNotifier(foodEntry.kJoule),
+       _carbohydrates = ValueNotifier(foodEntry.carbohydrates),
+       _sugar = ValueNotifier(foodEntry.sugar),
+       _fat = ValueNotifier(foodEntry.fat),
+       _saturatedFat = ValueNotifier(foodEntry.saturatedFat),
+       _protein = ValueNotifier(foodEntry.protein),
+       _salt = ValueNotifier(foodEntry.salt) {
     if (_foodEntry.food == null) {
       throw StateError("Food entry must not have a food.");
     }
@@ -173,184 +173,6 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
       _foodEntry.meal = _currentMeal.value;
 
       await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _foodEntry);
-    }
-  }
-
-  static double _getInitialFoodAmount(Food food) {
-    if (food.defaultFoodUnit != null) {
-      return food.defaultFoodUnit!.amount;
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      return food.foodUnitsWithOrder[0].object.amount;
-    } else {
-      return 100;
-    }
-  }
-
-  static MeasurementUnit _getInitialMeasurementUnit(Food food) {
-    if (food.defaultFoodUnit != null) {
-      return food.defaultFoodUnit!.amountMeasurementUnit;
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      return food.foodUnitsWithOrder[0].object.amountMeasurementUnit;
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return MeasurementUnit.gram;
-      } else {
-        return MeasurementUnit.milliliter;
-      }
-    }
-  }
-
-  static int _getInitialKJoule(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return (food.kJoule * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!)).round();
-      } else {
-        return (food.kJoule * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!)).round();
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return (food.kJoule * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!)).round();
-      } else {
-        return (food.kJoule * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!)).round();
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return (food.kJoule * (100 / food.nutritionPerGramAmount!)).round();
-      } else {
-        return (food.kJoule * (100 / food.nutritionPerMilliliterAmount!)).round();
-      }
-    }
-  }
-
-  static double? _getInitialCarbohydrates(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.carbohydrates != null ? food.carbohydrates! * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.carbohydrates != null ? food.carbohydrates! * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.carbohydrates != null ? food.carbohydrates! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.carbohydrates != null ? food.carbohydrates! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return food.carbohydrates != null ? food.carbohydrates! * (100 / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.carbohydrates != null ? food.carbohydrates! * (100 / food.nutritionPerMilliliterAmount!) : null;
-      }
-    }
-  }
-
-  static double? _getInitialSugar(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.sugar != null ? food.sugar! * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.sugar != null ? food.sugar! * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.sugar != null ? food.sugar! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.sugar != null ? food.sugar! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return food.sugar != null ? food.sugar! * (100 / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.sugar != null ? food.sugar! * (100 / food.nutritionPerMilliliterAmount!) : null;
-      }
-    }
-  }
-
-  static double? _getInitialFat(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.fat != null ? food.fat! * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.fat != null ? food.fat! * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.fat != null ? food.fat! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.fat != null ? food.fat! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return food.fat != null ? food.fat! * (100 / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.fat != null ? food.fat! * (100 / food.nutritionPerMilliliterAmount!) : null;
-      }
-    }
-  }
-
-  static double? _getInitialSaturatedFat(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.saturatedFat != null ? food.saturatedFat! * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.saturatedFat != null ? food.saturatedFat! * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.saturatedFat != null ? food.saturatedFat! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.saturatedFat != null ? food.saturatedFat! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return food.saturatedFat != null ? food.saturatedFat! * (100 / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.saturatedFat != null ? food.saturatedFat! * (100 / food.nutritionPerMilliliterAmount!) : null;
-      }
-    }
-  }
-
-  static double? _getInitialProtein(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.protein != null ? food.protein! * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.protein != null ? food.protein! * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.protein != null ? food.protein! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.protein != null ? food.protein! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return food.protein != null ? food.protein! * (100 / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.protein != null ? food.protein! * (100 / food.nutritionPerMilliliterAmount!) : null;
-      }
-    }
-  }
-
-  static double? _getInitialSalt(Food food) {
-    if (food.defaultFoodUnit != null) {
-      if (food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.salt != null ? food.salt! * (food.defaultFoodUnit!.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.salt != null ? food.salt! * (food.defaultFoodUnit!.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else if (food.foodUnitsWithOrder.isNotEmpty) {
-      if (food.foodUnitsWithOrder[0].object.amountMeasurementUnit == MeasurementUnit.gram) {
-        return food.salt != null ? food.salt! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.salt != null ? food.salt! * (food.foodUnitsWithOrder[0].object.amount / food.nutritionPerMilliliterAmount!) : null;
-      }
-    } else {
-      if (food.nutritionPerGramAmount != null) {
-        return food.salt != null ? food.salt! * (100 / food.nutritionPerGramAmount!) : null;
-      } else {
-        return food.salt != null ? food.salt! * (100 / food.nutritionPerMilliliterAmount!) : null;
-      }
     }
   }
 

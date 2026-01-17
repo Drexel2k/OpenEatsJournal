@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:openeatsjournal/domain/eats_journal_entry.dart';
 import 'package:openeatsjournal/domain/meal.dart';
 import 'package:openeatsjournal/domain/measurement_unit.dart';
 import 'package:openeatsjournal/domain/nutrition_calculator.dart';
@@ -114,47 +115,93 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           ),
           SizedBox(height: 6),
           Row(
-            children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
-          ),
-          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.name,
-                  builder: (_, _, _) {
-                    return OpenEatsJournalTextField(
-                      controller: _nameController,
-                      onChanged: (value) {
-                        _eatsJournalQuickEntryAddScreenViewModel.name.value = value;
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalQuickEntryAddScreenViewModel.nameValid,
-                  builder: (_, _, _) {
-                    if (!_eatsJournalQuickEntryAddScreenViewModel.nameValid.value) {
-                      return Text(
-                        AppLocalizations.of(context)!.input_invalid_value(
-                          AppLocalizations.of(context)!.name_capital,
-                          _eatsJournalQuickEntryAddScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
-                              ? AppLocalizations.of(context)!.empty
-                              : _eatsJournalQuickEntryAddScreenViewModel.name.value,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ValueListenableBuilder(
+                            valueListenable: _eatsJournalQuickEntryAddScreenViewModel.name,
+                            builder: (_, _, _) {
+                              return OpenEatsJournalTextField(
+                                controller: _nameController,
+                                onChanged: (value) {
+                                  _eatsJournalQuickEntryAddScreenViewModel.name.value = value;
+                                },
+                              );
+                            },
+                          ),
                         ),
-                        style: textTheme.labelMedium!.copyWith(color: Colors.red),
-                      );
-                    } else {
-                      return SizedBox();
-                    }
-                  },
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ValueListenableBuilder(
+                            valueListenable: _eatsJournalQuickEntryAddScreenViewModel.nameValid,
+                            builder: (_, _, _) {
+                              if (!_eatsJournalQuickEntryAddScreenViewModel.nameValid.value) {
+                                return Text(
+                                  AppLocalizations.of(context)!.input_invalid_value(
+                                    AppLocalizations.of(context)!.name_capital,
+                                    _eatsJournalQuickEntryAddScreenViewModel.name.value.trim() == OpenEatsJournalStrings.emptyString
+                                        ? AppLocalizations.of(context)!.empty
+                                        : _eatsJournalQuickEntryAddScreenViewModel.name.value,
+                                  ),
+                                  style: textTheme.labelMedium!.copyWith(color: Colors.red),
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
+              _eatsJournalQuickEntryAddScreenViewModel.quickEntry.id != null
+                  ? PopupMenuButton<String>(
+                      onSelected: (selected) {},
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                                arguments: EatsJournalEntry.quick(
+                                  entryDate: _eatsJournalQuickEntryAddScreenViewModel.currentEntryDate.value,
+                                  name: _eatsJournalQuickEntryAddScreenViewModel.name.value,
+                                  kJoule: _eatsJournalQuickEntryAddScreenViewModel.kJoule.value != null
+                                      ? _eatsJournalQuickEntryAddScreenViewModel.kJoule.value!
+                                      : 1,
+                                  meal: _eatsJournalQuickEntryAddScreenViewModel.currentMeal.value,
+                                  amount: _eatsJournalQuickEntryAddScreenViewModel.amount.value,
+                                  amountMeasurementUnit: _eatsJournalQuickEntryAddScreenViewModel.amountMeasurementUnit.value,
+                                  carbohydrates: _eatsJournalQuickEntryAddScreenViewModel.carbohydrates.value,
+                                  sugar: _eatsJournalQuickEntryAddScreenViewModel.sugar.value,
+                                  fat: _eatsJournalQuickEntryAddScreenViewModel.fat.value,
+                                  saturatedFat: _eatsJournalQuickEntryAddScreenViewModel.saturatedFat.value,
+                                  protein: _eatsJournalQuickEntryAddScreenViewModel.protein.value,
+                                  salt: _eatsJournalQuickEntryAddScreenViewModel.salt.value,
+                                ),
+                              );
+                            },
+                            child: Text(AppLocalizations.of(context)!.as_new_eats_journal_entry),
+                          ),
+                        ];
+                      },
+                      child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+                    )
+                  : SizedBox(),
             ],
           ),
           Divider(thickness: 2, height: 20),

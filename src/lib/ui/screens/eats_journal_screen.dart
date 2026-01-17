@@ -131,9 +131,21 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                       foodRepositoryGetDayDataResult: snapshot.data!,
                       dayKJoule: kJouleGaugeData.currentValue,
                     );
+
+                    double breakfastStartPoint = 0;
+                    double breakfastEndpoint = breakfastPercent;
+
                     double lunchPercent = _getLunchKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
+                    double lunchStartPoint = breakfastPercent;
+                    double lunchEndpoint = breakfastPercent + lunchPercent;
+
                     double dinnerPercent = _getDinnerKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
+                    double dinnerStartPoint = breakfastPercent + lunchPercent;
+                    double dinnerEndpoint = breakfastPercent + lunchPercent + dinnerPercent;
+
                     double snacksPercent = _getSnacksKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
+                    double snacksStartPoint = breakfastPercent + lunchPercent + dinnerPercent;
+                    double snacksEndpoint = breakfastPercent + lunchPercent + dinnerPercent + snacksPercent;
 
                     return Stack(
                       children: [
@@ -242,7 +254,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                       width: 80,
                                       child: Align(
                                         alignment: Alignment.centerRight,
-                                        child: GaugeDistribution(value: breakfastPercent, startValue: 0),
+                                        child: GaugeDistribution(startValue: breakfastStartPoint, endValue: breakfastEndpoint),
                                       ),
                                     ),
                                     Expanded(
@@ -269,7 +281,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           width: 80,
                                           child: Align(
                                             alignment: Alignment.centerRight,
-                                            child: GaugeDistribution(value: lunchPercent, startValue: breakfastPercent),
+                                            child: GaugeDistribution(startValue: lunchStartPoint, endValue: lunchEndpoint),
                                           ),
                                         ),
                                         Expanded(
@@ -298,7 +310,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           width: 80,
                                           child: Align(
                                             alignment: Alignment.centerRight,
-                                            child: GaugeDistribution(value: dinnerPercent, startValue: breakfastPercent + lunchPercent),
+                                            child: GaugeDistribution(startValue: dinnerEndpoint, endValue: dinnerStartPoint),
                                           ),
                                         ),
                                         Expanded(
@@ -327,7 +339,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           width: 80,
                                           child: Align(
                                             alignment: Alignment.centerRight,
-                                            child: GaugeDistribution(value: snacksPercent, startValue: breakfastPercent + lunchPercent + dinnerPercent),
+                                            child: GaugeDistribution(startValue: snacksStartPoint, endValue: snacksEndpoint),
                                           ),
                                         ),
                                         Expanded(

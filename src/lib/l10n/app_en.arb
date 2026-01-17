@@ -200,10 +200,13 @@
   "add_quick_entry": "Add quick entry",
   "edit_quick_entry": "Edit quick entry",
   "barcode": "barcode:",
-  "amount_gram": "{amount} gram",
+  "amount_gram": "{amount} gramm",
+  "amount_g": "{amount}g",
   "amount_milliliter": "{amount} milliliter",
+  "amount_ml": "{amount}g",
   "basics": "Basics",
   "online": "Online",
   "offline": "Offline",
-  "recent": "Recent"
+  "recent": "Recent",
+  "as_new_eats_journal_entry": "Als new eats journal entry"
 }

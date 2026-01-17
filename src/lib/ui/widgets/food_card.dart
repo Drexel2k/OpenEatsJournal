@@ -73,7 +73,7 @@ class FoodCard extends StatelessWidget {
                       menuItems.add(
                         PopupMenuItem(
                           onTap: () {
-                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.asUserFood(food: _food));
+                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.copyAsNewUserFood(food: _food));
                           },
                           child: Text(AppLocalizations.of(context)!.as_new_food),
                         ),
