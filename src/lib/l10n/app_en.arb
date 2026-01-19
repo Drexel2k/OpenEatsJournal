@@ -220,5 +220,6 @@
   "import_succeeded": "Import succeeded",
   "database_imported": "Database was imported. App closes now.",
   "export_succeeded": "Export succeeded",
-  "database_exported": "Database was exported."
+  "database_exported": "Database was exported.",
+  "wait_search": "Please wait until the previous search completed before starting a new search."
 }

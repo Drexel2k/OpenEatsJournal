@@ -83,6 +83,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                         await _selectDate(initialDate: initialDate, context: context);
                       },
+                      style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalQuickEntryAddScreenViewModel.currentEntryDate.value),
                         textAlign: TextAlign.center,

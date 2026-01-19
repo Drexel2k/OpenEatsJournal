@@ -40,6 +40,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final List<ObjectWithOrder<Food>> _foodSearchResultCache = [];
   final List<ObjectWithOrder<Food>> _foodSearchResultOpenFoodFacst = [];
   final List<ObjectWithOrder<Food>> _foodSearchResult = [];
+  bool _dontLoadMore = false;
   bool _hasMore = false;
   bool _isLoading = false;
   int _currentPage = 1;
@@ -47,6 +48,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final ExternalTriggerChangedNotifier _foodSearchResultChanged = ExternalTriggerChangedNotifier();
   final ValueNotifier<bool> _showInitialLoading = ValueNotifier(false);
   final ValueNotifier<int?> _errorCode = ValueNotifier(null);
+  final ValueNotifier<bool> _showIsLoadingMessage = ValueNotifier(false);
   String _errorMessage = OpenEatsJournalStrings.emptyString;
   final ValueNotifier<int?> _searchMessageCode = ValueNotifier(null);
   final ExternalTriggerChangedNotifier _sortButtonChanged = ExternalTriggerChangedNotifier();
@@ -65,6 +67,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   ExternalTriggerChangedNotifier get foodSearchResultChanged => _foodSearchResultChanged;
   ValueNotifier<bool> get showInitialLoading => _showInitialLoading;
   ValueNotifier<int?> get errorCode => _errorCode;
+  ValueNotifier<bool> get showIsLoadingMessage => _showIsLoadingMessage;
   String get errorMessage => _errorMessage;
   ValueNotifier<int?> get searchMessageCode => _searchMessageCode;
   ExternalTriggerChangedNotifier get sortButtonChanged => _sortButtonChanged;
@@ -81,6 +84,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> getFoodByBarcode({required int barcode, required Map<String, String> localizations, required SearchMode searchMode}) async {
+    if (_checkIsLoading()) {
+      return;
+    }
+
     _initSearch();
 
     await _foodRepository.getFoodsByBarcode(barcode: barcode, languageCode: languageCode, searchMode: searchMode).then((List<FoodRepositoryResult> result) {
@@ -88,7 +95,21 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     });
   }
 
+  bool _checkIsLoading() {
+    if (_isLoading) {
+      _showIsLoadingMessage.value = true;
+      return true;
+    }
+
+    _showIsLoadingMessage.value = false;
+    return false;
+  }
+
   Future<void> getFoodBySearchText({required String searchText, required Map<String, String> localizations, required SearchMode searchMode}) async {
+    if (_checkIsLoading()) {
+      return;
+    }
+
     _initSearch();
     _currentSearchText = searchText;
 
@@ -171,6 +192,8 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       }
 
       _addToSearchResult(foodsWithOrder);
+
+      _isLoading = false;
     }
 
     if (_foodSearchResult.length > 500) {
@@ -193,6 +216,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> getFoodBySearchTextLoadMore() async {
+    if (_checkIsLoading()) {
+      return;
+    }
+
     _isLoading = true;
     _currentPage = _currentPage + 1;
     await _foodRepository
@@ -216,19 +243,23 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
             }
 
             _addToSearchResult(foodsWithOrder);
-            _hasMore = !result.finished!;
-            _isLoading = false;
+
+            if (!_dontLoadMore) {
+              _hasMore = !result.finished!;
+            }
           } else {
-            _isLoading = false;
             _hasMore = false;
             _errorCode.value = result.errorCode;
             _errorMessage = result.errorMessage != null ? result.errorMessage! : OpenEatsJournalStrings.emptyString;
           }
+
+          _isLoading = false;
         });
   }
 
   void _initSearch() {
     _isLoading = true;
+    _dontLoadMore = false;
     _hasMore = false;
     _sortButtonEnabled = true;
     _errorMessage = OpenEatsJournalStrings.emptyString;
@@ -242,7 +273,6 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   void _initialSearchFinished() {
-    _isLoading = false;
     _showInitialLoading.value = false;
   }
 
@@ -336,11 +366,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     await _journalRepository.setWeightJournalEntry(date: date, weight: weight);
   }
 
-  void finishSearchAndClearSearchResult() {
-    _isLoading = false;
+  void finishSearch() {
+    _dontLoadMore = true;
     _hasMore = false;
-    _clearAllSearchResults();
-    _foodSearchResultChanged.notify();
   }
 
   void _clearAllSearchResults() {

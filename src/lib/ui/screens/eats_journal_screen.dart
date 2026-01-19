@@ -78,6 +78,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           _changeDate(date: date);
                         }
                       },
+                      style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalScreenViewModel.currentJournalDate.value),
                         textAlign: TextAlign.center,

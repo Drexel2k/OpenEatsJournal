@@ -46,7 +46,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               );
             },
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           ValueListenableBuilder(
             valueListenable: _statisticsScreenViewModel.currentStatistic,
             builder: (_, _, _) {

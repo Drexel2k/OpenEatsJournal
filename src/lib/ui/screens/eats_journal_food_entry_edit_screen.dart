@@ -61,6 +61,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: ValueListenableBuilder(
@@ -74,6 +75,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                             : _eatsJournalFoodAddScreenViewModel.foodEntry.entryDate;
                         await _selectDate(initialDate: initialDate, context: context);
                       },
+                      style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                       child: Text(
                         ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodAddScreenViewModel.currentEntryDate.value),
                         textAlign: TextAlign.center,
@@ -477,6 +479,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
+                  style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                   child: _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
                       ? Text(AppLocalizations.of(context)!.add)
                       : Text(AppLocalizations.of(context)!.update_abbreviated),

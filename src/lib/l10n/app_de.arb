@@ -220,5 +220,6 @@
   "import_succeeded": "Import erfolgreich",
   "database_imported": "Die Datenbank wurde importiert. Die App schließt sich jetzt.",
   "export_succeeded": "Export erfolgreich",
-  "database_exported": "Die Datenbank wurde exportiert."
+  "database_exported": "Die Datenbank wurde exportiert.",
+  "wait_search": "Bitte warte bis die vorherige Suche beendet ist, bevor Du eine neues Suche startest."
 }
