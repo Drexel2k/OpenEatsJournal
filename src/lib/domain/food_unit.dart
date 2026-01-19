@@ -1,4 +1,4 @@
-import 'package:openeatsjournal/domain/measurement_unit.dart';
+import "package:openeatsjournal/domain/measurement_unit.dart";
 
 class FoodUnit {
   FoodUnit({required String name, required double amount, required MeasurementUnit amountMeasurementUnit, int? id, String? originalFoodSourceFoodUnitId})

@@ -1,6 +1,6 @@
-import 'package:openeatsjournal/domain/food_unit.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class FoodUnitEditorData {
   FoodUnitEditorData({

@@ -1,6 +1,9 @@
+import "dart:io";
+
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:path/path.dart";
+import "package:path_provider/path_provider.dart";
 import "package:sqflite/sqflite.dart";
 
 class OpenEatsJournalDatabaseService {
@@ -8,6 +11,9 @@ class OpenEatsJournalDatabaseService {
   static final OpenEatsJournalDatabaseService instance = OpenEatsJournalDatabaseService._singleton();
 
   static Database? _database;
+  static final String _databaseFileName = "oej.db";
+  static late String _databaseFile;
+  static late String _databaseDirectory;
 
   static final String _sqlFoodColumns =
       """
@@ -51,7 +57,13 @@ class OpenEatsJournalDatabaseService {
   //     """,
   // };
 
+  bool _fileTransfering = false;
+
   Future<Database> get db async {
+    if (_fileTransfering) {
+      throw StateError("Can't access database during exports or imports.");
+    }
+
     if (_database != null) {
       return _database!;
     }
@@ -61,10 +73,9 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<Database> _initDb() async {
-    String databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "oej.db");
-
-    return await openDatabase(path, version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
+    _databaseDirectory = await getDatabasesPath();
+    _databaseFile = join(_databaseDirectory, _databaseFileName);
+    return await openDatabase(_databaseFile, version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
   }
 
   Future _onCreate(Database db, int version) async {
@@ -227,6 +238,41 @@ class OpenEatsJournalDatabaseService {
     // for (int i = oldVersion + 1; i <= newVersion; i++) {
     //   await db.execute(_migrationScripts[i]!);
     // }
+  }
+
+  Future<void> exportDatabase() async {
+    _fileTransfering = true;
+    await _database!.close();
+    Directory exportDirectory = Directory(join((await getApplicationDocumentsDirectory()).path, OpenEatsJournalStrings.export));
+    await exportDirectory.create(recursive: true);
+
+    String targetFile = join(exportDirectory.path, _databaseFileName);
+    File sourceFile = File(_databaseFile);
+    await sourceFile.copy(targetFile);
+    _database = await _initDb();
+    _fileTransfering = false;
+  }
+
+  Future<bool> importDatabase() async {
+    bool result = false;
+    File sourceFile = File(join((await getApplicationDocumentsDirectory()).path, OpenEatsJournalStrings.import, _databaseFileName));
+    if (sourceFile.existsSync()) {
+      _fileTransfering = true;
+      await _database!.close();
+
+      Directory targetDirectory = Directory(_databaseDirectory);
+      await targetDirectory.delete(recursive: true);
+      await targetDirectory.create(recursive: true);
+
+      await sourceFile.copy(_databaseFile);
+      result = true;
+    }
+
+    _database = await _initDb();
+    _fileTransfering = false;
+
+    //reload settings
+    return result;
   }
 
   Future<bool> _settingExists({required String setting}) async {

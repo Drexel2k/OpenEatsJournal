@@ -192,7 +192,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule().toDouble(), weightLossPerWeekKg: weightLossKg).round();
+    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(
+      kJoulePerDay: _getDailyKJoule().toDouble(),
+      weightLossPerWeekKg: weightLossKg,
+    ).round();
     if (dailyTargetKJoule < 1) {
       dailyTargetKJoule = 1;
     }
@@ -200,6 +203,14 @@ class SettingsScreenViewModel extends ChangeNotifier {
     await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule: dailyTargetKJoule);
 
     _dailyTargetKJoule.value = dailyTargetKJoule;
+  }
+
+  Future<void> exportDatabase() async {
+    await _settingsRepository.exportDatabase();
+  }
+
+  Future<bool> importDatabase() async {
+    return await _settingsRepository.importDatabase();
   }
 
   @override

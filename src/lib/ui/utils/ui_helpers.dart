@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/app_global.dart';
-import 'package:openeatsjournal/domain/eats_journal_entry.dart';
-import 'package:openeatsjournal/domain/food.dart';
-import 'package:openeatsjournal/domain/food_source.dart';
-import 'package:openeatsjournal/domain/meal.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart';
-import 'package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart';
-import 'package:openeatsjournal/ui/utils/open_eats_journal_colors.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
+import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
 class UiHelpers {
   UiHelpers._();

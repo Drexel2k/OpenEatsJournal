@@ -79,7 +79,7 @@
   "settings": "Einstellungen",
   "personal": "Persönlich",
   "app": "App",
-  "dark_mode": "Dark mode",
+  "dark_mode": "Dark mode:",
   "language": "Sprache:",
   "english": "Englisch",
   "german": "Deutsch",
@@ -208,5 +208,15 @@
   "online": "Online",
   "offline": "Offline",
   "recent": "Zuletzt",
-  "as_new_eats_journal_entry": "Als neuer Essenstagebucheintrag"
+  "as_new_eats_journal_entry": "Als neuer Essenstagebucheintrag",
+  "export_import": "Export/import:",
+  "database_import_hint": "Die Datenbank wird nach /android/data/com.drexeldevelopment.openeatsjournal/app_flutter/export exportiert und wird von /android/data/com.drexeldevelopment.openeatsjournal/OpenEatsJournal/import/oej.db importiert. Alle Deine existierenden Daten werden während des Imports überschrieben. Die Datenbank ist im SQLite Format und kan z.B. mit DB Browser for SQLite (DB4S) geöffnet werden.",
+  "export_data": "Daten exportieren",
+  "import_data": "Daten importieren",
+  "warning": "Warnung",
+  "importing_data": "Der Datenbank Import wird all Deine existierenden Daten überschreiben!",
+  "file_not_found": "Datei nicht gefunden",
+  "no_file_to_import": "Keine Datei zum importieren gefunden.",
+  "import_succeeded": "Import erfolgreich",
+  "database_imported": "Die Datenbank wurde importiert. Die App schließt sich jetzt."
 }

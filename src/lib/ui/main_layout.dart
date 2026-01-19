@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/app_global.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class MainLayout extends StatelessWidget {
   const MainLayout({

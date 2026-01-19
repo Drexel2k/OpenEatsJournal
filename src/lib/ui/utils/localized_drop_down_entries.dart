@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/domain/meal.dart';
-import 'package:openeatsjournal/domain/statistic.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/statistic.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class LocalizedDropDownEntries {
   LocalizedDropDownEntries._();

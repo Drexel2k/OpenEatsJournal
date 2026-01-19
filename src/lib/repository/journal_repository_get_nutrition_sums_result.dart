@@ -1,5 +1,5 @@
-import 'package:openeatsjournal/domain/nutritions.dart';
-import 'package:openeatsjournal/domain/nutrition_sums.dart';
+import "package:openeatsjournal/domain/nutritions.dart";
+import "package:openeatsjournal/domain/nutrition_sums.dart";
 
 class JournalRepositoryGetNutritionSumsResult {
   const JournalRepositoryGetNutritionSumsResult({ Map<DateTime, Nutritions>? groupNutritionTargets, Map<DateTime, NutritionSums>? groupNutritionSums, DateTime? from, DateTime? until})

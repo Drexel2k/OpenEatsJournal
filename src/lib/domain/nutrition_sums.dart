@@ -1,4 +1,4 @@
-import 'package:openeatsjournal/domain/nutritions.dart';
+import "package:openeatsjournal/domain/nutritions.dart";
 
 class NutritionSums {
   NutritionSums({required int entryCount, required Nutritions nutritions})

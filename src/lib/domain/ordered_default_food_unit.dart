@@ -1,5 +1,5 @@
-import 'package:openeatsjournal/domain/food_unit.dart';
-import 'package:openeatsjournal/domain/object_with_order.dart';
+import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/object_with_order.dart";
 
 class OrderedDefaultFoodUnit {
   OrderedDefaultFoodUnit({required ObjectWithOrder<FoodUnit> foodUnitWithOrder, required bool isDefault})

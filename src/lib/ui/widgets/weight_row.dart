@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
-import 'package:openeatsjournal/ui/widgets/weight_row_viewmodel.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
+import "package:openeatsjournal/ui/widgets/weight_row_viewmodel.dart";
 
 class WeightRow extends StatefulWidget {
   const WeightRow({

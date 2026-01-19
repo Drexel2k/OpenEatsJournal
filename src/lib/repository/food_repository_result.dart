@@ -1,4 +1,4 @@
-import 'package:openeatsjournal/domain/food.dart';
+import "package:openeatsjournal/domain/food.dart";
 
 class FoodRepositoryResult {
   const FoodRepositoryResult({List<Food>? foods, bool? finished, int? errorCode, String? errorMessage})

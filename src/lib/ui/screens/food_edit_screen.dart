@@ -1,19 +1,19 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:openeatsjournal/domain/food_unit_editor_data.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/app_global.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/main_layout.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart';
-import 'package:openeatsjournal/ui/widgets/food_unit_editor.dart';
-import 'package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart';
-import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
-import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
+import "package:collection/collection.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:openeatsjournal/domain/food_unit_editor_data.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/main_layout.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/widgets/food_unit_editor.dart";
+import "package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class FoodEditScreen extends StatefulWidget {
   const FoodEditScreen({super.key, required FoodEditScreenViewModel foodEditScreenViewModel}) : _foodEditScreenViewModel = foodEditScreenViewModel;
@@ -282,7 +282,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     },
                   ),
                 ),
-                Expanded(child: SizedBox(height: 0)),
+                Expanded(child: SizedBox()),
               ],
             ),
             ValueListenableBuilder(
@@ -389,7 +389,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     },
                   ),
                 ),
-                Expanded(child: SizedBox(height: 0)),
+                Expanded(child: SizedBox()),
                 SizedBox(
                   width: inputFieldsWidth,
                   child: ValueListenableBuilder(
@@ -428,7 +428,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     },
                   ),
                 ),
-                Expanded(child: SizedBox(height: 0)),
+                Expanded(child: SizedBox()),
               ],
             ),
             Row(
@@ -477,7 +477,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     },
                   ),
                 ),
-                Expanded(child: SizedBox(height: 0)),
+                Expanded(child: SizedBox()),
                 SizedBox(
                   width: inputFieldsWidth,
                   child: ValueListenableBuilder(
@@ -516,7 +516,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     },
                   ),
                 ),
-                Expanded(child: SizedBox(height: 0)),
+                Expanded(child: SizedBox()),
               ],
             ),
             Row(

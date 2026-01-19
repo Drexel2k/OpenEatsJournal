@@ -18,6 +18,8 @@ class OpenEatsJournalStrings {
   static const String doublepoint = ":";
   static const String serving = "serving";
   static const String piece = "piece";
+  static const String export = "export";
+  static const String import = "import";
 
   static const String csvTrue = "true";
   static const String csvFood = "food";

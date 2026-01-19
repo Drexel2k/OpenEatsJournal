@@ -1,10 +1,10 @@
-import 'package:openeatsjournal/domain/food.dart';
-import 'package:openeatsjournal/domain/food_source.dart';
-import 'package:openeatsjournal/domain/food_unit.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/object_with_order.dart';
-import 'package:openeatsjournal/domain/ordered_default_food_unit.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/object_with_order.dart";
+import "package:openeatsjournal/domain/ordered_default_food_unit.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class Convert {
   static Food getFoodFromDbResult({required List<Map<String, Object?>> dbResult}) {

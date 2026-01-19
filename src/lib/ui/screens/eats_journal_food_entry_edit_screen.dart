@@ -1,23 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:openeatsjournal/domain/eats_journal_entry.dart';
-import 'package:openeatsjournal/domain/food.dart';
-import 'package:openeatsjournal/domain/food_source.dart';
-import 'package:openeatsjournal/domain/food_unit.dart';
-import 'package:openeatsjournal/domain/meal.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/object_with_order.dart';
-import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/app_global.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/main_layout.dart';
-import 'package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/ui/utils/localized_drop_down_entries.dart';
-import 'package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart';
-import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
-import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/food_unit.dart";
+import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/object_with_order.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/main_layout.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class EatsJournalFoodEntryEditScreen extends StatefulWidget {
   const EatsJournalFoodEntryEditScreen({super.key, required EatsJournalFoodEntryEditScreenViewModel eatsJournalFoodAddScreenViewModel})

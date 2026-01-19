@@ -181,11 +181,12 @@ class FoodRepository {
       int? energyKjPer100Units;
       MeasurementUnit? nutrimentsMeasurementUnit;
 
+      //todo:extract method
       if (foodApi.nutritionDataPer != null && foodApi.nutritionDataPer == OpenFoodFactsApiStrings.serving) {
         if (foodApi.servingQuantity != null) {
           num servingQuantity = num.parse(foodApi.servingQuantity!);
           servingAdjustFactor = 100 / servingQuantity;
-          energyKjPer100Units = _getEnergyPer100Units(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
+          energyKjPer100Units = _getEnergyPer100UnitsFromServing(foodApi: foodApi, servingAdjustFactor: servingAdjustFactor);
         }
 
         //If energyKjPer100Units is not null here we assume the unit is from serving, because nutritionDataPer was not null and per serving.
@@ -357,7 +358,7 @@ class FoodRepository {
     return name;
   }
 
-  int? _getEnergyPer100Units({required FoodApi foodApi, double? servingAdjustFactor}) {
+  int? _getEnergyPer100UnitsFromServing({required FoodApi foodApi, double? servingAdjustFactor}) {
     int? energyKjPer100Units = foodApi.nutriments!.energyKj100g;
 
     if (energyKjPer100Units == null && foodApi.nutriments!.energyKj != null && servingAdjustFactor != null) {

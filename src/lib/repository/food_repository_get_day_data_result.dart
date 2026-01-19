@@ -1,5 +1,5 @@
-import 'package:openeatsjournal/domain/meal.dart';
-import 'package:openeatsjournal/domain/nutritions.dart';
+import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/nutritions.dart";
 
 class FoodRepositoryGetDayMealSumsResult {
   const FoodRepositoryGetDayMealSumsResult({Nutritions? dayNutritionTargets, Map<Meal, Nutritions>? mealNutritionSums})

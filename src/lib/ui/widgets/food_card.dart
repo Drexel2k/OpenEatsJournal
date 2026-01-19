@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/domain/food.dart';
-import 'package:openeatsjournal/domain/food_source.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/ui/utils/ui_helpers.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 
 class FoodCard extends StatelessWidget {
   const FoodCard({

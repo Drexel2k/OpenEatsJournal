@@ -1,5 +1,5 @@
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart';
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 
 class NutrimentsApi {
   NutrimentsApi({

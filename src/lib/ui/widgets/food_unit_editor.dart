@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/domain/utils/open_eats_journal_strings.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart';
-import 'package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart';
-import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class FoodUnitEditor extends StatefulWidget {
   const FoodUnitEditor({super.key, required FoodUnitEditorViewModel foodUnitEditorViewModel}) : _foodUnitEditorViewModel = foodUnitEditorViewModel;

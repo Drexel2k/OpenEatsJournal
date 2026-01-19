@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:openeatsjournal/domain/eats_journal_entry.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
-import 'package:openeatsjournal/domain/nutrition_calculator.dart';
-import 'package:openeatsjournal/domain/utils/convert_validate.dart';
-import 'package:openeatsjournal/l10n/app_localizations.dart';
-import 'package:openeatsjournal/ui/utils/ui_helpers.dart';
-import 'package:openeatsjournal/ui/widgets/round_outlined_button.dart';
+import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class EatsJournalEntryRow extends StatelessWidget {
   const EatsJournalEntryRow({

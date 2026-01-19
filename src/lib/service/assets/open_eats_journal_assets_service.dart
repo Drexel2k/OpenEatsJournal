@@ -1,5 +1,5 @@
-import 'package:csv/csv.dart';
-import 'package:flutter/services.dart';
+import "package:csv/csv.dart";
+import "package:flutter/services.dart";
 
 class OpenEatsJournalAssetsService {
   OpenEatsJournalAssetsService._singleton();

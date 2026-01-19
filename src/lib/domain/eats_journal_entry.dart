@@ -1,7 +1,7 @@
-import 'package:openeatsjournal/domain/food.dart';
-import 'package:openeatsjournal/domain/food_source.dart';
-import 'package:openeatsjournal/domain/meal.dart';
-import 'package:openeatsjournal/domain/measurement_unit.dart';
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/measurement_unit.dart";
 
 class EatsJournalEntry {
   EatsJournalEntry.fromFood({required DateTime entryDate, required Food food, required Meal meal, double? amount, MeasurementUnit? amountMeasurementUnit})
