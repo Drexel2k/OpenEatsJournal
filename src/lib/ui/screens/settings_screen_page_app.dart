@@ -102,6 +102,23 @@ class SettingsScreenPageApp extends StatelessWidget {
                     OutlinedButton(
                       onPressed: () async {
                         await _settingsViewModel.exportDatabase();
+                        await showDialog(
+                          context: AppGlobal.navigatorKey.currentContext!,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(AppLocalizations.of(context)!.export_succeeded),
+                              content: Text(AppLocalizations.of(context)!.database_exported),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(AppLocalizations.of(context)!.ok),
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       child: Text(AppLocalizations.of(context)!.export_data),
                     ),
@@ -170,6 +187,7 @@ class SettingsScreenPageApp extends StatelessWidget {
                               },
                             );
 
+                            //closes app
                             SystemChannels.platform.invokeMethod("SystemNavigator.pop");
                           }
                         }

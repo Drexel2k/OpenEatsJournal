@@ -243,7 +243,8 @@ class OpenEatsJournalDatabaseService {
   Future<void> exportDatabase() async {
     _fileTransfering = true;
     await _database!.close();
-    Directory exportDirectory = Directory(join((await getApplicationDocumentsDirectory()).path, OpenEatsJournalStrings.export));
+    //will probably only work on Android, for iOS maybe another solution like the os' share functionality is needed
+    Directory exportDirectory = Directory(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.export));
     await exportDirectory.create(recursive: true);
 
     String targetFile = join(exportDirectory.path, _databaseFileName);
@@ -255,7 +256,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<bool> importDatabase() async {
     bool result = false;
-    File sourceFile = File(join((await getApplicationDocumentsDirectory()).path, OpenEatsJournalStrings.import, _databaseFileName));
+    File sourceFile = File(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.import, _databaseFileName));
     if (sourceFile.existsSync()) {
       _fileTransfering = true;
       await _database!.close();
