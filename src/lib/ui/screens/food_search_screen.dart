@@ -11,6 +11,7 @@ import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
@@ -55,6 +56,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFood,
+      layoutMode: LayoutMode.noScroll,
       title: AppLocalizations.of(context)!.food_management,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

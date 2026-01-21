@@ -27,6 +27,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
 
+  final FocusNode _heightFocusNode = FocusNode();
+  final FocusNode _weightFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     final String languageCode = Localizations.localeOf(context).toString();
@@ -219,6 +222,14 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             controller: _heightController,
                             keyboardType: TextInputType.numberWithOptions(signed: false),
                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            focusNode: _heightFocusNode,
+                            onTap: () {
+                              //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                              //effect.
+                              if (!_heightFocusNode.hasFocus) {
+                                _heightController.selection = TextSelection(baseOffset: 0, extentOffset: _heightController.text.length);
+                              }
+                            },
                             onChanged: (value) {
                               int? intValue = int.tryParse(value);
                               widget._settingsScreenViewModel.height.value = intValue;
@@ -277,8 +288,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             controller: _weightController,
                             keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                             inputFormatters: [
-                              //if filter is not matched, the value is set to empty string
-                              //which feels strange in the ui
+                              //If filter is not matched, the value is set to empty string which feels strange in the ui.
                               //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
                               TextInputFormatter.withFunction((oldValue, newValue) {
                                 final String text = newValue.text.trim();
@@ -294,6 +304,12 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                 }
                               }),
                             ],
+                            focusNode: _weightFocusNode,
+                            onTap: () {
+                              if (!_weightFocusNode.hasFocus) {
+                                _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                              }
+                            },
                             onChanged: (value) {
                               num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
                               widget._settingsScreenViewModel.weight.value = doubleValue as double?;
@@ -546,7 +562,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
   void dispose() {
     _birthDayController.dispose();
     _heightController.dispose();
+    _heightFocusNode.dispose();
     _weightController.dispose();
+    _weightFocusNode.dispose();
 
     super.dispose();
   }

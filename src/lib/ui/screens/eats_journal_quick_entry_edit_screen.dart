@@ -38,6 +38,16 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
   final TextEditingController _proteinController = TextEditingController();
   final TextEditingController _saltController = TextEditingController();
 
+  final FocusNode _nameFocusNode = FocusNode();
+  final FocusNode _amountFocusNode = FocusNode();
+  final FocusNode _kCalFocusNode = FocusNode();
+  final FocusNode _carbohydratesFocusNode = FocusNode();
+  final FocusNode _sugarFocusNode = FocusNode();
+  final FocusNode _fatFocusNode = FocusNode();
+  final FocusNode _saturatedFatFocusNode = FocusNode();
+  final FocusNode _proteinFocusNode = FocusNode();
+  final FocusNode _saltFocusNode = FocusNode();
+
   @override
   void initState() {
     _eatsJournalQuickEntryAddScreenViewModel = widget._eatsJournalQuickEntryAddScreenViewModel;
@@ -224,8 +234,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       controller: _kCalController,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      focusNode: _kCalFocusNode,
                       onTap: () {
-                        _kCalController.selection = TextSelection(baseOffset: 0, extentOffset: _kCalController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_kCalFocusNode.hasFocus) {
+                          _kCalController.selection = TextSelection(baseOffset: 0, extentOffset: _kCalController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         int? intValue = int.tryParse(value);
@@ -240,7 +255,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox(height: 0)),
+              Spacer(),
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
@@ -264,8 +279,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _amountFocusNode,
                       onTap: () {
-                        _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_amountFocusNode.hasFocus) {
+                          _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -348,8 +368,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _carbohydratesFocusNode,
                       onTap: () {
-                        _carbohydratesController.selection = TextSelection(baseOffset: 0, extentOffset: _carbohydratesController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_carbohydratesFocusNode.hasFocus) {
+                          _carbohydratesController.selection = TextSelection(baseOffset: 0, extentOffset: _carbohydratesController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -363,7 +388,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox(height: 0)),
+              Spacer(),
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
@@ -387,8 +412,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _sugarFocusNode,
                       onTap: () {
-                        _sugarController.selection = TextSelection(baseOffset: 0, extentOffset: _sugarController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_sugarFocusNode.hasFocus) {
+                          _sugarController.selection = TextSelection(baseOffset: 0, extentOffset: _sugarController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -402,7 +432,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox(height: 0)),
+              Spacer(),
             ],
           ),
           Row(
@@ -436,8 +466,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _fatFocusNode,
                       onTap: () {
-                        _fatController.selection = TextSelection(baseOffset: 0, extentOffset: _fatController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_fatFocusNode.hasFocus) {
+                          _fatController.selection = TextSelection(baseOffset: 0, extentOffset: _fatController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -451,7 +486,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox(height: 0)),
+              Spacer(),
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
@@ -475,8 +510,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _saturatedFatFocusNode,
                       onTap: () {
-                        _saturatedFatController.selection = TextSelection(baseOffset: 0, extentOffset: _saturatedFatController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_saturatedFatFocusNode.hasFocus) {
+                          _saturatedFatController.selection = TextSelection(baseOffset: 0, extentOffset: _saturatedFatController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -490,7 +530,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox(height: 0)),
+              Spacer(),
             ],
           ),
           Row(
@@ -524,8 +564,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _proteinFocusNode,
                       onTap: () {
-                        _proteinController.selection = TextSelection(baseOffset: 0, extentOffset: _proteinController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_proteinFocusNode.hasFocus) {
+                          _proteinController.selection = TextSelection(baseOffset: 0, extentOffset: _proteinController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -539,7 +584,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox()),
+              Spacer(),
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
@@ -563,8 +608,13 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           }
                         }),
                       ],
+                      focusNode: _saltFocusNode,
                       onTap: () {
-                        _saltController.selection = TextSelection(baseOffset: 0, extentOffset: _saltController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_saltFocusNode.hasFocus) {
+                          _saltController.selection = TextSelection(baseOffset: 0, extentOffset: _saltController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
@@ -578,7 +628,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   },
                 ),
               ),
-              Expanded(child: SizedBox()),
+              Spacer(),
             ],
           ),
           Divider(thickness: 2, height: 20),
@@ -654,6 +704,16 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     _saturatedFatController.dispose();
     _proteinController.dispose();
     _saltController.dispose();
+
+    _nameFocusNode.dispose();
+    _amountFocusNode.dispose();
+    _kCalFocusNode.dispose();
+    _carbohydratesFocusNode.dispose();
+    _sugarFocusNode.dispose();
+    _fatFocusNode.dispose();
+    _saturatedFatFocusNode.dispose();
+    _proteinFocusNode.dispose();
+    _saltFocusNode.dispose();
 
     super.dispose();
   }

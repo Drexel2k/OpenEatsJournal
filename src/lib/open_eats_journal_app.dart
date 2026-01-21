@@ -26,21 +26,30 @@ import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
-class OpenEatsJournalApp extends StatelessWidget {
+class OpenEatsJournalApp extends StatefulWidget {
   const OpenEatsJournalApp({super.key, required OpenEatsJournalAppViewModel openEatsJournalAppViewModel, required Repositories repositories})
     : _repositories = repositories,
       _openEatsJournalAppViewModel = openEatsJournalAppViewModel;
 
   final OpenEatsJournalAppViewModel _openEatsJournalAppViewModel;
   final Repositories _repositories;
+  @override
+  State<OpenEatsJournalApp> createState() => _OpenEatsJournalAppState();
+}
+
+class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
+  late OpenEatsJournalAppViewModel _openEatsJournalAppViewModel;
+  late Repositories _repositories;
+
+  @override
+  void initState() {
+    _openEatsJournalAppViewModel = widget._openEatsJournalAppViewModel;
+    _repositories = widget._repositories;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    EdgeInsets padding = MediaQuery.of(context).padding;
-    AppGlobal.paddingTop = padding.top;
-    AppGlobal.safeHeight = MediaQuery.sizeOf(context).height - padding.top - padding.bottom;
-    AppGlobal.safeHeigtWithAppbar = AppGlobal.safeHeight - kToolbarHeight;
-
     return ListenableBuilder(
       listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
       builder: (contextBuilder, _) {
@@ -64,7 +73,10 @@ class OpenEatsJournalApp extends StatelessWidget {
 
                 languageCode = _openEatsJournalAppViewModel.languageCode;
               } else {
-                Brightness brightness = MediaQuery.of(context).platformBrightness;
+                //MediaQuery.of(context) lets Textfields reset their TextSelection after display of virtual keybord e.g.!?! Also applies to date picker....
+                //see also main_layout.dart
+                //Brightness brightness = MediaQuery.of(context).platformBrightness;
+                Brightness brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
                 if (brightness == Brightness.dark) {
                   themeMode = ThemeMode.dark;
                 }
@@ -162,7 +174,7 @@ class OpenEatsJournalApp extends StatelessWidget {
                             foodEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
                             journalRepository: _repositories.journalRepository,
                             foodRepository: _repositories.foodRepository,
-                            settingsRepository: _repositories.settingsRepository
+                            settingsRepository: _repositories.settingsRepository,
                           ),
                         ),
                         OpenEatsJournalStrings.navigatorRouteFoodEdit: (contextBuilder) => FoodEditScreen(

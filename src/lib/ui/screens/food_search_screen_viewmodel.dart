@@ -192,9 +192,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       }
 
       _addToSearchResult(foodsWithOrder);
-
-      _isLoading = false;
     }
+
+    _isLoading = false;
 
     if (_foodSearchResult.length > 500) {
       _searchMessageCode.value = 1;

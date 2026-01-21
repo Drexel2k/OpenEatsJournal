@@ -9,12 +9,16 @@ class SettingsTextField extends StatelessWidget {
     TextEditingController? controller,
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
+    bool? selectAllOnFocus,
+    FocusNode? focusNode,
     ValueChanged<String>? onChanged,
     bool readOnly = false,
   }) : _onTap = onTap,
        _controller = controller,
        _keyboardType = keyboardType,
        _inputFormatters = inputFormatters,
+       _selectAllOnFocus = selectAllOnFocus,
+       _focusNode = focusNode,
        _onChanged = onChanged,
        _readOnly = readOnly;
 
@@ -22,12 +26,13 @@ class SettingsTextField extends StatelessWidget {
   final TextEditingController? _controller;
   final TextInputType? _keyboardType;
   final List<TextInputFormatter>? _inputFormatters;
+  final bool? _selectAllOnFocus;
+  final FocusNode? _focusNode;
   final ValueChanged<String>? _onChanged;
   final bool _readOnly;
 
   @override
   Widget build(BuildContext context) {
-
     return SizedBox(
       width: 140.0,
       child: OpenEatsJournalTextField(
@@ -36,6 +41,8 @@ class SettingsTextField extends StatelessWidget {
         onTap: _onTap,
         keyboardType: _keyboardType,
         inputFormatters: _inputFormatters,
+        selectAllOnFocus: _selectAllOnFocus,
+        focusNode : _focusNode,
         onChanged: _onChanged,
       ),
     );

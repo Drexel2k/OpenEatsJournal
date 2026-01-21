@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-01-18 00-00-00,2026-01-15 00-00-00
+2026-01-21 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -110,4 +110,11 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","43","2026-01-18 00-00-00","Spam low-fat","Frühstücksfleisch fettarm",,,"100",,"569","4.9","2","1.2","1.1","21.5","2.2",
 "foodunit","1","Serving","Portion","40","g","true"
 "food","44","2026-01-18 00-00-00","Gummy candy","Weingummi",,,"100",,"1459","0.5","0.1","77","46","6.9","0.1",
-"foodunit","1","Gummy bear","Gummibärchen","2.4","g","true"
+"foodunit","1","Gummy bear","Gummibärchen","2.4","g","true
+"food","45","2026-01-21 00-00-00","Waffles","Waffeln",,,"100",,"2022","29","5.1","49","24","6.2","0.3",
+"foodunit","1","Heart piece","Herzstück","11","g","true"
+"foodunit","2","Waffle","Waffel","66","g","false"
+"foodunit","3","Belgian waffle","Belgische Waffel","90","g","false"
+"food","46","2026-01-21 00-00-00","Lye pastries / pretzel","Laugengebäck",,,"100",,"1209","5.4","0.8","50","1.1","7.8","3.9",
+"foodunit","1","Pretzel stick","Laugenstange","80","g","true"
+"foodunit","2","Lye pretzel","Laugenbrezel","90","g","false"

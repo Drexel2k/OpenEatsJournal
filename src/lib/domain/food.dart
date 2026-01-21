@@ -411,14 +411,14 @@ class Food {
   void _removeFoodUnitWithMeasurementUnit({required MeasurementUnit measurementUnit}) {
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object.amountMeasurementUnit == measurementUnit);
 
-    int order = 1;
     if (_foodUnitsWithOrder.isNotEmpty) {
       _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+
+      int order = 1;
       for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodUnitsWithOrder) {
         foodUnitWithOrder.order = order;
+        order++;
       }
-
-      order++;
     }
     _ensureDefaultFoodUnit();
   }

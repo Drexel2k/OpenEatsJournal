@@ -60,9 +60,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteEatsJournal,
       title: AppLocalizations.of(context)!.eats_journal,
-      mainNavigationCallback: () {
-        _eatsJournalScreenViewModel.refreshNutritionData();
-      },
       body: Column(
         children: [
           Row(
@@ -936,9 +933,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                            await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
-                            _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                            _eatsJournalScreenViewModel.refreshNutritionData();
+                            await Navigator.pushNamedAndRemoveUntil(context, OpenEatsJournalStrings.navigatorRouteFood, (Route<dynamic> route) => false);
                           },
                           label: Text(AppLocalizations.of(context)!.eats_journal_entry),
                         ),

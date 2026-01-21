@@ -291,7 +291,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
         }
       }
 
-      //updating food units in food and removing deleted ones, editors work only on temporary datra and dont change the food.
+      //updating food units in food and removing deleted ones, editors work only on temporary data and don't change the food.
       int order = 1;
       for (FoodUnitEditorData foodUnitEditorData in _foodUnitEditorsData) {
         //get food unit if it already existed and update

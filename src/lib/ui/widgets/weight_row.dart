@@ -34,6 +34,8 @@ class _WeightRowState extends State<WeightRow> {
 
   final TextEditingController _weightController = TextEditingController();
 
+  final FocusNode _weightFocusNode = FocusNode();
+
   //only called once even if the widget is recreated on opening the virtual keyboard e.g.
   @override
   void initState() {
@@ -77,8 +79,13 @@ class _WeightRowState extends State<WeightRow> {
                         }
                       }),
                     ],
+                                       focusNode: _weightFocusNode,
                     onTap: () {
-                      _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                      //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                      //effect.
+                      if (!_weightFocusNode.hasFocus) {
+                        _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                      }
                     },
                     onChanged: (value) {
                       num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
@@ -151,8 +158,10 @@ class _WeightRowState extends State<WeightRow> {
     if (widget._weightRowViewModel != _weightRowViewModel) {
       _weightRowViewModel.dispose();
     }
-    
+
     _weightController.dispose();
+
+    _weightFocusNode.dispose();
 
     super.dispose();
   }

@@ -23,6 +23,8 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
+  final FocusNode _amountFocusNode = FocusNode();
+
   //only called once even if the widget is recreated on opening the virtual keyboard e.g.
   @override
   void initState() {
@@ -99,8 +101,13 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                       }),
                     ],
                     enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
+                                       focusNode: _amountFocusNode,
                     onTap: () {
-                      _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                      //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                      //effect.
+                      if (!_amountFocusNode.hasFocus) {
+                        _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                      }
                     },
                     onChanged: (value) {
                       double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -204,9 +211,7 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
           builder: (_, _, _) {
             if (!_foodUnitEditorViewModel.amountValid.value) {
               return Text(
-                AppLocalizations.of(
-                  context,
-                )!.input_invalid(AppLocalizations.of(context)!.amount),
+                AppLocalizations.of(context)!.input_invalid(AppLocalizations.of(context)!.amount),
                 style: textTheme.labelMedium!.copyWith(color: Colors.red),
               );
             } else {
@@ -227,6 +232,8 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
 
     _nameController.dispose();
     _amountController.dispose();
+
+    _amountFocusNode.dispose();
 
     super.dispose();
   }

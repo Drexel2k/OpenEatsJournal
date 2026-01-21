@@ -21,6 +21,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
   late WeightJournalEntryAddScreenViewModel _weightJournalEntryAddScreenViewModel;
 
   final TextEditingController _weightController = TextEditingController();
+  final FocusNode _weightFocusNode = FocusNode();
 
   //only called once even if the widget is recreated on opening the virtual keyboard e.g.
   @override
@@ -70,8 +71,13 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                           }
                         }),
                       ],
+                                           focusNode: _weightFocusNode,
                       onTap: () {
-                        _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_weightFocusNode.hasFocus) {
+                          _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
@@ -132,6 +138,8 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
     }
 
     _weightController.dispose();
+
+    _weightFocusNode.dispose();
 
     super.dispose();
   }

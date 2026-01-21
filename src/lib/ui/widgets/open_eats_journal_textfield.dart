@@ -9,9 +9,10 @@ class OpenEatsJournalTextField extends StatelessWidget {
     TextEditingController? controller,
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
+    bool? selectAllOnFocus,
+    FocusNode? focusNode,
     Widget? decorationSuffixIcon,
     ValueChanged<String>? onChanged,
-
     bool readOnly = false,
     bool? enabled,
   }) : _hintText = hintText,
@@ -19,6 +20,8 @@ class OpenEatsJournalTextField extends StatelessWidget {
        _controller = controller,
        _keyboardType = keyboardType,
        _inputFormatters = inputFormatters,
+       _selectAllOnFocus = selectAllOnFocus,
+       _focusNode = focusNode,
        _decorationSuffixIcon = decorationSuffixIcon,
        _onChanged = onChanged,
        _readOnly = readOnly,
@@ -29,6 +32,8 @@ class OpenEatsJournalTextField extends StatelessWidget {
   final TextEditingController? _controller;
   final TextInputType? _keyboardType;
   final List<TextInputFormatter>? _inputFormatters;
+  final bool? _selectAllOnFocus;
+  final FocusNode? _focusNode;
   final Widget? _decorationSuffixIcon;
   final ValueChanged<String>? _onChanged;
   final bool _readOnly;
@@ -57,6 +62,8 @@ class OpenEatsJournalTextField extends StatelessWidget {
       onTap: _onTap,
       keyboardType: _keyboardType,
       inputFormatters: _inputFormatters,
+      selectAllOnFocus: _selectAllOnFocus,
+      focusNode: _focusNode,
       onChanged: _onChanged,
       enabled: _enabled,
     );

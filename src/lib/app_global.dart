@@ -5,7 +5,4 @@ class AppGlobal {
 
   //used to access current context after async calls (open dialogs after async e.g.) functions
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  static late double paddingTop;
-  static late double safeHeight;
-  static late double safeHeigtWithAppbar;
 }

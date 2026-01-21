@@ -14,6 +14,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
@@ -35,6 +36,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _eatsAmountController = TextEditingController();
 
+  final FocusNode _amountFocusNode = FocusNode();
+  final FocusNode _eatsAmountFocusNode = FocusNode();
+
   @override
   void initState() {
     _eatsJournalFoodAddScreenViewModel = widget._eatsJournalFoodAddScreenViewModel;
@@ -54,6 +58,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+      layoutMode: LayoutMode.intrinsicHeightFixedHeight,
       title: _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
           ? AppLocalizations.of(context)!.add_eats_journal_entry
           : AppLocalizations.of(context)!.edit_eats_journal_entry,
@@ -354,8 +359,13 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                           }
                         }),
                       ],
+                      focusNode: _amountFocusNode,
                       onTap: () {
-                        _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_amountFocusNode.hasFocus) {
+                          _amountController.selection = TextSelection(baseOffset: 0, extentOffset: _amountController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -395,8 +405,13 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                           }
                         }),
                       ],
+                      focusNode: _eatsAmountFocusNode,
                       onTap: () {
-                        _eatsAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _eatsAmountController.text.length);
+                        //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                        //effect.
+                        if (!_eatsAmountFocusNode.hasFocus) {
+                          _eatsAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _eatsAmountController.text.length);
+                        }
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -489,8 +504,11 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           ),
           SizedBox(height: 10),
           Expanded(
-            child: ListView(
-              children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!, textTheme: textTheme, context: context),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!, textTheme: textTheme, context: context),
+              ),
             ),
           ),
           Divider(thickness: 2, height: 20),
@@ -716,6 +734,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
     _amountController.dispose();
     _eatsAmountController.dispose();
+
+    _amountFocusNode.dispose();
+    _eatsAmountFocusNode.dispose();
 
     super.dispose();
   }
