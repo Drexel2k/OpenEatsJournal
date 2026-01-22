@@ -30,7 +30,9 @@ class SettingsScreenPageApp extends StatelessWidget {
                     return Switch(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _settingsViewModel.darkMode.value,
-                      onChanged: (value) => _settingsViewModel.darkMode.value = value,
+                      onChanged: (value) {
+                        _settingsViewModel.darkMode.value = value;
+                      },
                     );
                   },
                 ),

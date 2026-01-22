@@ -16,7 +16,11 @@ import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 
 void main() {
-  ErrorWidget.builder = ErrorHandlers.errorWidget;
+  //ErrorWidget.builder = ErrorHandlers.errorWidget;
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    FlutterError.presentError(details);
+    ErrorHandlers.showException(error: details.exception, stackTrace: details.stack);
+  };
 
   PlatformDispatcher.instance.onError = (error, stack) {
     ErrorHandlers.showException(error: error, stackTrace: stack);
