@@ -35,7 +35,13 @@ class OpenEatsJournalStrings {
   static const String chartDateLabelVar = "dateLabelVar";
   static const String chartEntryCount = "entryCount";
   static const String chartWeight = "weight";
-  static const String chartWeightVar = "weightVar";
+  static const String chartfat = "fat";
+  static const String chartSaturatedFat = "saturatedFat";
+  static const String chartCarbohydrates = "carbohydrates";
+  static const String chartSugar = "sugar";
+  static const String chartProtein = "protein";
+  static const String chartSalt = "salz";
+  static const String chartVar = "Var";
 
   static const String settingDarkmode = "darkmode";
   static const String settingGender = "gender";

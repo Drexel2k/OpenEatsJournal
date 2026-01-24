@@ -7,7 +7,7 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/utils/week_of_year.dart";
 import "package:openeatsjournal/repository/journal_repository_get_weight_max_result.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/statistic_type.dart";
+import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:openeatsjournal/ui/widgets/linechart.dart";
 
 class StatisticsScreenPageWeight extends StatelessWidget {
@@ -37,6 +37,8 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                 for (int dayIndex = 0; dayIndex <= 31; dayIndex++) {
                   currentDate = snapshot.data!.from!.add(Duration(days: dayIndex));
 
+                  //check if an entry exists before the current stastics range, as a weight entry is also valid for the following days until a newer entry is
+                  //available, so the the drawn line enters the chart at the correct height
                   if (dayIndex == 0) {
                     DateTime dateBeforeEntry = snapshot.data!.groupMaxWeights!.keys.min;
                     if (dateBeforeEntry.compareTo(currentDate) < 0) {
@@ -57,6 +59,8 @@ class StatisticsScreenPageWeight extends StatelessWidget {
 
                   xAxisInfo[currentDate] = dateFormatter.format(currentDate);
 
+                  //check if an entry exists after the current stastics range, as a weight entry is also valid for the following days until a newer entry is
+                  //available, so the the drawn line exits the chart at the correct height
                   if (dayIndex == 31) {
                     DateTime dateAfterEntry = snapshot.data!.groupMaxWeights!.keys.max;
                     if (dateAfterEntry.compareTo(currentDate) > 0) {
@@ -70,11 +74,12 @@ class StatisticsScreenPageWeight extends StatelessWidget {
               }
 
               return Linechart(
+                dataVar: OpenEatsJournalStrings.chartWeight,
                 data: dayData,
                 displayFrom: snapshot.data!.from!,
                 displayUntil: snapshot.data!.until!,
                 xAxisInfo: xAxisInfo,
-                statisticsType: StatisticType.daily,
+                statisticsType: StatisticInterval.daily,
               );
             } else {
               return Text("No Data Available");
@@ -132,11 +137,12 @@ class StatisticsScreenPageWeight extends StatelessWidget {
               }
 
               return Linechart(
+                dataVar: OpenEatsJournalStrings.chartWeight,
                 data: weekData,
                 displayFrom: snapshot.data!.from!,
                 displayUntil: snapshot.data!.until!,
                 xAxisInfo: xAxisInfo,
-                statisticsType: StatisticType.weekly,
+                statisticsType: StatisticInterval.weekly,
               );
             } else {
               return Text("No Data Available");
@@ -158,7 +164,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
               int currentYear = currentDate.year - 1;
               DateTime currentMonthStartDate;
               Map<DateTime, String> xAxisInfo = {};
-              
+
               if (snapshot.data!.groupMaxWeights != null) {
                 for (int monthIndex = 0; monthIndex <= 12; monthIndex++) {
                   currentMonthStartDate = DateTime(currentYear, currentMonth, 1);
@@ -202,11 +208,12 @@ class StatisticsScreenPageWeight extends StatelessWidget {
               }
 
               return Linechart(
+                dataVar: OpenEatsJournalStrings.chartWeight,
                 data: monthData,
                 displayFrom: snapshot.data!.from!,
                 displayUntil: snapshot.data!.until!,
                 xAxisInfo: xAxisInfo,
-                statisticsType: StatisticType.monthly,
+                statisticsType: StatisticInterval.monthly,
               );
             } else {
               return Text("No Data Available");

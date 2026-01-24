@@ -254,6 +254,9 @@ class OpenEatsJournalDatabaseService {
       }
 
       File sourceFile = File(_databaseFile);
+      //We need to create a new file here, just copying the file copies it it with its current file system permissions which results in a file only readable by
+      //the owner account (-rw-------). This means it isn't readable when trying to copy ith on computer connected via USB. Creating a new file creates it also
+      //with read write permissions for the group (-rw-rw----), which makes copying the file via a USB connection possible.
       IOSink targetStream = targetFile.openWrite();
       await targetStream.addStream(sourceFile.openRead());
 

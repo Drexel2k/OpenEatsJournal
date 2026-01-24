@@ -11,7 +11,7 @@ class ErrorHandlers {
     Directory logDirectory = Directory(join((await getApplicationDocumentsDirectory()).path, "log"));
     logDirectory.createSync(recursive: true);
     File logFile = File(join(logDirectory.path, "error.log"));
-    if (logFile.lengthSync() > 1048576) {
+    if (logFile.existsSync() && logFile.lengthSync() > 1048576) {
       logFile.deleteSync();
     }
     

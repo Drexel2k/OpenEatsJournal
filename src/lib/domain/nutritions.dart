@@ -22,5 +22,5 @@ class Nutritions {
   double? get fat => _fat;
   double? get saturatedFat => _saturatedFat;
   double? get protein => _protein;
-  double? get salte => _salt;
+  double? get salt => _salt;
 }

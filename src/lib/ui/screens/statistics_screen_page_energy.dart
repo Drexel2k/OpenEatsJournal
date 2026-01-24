@@ -7,7 +7,7 @@ import "package:openeatsjournal/domain/utils/week_of_year.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums_result.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/statistic_type.dart";
+import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:openeatsjournal/ui/widgets/bar_linechart.dart";
 
 class StatisticsScreenPageEnergy extends StatelessWidget {
@@ -21,7 +21,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
     return Column(
       children: [
         FutureBuilder<JournalRepositoryGetNutritionSumsResult>(
-          future: _statisticsScreenViewModel.last31daysEnergyData,
+          future: _statisticsScreenViewModel.last31daysNutritionData,
           builder: (BuildContext context, AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -57,7 +57,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 xAxisInfo[currentDate] = dateFormatter.format(currentDate);
               }
 
-              return BarLinechart(data: dayData, xAxisInfo: xAxisInfo, statisticsType: StatisticType.daily);
+              return BarLinechart(data: dayData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.daily);
             } else {
               return Text("No Data Available");
             }
@@ -65,7 +65,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
         ),
         SizedBox(height: 20),
         FutureBuilder<JournalRepositoryGetNutritionSumsResult>(
-          future: _statisticsScreenViewModel.last15weeksEnergyData,
+          future: _statisticsScreenViewModel.last15weeksNutritionData,
           builder: (BuildContext context, AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -102,7 +102,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 xAxisInfo[currentWeekStartDate] = ("${currentWeekOfYear.week}/${currentWeekOfYear.year}");
               }
 
-              return BarLinechart(data: weekData, xAxisInfo: xAxisInfo, statisticsType: StatisticType.weekly);
+              return BarLinechart(data: weekData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.weekly);
             } else {
               return Text("No Data Available");
             }
@@ -110,7 +110,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
         ),
         SizedBox(height: 26),
         FutureBuilder<JournalRepositoryGetNutritionSumsResult>(
-          future: _statisticsScreenViewModel.last13monthsEnergyData,
+          future: _statisticsScreenViewModel.last13monthsNutritionData,
           builder: (BuildContext context, AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
@@ -156,7 +156,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 }
               }
 
-              return BarLinechart(data: monthData, xAxisInfo: xAxisInfo, statisticsType: StatisticType.monthly);
+              return BarLinechart(data: monthData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.monthly);
             } else {
               return Text("No Data Available");
             }

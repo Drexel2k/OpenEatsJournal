@@ -3,28 +3,28 @@ import "package:graphic/graphic.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/utils/statistic_type.dart";
+import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 
 //Values and bars on the corner cases are cut off, due to limitation on setting marginMin and marginMax on a TimeScale when min and max values are set.
 //We could work with a linear scale here, but the placement of xAxis values is different than on the line charts, that looks also strange, especially
 //on switching charts.
 //See issue https://github.com/entronad/graphic/issues/358
 class BarLinechart extends StatelessWidget {
-  const BarLinechart({super.key, required List<Tuple> data, required Map<DateTime, String> xAxisInfo, required StatisticType statisticsType})
+  const BarLinechart({super.key, required List<Tuple> data, required Map<DateTime, String> xAxisInfo, required StatisticInterval statisticsType})
     : _data = data,
       _xAxisInfo = xAxisInfo,
       _statisticsType = statisticsType;
 
   final List<Tuple> _data;
   final Map<DateTime, String> _xAxisInfo;
-  final StatisticType _statisticsType;
+  final StatisticInterval _statisticsType;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    double barSize = _statisticsType == StatisticType.daily ? 4 : 18;
+    double barSize = _statisticsType == StatisticInterval.daily ? 4 : 18;
 
     int? maxkCalIntake = _data.reduce((currentEntry, nextEntry) {
       if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
@@ -88,10 +88,10 @@ class BarLinechart extends StatelessWidget {
 
     double xAxisLabelXOffset = 12;
     double xAxisLabelYOffset = 15;
-    if (_statisticsType == StatisticType.weekly) {
+    if (_statisticsType == StatisticInterval.weekly) {
       xAxisLabelXOffset = 14;
       xAxisLabelYOffset = 18;
-    } else if (_statisticsType == StatisticType.monthly) {
+    } else if (_statisticsType == StatisticInterval.monthly) {
       xAxisLabelXOffset = 12;
       xAxisLabelYOffset = 18;
     }
@@ -133,9 +133,9 @@ class BarLinechart extends StatelessWidget {
             as DateTime;
 
     String timeInfo = AppLocalizations.of(context)!.days;
-    if (_statisticsType == StatisticType.weekly) {
+    if (_statisticsType == StatisticInterval.weekly) {
       timeInfo = AppLocalizations.of(context)!.weeks;
-    } else if (_statisticsType == StatisticType.monthly) {
+    } else if (_statisticsType == StatisticInterval.monthly) {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
