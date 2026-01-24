@@ -741,12 +741,11 @@ class OpenEatsJournalDatabaseService {
     searchText = searchText.trim();
 
     List<Object?> whereArgs = [];
-    String foodSourceWhereSql = OpenEatsJournalStrings.emptyString;
-
+    List<String> whereSqls = [];
     if (foodSourceIds.isNotEmpty) {
       String placeholders = "?, " * foodSourceIds.length;
       placeholders = placeholders.substring(0, placeholders.length - 2);
-      foodSourceWhereSql = "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders) AND ";
+      whereSqls.add("${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders)");
       whereArgs.addAll(foodSourceIds);
     }
 
@@ -755,21 +754,15 @@ class OpenEatsJournalDatabaseService {
     String searchTextWhereSql = OpenEatsJournalStrings.emptyString;
     if (searchWords.isNotEmpty) {
       for (String word in searchWords) {
-        searchTextWhereSql = "${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSearchText} LIKE ? AND ";
+        whereSqls.add("${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSearchText} LIKE ?");
         whereArgs.add("%$word%");
-      }
-
-      searchTextWhereSql = searchTextWhereSql.substring(0, searchTextWhereSql.length - 5);
-    } else {
-      if (foodSourceIds.isNotEmpty) {
-        foodSourceWhereSql = foodSourceWhereSql.substring(0, foodSourceWhereSql.length - 5);
       }
     }
 
     return _getFoods(
       whereSql:
           """              
-              $foodSourceWhereSql
+              ${whereSqls.join(" AND ")}
               $searchTextWhereSql
               """,
       whereArgs: whereArgs,
@@ -777,24 +770,21 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getFoodsByBarcode({required int barcode, List<int>? foodSourceIds}) async {
-    List<Object?> arguments = [];
-    String foodSourceWhereSql = OpenEatsJournalStrings.emptyString;
-
+    List<Object?> whereArgs = [];
+    List<String> whereSqls = [];
     if (foodSourceIds != null) {
       String placeholders = "?, " * foodSourceIds.length;
       placeholders = placeholders.substring(0, placeholders.length - 2);
-      foodSourceWhereSql = "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders) AND ";
-      arguments.addAll(foodSourceIds);
+      whereSqls.add("${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders)");
+      whereArgs.addAll(foodSourceIds);
     }
 
-    arguments.add(barcode);
+    whereSqls.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
+    whereArgs.add(barcode);
 
     return _getFoods(
-      whereSql:
-          """
-              $foodSourceWhereSql
-              ${OpenEatsJournalStrings.dbColumnBarcode} = ?""",
-      whereArgs: arguments,
+      whereSql:whereSqls.join(" AND "),
+      whereArgs: whereArgs,
     );
   }
 
@@ -841,7 +831,7 @@ class OpenEatsJournalDatabaseService {
       }
     }
 
-    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(wheres: wheres, arguments: arguments);
+    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(whereSqls: wheres, arguments: arguments);
 
     if (dbResult.isEmpty) {
       return null;
@@ -855,18 +845,18 @@ class OpenEatsJournalDatabaseService {
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: days)));
     arguments.add(formattedDate);
 
-    List<String> wheres = [];
+    List<String> whereSqls = [];
     if (foodSourceIds.isNotEmpty) {
       String placeholders = "?, " * foodSourceIds.length;
       placeholders = placeholders.substring(0, placeholders.length - 2);
-      wheres.add("${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders)");
+      whereSqls.add("${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} IN ($placeholders)");
       arguments.addAll(foodSourceIds);
     }
 
-    wheres.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
+    whereSqls.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
     arguments.add(barcode);
 
-    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(wheres: wheres, arguments: arguments);
+    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(whereSqls: whereSqls, arguments: arguments);
 
     if (dbResult.isEmpty) {
       return null;
@@ -875,7 +865,7 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
-  Future<List<Map<String, Object?>>> _getFoodsByUsageInternal({required List<String> wheres, required List<Object?> arguments}) async {
+  Future<List<Map<String, Object?>>> _getFoodsByUsageInternal({required List<String> whereSqls, required List<Object?> arguments}) async {
     Database db = await instance.db;
     return db.rawQuery("""
         SELECT
@@ -898,7 +888,7 @@ class OpenEatsJournalDatabaseService {
                 ${OpenEatsJournalStrings.dbTableFoodByUsage}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
                 $_sqlFoodUnitJoin
         WHERE 
-                ${wheres.join(" AND ")}
+                ${whereSqls.join(" AND ")}
         ORDER BY
                 ${OpenEatsJournalStrings.dbResultEntryCount} DESC
         """, arguments);
