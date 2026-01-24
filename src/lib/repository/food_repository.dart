@@ -1,4 +1,5 @@
 import "dart:convert";
+import "package:collection/collection.dart";
 import "package:http/http.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -40,7 +41,8 @@ class FoodRepository {
     _oejAssetsService = oejAssetsService;
   }
 
-  //result list must always contain exactly 3 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, index 3 = open food facts results
+  //result list must always contain exactly 4 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
+  // index 4 = all results
   Future<List<FoodRepositoryResult>> getFoodsByBarcode({required int barcode, required String languageCode, required SearchMode searchMode}) async {
     List<FoodRepositoryResult> result = [];
 
@@ -51,23 +53,46 @@ class FoodRepository {
       localFoodSources = [FoodSource.user.value, FoodSource.openFoodFacts.value];
     }
 
+    List<Food> allResults = [];
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources)
         : await _oejDatabaseService.getFoodsByBarcodeByUsage(barcode: barcode, foodSourceIds: localFoodSources, days: _dayForFoodUsage);
 
-    List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : null;
-    if (foods != null) {
+    List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
+
+    Food? foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.user);
+    if (foodExists != null) {
       result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()));
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
     } else {
       result.add(FoodRepositoryResult());
+    }
+
+    foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.standard);
+    if (foodExists != null) {
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
+    } else {
       result.add(FoodRepositoryResult());
+    }
+
+    foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.openFoodFacts);
+    if (foodExists != null) {
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
+    } else {
       result.add(FoodRepositoryResult());
     }
 
     if (searchMode == SearchMode.online) {
       result.add(await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode));
+    } else {
+      result.add(FoodRepositoryResult());
+    }
+
+    if (result[3].foods != null) {
+      allResults.addAll(result[3].foods!);
+    }
+
+    if (allResults.isNotEmpty) {
+      result.add(FoodRepositoryResult(foods: allResults));
     } else {
       result.add(FoodRepositoryResult());
     }
@@ -103,7 +128,8 @@ class FoodRepository {
     return FoodRepositoryResult(errorCode: 3);
   }
 
-  //result list must always contain exactly 3 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, index 3 = open food facts results
+  //result list must always contain exactly 4 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
+  // index 4 = all results
   Future<List<FoodRepositoryResult>> getFoodsBySearchText({required String searchText, required String languageCode, required SearchMode searchMode}) async {
     List<FoodRepositoryResult> result = [];
 
@@ -118,19 +144,44 @@ class FoodRepository {
         ? await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources)
         : await _oejDatabaseService.getFoodsBySearchtextByUsage(searchText: searchText, foodSourceIds: localFoodSources, days: _dayForFoodUsage);
 
-    List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : null;
-    if (foods != null) {
+    List<Food> allResults = [];
+    List<Food> foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
+
+    allResults.addAll(foods);
+
+    Food? foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.user);
+    if (foodExists != null) {
       result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()));
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
     } else {
       result.add(FoodRepositoryResult());
+    }
+
+    foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.standard);
+    if (foodExists != null) {
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
+    } else {
       result.add(FoodRepositoryResult());
+    }
+
+    foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.openFoodFacts);
+    if (foodExists != null) {
+      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
+    } else {
       result.add(FoodRepositoryResult());
     }
 
     if (searchMode == SearchMode.online) {
       result.add(await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1));
+    } else {
+      result.add(FoodRepositoryResult());
+    }
+
+    if (result[3].foods != null) {
+      allResults.addAll(result[3].foods!);
+    }
+
+    if (allResults.isNotEmpty) {
+      result.add(FoodRepositoryResult(foods: allResults));
     } else {
       result.add(FoodRepositoryResult());
     }

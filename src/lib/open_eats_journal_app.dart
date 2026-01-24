@@ -168,7 +168,9 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                           ),
                           onboardingFinishedCallback: _onboardingFinished,
                         ),
-                        OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
+                        OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(
+                          iconBackGroundColor: _openEatsJournalAppViewModel.darkMode ? Color.fromARGB(255, 83, 83, 83) : Color.fromARGB(255, 255, 255, 255),
+                        ),
                         OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) => EatsJournalFoodEntryEditScreen(
                           eatsJournalFoodAddScreenViewModel: EatsJournalFoodEntryEditScreenViewModel(
                             foodEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),

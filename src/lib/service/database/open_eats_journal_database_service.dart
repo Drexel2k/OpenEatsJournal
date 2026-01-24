@@ -240,18 +240,30 @@ class OpenEatsJournalDatabaseService {
     // }
   }
 
-  Future<void> exportDatabase() async {
+  Future<bool> exportDatabase() async {
     _fileTransfering = true;
-    await _database!.close();
-    //will probably only work on Android, for iOS maybe another solution like the os' share functionality is needed
-    Directory exportDirectory = Directory(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.export));
-    await exportDirectory.create(recursive: true);
+    try {
+      await _database!.close();
+      //will probably only work on Android, for iOS maybe another solution like the os' share functionality is needed
+      Directory exportDirectory = Directory(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.export));
+      await exportDirectory.create(recursive: true);
 
-    String targetFile = join(exportDirectory.path, _databaseFileName);
-    File sourceFile = File(_databaseFile);
-    await sourceFile.copy(targetFile);
-    _database = await _initDb();
+      File targetFile = File(join(exportDirectory.path, _databaseFileName));
+      if (targetFile.existsSync()) {
+        targetFile.deleteSync();
+      }
+
+      File sourceFile = File(_databaseFile);
+      IOSink targetStream = targetFile.openWrite();
+      await targetStream.addStream(sourceFile.openRead());
+
+      _database = await _initDb();
+    } catch (e) {
+      return false;
+    }
+
     _fileTransfering = false;
+    return true;
   }
 
   Future<bool> importDatabase() async {
@@ -826,7 +838,7 @@ class OpenEatsJournalDatabaseService {
       }
     }
 
-    List<Map<String, Object?>> dbResult = await _getFoodIdsByBarcodeByUsageInternal(wheres: wheres, arguments: arguments);
+    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(wheres: wheres, arguments: arguments);
 
     if (dbResult.isEmpty) {
       return null;
@@ -851,7 +863,7 @@ class OpenEatsJournalDatabaseService {
     wheres.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
     arguments.add(barcode);
 
-    List<Map<String, Object?>> dbResult = await _getFoodIdsByBarcodeByUsageInternal(wheres: wheres, arguments: arguments);
+    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(wheres: wheres, arguments: arguments);
 
     if (dbResult.isEmpty) {
       return null;
@@ -860,7 +872,7 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
-  Future<List<Map<String, Object?>>> _getFoodIdsByBarcodeByUsageInternal({required List<String> wheres, required List<Object?> arguments}) async {
+  Future<List<Map<String, Object?>>> _getFoodsByUsageInternal({required List<String> wheres, required List<Object?> arguments}) async {
     Database db = await instance.db;
     return db.rawQuery("""
         SELECT

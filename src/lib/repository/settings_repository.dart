@@ -305,8 +305,8 @@ class SettingsRepository extends ChangeNotifier {
     return dayTargetKJoule;
   }
 
-  Future<void> exportDatabase() async {
-    await _oejDatabase.exportDatabase();
+  Future<bool> exportDatabase() async {
+    return await _oejDatabase.exportDatabase();
   }
 
   Future<bool> importDatabase() async {

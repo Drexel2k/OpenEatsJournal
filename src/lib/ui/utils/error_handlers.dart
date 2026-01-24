@@ -8,17 +8,15 @@ import "package:path_provider/path_provider.dart";
 
 class ErrorHandlers {
   static Future<void> showException({required Object error, StackTrace? stackTrace}) async {
-    Directory? logDirectory = await getExternalStorageDirectory();
-    if (logDirectory != null) {
-      logDirectory = Directory(join(logDirectory.path, "log"));
-      logDirectory.createSync(recursive: true);
-      File logFile = File(join(logDirectory.path, "error.log"));
-      if (logFile.lengthSync() > 1048576) {
-        logFile.deleteSync();
-      }
-      String stack = stackTrace != null ? stackTrace.toString() : "";
-      logFile.writeAsString("${DateTime.now()} se ${error.toString()} $stack", mode: FileMode.append, flush: true);
+    Directory logDirectory = Directory(join((await getApplicationDocumentsDirectory()).path, "log"));
+    logDirectory.createSync(recursive: true);
+    File logFile = File(join(logDirectory.path, "error.log"));
+    if (logFile.lengthSync() > 1048576) {
+      logFile.deleteSync();
     }
+    
+    String stack = stackTrace != null ? stackTrace.toString() : "";
+    logFile.writeAsString("${DateTime.now()} se ${error.toString()} $stack", mode: FileMode.append, flush: true);
 
     final BuildContext? context = AppGlobal.navigatorKey.currentContext;
     if (context != null && context.mounted) {

@@ -205,8 +205,8 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _dailyTargetKJoule.value = dailyTargetKJoule;
   }
 
-  Future<void> exportDatabase() async {
-    await _settingsRepository.exportDatabase();
+  Future<bool> exportDatabase() async {
+    return await _settingsRepository.exportDatabase();
   }
 
   Future<bool> importDatabase() async {

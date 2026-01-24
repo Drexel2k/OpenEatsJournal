@@ -103,13 +103,22 @@ class SettingsScreenPageApp extends StatelessWidget {
                   children: [
                     OutlinedButton(
                       onPressed: () async {
-                        await _settingsViewModel.exportDatabase();
+                        bool success = await _settingsViewModel.exportDatabase();
+
+                        String title = AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.export_succeeded;
+                        String content = AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.database_exported;
+
+                        if (!success) {
+                          title = AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.export_not_succeeded;
+                          content = AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.database_not_exported;
+                        }
+
                         await showDialog(
                           context: AppGlobal.navigatorKey.currentContext!,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text(AppLocalizations.of(context)!.export_succeeded),
-                              content: Text(AppLocalizations.of(context)!.database_exported),
+                              title: Text(title),
+                              content: Text(content),
                               actions: <Widget>[
                                 TextButton(
                                   child: Text(AppLocalizations.of(context)!.ok),

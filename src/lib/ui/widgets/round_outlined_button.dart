@@ -1,12 +1,14 @@
 import "package:flutter/material.dart";
 
 class RoundOutlinedButton extends StatelessWidget {
-  const RoundOutlinedButton({super.key, VoidCallback? onPressed, required Widget child})
+  const RoundOutlinedButton({super.key, VoidCallback? onPressed, required Widget child, Color? backgroundColor})
     : _onPressed = onPressed,
-      _child = child;
+      _child = child,
+      _backgroundColor = backgroundColor;
 
   final VoidCallback? _onPressed;
   final Widget _child;
+  final Color? _backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class RoundOutlinedButton extends StatelessWidget {
         minimumSize: Size(40, 40),
         padding: EdgeInsets.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        backgroundColor: _backgroundColor,
       ),
       child: _child,
     );

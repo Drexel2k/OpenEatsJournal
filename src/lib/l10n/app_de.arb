@@ -110,7 +110,8 @@
   "open_food_facts_exception": "Open Food Facts Verbindungsfehler: {errorMessage}.",
   "open_food_facts_unexpected_response": "Unerwartete Open Food Facts Antwort.",
   "open_food_facts_unexpected_status": "Unerwarteter Open Food Facts Status Code.",
-  "open_food_facts_unexpected_error": "Unerwarteter Open Food Facts Fehler.",
+  "search_unexpected_error": "Unerwarteter Fehler in der Suche.",
+  "enter_search_criteria" : "Bitte ein Suchkriterium eingeben.",
   "search_food": "Suche Lebensmittel...",
   "popularity": "Popularität",
   "name": "Name",
@@ -209,7 +210,7 @@
   "offline": "Offline",
   "recent": "Zuletzt",
   "as_new_eats_journal_entry": "Als neuer Essenstagebucheintrag",
-  "export_import": "Export/import:",
+  "export_import": "Export/Import:",
   "database_import_hint": "Die Datenbank wird nach \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\export exportiert und wird von \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\import\\oej.db importiert. Alle Deine existierenden Daten werden während des Imports überschrieben. Die Datenbank ist im SQLite Format und kan z.B. mit DB Browser for SQLite (DB4S) geöffnet werden.",
   "export_data": "Daten exportieren",
   "import_data": "Daten importieren",
@@ -221,5 +222,7 @@
   "database_imported": "Die Datenbank wurde importiert. Die App schließt sich jetzt.",
   "export_succeeded": "Export erfolgreich",
   "database_exported": "Die Datenbank wurde exportiert.",
+  "export_not_succeeded": "Export nicht erfolgreich",
+  "database_not_exported": "Die Datenbank konnte nicht exportiert werden.",
   "wait_search": "Bitte warte bis die vorherige Suche beendet ist, bevor Du eine neues Suche startest."
 }

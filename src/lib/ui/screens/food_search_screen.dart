@@ -203,8 +203,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_response, style: style);
                 } else if (_foodSearchScreenViewModel.errorCode.value == 3) {
                   return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_status, style: style);
+                } else if (_foodSearchScreenViewModel.errorCode.value == 4) {
+                  return Text(AppLocalizations.of(context)!.enter_search_criteria, style: style);
                 } else {
-                  return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_error, style: style);
+                  return Text(AppLocalizations.of(context)!.search_unexpected_error, style: style);
                 }
               } else {
                 return SizedBox();
@@ -264,7 +266,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             ],
                             initialSelection: _foodSearchScreenViewModel.sortOrder,
                             onSelected: (SortOrder? sortOrder) {
-                              _foodSearchScreenViewModel.setSortOrder(sortOrder!);
+                              _foodSearchScreenViewModel.setSortOrder(sortOrder: sortOrder!, searchMode: _searchMode);
                             },
                             enabled: _foodSearchScreenViewModel.sortButtonEnabled,
                           );
@@ -425,11 +427,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
     if (parts.length == 2 && parts[0].trim().toLowerCase() == OpenEatsJournalStrings.code) {
       int? barcode = int.tryParse(parts[1]);
-      if (barcode != null) {
-        await _foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, localizations: standardFoodUnitLocalizations, searchMode: _searchMode);
-      }
+      await _foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, localizations: standardFoodUnitLocalizations, searchMode: _searchMode);
     } else {
-      await _foodSearchScreenViewModel.getFoodBySearchText(searchText: cleanSearchText, localizations: standardFoodUnitLocalizations, searchMode: _searchMode);
+      await _foodSearchScreenViewModel.getFoodsBySearchText(searchText: cleanSearchText, localizations: standardFoodUnitLocalizations, searchMode: _searchMode);
     }
   }
 
