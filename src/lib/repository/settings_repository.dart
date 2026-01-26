@@ -80,11 +80,15 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
-  //Needs to be set for Open Food Facts Api, but shall not be in the repo...
-  String? get appContactMail => null;
+  String get donateUrl => "https://github.com/Drexel2k/OpenEatsJournal/";
+  String get githubUrl => "https://github.com/Drexel2k/OpenEatsJournal/";
   String get appName => "OpenEatsJournal";
   String get appVersion => "0.1";
   bool get useStagingServices => true;
+  //Data required, but shall not be in the repo...
+  String? get appContactMail => null;
+  String? get paypalUrl => null;
+  String? get contactData => null;
 
   //must be called once before the singleton is used
   void init({required OpenEatsJournalDatabaseService oejDatabase}) {

@@ -1,10 +1,13 @@
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/screens/about_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class SettingsScreenPageApp extends StatelessWidget {
   const SettingsScreenPageApp({super.key, required SettingsScreenViewModel settingsViewModel}) : _settingsViewModel = settingsViewModel;
@@ -14,10 +17,150 @@ class SettingsScreenPageApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Column(
         children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.about_label, style: textTheme.titleSmall)),
+              Flexible(
+                flex: 1,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await showDialog<void>(
+                      useSafeArea: true,
+                      barrierDismissible: false,
+                      context: AppGlobal.navigatorKey.currentContext!,
+                      builder: (BuildContext contextBuilder) {
+                        double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.075;
+                        double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.045;
+
+                        return Dialog(
+                          insetPadding: EdgeInsets.fromLTRB(dialogHorizontalPadding, dialogVerticalPadding, dialogHorizontalPadding, dialogVerticalPadding),
+                          child: AboutScreen(contactData: _settingsViewModel.contactData, appVersion: _settingsViewModel.appVersion),
+                        );
+                      },
+                    );
+                  },
+                  child: Text(AppLocalizations.of(context)!.about),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Text(AppLocalizations.of(context)!.contribute, style: textTheme.titleSmall),
+                    Tooltip(
+                      triggerMode: TooltipTriggerMode.tap,
+                      showDuration: Duration(seconds: 60),
+                      message: AppLocalizations.of(context)!.contribute_tooltip,
+                      child: Icon(Icons.help_outline),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: textTheme.bodyLarge,
+                        children: [
+                          TextSpan(
+                            text: "github",
+                            style: TextStyle(color: colorScheme.primary),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                await launchUrl(Uri.parse(_settingsViewModel.githubUrl), mode: LaunchMode.platformDefault);
+                              },
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Text(AppLocalizations.of(context)!.donate, style: textTheme.titleSmall),
+                    Tooltip(
+                      triggerMode: TooltipTriggerMode.tap,
+                      showDuration: Duration(seconds: 60),
+                      message: AppLocalizations.of(context)!.welcome_message_donation_voluntary,
+                      child: Icon(Icons.help_outline),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: textTheme.bodyLarge,
+                        children: [
+                          TextSpan(text: AppLocalizations.of(context)!.welcome_message_onetime, style: textTheme.bodyLarge),
+                          TextSpan(
+                            text: "paypal",
+                            style: TextStyle(color: colorScheme.primary),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                await launchUrl(Uri.parse(_settingsViewModel.paypalUrl), mode: LaunchMode.platformDefault);
+                              },
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        style: textTheme.bodyLarge,
+                        children: [
+                          TextSpan(text: AppLocalizations.of(context)!.welcome_message_reoccuring, style: textTheme.bodyLarge),
+                          TextSpan(
+                            text: OpenEatsJournalStrings.donationPlatform,
+                            style: TextStyle(color: colorScheme.primary),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                await launchUrl(Uri.parse(_settingsViewModel.donateUrl), mode: LaunchMode.platformDefault);
+                              },
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Divider(thickness: 2, height: 20),
+          SizedBox(height: 10),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

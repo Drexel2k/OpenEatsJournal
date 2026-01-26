@@ -75,6 +75,12 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   SettingsRepository get settingsRepository => _settingsRepository;
 
+  String get githubUrl => _settingsRepository.githubUrl;
+  String get paypalUrl => _settingsRepository.paypalUrl!;
+  String get donateUrl => _settingsRepository.donateUrl;
+  String get contactData => _settingsRepository.contactData!;
+  String get appVersion => _settingsRepository.appVersion;
+
   void _setDailyTargetKJoule() {
     _dailyTargetKJoule.value =
         ((_settingsRepository.kJouleMonday +

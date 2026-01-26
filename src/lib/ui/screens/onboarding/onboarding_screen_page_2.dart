@@ -25,15 +25,13 @@ class _OnboardingScreenPage2State extends State<OnboardingScreenPage2> {
             child: IntrinsicHeight(
               child: Column(
                 children: [
-                  Text(AppLocalizations.of(context)!.welcome_message_2, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  Text(AppLocalizations.of(context)!.welcome_message_data, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   SizedBox(height: 10),
-                  Text(AppLocalizations.of(context)!.welcome_message_3, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  Text(AppLocalizations.of(context)!.welcome_message_data_storage, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   SizedBox(height: 10),
-                  Text(AppLocalizations.of(context)!.welcome_message_4, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-                  SizedBox(height: 10),
-                  Text(AppLocalizations.of(context)!.welcome_message_5, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-                  SizedBox(height: 10),
-                  Text(AppLocalizations.of(context)!.welcome_message_6, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  Text(AppLocalizations.of(context)!.welcome_message_local_database, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  SizedBox(height: 40),
+                  Text(AppLocalizations.of(context)!.welcome_message_stay_healthy, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   Spacer(),
                   CheckboxListTile(
                     controlAffinity: ListTileControlAffinity.leading,

@@ -12,6 +12,8 @@ class OpenEatsJournalStrings {
   static const String navigatorRouteQuickEntryEdit = "/quickentryedit";
 
   static const String emptyString = "";
+  static const String openEatsJournal = "Open Eats Journal";
+  static const String donationPlatform = "donate";
   static const String de = "de";
   static const String en = "en";
   static const String code = "code";
@@ -20,6 +22,7 @@ class OpenEatsJournalStrings {
   static const String piece = "piece";
   static const String export = "export";
   static const String import = "import";
+  static const String contactDataPlaceholder = "{contact_data}";
 
   static const String csvTrue = "true";
   static const String csvFood = "food";

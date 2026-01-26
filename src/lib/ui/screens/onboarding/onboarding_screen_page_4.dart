@@ -92,44 +92,74 @@ class OnboardingScreenPage4 extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 15),
+                  Spacer(),
                   ValueListenableBuilder(
                     valueListenable: _onboardingScreenViewModel.weightTarget,
                     builder: (contextBuilder, _, _) {
-                      return Text(
-                        AppLocalizations.of(contextBuilder)!.your_daily_calories_need(
+                      return Center(
+                        child: Text(
                           _onboardingScreenViewModel.dailyNeedKJoule.value != null
                               ? ConvertValidate.numberFomatterInt.format(
                                   NutritionCalculator.getKCalsFromKJoules(kJoules: _onboardingScreenViewModel.dailyNeedKJoule.value!),
                                 )
                               : AppLocalizations.of(contextBuilder)!.na,
+
+                          style: textTheme.titleLarge,
+                          textAlign: TextAlign.center,
                         ),
-                        style: textTheme.titleMedium,
                       );
                     },
+                  ),
+                  Center(
+                    child: Text(AppLocalizations.of(context)!.daily_calories_need, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   ),
                   ValueListenableBuilder(
                     valueListenable: _onboardingScreenViewModel.weightTarget,
                     builder: (contextBuilder, _, _) {
-                      return Text(
-                        AppLocalizations.of(contextBuilder)!.your_daily_calories_target(
+                      return Center(
+                        child: Text(
                           _onboardingScreenViewModel.dailyTargetKJoule.value != null
                               ? ConvertValidate.numberFomatterInt.format(
                                   NutritionCalculator.getKCalsFromKJoules(kJoules: _onboardingScreenViewModel.dailyTargetKJoule.value!),
                                 )
                               : AppLocalizations.of(contextBuilder)!.na,
+                          style: textTheme.titleLarge,
+                          textAlign: TextAlign.center,
                         ),
-                        style: textTheme.titleMedium,
                       );
                     },
                   ),
-                  SizedBox(height: 10),
-                  Text(AppLocalizations.of(context)!.proposed_values, style: textTheme.bodyLarge),
-                  SizedBox(height: 10),
-                  Text(AppLocalizations.of(context)!.in_doubt_consult_doctor, style: textTheme.bodyLarge),
-                  Spacer(),
                   Center(
-                    child: FilledButton(onPressed: _onDone, child: Text(AppLocalizations.of(context)!.finish)),
+                    child: Text(AppLocalizations.of(context)!.daily_calories_target, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  ),
+                  SizedBox(height: 20),
+                  Text(AppLocalizations.of(context)!.proposed_values, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  SizedBox(height: 10),
+                  Text(AppLocalizations.of(context)!.in_doubt_consult_doctor, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  SizedBox(height: 10),
+                  Center(
+                    child: FilledButton(
+                      onPressed: () {
+                        if (_onboardingScreenViewModel.weightTarget.value == null) {
+                          SnackBar snackBar = SnackBar(
+                            content: Text(AppLocalizations.of(context)!.select_target),
+                            action: SnackBarAction(
+                              label: AppLocalizations.of(context)!.close,
+                              onPressed: () {
+                                //Click on SnackbarAction closes the SnackBar,
+                                //nothing else to do here...
+                              },
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
+                        }
+
+                        _onDone();
+                      },
+                      child: Text(AppLocalizations.of(context)!.proceed),
+                    ),
                   ),
                 ],
               ),

@@ -58,6 +58,11 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   ValueNotifier<int?> get dailyNeedKJoule => _dailyNeedKJoule;
   ValueNotifier<int?> get dailyTargetKJoule => _dailyTargetKJoule;
 
+  String get contactData => _settingsRepository.contactData!;
+  String get githubUrl => _settingsRepository.githubUrl;
+  String get paypalUrl => _settingsRepository.paypalUrl!;
+  String get donateUrl => _settingsRepository.donateUrl;
+
   Future<void> saveOnboardingData() async {
     int age = 0;
     final DateTime today = DateTime.now();

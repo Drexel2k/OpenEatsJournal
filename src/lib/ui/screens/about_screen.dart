@@ -1,61 +1,39 @@
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:flutter_svg/svg.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 
-class OnboardingScreenPage1 extends StatefulWidget {
-  const OnboardingScreenPage1({super.key, required VoidCallback onDone, required bool darkMode, required OnboardingScreenViewModel onboardingScreenViewModel})
-    : _onDone = onDone,
-      _darkMode = darkMode,
-      _onboardingScreenViewModel = onboardingScreenViewModel;
+class AboutScreen extends StatelessWidget {
+  const AboutScreen({super.key, required String contactData, required String appVersion}) : _contactData = contactData, _appVersion = appVersion;
 
-  final OnboardingScreenViewModel _onboardingScreenViewModel;
-  final VoidCallback _onDone;
-  final bool _darkMode;
-
-  @override
-  State<OnboardingScreenPage1> createState() => _OnboardingScreenPage1State();
-}
-
-class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
-  bool _licenseAgreed = false;
+  final String _contactData;
+  final String _appVersion;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    String logoPath = "assets/openeatsjournal_logo_lightmode.svg";
-    if (widget._darkMode) {
-      logoPath = "assets/openeatsjournal_logo_darkmode.svg";
-    }
+    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
+    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
 
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints viewportConstraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-            child: IntrinsicHeight(
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Column(
+        children: [
+          AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.about)),
+          Expanded(
+            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SvgPicture.asset(logoPath, semanticsLabel: "App Logo", height: 150, width: 150),
-                  Text(style: textTheme.headlineMedium, OpenEatsJournalStrings.openEatsJournal),
+                  Text("${OpenEatsJournalStrings.openEatsJournal} v$_appVersion", style: textTheme.headlineMedium),
                   SizedBox(height: 10),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(AppLocalizations.of(context)!.welcome, style: textTheme.headlineSmall),
-                      Icon(Icons.waving_hand_outlined),
-                    ],
-                  ),
-                  SizedBox(height: 12),
                   Text(AppLocalizations.of(context)!.welcome_message_welcome, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-                  Spacer(),
+                  SizedBox(height: 10),
                   RichText(
+                    textAlign: TextAlign.center,
                     text: TextSpan(
                       style: textTheme.bodyLarge,
                       children: [
@@ -71,6 +49,12 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                                 context: AppGlobal.navigatorKey.currentContext!,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
+                                    insetPadding: EdgeInsets.fromLTRB(
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                    ),
                                     title: Text(AppLocalizations.of(context)!.agplv3_license),
                                     content: SingleChildScrollView(child: Text(license)),
                                     actions: <Widget>[
@@ -93,12 +77,18 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
                               String license = await rootBundle.loadString("assets/privacy.txt");
-                              license = license.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, widget._onboardingScreenViewModel.contactData);
+                              license = license.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, _contactData);
 
                               await showDialog(
                                 context: AppGlobal.navigatorKey.currentContext!,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
+                                    insetPadding: EdgeInsets.fromLTRB(
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                      dialogHorizontalPadding,
+                                      dialogVerticalPadding,
+                                    ),
                                     title: Text(AppLocalizations.of(context)!.privacy_statement),
                                     content: SingleChildScrollView(child: Text(license)),
                                     actions: <Widget>[
@@ -117,52 +107,21 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                         TextSpan(text: " ${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
                       ],
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 12),
-                  CheckboxListTile(
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(AppLocalizations.of(context)!.license_agree, style: textTheme.labelLarge, textAlign: TextAlign.center),
-                    value: _licenseAgreed,
-                    onChanged: (value) {
-                      setState(() {
-                        _licenseAgreed = value ?? false;
-                      });
-                    },
-                  ),
-                  FilledButton(
-                    onPressed: () {
-                      if (!_licenseAgreed) {
-                        SnackBar snackBar = SnackBar(
-                          content: Text(AppLocalizations.of(context)!.license_must_agree),
-                          action: SnackBarAction(
-                            label: AppLocalizations.of(context)!.close,
-                            onPressed: () {
-                              //Click on SnackbarAction closes the SnackBar,
-                              //nothing else to do here...
-                            },
-                          ),
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        return;
-                      }
-
-                      widget._onDone();
-                    },
-                    child: Text(AppLocalizations.of(context)!.agree_proceed),
-                  ),
+                  SizedBox(height: 10),
+                  Text(AppLocalizations.of(context)!.welcome_message_data, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  SizedBox(height: 10),
+                  Text(AppLocalizations.of(context)!.welcome_message_data_storage, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  SizedBox(height: 10),
+                  Text(AppLocalizations.of(context)!.welcome_message_local_database, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+                  SizedBox(height: 10),
+                  Text(AppLocalizations.of(context)!.welcome_message_stay_healthy, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                 ],
               ),
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

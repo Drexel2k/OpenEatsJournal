@@ -5,6 +5,7 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_1.d
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_2.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_3.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_4.dart";
+import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_page_5.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
@@ -46,6 +47,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           pageTitle = AppLocalizations.of(context)!.tell_about_yourself;
         } else if (_onboardingScreenViewModel.currentPageIndex.value == 3) {
           pageTitle = AppLocalizations.of(context)!.your_targets;
+        } else if (_onboardingScreenViewModel.currentPageIndex.value == 4) {
+          pageTitle = AppLocalizations.of(context)!.support_this_app;
         }
 
         return Scaffold(
@@ -72,6 +75,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       _movePageIndex(1);
                     },
                     darkMode: _onboardingScreenViewModel.darkMode,
+                    onboardingScreenViewModel: _onboardingScreenViewModel,
                   ),
                   OnboardingScreenPage2(
                     onDone: () {
@@ -85,6 +89,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onboardingScreenViewModel: _onboardingScreenViewModel,
                   ),
                   OnboardingScreenPage4(
+                    onDone: () {
+                      _movePageIndex(1);
+                    },
+                    onboardingScreenViewModel: _onboardingScreenViewModel,
+                  ),
+                  OnboardingScreenPage5(
                     onDone: () async {
                       await _onboardingScreenViewModel.saveOnboardingData();
                       _onboardingFinishedCallback();
