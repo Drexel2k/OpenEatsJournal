@@ -148,42 +148,58 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         Center(
                           child: Column(
                             children: [
-                              SizedBox(height: 50),
+                              SizedBox(height: 55),
                               Text(AppLocalizations.of(context)!.kcal, style: textTheme.titleLarge, textAlign: TextAlign.center),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
+                                  Text(
+                                    " ${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.maxValue - kJouleGaugeData.currentValue))}",
+                                    style: textTheme.titleMedium,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                               Text(
-                                "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.currentValue))}/\n${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.maxValue))}",
-                                style: textTheme.titleMedium,
+                                "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.currentValue))}/${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.maxValue))}",
+                                style: textTheme.titleSmall,
                                 textAlign: TextAlign.center,
                               ),
                             ],
                           ),
                         ),
-                        Center(
-                          child: SizedBox(
-                            height: dimension,
-                            width: dimension,
-                            child: Chart(
-                              data: [
-                                {"type": "100Percent", "percent": 100},
-                                {"type": "currentPercent", "percent": kJouleGaugeData.percentageFilled},
-                              ],
-                              variables: {
-                                "type": Variable(accessor: (Map map) => map["type"] as String),
-                                "percent": Variable(accessor: (Map map) => map["percent"] as num, scale: LinearScale(min: 0, max: 100)),
-                              },
-                              marks: [
-                                IntervalMark(
-                                  shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(8)))),
-                                  color: ColorEncode(variable: "type", values: kJouleGaugeData.colors),
+                        Column(
+                          children: [
+                            SizedBox(height: 5,),
+                            Center(
+                              child: SizedBox(
+                                height: dimension,
+                                width: dimension,
+                                child: Chart(
+                                  data: [
+                                    {"type": "100Percent", "percent": 100},
+                                    {"type": "currentPercent", "percent": kJouleGaugeData.percentageFilled},
+                                  ],
+                                  variables: {
+                                    "type": Variable(accessor: (Map map) => map["type"] as String),
+                                    "percent": Variable(accessor: (Map map) => map["percent"] as num, scale: LinearScale(min: 0, max: 100)),
+                                  },
+                                  marks: [
+                                    IntervalMark(
+                                      shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(8)))),
+                                      color: ColorEncode(variable: "type", values: kJouleGaugeData.colors),
+                                    ),
+                                  ],
+                                  coord: PolarCoord(transposed: true, startAngle: 2.5, endAngle: 6.93, startRadius: radius, endRadius: radius),
                                 ),
-                              ],
-                              coord: PolarCoord(transposed: true, startAngle: 2.5, endAngle: 6.93, startRadius: radius, endRadius: radius),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                         Column(
                           children: [
-                            SizedBox(height: 150),
+                            SizedBox(height: 155),
                             Row(
                               children: [
                                 Expanded(
@@ -193,17 +209,17 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.carb, gaugeData: carbohydratesGaugeData),
+                                    child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.carbs, gaugeData: carbohydratesGaugeData),
                                   ),
                                 ),
                                 Expanded(
                                   child: Center(
-                                    child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.prot, gaugeData: proteinGaugeData),
+                                    child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.protein, gaugeData: proteinGaugeData),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            
                             FutureBuilder<Map<int, bool>>(
                               future: _eatsJournalScreenViewModel.eatsJournalEntriesAvailableForLast8Days,
                               builder: (BuildContext context, AsyncSnapshot<Map<int, bool>> snapshot) {
@@ -236,7 +252,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 }
                               },
                             ),
-                            SizedBox(height: 6),
+                            SizedBox(height: 4),
                             //Hack for renderring graphic pie chart. The pie chart takes always the space of the full circle,
                             //even if through start and end angle not the full space is needed.
                             //Through the stack widgets can be placed closer together by overlapping the free space of the

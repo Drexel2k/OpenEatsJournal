@@ -339,7 +339,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.carbohydrates, style: textTheme.titleSmall)),
+              Expanded(child: Text(AppLocalizations.of(context)!.carbohydrates_label, style: textTheme.titleSmall)),
               Expanded(child: Text(AppLocalizations.of(context)!.sugar, style: textTheme.titleSmall)),
             ],
           ),
@@ -535,7 +535,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.protein, style: textTheme.titleSmall)),
+              Expanded(child: Text(AppLocalizations.of(context)!.protein_label, style: textTheme.titleSmall)),
               Expanded(child: Text(AppLocalizations.of(context)!.salt, style: textTheme.titleSmall)),
             ],
           ),

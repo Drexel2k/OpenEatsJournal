@@ -58,6 +58,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                 displayFrom: snapshot.data!.from!,
                 displayUntil: snapshot.data!.until!,
                 xAxisInfo: xAxisInfo,
+                yAxisStartAtZero: true,
                 statisticsType: StatisticInterval.daily,
               );
             } else {
@@ -101,6 +102,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                 displayFrom: snapshot.data!.from!,
                 displayUntil: snapshot.data!.until!,
                 xAxisInfo: xAxisInfo,
+                yAxisStartAtZero: true,
                 statisticsType: StatisticInterval.weekly,
               );
             } else {
@@ -152,6 +154,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                 displayFrom: snapshot.data!.from!,
                 displayUntil: snapshot.data!.until!,
                 xAxisInfo: xAxisInfo,
+                yAxisStartAtZero: true,
                 statisticsType: StatisticInterval.monthly,
               );
             } else {

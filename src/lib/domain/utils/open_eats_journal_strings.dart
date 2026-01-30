@@ -13,7 +13,8 @@ class OpenEatsJournalStrings {
 
   static const String emptyString = "";
   static const String openEatsJournal = "Open Eats Journal";
-  static const String donationPlatform = "donate";
+  static const String donationPlatform = "Ko-fi";
+  static const String github = "GitHub";
   static const String de = "de";
   static const String en = "en";
   static const String code = "code";

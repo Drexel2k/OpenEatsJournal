@@ -15,6 +15,7 @@ class Linechart extends StatelessWidget {
     required DateTime displayFrom,
     required DateTime displayUntil,
     required Map<DateTime, String> xAxisInfo,
+    required bool yAxisStartAtZero,
     required StatisticInterval statisticsType,
   }) : _data = data,
        _dataVar = dataVar,
@@ -22,6 +23,7 @@ class Linechart extends StatelessWidget {
        _displayUntil = displayUntil,
        _xAxisInfo = xAxisInfo,
        _statisticsType = statisticsType,
+       _yAxisStartAtZero = yAxisStartAtZero,
        _chartVar = "$dataVar${OpenEatsJournalStrings.chartDateVar}";
 
   final List<Tuple> _data;
@@ -29,6 +31,7 @@ class Linechart extends StatelessWidget {
   final DateTime _displayFrom;
   final DateTime _displayUntil;
   final Map<DateTime, String> _xAxisInfo;
+  final bool _yAxisStartAtZero;
   final StatisticInterval _statisticsType;
   final String _chartVar;
 
@@ -37,7 +40,23 @@ class Linechart extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    double? maxWeight = _data.reduce((currentEntry, nextEntry) {
+    double? minValue = _data.reduce((currentEntry, nextEntry) {
+      if (currentEntry[_dataVar] == null) {
+        return nextEntry;
+      }
+
+      if (nextEntry[_dataVar] == null) {
+        return currentEntry;
+      }
+
+      if (currentEntry[_dataVar] < nextEntry[_dataVar]) {
+        return currentEntry;
+      } else {
+        return nextEntry;
+      }
+    })[_dataVar];
+
+    double? maxValue = _data.reduce((currentEntry, nextEntry) {
       if (currentEntry[_dataVar] == null) {
         return nextEntry;
       }
@@ -53,20 +72,26 @@ class Linechart extends StatelessWidget {
       }
     })[_dataVar];
 
-    double maxValue = 0;
-    if (maxWeight != null) {
-      maxValue = maxWeight;
-    }
+    minValue ??= 0;
+    maxValue ??= 0;
 
-    int yAxisScaleMaxValue = (maxValue * 1.3).toInt();
-    if (maxValue >= 100000) {
-      yAxisScaleMaxValue = (maxValue * 1.5).toInt();
-    } else if (maxValue >= 50000) {
-      yAxisScaleMaxValue = (maxValue * 1.4).toInt();
-    } else if (maxValue >= 10000) {
-      yAxisScaleMaxValue = (maxValue * 1.35).toInt();
-    } else if (maxValue >= 5000) {
-      yAxisScaleMaxValue = (maxValue * 1.5).toInt();
+    int yAxisScaleMinValue = 0;
+    int yAxisScaleMaxValue = 0;
+
+    if (_yAxisStartAtZero) {
+      yAxisScaleMaxValue = (maxValue * 1.3).toInt();
+      if (maxValue >= 100000) {
+        yAxisScaleMaxValue = (maxValue * 1.5).toInt();
+      } else if (maxValue >= 50000) {
+        yAxisScaleMaxValue = (maxValue * 1.4).toInt();
+      } else if (maxValue >= 10000) {
+        yAxisScaleMaxValue = (maxValue * 1.35).toInt();
+      } else if (maxValue >= 5000) {
+        yAxisScaleMaxValue = (maxValue * 1.5).toInt();
+      }
+    } else {
+      yAxisScaleMinValue = minValue.toInt() - 5;
+      yAxisScaleMaxValue = maxValue.toInt() + 5;
     }
 
     double xAxisLabelXOffset = 12;
@@ -112,7 +137,7 @@ class Linechart extends StatelessWidget {
               ),
               _chartVar: Variable(
                 accessor: (Map<dynamic, dynamic> map) => map[_dataVar] != null ? map[_dataVar] as num : 0,
-                scale: LinearScale(min: 0, max: yAxisScaleMaxValue),
+                scale: LinearScale(min: yAxisScaleMinValue, max: yAxisScaleMaxValue),
               ),
             },
             marks: [

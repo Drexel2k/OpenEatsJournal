@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-01-25 00-00-00,2026-01-15 00-00-00
+2026-01-30 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -133,3 +133,22 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Carrot","Karotte","75","g","true"
 "food","53","2026-01-25 00-00-00","Green salad / lettuce / Iceberg lettuce","Blattsalat / Kopfsalat / Eisbergsalat",,,"100",,"63","0.2",,"1.6","1.6","1",,
 "foodunit","1","Head","Kopf","400","g","true"
+"food","54","2026-01-28 00-00-00","Chocolate Cookies / American Style Cookies","Schokokekse / American Style Cookies",,,"100",,"2081","25.7","13.5","59","35","5.6","0.6",
+"foodunit","1","Cookie","Keks","50","g","true"
+"food","55","2026-01-28 00-00-00","Cream fresh 30% fat unprepared","Schlagsahne frisch 30% Fett unzubereitet",,,"100",,"1207","30","20.1","3.2","3.2","2.5","0.1",
+"food","56","2026-01-28 00-00-00","Whipped Cream fresh 30% fat + sugar","Schlagsahne geschlagen 30% Fett + Zucker",,,"100",,"1462","30","20.1","18.25","18.2","2.5","0.1",
+"foodunit","1","Tablespoon","Esslöffel","15","g","true"
+"food","57","2026-01-29 00-00-00","Pickled olives","Eingelegte Oliven",,,"100",,"780","18.8","2.3","1.3","0.3","1.3","4",
+"foodunit","1","Olive","Olive","5","g","true"
+"food","58","2026-01-29 00-00-00","Sugar","Zucker",,,"100",,"1700",,,"100","100",,,
+"food","59","2026-01-29 00-00-00","Vegetable oil","Pflanzenöl",,,,"100","3404","92","10",,,,,
+"food","60","2026-01-29 00-00-00","Fyring fat / Cooking fat / Clarified butter","Bratfett / Frittierfett / Butterschmalz",,,"100",,"3693","99.8","64.9",,,,,
+"food","61","2026-01-29 00-00-00","Rice pudding with full milk, butter and sugar","Milchreis mit Vollmilch, butter und Zucker",,,"100",,"586","3.9","2.5","22","7","4","0.1",
+"foodunit","1","Serving","Portion","250","g","true"
+"food","62","2026-01-29 00-00-00","Semolina pudding with sugar and full milk","Grießbrei mit Zucker und Vollmilch",,,"100",,"486","3.1","2","18","11","3.6","0.1",
+"foodunit","1","Serving","Portion","250","g","true"
+"food","63","2026-01-30 00-00-00","Vinaigrette / Salad dressing vinegar oil","Vinaigrette / Salatdressing Essig Öl",,,,"100","1883","49","5.8","4.1","3.9","0.8","1.6",
+"food","64","2026-01-30 00-00-00","Salad dressing french / thousand island","Salatdressing French / Thousand Island",,,,"100","1189","27.5","2.1","7.6","6.1","1.5","1.8",
+"food","65","2026-01-30 00-00-00","Salad dressing yoghurt","Salatdressing Joghurt",,,,"100","812","16","1.2","11","8.2","1.3","1.5",
+"food","66","2026-01-30 00-00-00","Salad dressing balsamic","Salatdressing Balsamico",,,,"100","379","5.3","0.4","9.5","8.7","0.2","2.2",
+"food","67","2026-01-30 00-00-00","Salad dressing american","Salatdressing American",,,,"100","938","19.2","1.7","12","10.8","1.1","1.7",

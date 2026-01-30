@@ -79,7 +79,7 @@ class SettingsScreenPageApp extends StatelessWidget {
                         style: textTheme.bodyLarge,
                         children: [
                           TextSpan(
-                            text: "github",
+                            text: OpenEatsJournalStrings.github,
                             style: TextStyle(color: colorScheme.primary),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () async {
@@ -122,25 +122,6 @@ class SettingsScreenPageApp extends StatelessWidget {
                       text: TextSpan(
                         style: textTheme.bodyLarge,
                         children: [
-                          TextSpan(text: AppLocalizations.of(context)!.welcome_message_onetime, style: textTheme.bodyLarge),
-                          TextSpan(
-                            text: "paypal",
-                            style: TextStyle(color: colorScheme.primary),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () async {
-                                await launchUrl(Uri.parse(_settingsViewModel.paypalUrl), mode: LaunchMode.platformDefault);
-                              },
-                          ),
-                        ],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
-                    RichText(
-                      text: TextSpan(
-                        style: textTheme.bodyLarge,
-                        children: [
-                          TextSpan(text: AppLocalizations.of(context)!.welcome_message_reoccuring, style: textTheme.bodyLarge),
                           TextSpan(
                             text: OpenEatsJournalStrings.donationPlatform,
                             style: TextStyle(color: colorScheme.primary),

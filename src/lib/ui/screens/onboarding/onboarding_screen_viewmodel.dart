@@ -60,7 +60,6 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
   String get contactData => _settingsRepository.contactData!;
   String get githubUrl => _settingsRepository.githubUrl;
-  String get paypalUrl => _settingsRepository.paypalUrl!;
   String get donateUrl => _settingsRepository.donateUrl;
 
   Future<void> saveOnboardingData() async {

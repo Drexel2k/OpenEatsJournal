@@ -32,7 +32,7 @@ class OnboardingScreenPage5 extends StatelessWidget {
                       children: [
                         TextSpan(text: "${AppLocalizations.of(context)!.welcome_message_contribute_1} ", style: textTheme.bodyLarge),
                         TextSpan(
-                          text: "github",
+                          text: OpenEatsJournalStrings.github,
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
@@ -49,32 +49,12 @@ class OnboardingScreenPage5 extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 20),
-                  Text(AppLocalizations.of(context)!.welcome_message_donation, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   SizedBox(height: 10),
                   RichText(
                     text: TextSpan(
                       style: textTheme.bodyLarge,
                       children: [
-                        TextSpan(text: AppLocalizations.of(context)!.welcome_message_onetime, style: textTheme.bodyLarge),
-                        TextSpan(
-                          text: "paypal",
-                          style: TextStyle(color: colorScheme.primary),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () async {
-                              await launchUrl(Uri.parse(_onboardingScreenViewModel.paypalUrl), mode: LaunchMode.platformDefault);
-                            },
-                        ),
-                        TextSpan(text: ".", style: textTheme.bodyLarge),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      style: textTheme.bodyLarge,
-                      children: [
-                        TextSpan(text: AppLocalizations.of(context)!.welcome_message_reoccuring, style: textTheme.bodyLarge),
+                        TextSpan(text: "${AppLocalizations.of(context)!.welcome_message_donation_1} ", style: textTheme.bodyLarge),
                         TextSpan(
                           text: OpenEatsJournalStrings.donationPlatform,
                           style: TextStyle(color: colorScheme.primary),
@@ -83,15 +63,13 @@ class OnboardingScreenPage5 extends StatelessWidget {
                               await launchUrl(Uri.parse(_onboardingScreenViewModel.donateUrl), mode: LaunchMode.platformDefault);
                             },
                         ),
-                        TextSpan(text: ".", style: textTheme.bodyLarge),
+                        TextSpan(text: "${AppLocalizations.of(context)!.welcome_message_donation_2} ", style: textTheme.bodyLarge),
                       ],
                     ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 20),
                   Text(AppLocalizations.of(context)!.welcome_message_donation_voluntary, style: textTheme.bodyLarge, textAlign: TextAlign.center),
-                  SizedBox(height: 10),
-                  Text("Don't be evil.", style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   Spacer(),
                   FilledButton(
                     onPressed: () {
