@@ -596,6 +596,41 @@ class OpenEatsJournalDatabaseService {
     return true;
   }
 
+  Future<bool> replaceFoodEntriesMeasurementUnit({
+    required int foodId,
+    required int fromMeasurementUnitId,
+    required int toMeasurementUnitId,
+  }) async {
+    Database db = await instance.db;
+    if (fromMeasurementUnitId == toMeasurementUnitId) {
+      throw ArgumentError("From measurement unit and to measurement unit are the same.");
+    }
+
+    String where = "${OpenEatsJournalStrings.dbColumnFoodIdRef} = ? AND ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} = ?";
+    List<Object> whereArgs = [foodId, fromMeasurementUnitId];
+
+    final List<Map<String, Object?>> dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableEatsJournal,
+      columns: [OpenEatsJournalStrings.dbColumnId],
+      where: where,
+      whereArgs: whereArgs,
+      limit: 1,
+    );
+
+    if (dbResult.isEmpty) {
+      return false;
+    }
+
+    db.update(
+      OpenEatsJournalStrings.dbTableEatsJournal,
+      {OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: toMeasurementUnitId},
+      where: where,
+      whereArgs: whereArgs,
+    );
+
+    return true;
+  }
+
   //creates new food entry or updates an existing one.
   Future<int> setFoodByExternalId({required Map<String, Object?> foodData, int? id}) async {
     Database db = await instance.db;
@@ -782,10 +817,7 @@ class OpenEatsJournalDatabaseService {
     whereSqls.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
     whereArgs.add(barcode);
 
-    return _getFoods(
-      whereSql:whereSqls.join(" AND "),
-      whereArgs: whereArgs,
-    );
+    return _getFoods(whereSql: whereSqls.join(" AND "), whereArgs: whereArgs);
   }
 
   Future<List<Map<String, Object?>>?> _getFoods({required String whereSql, required List<Object?> whereArgs}) async {

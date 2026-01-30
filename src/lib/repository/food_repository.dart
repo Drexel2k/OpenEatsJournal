@@ -556,6 +556,24 @@ class FoodRepository {
     }
 
     await _oejDatabaseService.deleteFoodUnits(foodId: foodId, exceptIds: foodUnitIds);
+
+    //If food changes its nutritionPerXXXmount to null possibly, associated eats journal entries associated to that food and measurement unit need to be
+    //updated, otherwise we have an inconsistent state leading to errors.
+    if (food.nutritionPerGramAmount == null) {
+      await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
+        foodId: foodId,
+        fromMeasurementUnitId: MeasurementUnit.gram.value,
+        toMeasurementUnitId: MeasurementUnit.milliliter.value,
+      );
+    }
+
+    if (food.nutritionPerMilliliterAmount == null) {
+      await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
+        foodId: foodId,
+        fromMeasurementUnitId: MeasurementUnit.milliliter.value,
+        toMeasurementUnitId: MeasurementUnit.gram.value,
+      );
+    }
   }
 
   Future<void> setFood({required Food food}) async {
@@ -604,6 +622,24 @@ class FoodRepository {
     }
 
     await _oejDatabaseService.deleteFoodUnits(foodId: foodId, exceptIds: foodUnitIds);
+
+    //If food changes its nutritionPerXXXmount to null possibly, associated eats journal entries associated to that food and measurement unit need to be
+    //updated (or deleted) otherwise we have an inconsistent state leading to errors.
+    if (food.nutritionPerGramAmount == null) {
+      await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
+        foodId: foodId,
+        fromMeasurementUnitId: MeasurementUnit.gram.value,
+        toMeasurementUnitId: MeasurementUnit.milliliter.value,
+      );
+    }
+
+    if (food.nutritionPerMilliliterAmount == null) {
+      await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
+        foodId: foodId,
+        fromMeasurementUnitId: MeasurementUnit.milliliter.value,
+        toMeasurementUnitId: MeasurementUnit.gram.value,
+      );
+    }
   }
 
   Future<DateTime> initializeStandardFoodData({required String languageCode, DateTime? lastProcessedStandardFoodDataChangeDate}) async {

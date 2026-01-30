@@ -265,8 +265,25 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _food.brands.clear();
       _food.brands.addAll(_brands.value.split(",").map((brand) => brand.trim()));
       _food.barcode = _barcode.value;
-      _food.nutritionPerGramAmount = _nutritionPerGramAmount.value;
-      _food.nutritionPerMilliliterAmount = _nutritionPerMilliliterAmount.value;
+
+      //It is important to set non null values first, before setting null values, otherwise it can be that both ambounts may get null, which is throws an
+      //exception in the food...
+      if (_nutritionPerGramAmount.value != null) {
+        _food.nutritionPerGramAmount = _nutritionPerGramAmount.value;
+      }
+
+      if (_nutritionPerMilliliterAmount.value != null) {
+        _food.nutritionPerMilliliterAmount = _nutritionPerMilliliterAmount.value;
+      }
+
+      if (_nutritionPerGramAmount.value == null) {
+        _food.nutritionPerGramAmount = null;
+      }
+
+      if (_nutritionPerMilliliterAmount.value == null) {
+        _food.nutritionPerMilliliterAmount = null;
+      }
+
       _food.kJoule = _kJoule.value!;
       _food.carbohydrates = _carbohydrates.value;
       _food.sugar = _sugar.value;
