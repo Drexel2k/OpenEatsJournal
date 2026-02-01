@@ -1,3 +1,133 @@
-PRIVACY STATEMENT
+PRIVACY POLICY
+Last update: January 31, 2026
+
+    INTRODUCTION
+Open Eats Journal is a free, open source, data minimized and data privacy friendly eats, nutrition and calories journal app for Android. The developer does not collect any personal data via Open Eats Journal, data is not shared in any way, there are no ads and no tracking or profiling takes place. If you search for foods online to retrieve nutrition values and names, the request is sent to the Open Food Facts API  (https://world.openfoodfacts.org/). However, if the functionality is not desired or needed, you can also only search offline. Questions and suggestions regarding the privacy of Open Eats Journal can be sent to us via the e-mail address drexel.development@gmail.com. 
+
+  APPLICATION OF THIS PRIVACY POLICY
+This privacy policy only applies to the Open Eats Journal mobile app. For some aspects which are not directly embedded in the app but are reached via a link external services are used. These are:
+- Contributions: Github - privacy policy: https://docs.github.com/en/site-policy/privacy-policies
+- Tips: Ko-fi - privacy policy: https://more.ko-fi.com/privacy
+Please be aware of the privacy policies provided by these services to inform you about how your personal data is collected and processed by these services.
+Also, when downloading the app through an app store, be aware of their privacy policy e.g.:
+- Google Play Store - privacy policy: https://policies.google.com/privacy?hl=en-US 
+
+    DATA PROCESSING
+  Definitions of terms
+This section defines some terms and words. Knowing those terms will help you understand the following sections.
+- Data subject – the user of the app
+- Personal data – any data the data subject could be identified with
+- Data controller – the person / entity providing the app
+- Data processor – the person / entity providing the app
+- Sub-processor – a third party processing data
+
+  Contact details
+The controller of data processing within the meaning of the GDPR and other data protection legislation:
 
 {contact_data}
+
+For any legal issues, the place of jurisdiction is Bochum, Germany.
+
+  I. Scope and description
+a) Open Eats Journal mobile app
+Sections a) apply to the mobile app Open Eats Journal. Open Eats Journal is a free, open source, data minimized and data privacy friendly eats, nutrition and calories journal app for Android.
+b) E-Mail requests regarding the privacy of Open Eats Journal
+Sections b) apply to the E-mail requests regarding the privacy of Open Eats Journal.
+
+  II. Purpose of data processing
+a) Open Eats Journal mobile app
+The data processor only processes personal data insofar as absolutely required for providing the app’s functionality of eats income, nutritional data and weight tracking and statistics. For details about entities and personal data see section III. Data subjects and personal data.
+b) E-Mail requests regarding the privacy of Open Eats Journal
+User’s personal data is only processed if required for fulfilling legal obligations or with the user’s consent regarding privacy inquiry. For details about entities and personal data see section III. Data subjects and personal data.
+
+  III. Data subjects and personal data
+a) Open Eats Journal mobile app
+The following entities of personal data are stored by Open Eats Journal:
+- Personal settings, purpose: calculation of nutrition targets
+- Weight entries, purpose: journal functionality, display of weight statics, calculation of nutrition targets
+- Eats journal entries, purpose: journal functionality, display of statistics
+
+The entities contain the following data:
+- Personal settings
+-- Birthday
+-- Height
+-- Gender
+
+- Weight entries
+-- Date
+-- Weight
+
+- Eats journal entries
+-- Date
+-- Reference to food eaten (user food, standard food, open food facts food) if applicable
+-- Name of entry/food if applicable/entered
+-- Amount of food if applicable/entered
+-- Amount measurement unit (g/ml) if applicable/entered
+-- Kilojoule
+-- Fat if applicable/entered
+-- Saturated fat if applicable/entered
+-- Carbohydrates if applicable/entered
+-- Sugar if applicable/entered
+-- Protein if applicable/entered
+-- Salt if applicable/entered
+-- Meal (breakfast/lunch/dinner/snack)
+
+b) E-Mail requests regarding the privacy of Open Eats Journal
+The following entities of personal data are stored by E-Mail requests:
+- E-mail
+The entities contain the following data:
+- E-mail
+-- E-mail address
+-- Name
+-- Any data the sender provided
+
+  IV. Data storage and data deletion
+a) Open Eats Journal mobile app
+By default, all data (both personal and non-personal) remains on the data subject’s Android device for as long as not explicitly exported, copied and shared by the data subject. The data stored on the data subject’s device is stored in the app exclusive storage folder and can be deleted by the data subject at any time by uninstalling the app.
+All data stored can be exported via the app’s export function, exports and error logs are stored on the device under Android/data/com.drexeldevelopment.openeatsjournal/files/export/ (exports) and Android/data/com.drexeldevelopment.openeatsjournal/files/log/ (error logs) and are also deleted when the app is uninstalled. The exported data is in in SQLite format and can be opened with DB Browser for SQLite (DB4S) e.g.
+b) E-Mail requests regarding the privacy of Open Eats Journal
+When you contact us by e-mail, the data you provide (usually your e-mail address and name, if applicable) will be stored in the e-mail system of the sub-processor in order to respond to your inquiry. We delete the data collected in this context after the inquiry is completed.
+
+  V. Sub-processors
+a) Open Eats Journal mobile app
+Open Food Facts (French "Loi 1901" Association) – privacy policy: https://world.openfoodfacts.org/privacy
+If you search for foods online to retrieve nutrition values and name, the request is send to the Open Food Facts API (https://world.openfoodfacts.org/). Beside the requested data (Food name, brands, nutrition data) needed by Open Eats Journal, as on every internet communication your IP address is visible to them. 
+b) E-Mail requests regarding the privacy of Open Eats Journal
+Google LLC - privacy policy: https://policies.google.com/privacy?hl=en-US
+E-mailbox is operated by Google LLC (Gmail).
+
+  VI. Permissions
+a) Open Eats Journal mobile app
+Open Eats Journal needs camera permissions to scan for barcodes on the image, to make searching food data by EANs more comfortable.
+b) E-Mail requests regarding the privacy of Open Eats Journal
+n.a.
+
+  VII. Logging/Tracking
+a) Open Eats Journal mobile app
+Open Eats Journal logs only errors and stores the log locally on the device under Android/data/com.drexeldevelopment.openeatsjournal/files/log/.
+b) E-Mail requests regarding the privacy of Open Eats Journal
+n.a.
+
+  VIII. Legal basis
+The legal basis for the processing of personal data in Open Eats Journal is Article 6, paragraph 1 (a-c, e), paragraph 3 (b) GDPR.
+ 
+  IX. Rights
+You have the following rights regarding your personal data:
+- the right to obtain confirmation as to whether data concerning you is being processed and information on the data processed, further information on data processing, and copies of data (Article 15 GDPR)
+- the right to rectify or complete inaccurate or incomplete data (Article 16 GDPR)
+- the right of deletion of data concerning you without undue delay (Article 17 GDPR)
+- the right to restriction of processing (Article 18 GDPR)
+- the right to object to the future processing of the data concerning you which is based on Article 6, paragraph 1, point (e) or (f) GDPR (Article 21 GDPR)
+
+You also have the right to lodge a complaint with a supervisory authority about the processing of the personal data concerning you by the data controller (Article 77 GDPR), this is: 
+Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+Kavalleriestr. 2-4
+40213 Düsseldorf
+Phone: 0211/38424-0
+Fax: 0211/38424-999
+E-mail: poststelle@ldi.nrw.de
+
+a) Open Eats Journal mobile app
+All legal requirements are fulfilled by data export functions of Open Eats Journal and uninstall function of Android, see also section III. Data storage and data deletion.
+b) E-Mail requests regarding the privacy of Open Eats Journal
+Inquiries can be sent to drexel.development@gmail.com. See also section III. Data storage and data deletion.

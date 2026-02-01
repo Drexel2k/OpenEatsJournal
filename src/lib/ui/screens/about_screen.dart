@@ -6,8 +6,12 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key, required String contactData, required String appVersion}) : _contactData = contactData, _appVersion = appVersion;
+  const AboutScreen({super.key, required String languageCode, required String contactData, required String appVersion})
+    : _languageCode = languageCode,
+      _contactData = contactData,
+      _appVersion = appVersion;
 
+  final String _languageCode;
   final String _contactData;
   final String _appVersion;
 
@@ -43,7 +47,7 @@ class AboutScreen extends StatelessWidget {
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              String license = await rootBundle.loadString("assets/agpl-3.0.txt");
+                              String licenseText = await rootBundle.loadString("assets/agpl-3.0.txt");
 
                               await showDialog(
                                 context: AppGlobal.navigatorKey.currentContext!,
@@ -56,7 +60,7 @@ class AboutScreen extends StatelessWidget {
                                       dialogVerticalPadding,
                                     ),
                                     title: Text(AppLocalizations.of(context)!.agplv3_license),
-                                    content: SingleChildScrollView(child: Text(license)),
+                                    content: SingleChildScrollView(child: Text(licenseText)),
                                     actions: <Widget>[
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
@@ -70,14 +74,17 @@ class AboutScreen extends StatelessWidget {
                               );
                             },
                         ),
-                        TextSpan(text: " ${AppLocalizations.of(context)!.welcome_message_license_2} ", style: textTheme.bodyLarge),
+                        TextSpan(
+                          text: "${_languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_2} ",
+                          style: textTheme.bodyLarge,
+                        ),
                         TextSpan(
                           text: AppLocalizations.of(context)!.privacy_statement,
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              String license = await rootBundle.loadString("assets/privacy.txt");
-                              license = license.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, _contactData);
+                              String privacyText = await rootBundle.loadString("assets/privacy.txt");
+                              privacyText = privacyText.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, _contactData);
 
                               await showDialog(
                                 context: AppGlobal.navigatorKey.currentContext!,
@@ -89,8 +96,8 @@ class AboutScreen extends StatelessWidget {
                                       dialogHorizontalPadding,
                                       dialogVerticalPadding,
                                     ),
-                                    title: Text(AppLocalizations.of(context)!.privacy_statement),
-                                    content: SingleChildScrollView(child: Text(license)),
+                                    title: Text(AppLocalizations.of(context)!.privacy_statement_capital),
+                                    content: SingleChildScrollView(child: Text(privacyText)),
                                     actions: <Widget>[
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
@@ -104,7 +111,7 @@ class AboutScreen extends StatelessWidget {
                               );
                             },
                         ),
-                        TextSpan(text: " ${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
+                        TextSpan(text: "${_languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
                       ],
                     ),
                   ),

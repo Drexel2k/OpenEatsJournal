@@ -1,5 +1,5 @@
 # Open Eats Journal
-Open Eats Journal is a free, open source, data minmized and data privacy friendly eats, nutrition and calories journal app for Android and iOS.
+Open Eats Journal is a free, open source, data minimized and data privacy friendly eats, nutrition and calories journal app for Android and iOS.
 
 ## Getting Started With Development
 ### Android development with Windows 11

@@ -65,14 +65,14 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              String license = await rootBundle.loadString("assets/agpl-3.0.txt");
+                              String licenseText = await rootBundle.loadString("assets/agpl-3.0.txt");
 
                               await showDialog(
                                 context: AppGlobal.navigatorKey.currentContext!,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text(AppLocalizations.of(context)!.agplv3_license),
-                                    content: SingleChildScrollView(child: Text(license)),
+                                    content: SingleChildScrollView(child: Text(licenseText)),
                                     actions: <Widget>[
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
@@ -86,21 +86,21 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                               );
                             },
                         ),
-                        TextSpan(text: " ${AppLocalizations.of(context)!.welcome_message_license_2} ", style: textTheme.bodyLarge),
+                        TextSpan(text: "${widget._onboardingScreenViewModel.languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_2} ", style: textTheme.bodyLarge),
                         TextSpan(
                           text: AppLocalizations.of(context)!.privacy_statement,
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              String license = await rootBundle.loadString("assets/privacy.txt");
-                              license = license.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, widget._onboardingScreenViewModel.contactData);
+                              String privacyText = await rootBundle.loadString("assets/privacy.txt");
+                              privacyText = privacyText.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, widget._onboardingScreenViewModel.contactData);
 
                               await showDialog(
                                 context: AppGlobal.navigatorKey.currentContext!,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text(AppLocalizations.of(context)!.privacy_statement),
-                                    content: SingleChildScrollView(child: Text(license)),
+                                    content: SingleChildScrollView(child: Text(privacyText)),
                                     actions: <Widget>[
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
@@ -114,7 +114,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                               );
                             },
                         ),
-                        TextSpan(text: " ${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
+                        TextSpan(text: "${widget._onboardingScreenViewModel.languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
                       ],
                     ),
                     textAlign: TextAlign.center,
