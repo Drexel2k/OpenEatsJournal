@@ -2,15 +2,11 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:url_launcher/url_launcher.dart";
 
 class OnboardingScreenPage5 extends StatelessWidget {
-  const OnboardingScreenPage5({super.key, required onDone, required OnboardingScreenViewModel onboardingScreenViewModel})
-    : _onDone = onDone,
-      _onboardingScreenViewModel = onboardingScreenViewModel;
+  const OnboardingScreenPage5({super.key, required onDone}) : _onDone = onDone;
 
-  final OnboardingScreenViewModel _onboardingScreenViewModel;
   final VoidCallback _onDone;
 
   @override
@@ -36,7 +32,7 @@ class OnboardingScreenPage5 extends StatelessWidget {
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              await launchUrl(Uri.parse(_onboardingScreenViewModel.githubUrl), mode: LaunchMode.platformDefault);
+                              await launchUrl(Uri.parse(OpenEatsJournalStrings.urlGithub), mode: LaunchMode.platformDefault);
                             },
                         ),
                         TextSpan(
@@ -60,7 +56,7 @@ class OnboardingScreenPage5 extends StatelessWidget {
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              await launchUrl(Uri.parse(_onboardingScreenViewModel.donateUrl), mode: LaunchMode.platformDefault);
+                              await launchUrl(Uri.parse(OpenEatsJournalStrings.urlDonate), mode: LaunchMode.platformDefault);
                             },
                         ),
                         TextSpan(text: "${AppLocalizations.of(context)!.welcome_message_donation_2} ", style: textTheme.bodyLarge),

@@ -80,8 +80,6 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
-  String get donateUrl => "https://ko-fi.com/openeatsjournal";
-  String get githubUrl => "https://github.com/Drexel2k/OpenEatsJournal/";
   String get appName => "OpenEatsJournal";
   String get appVersion => "0.1";
   bool get useStagingServices => true;

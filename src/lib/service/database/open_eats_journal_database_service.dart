@@ -220,7 +220,7 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.dbColumnName: "Open Food Facts",
       OpenEatsJournalStrings.dbColumnDescription:
           "Open Food Facts is a food products database made by everyone, for everyone. You can use it to make better food choices, and as it is open data, anyone can re-use it for any purpose. Open Food Facts is a non-profit project developed by thousands of volunteers from around the world. You can start contributing by adding a product from your kitchen with our app for iPhone or Android, and we have lots of exciting projects you can contribute to in many different ways.",
-      "url": "https://world.openfoodfacts.org/",
+      "url": OpenEatsJournalStrings.urlOpenFoodFacts,
     });
 
     batch.insert(OpenEatsJournalStrings.dbTableMeal, {OpenEatsJournalStrings.dbColumnId: 1, OpenEatsJournalStrings.dbColumnName: "breakfast"});
@@ -596,11 +596,7 @@ class OpenEatsJournalDatabaseService {
     return true;
   }
 
-  Future<bool> replaceFoodEntriesMeasurementUnit({
-    required int foodId,
-    required int fromMeasurementUnitId,
-    required int toMeasurementUnitId,
-  }) async {
+  Future<bool> replaceFoodEntriesMeasurementUnit({required int foodId, required int fromMeasurementUnitId, required int toMeasurementUnitId}) async {
     Database db = await instance.db;
     if (fromMeasurementUnitId == toMeasurementUnitId) {
       throw ArgumentError("From measurement unit and to measurement unit are the same.");

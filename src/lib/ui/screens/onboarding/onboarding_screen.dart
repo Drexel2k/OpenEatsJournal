@@ -100,7 +100,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       _onboardingFinishedCallback();
                       Navigator.pushReplacementNamed(AppGlobal.navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
                     },
-                    onboardingScreenViewModel: _onboardingScreenViewModel,
                   ),
                 ],
               ),

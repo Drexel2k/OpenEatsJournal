@@ -25,6 +25,10 @@ class OpenEatsJournalStrings {
   static const String import = "import";
   static const String contactDataPlaceholder = "{contact_data}";
 
+  static const String urlDonate = "https://ko-fi.com/openeatsjournal";
+  static const String urlGithub = "https://github.com/Drexel2k/OpenEatsJournal/";
+  static const String urlOpenFoodFacts = "https://github.com/Drexel2k/OpenEatsJournal/";
+
   static const String csvTrue = "true";
   static const String csvFood = "food";
   static const String csvFoodUnit = "foodunit";

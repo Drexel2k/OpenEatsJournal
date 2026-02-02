@@ -245,5 +245,10 @@
   "database_exported": "Die Datenbank wurde exportiert.",
   "export_not_succeeded": "Export nicht erfolgreich",
   "database_not_exported": "Die Datenbank konnte nicht exportiert werden.",
-  "wait_search": "Bitte warte bis die vorherige Suche beendet ist, bevor Du eine neues Suche startest."
+  "wait_search": "Bitte warte bis die vorherige Suche beendet ist, bevor Du eine neues Suche startest.",
+  "no_result_from_online_source": "Kein Ergebnis in der Online Suche.\nBitte hilf mit und füge fehlende Daten hinzu.\nTippe für Informationen, wie Du beitragen kannst.",
+  "no_online_result_found": "Keine Online Ergebnisse gefunden?",
+  "adding_online_data_1": "Open Eats journal nutzt",
+  "adding_online_data_2": "als Online-Quelle für Lebensmitteldaten. Da dies Open Data ist, kannst Du helfen ihre Daten zu verbessern.\n\nInsbesondere Barcode Lebensmittel sollten in Open Food Facts verfügbar sein, wenn diese nicht in Open Eats Journal gefunden werden, fehlen diese ganz oder einige Daten, die Open Eats Journal benötigt, fehlen. Du kannst über ihre Website oder App Lebensmittel editieren oder hinzufügen. Für weitere Informationen besuche ihre Website.\n\nDiese Daten werden mindestens von Open Eats Journal benötigt:\nAllgemeine Informationen/Produkteigenschaften: Produktname, Menge (z.B. 750g oder 3x250g)\nNährwertangaben: Energie, Portionsgröße (z.B. 50g).",
+  "open_food_facts": "Open Food Facts"
 }

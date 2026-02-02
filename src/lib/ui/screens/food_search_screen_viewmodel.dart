@@ -38,9 +38,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final List<ObjectWithOrder<Food>> _foodSearchResultUser = [];
   final List<ObjectWithOrder<Food>> _foodSearchResultStandard = [];
   final List<ObjectWithOrder<Food>> _foodSearchResultCache = [];
-  final List<ObjectWithOrder<Food>> _foodSearchResultOpenFoodFacts = [];
-  final List<ObjectWithOrder<Food>> _foodSearchResultAll = [];
-  final List<ObjectWithOrder<Food>> _foodSearchResult = [];
+  final List<ObjectWithOrder<Food?>> _foodSearchResultOpenFoodFacts = [];
+  final List<ObjectWithOrder<Food?>> _foodSearchResultAll = [];
+  final List<ObjectWithOrder<Food?>> _foodSearchResult = [];
 
   bool _dontLoadMore = false;
   bool _hasMore = false;
@@ -51,6 +51,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _showInitialLoading = ValueNotifier(false);
   final ValueNotifier<int?> _errorCode = ValueNotifier(null);
   final ValueNotifier<bool> _showIsLoadingMessage = ValueNotifier(false);
+  final ValueNotifier<bool> _showBarcodeNotFoundMessage = ValueNotifier(false);
   String _errorMessage = OpenEatsJournalStrings.emptyString;
   final ValueNotifier<int?> _searchMessageCode = ValueNotifier(null);
   final ExternalTriggerChangedNotifier _sortButtonChanged = ExternalTriggerChangedNotifier();
@@ -63,13 +64,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   String get languageCode => _settingsRepository.languageCode.value;
   ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
 
-  List<ObjectWithOrder<Food>> get foodSearchResult => _foodSearchResult;
+  List<ObjectWithOrder<Food?>> get foodSearchResult => _foodSearchResult;
   bool get hasMore => _hasMore;
   bool get isLoading => _isLoading;
   ExternalTriggerChangedNotifier get foodSearchResultChanged => _foodSearchResultChanged;
   ValueNotifier<bool> get showInitialLoading => _showInitialLoading;
   ValueNotifier<int?> get errorCode => _errorCode;
   ValueNotifier<bool> get showIsLoadingMessage => _showIsLoadingMessage;
+  ValueListenable<bool> get showBarcodeNotFoundMessage => _showBarcodeNotFoundMessage;
   String get errorMessage => _errorMessage;
   ValueNotifier<int?> get searchMessageCode => _searchMessageCode;
   ExternalTriggerChangedNotifier get sortButtonChanged => _sortButtonChanged;
@@ -154,87 +156,100 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _initialSearchFinished();
 
     int order = 0;
-    List<ObjectWithOrder<Food>>? foodsWithOrder = [];
-    if (result.any((resultInternal) => resultInternal.foods != null && resultInternal.foods!.isNotEmpty)) {
-      //Popularity in recent mode shall not be ordered by source first, but strictly after usage amount
+    List<ObjectWithOrder<Food?>>? foodsWithOrder = [];
 
-      if (result[4].foods != null && result[4].foods!.isNotEmpty) {
-        for (Food food in result[4].foods!) {
-          if (food.foodUnitsWithOrder.isNotEmpty) {
-            for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
-              if (localizations.containsKey(unitWithOrder.object.name)) {
-                unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
-              }
+    if (searchmode == SearchMode.online && result[3].errorCode == null) {
+      if (result[3].foods == null || result[3].foods!.isEmpty) {
+        _showBarcodeNotFoundMessage.value = true;
+      }
+    }
+
+    //Popularity in recent mode shall not be ordered by source first, but strictly after usage amount
+    if (result[4].foods != null && result[4].foods!.isNotEmpty) {
+      for (Food food in result[4].foods!) {
+        if (food.foodUnitsWithOrder.isNotEmpty) {
+          for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+            if (localizations.containsKey(unitWithOrder.object.name)) {
+              unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
             }
           }
-
-          _foodSearchResultAll.add(ObjectWithOrder(object: food, order: order++));
         }
 
-        if (searchmode == SearchMode.recent) {
-          foodsWithOrder.addAll(_foodSearchResultAll);
-        }
+        _foodSearchResultAll.add(ObjectWithOrder(object: food, order: order++));
       }
 
-      if (result[0].foods != null && result[0].foods!.isNotEmpty) {
-        for (Food food in result[0].foods!) {
-          _foodSearchResultUser.add(ObjectWithOrder(object: food, order: order++));
-        }
+      if (searchmode == SearchMode.recent) {
+        foodsWithOrder.addAll(_foodSearchResultAll);
+      }
+    }
 
-        if (searchmode != SearchMode.recent) {
-          foodsWithOrder.addAll(_foodSearchResultUser);
-        }
+    if (result[0].foods != null && result[0].foods!.isNotEmpty) {
+      for (Food food in result[0].foods!) {
+        _foodSearchResultUser.add(ObjectWithOrder(object: food, order: order++));
       }
 
-      if (result[1].foods != null && result[1].foods!.isNotEmpty) {
-        for (Food food in result[1].foods!) {
-          _foodSearchResultStandard.add(ObjectWithOrder(object: food, order: order++));
-        }
+      if (searchmode != SearchMode.recent) {
+        foodsWithOrder.addAll(_foodSearchResultUser);
+      }
+    }
 
-        if (searchmode != SearchMode.recent) {
-          foodsWithOrder.addAll(_foodSearchResultStandard);
-        }
+    if (result[1].foods != null && result[1].foods!.isNotEmpty) {
+      for (Food food in result[1].foods!) {
+        _foodSearchResultStandard.add(ObjectWithOrder(object: food, order: order++));
       }
 
-      if (result[2].foods != null && result[2].foods!.isNotEmpty) {
-        for (Food food in result[2].foods!) {
-          _foodSearchResultCache.add(ObjectWithOrder(object: food, order: order++));
-        }
+      if (searchmode != SearchMode.recent) {
+        foodsWithOrder.addAll(_foodSearchResultStandard);
+      }
+    }
 
-        if (searchmode != SearchMode.recent) {
-          foodsWithOrder.addAll(_foodSearchResultCache);
-        }
+    if (result[2].foods != null && result[2].foods!.isNotEmpty) {
+      for (Food food in result[2].foods!) {
+        _foodSearchResultCache.add(ObjectWithOrder(object: food, order: order++));
       }
 
-      if (result[3].foods != null && result[3].foods!.isNotEmpty) {
-        for (Food food in result[3].foods!) {
-          _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: food, order: order++));
-        }
+      if (searchmode != SearchMode.recent) {
+        foodsWithOrder.addAll(_foodSearchResultCache);
+      }
+    }
+
+    if (result[3].foods != null && result[3].foods!.isNotEmpty) {
+      for (Food food in result[3].foods!) {
+        _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: food, order: order++));
+      }
+
+      if (searchmode != SearchMode.recent) {
+        foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
+      }
+    } else {
+      //If Open Food Facts return nothing, this null food will display the Open Food Facts contribution hint in the ui.
+      if (searchmode == SearchMode.online) {
+        _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: null, order: order++));
 
         if (searchmode != SearchMode.recent) {
           foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
         }
       }
+    }
 
-      _addToSearchResult(foodsWithOrder);
+    _addToSearchResult(foodsWithOrder);
 
-      if (_foodSearchResult.length > 500) {
-        _searchMessageCode.value = 1;
-        if (_sortButtonEnabled == true || _sortOrder != SortOrder.popularity) {
-          _sortButtonEnabled = false;
-          _sortOrder = SortOrder.popularity;
-          _sortButtonChanged.notify();
-        }
+    if (_foodSearchResult.length > 500) {
+      _searchMessageCode.value = 1;
+      if (_sortButtonEnabled == true || _sortOrder != SortOrder.popularity) {
+        _sortButtonEnabled = false;
+        _sortOrder = SortOrder.popularity;
+        _sortButtonChanged.notify();
       }
+    }
 
-      if (result[3].errorCode == null) {
-        if (result[3].finished != null && !result[3].finished!) {
-          _hasMore = true;
-        }
-      } else {
-        _errorCode.value = result[3].errorCode;
-        _errorMessage = result[3].errorMessage != null ? result[3].errorMessage! : OpenEatsJournalStrings.emptyString;
+    if (result[3].errorCode == null) {
+      if (result[3].finished != null && !result[3].finished!) {
+        _hasMore = true;
       }
+    } else {
+      _errorCode.value = result[3].errorCode;
+      _errorMessage = result[3].errorMessage != null ? result[3].errorMessage! : OpenEatsJournalStrings.emptyString;
     }
 
     _isLoading = false;
@@ -254,7 +269,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
             List<ObjectWithOrder<Food>> foodsWithOrder = [];
             if (result.foods!.isNotEmpty) {
               int order = 0;
-              for (ObjectWithOrder<Food> food in _foodSearchResult) {
+              for (ObjectWithOrder<Food?> food in _foodSearchResult) {
                 if (food.order > order) {
                   order = food.order;
                 }
@@ -298,6 +313,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _clearAllSearchResults();
     _sortButtonChanged.notify();
     _showInitialLoading.value = true;
+    _showBarcodeNotFoundMessage.value = false;
     _foodSearchResultChanged.notify();
   }
 
@@ -305,7 +321,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _showInitialLoading.value = false;
   }
 
-  void _addToSearchResult(List<ObjectWithOrder<Food>>? foods) {
+  void _addToSearchResult(List<ObjectWithOrder<Food?>>? foods) {
     if (foods != null) {
       _foodSearchResult.addAll(foods);
     }
@@ -322,12 +338,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _foodSearchResultUser.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
       _foodSearchResultStandard.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
       _foodSearchResultCache.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
-      _foodSearchResultOpenFoodFacts.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
+      _foodSearchResultOpenFoodFacts.sort((food1, food2) => _compareNullFoodWithOrder(foodWithOrder1: food1, foodWithOrder2: food2, sortOrder: sortOrder));
     } else if (_sortOrder == SortOrder.kcal) {
       _foodSearchResultUser.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
       _foodSearchResultStandard.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
       _foodSearchResultCache.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
-      _foodSearchResultOpenFoodFacts.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
+      _foodSearchResultOpenFoodFacts.sort((food1, food2) => _compareNullFoodWithOrder(foodWithOrder1: food1, foodWithOrder2: food2, sortOrder: sortOrder));
     } else if (_sortOrder == SortOrder.popularity) {
       if (searchMode != SearchMode.recent) {
         _foodSearchResultUser.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
@@ -358,6 +374,26 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     }
 
     _foodSearchResultChanged.notify();
+  }
+
+  int _compareNullFoodWithOrder({
+    required ObjectWithOrder<Food?> foodWithOrder1,
+    required ObjectWithOrder<Food?> foodWithOrder2,
+    required SortOrder sortOrder,
+  }) {
+    if (foodWithOrder1.object == null) {
+      return -1;
+    }
+
+    if (foodWithOrder2.object == null) {
+      return 1;
+    }
+
+    if (sortOrder == SortOrder.kcal) {
+      return foodWithOrder1.object!.kJoule.compareTo(foodWithOrder2.object!.kJoule);
+    } else {
+      return foodWithOrder1.object!.name.compareTo(foodWithOrder2.object!.name);
+    }
   }
 
   void changeSortDirection() {

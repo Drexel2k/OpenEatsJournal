@@ -59,8 +59,6 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   ValueNotifier<int?> get dailyTargetKJoule => _dailyTargetKJoule;
 
   String get contactData => _settingsRepository.contactData!;
-  String get githubUrl => _settingsRepository.githubUrl;
-  String get donateUrl => _settingsRepository.donateUrl;
   String get languageCode => _languagaCode;
 
   Future<void> saveOnboardingData() async {

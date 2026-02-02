@@ -1,3 +1,4 @@
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -20,6 +21,7 @@ import "package:openeatsjournal/ui/widgets/food_card.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class FoodSearchScreen extends StatefulWidget {
   const FoodSearchScreen({super.key, required FoodSearchScreenViewModel foodSearchScreenViewModel}) : _foodSearchScreenViewModel = foodSearchScreenViewModel;
@@ -47,7 +49,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final double fabMenuWidth = 150;
+
+    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
+    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
 
     Map<String, String> standardFoodUnitLocalizations = {
       OpenEatsJournalStrings.piece: AppLocalizations.of(context)!.piece,
@@ -296,33 +302,91 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                     }
 
-                    return FoodCard(
-                      food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object,
-                      textTheme: textTheme,
-                      onCardTap: ({required Food food}) {
-                        Navigator.pushNamed(
-                          context,
-                          OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
-                          arguments: EatsJournalEntry.fromFood(
-                            entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
-                            food: food,
-                            amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
-                            meal: _foodSearchScreenViewModel.currentMeal.value,
+                    //food is null, when online search for barcode returned no result.
+                    if (_foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object != null) {
+                      return FoodCard(
+                        food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object!,
+                        textTheme: textTheme,
+                        onCardTap: ({required Food food}) {
+                          Navigator.pushNamed(
+                            context,
+                            OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                            arguments: EatsJournalEntry.fromFood(
+                              entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                              food: food,
+                              amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
+                              meal: _foodSearchScreenViewModel.currentMeal.value,
+                            ),
+                          );
+                        },
+                        onAddJournalEntryPressed: ({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) async {
+                          await _foodSearchScreenViewModel.addEatsJournalEntry(
+                            EatsJournalEntry.fromFood(
+                              food: food,
+                              entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                              amount: amount,
+                              amountMeasurementUnit: amountMeasurementUnit,
+                              meal: _foodSearchScreenViewModel.currentMeal.value,
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      final borderRadius = BorderRadius.circular(8);
+                      return Card(
+                        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+                        child: InkWell(
+                          borderRadius: borderRadius,
+                          onTap: () async {
+                            await showDialog(
+                              context: AppGlobal.navigatorKey.currentContext!,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  insetPadding: EdgeInsets.fromLTRB(
+                                    dialogHorizontalPadding,
+                                    dialogVerticalPadding,
+                                    dialogHorizontalPadding,
+                                    dialogVerticalPadding,
+                                  ),
+                                  title: Text(AppLocalizations.of(context)!.no_online_result_found),
+                                  content: SingleChildScrollView(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: textTheme.bodyMedium,
+                                        text: AppLocalizations.of(context)!.adding_online_data_1,
+                                        children: [
+                                          TextSpan(
+                                            text: " ${AppLocalizations.of(context)!.open_food_facts} ",
+                                            style: TextStyle(color: colorScheme.primary),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = () async {
+                                                await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
+                                              },
+                                          ),
+                                          TextSpan(text: AppLocalizations.of(context)!.adding_online_data_2),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text(AppLocalizations.of(context)!.ok),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Padding(
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
+                            child: Text(AppLocalizations.of(context)!.no_result_from_online_source, textAlign: TextAlign.center),
                           ),
-                        );
-                      },
-                      onAddJournalEntryPressed: ({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) async {
-                        await _foodSearchScreenViewModel.addEatsJournalEntry(
-                          EatsJournalEntry.fromFood(
-                            food: food,
-                            entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
-                            amount: amount,
-                            amountMeasurementUnit: amountMeasurementUnit,
-                            meal: _foodSearchScreenViewModel.currentMeal.value,
-                          ),
-                        );
-                      },
-                    );
+                        ),
+                      );
+                    }
                   },
                 ),
               );

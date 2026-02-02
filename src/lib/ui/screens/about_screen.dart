@@ -65,7 +65,7 @@ class AboutScreen extends StatelessWidget {
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
                                         onPressed: () {
-                                          Navigator.pop(context, true);
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ],
@@ -102,7 +102,7 @@ class AboutScreen extends StatelessWidget {
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
                                         onPressed: () {
-                                          Navigator.pop(context, true);
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ],

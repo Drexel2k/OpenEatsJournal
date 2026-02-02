@@ -77,7 +77,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
                                         onPressed: () {
-                                          Navigator.pop(context, true);
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ],
@@ -105,7 +105,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
                                         onPressed: () {
-                                          Navigator.pop(context, true);
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ],

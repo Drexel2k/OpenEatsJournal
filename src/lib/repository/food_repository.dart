@@ -232,7 +232,10 @@ class FoodRepository {
       int? energyKjPer100Units;
       MeasurementUnit? nutrimentsMeasurementUnit;
 
-      //todo:extract method
+
+      //energyKjPer100Units comes from foodApi.nutriments!.energyKj100g or foodApi.nutriments!.energyKj! and is either asssociated to serving quantity or
+      //product quantity. First we try to get energyKjPer100Units and nutrimentsMeasurementUnit from serving, then from prodcut. If we get energyKjPer100Units
+      //but no nutrimentsMeasurementUnit we just assume ist gram.
       if (foodApi.nutritionDataPer != null && foodApi.nutritionDataPer == OpenFoodFactsApiStrings.serving) {
         if (foodApi.servingQuantity != null) {
           num servingQuantity = num.parse(foodApi.servingQuantity!);
@@ -252,6 +255,11 @@ class FoodRepository {
         //nutritionDataPer can only be 100g or serving, so if it is not serving, energyKj100g and energyKj should be the same.
         energyKjPer100Units = foodApi.nutriments!.energyKj100g ?? foodApi.nutriments!.energyKj;
         nutrimentsMeasurementUnit = _getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit);
+
+        //If we have energyKjPer100Units but no nutrimentsMeasurementUnit we just assume nutrimentsMeasurementUnit it's gram...
+        if (energyKjPer100Units != null && nutrimentsMeasurementUnit == null) {
+          nutrimentsMeasurementUnit = MeasurementUnit.gram;
+        }
       }
 
       if (energyKjPer100Units != null && nutrimentsMeasurementUnit != null) {
