@@ -211,6 +211,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   return Text(AppLocalizations.of(context)!.open_food_facts_unexpected_status, style: style);
                 } else if (_foodSearchScreenViewModel.errorCode.value == 4) {
                   return Text(AppLocalizations.of(context)!.enter_search_criteria, style: style);
+                } else if (_foodSearchScreenViewModel.errorCode.value == 5) {
+                  return Text(AppLocalizations.of(context)!.could_not_parse_open_food_facts_answer, style: style);
                 } else {
                   return Text(AppLocalizations.of(context)!.search_unexpected_error, style: style);
                 }

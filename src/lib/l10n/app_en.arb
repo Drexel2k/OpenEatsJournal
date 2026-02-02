@@ -250,5 +250,6 @@
   "no_online_result_found": "No online result found?",
   "adding_online_data_1": "Open Eats journal uses",
   "adding_online_data_2": "as online source for food data. As this is open data you can help and improve their data.\n\nEspecially barcode food should be available in Open Food Facts, if it is not found in Open Eats Journal, it may be missing at all or some data which is required by Open Eats Journal is missing. You can edit foods or add foods either on their website or with their app. Fore more information visit their website.\n\nThis data is at least required by Open Eats Journal:\nBasic details/product characteristics: product name, quantity (e.g. 750g or 3x250g)\nNutrition facts: energy, serving size (e.g. 50g).",
-  "open_food_facts": "Open Food Facts"
+  "open_food_facts": "Open Food Facts",
+  "could_not_parse_open_food_facts_answer": "Open Food Facts Antwort konnte nicht gelesen werden."
 }

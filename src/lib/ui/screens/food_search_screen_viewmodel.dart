@@ -213,21 +213,23 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       }
     }
 
-    if (result[3].foods != null && result[3].foods!.isNotEmpty) {
-      for (Food food in result[3].foods!) {
-        _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: food, order: order++));
-      }
-
-      if (searchmode != SearchMode.recent) {
-        foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
-      }
-    } else {
-      //If Open Food Facts return nothing, this null food will display the Open Food Facts contribution hint in the ui.
-      if (searchmode == SearchMode.online) {
-        _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: null, order: order++));
+    if (result[3].errorCode == null) {
+      if (result[3].foods != null && result[3].foods!.isNotEmpty) {
+        for (Food food in result[3].foods!) {
+          _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: food, order: order++));
+        }
 
         if (searchmode != SearchMode.recent) {
           foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
+        }
+      } else {
+        //If Open Food Facts return nothing, this null food will display the Open Food Facts contribution hint in the ui.
+        if (searchmode == SearchMode.online) {
+          _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: null, order: order++));
+
+          if (searchmode != SearchMode.recent) {
+            foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
+          }
         }
       }
     }

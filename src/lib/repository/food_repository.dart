@@ -109,7 +109,12 @@ class FoodRepository {
     }
 
     if (jsonString != null) {
-      Map<String, dynamic> json = jsonDecode(jsonString);
+      Map<String, dynamic> json;
+      try {
+        json = jsonDecode(jsonString);
+      } on FormatException {
+        return FoodRepositoryResult(errorCode: 5);
+      }
 
       if (json.containsKey(OpenFoodFactsApiStrings.product)) {
         Food? food = _getFoodFromOpenFoodFactsApiV1V2Food(json: json[OpenFoodFactsApiStrings.product], languageCode: languageCode);
@@ -204,8 +209,14 @@ class FoodRepository {
     }
 
     List<Food> foods = [];
+    Map<String, dynamic> json;
     if (jsonString != null) {
-      Map<String, dynamic> json = jsonDecode(jsonString);
+      try {
+        json = jsonDecode(jsonString);
+      } on FormatException {
+        return FoodRepositoryResult(errorCode: 5);
+      }
+
       if (json.containsKey(OpenFoodFactsApiStrings.products)) {
         for (Map<String, dynamic> product in json[OpenFoodFactsApiStrings.products]) {
           Food? food = _getFoodFromOpenFoodFactsApiV1V2Food(json: product, languageCode: languageCode);
@@ -231,7 +242,6 @@ class FoodRepository {
       double? servingAdjustFactor;
       int? energyKjPer100Units;
       MeasurementUnit? nutrimentsMeasurementUnit;
-
 
       //energyKjPer100Units comes from foodApi.nutriments!.energyKj100g or foodApi.nutriments!.energyKj! and is either asssociated to serving quantity or
       //product quantity. First we try to get energyKjPer100Units and nutrimentsMeasurementUnit from serving, then from prodcut. If we get energyKjPer100Units

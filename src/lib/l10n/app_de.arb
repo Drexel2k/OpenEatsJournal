@@ -250,5 +250,6 @@
   "no_online_result_found": "Keine Online Ergebnisse gefunden?",
   "adding_online_data_1": "Open Eats journal nutzt",
   "adding_online_data_2": "als Online-Quelle für Lebensmitteldaten. Da dies Open Data ist, kannst Du helfen ihre Daten zu verbessern.\n\nInsbesondere Barcode Lebensmittel sollten in Open Food Facts verfügbar sein, wenn diese nicht in Open Eats Journal gefunden werden, fehlen diese ganz oder einige Daten, die Open Eats Journal benötigt, fehlen. Du kannst über ihre Website oder App Lebensmittel editieren oder hinzufügen. Für weitere Informationen besuche ihre Website.\n\nDiese Daten werden mindestens von Open Eats Journal benötigt:\nAllgemeine Informationen/Produkteigenschaften: Produktname, Menge (z.B. 750g oder 3x250g)\nNährwertangaben: Energie, Portionsgröße (z.B. 50g).",
-  "open_food_facts": "Open Food Facts"
+  "open_food_facts": "Open Food Facts",
+  "could_not_parse_open_food_facts_answer": "Could not parse Open Food Facts answer."
 }

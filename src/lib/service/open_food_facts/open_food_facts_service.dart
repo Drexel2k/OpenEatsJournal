@@ -58,7 +58,8 @@ class OpenFoodFactsService {
       headers: headers,
     );
 
-    if (resp.statusCode == 200) {
+    //404 means no food with barcode was found, which is still a normal result for us.
+    if (resp.statusCode == 200 || resp.statusCode == 404) {
       return resp.body;
     }
 
