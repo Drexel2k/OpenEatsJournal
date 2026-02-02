@@ -22,7 +22,7 @@ Use paths for SDKs without spaces and sepcial characers.
 6. When debugging and setting the focus on a text field for the first time, click on the 3 line menu on the appearing bar. Then click on "Settings", then "Write in text fields" and disable "Use stylus to write in text fields". Go back, click "Physical keyboard" and enable "Show on-screen keyboard". This enforces the virtual keyboard on the emulator, which triggers rebuilding of widgets when it opens, which happens on a real phone all the time. So errors due to rebuilding the widgets will be noticed during development.
 
 #### Setup Flutter SDK
-1. Download Flutter (currently 3.38.5 is used) from https://docs.flutter.dev/install/archive and extract.
+1. Download Flutter (currently 3.38.9 is used) from https://docs.flutter.dev/install/archive and extract.
 
 #### Setup the Workspace in Visual Studio Code (VSC)
 1. Download and install git.
