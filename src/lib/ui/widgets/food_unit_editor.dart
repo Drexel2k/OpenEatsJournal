@@ -29,17 +29,18 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
   @override
   void initState() {
     _foodUnitEditorViewModel = widget._foodUnitEditorViewModel;
+    
+    _nameController.text = _foodUnitEditorViewModel.name.value;
+    _amountController.text = _foodUnitEditorViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)
+        : OpenEatsJournalStrings.emptyString;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-
-    _nameController.text = _foodUnitEditorViewModel.name.value;
-    _amountController.text = _foodUnitEditorViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)
-        : OpenEatsJournalStrings.emptyString;
 
     return Column(
       children: [
@@ -101,7 +102,7 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                       }),
                     ],
                     enabled: _foodUnitEditorViewModel.foodUnitsEditMode.value,
-                                       focusNode: _amountFocusNode,
+                    focusNode: _amountFocusNode,
                     onTap: () {
                       //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                       //effect.

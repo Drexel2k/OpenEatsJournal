@@ -36,13 +36,10 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
       _loadFinished();
 
       if (result != null) {
-        _addToResult(result);
+        _eatsJournalEntriesResult.addAll(result);
       }
     });
-  }
 
-  void _addToResult(List<EatsJournalEntry> eatsJournalEntries) {
-    _eatsJournalEntriesResult.addAll(eatsJournalEntries);
     _eatsJournalEntriesChanged.notify();
   }
 
@@ -64,7 +61,7 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
 
   Future<void> duplicateEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _journalRepository.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
-  }  
+  }
 
   @override
   void dispose() {

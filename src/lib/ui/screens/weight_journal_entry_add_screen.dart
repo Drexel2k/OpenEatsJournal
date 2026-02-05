@@ -27,13 +27,14 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
   @override
   void initState() {
     _weightJournalEntryAddScreenViewModel = widget._weightJournalEntryAddScreenViewModel;
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeight);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeight);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -71,7 +72,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                           }
                         }),
                       ],
-                                           focusNode: _weightFocusNode,
+                      focusNode: _weightFocusNode,
                       onTap: () {
                         //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                         //effect.
@@ -93,6 +94,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
               ),
             ],
           ),
+          Text(AppLocalizations.of(context)!.weight_impact),
           ValueListenableBuilder(
             valueListenable: _weightJournalEntryAddScreenViewModel.weightValid,
             builder: (_, _, _) {

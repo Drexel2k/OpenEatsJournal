@@ -57,13 +57,6 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   @override
   void initState() {
     _foodEditScreenViewModel = widget._foodEditScreenViewModel;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
     _nameController.text = _foodEditScreenViewModel.name.value;
     _brandsController.text = _foodEditScreenViewModel.brands.value;
     _barcodeController.text = _foodEditScreenViewModel.barcode.value != null ? "${_foodEditScreenViewModel.barcode.value}" : OpenEatsJournalStrings.emptyString;
@@ -93,6 +86,12 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
         ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.salt.value)
         : OpenEatsJournalStrings.emptyString;
 
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     double inputFieldsWidth = 90;
 
     return MainLayout(
@@ -168,6 +167,16 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                               );
                             },
                           ),
+                        ),
+                        SizedBox(width: 5),
+                        RoundOutlinedButton(
+                          onPressed: () async {
+                            Object? barcodeScanResult = await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteBarcodeScanner);
+                            if (barcodeScanResult != null) {
+                              _foodEditScreenViewModel.barcode.value = int.tryParse(barcodeScanResult as String);
+                            }
+                          },
+                          child: Icon(Icons.qr_code_scanner),
                         ),
                       ],
                     ),

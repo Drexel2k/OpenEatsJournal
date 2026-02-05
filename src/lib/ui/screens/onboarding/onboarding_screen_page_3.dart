@@ -26,9 +26,7 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
   final TextEditingController _weightController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
+  void initState() {
     _birthDayController.text = widget._onboardingScreenViewModel.birthday.value != null
         ? ConvertValidate.dateFormatterDisplayMediumDateOnly.format(widget._onboardingScreenViewModel.birthday.value!)
         : OpenEatsJournalStrings.emptyString;
@@ -38,6 +36,13 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
     _weightController.text = widget._onboardingScreenViewModel.weight.value != null
         ? ConvertValidate.getCleanDoubleString(doubleValue: widget._onboardingScreenViewModel.weight.value!)
         : OpenEatsJournalStrings.emptyString;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {

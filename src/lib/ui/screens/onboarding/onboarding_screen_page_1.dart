@@ -34,6 +34,8 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
       logoPath = "assets/openeatsjournal_logo_darkmode.svg";
     }
 
+    double agreeTextMaxWidth = MediaQuery.sizeOf(context).width - 75;
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
@@ -86,14 +88,21 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                               );
                             },
                         ),
-                        TextSpan(text: "${widget._onboardingScreenViewModel.languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_2} ", style: textTheme.bodyLarge),
+                        TextSpan(
+                          text:
+                              "${widget._onboardingScreenViewModel.languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_2} ",
+                          style: textTheme.bodyLarge,
+                        ),
                         TextSpan(
                           text: AppLocalizations.of(context)!.privacy_statement,
                           style: TextStyle(color: colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
                               String privacyText = await rootBundle.loadString("assets/privacy.txt");
-                              privacyText = privacyText.replaceAll(OpenEatsJournalStrings.contactDataPlaceholder, widget._onboardingScreenViewModel.contactData);
+                              privacyText = privacyText.replaceAll(
+                                OpenEatsJournalStrings.contactDataPlaceholder,
+                                widget._onboardingScreenViewModel.contactData,
+                              );
 
                               await showDialog(
                                 context: AppGlobal.navigatorKey.currentContext!,
@@ -114,21 +123,44 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                               );
                             },
                         ),
-                        TextSpan(text: "${widget._onboardingScreenViewModel.languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
+                        TextSpan(
+                          text:
+                              "${widget._onboardingScreenViewModel.languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_3}",
+                          style: textTheme.bodyLarge,
+                        ),
                       ],
                     ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 12),
-                  CheckboxListTile(
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(AppLocalizations.of(context)!.license_agree, style: textTheme.labelLarge, textAlign: TextAlign.center),
-                    value: _licenseAgreed,
-                    onChanged: (value) {
-                      setState(() {
-                        _licenseAgreed = value ?? false;
-                      });
-                    },
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Spacer(),
+                      Checkbox(
+                        value: _licenseAgreed,
+                        onChanged: (value) {
+                          setState(() {
+                            _licenseAgreed = value ?? false;
+                          });
+                        },
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(height: 9),
+                          Container(
+                            constraints: BoxConstraints(maxWidth: agreeTextMaxWidth),
+                            child: Text(
+                              AppLocalizations.of(context)!.license_agree,
+                              style: textTheme.titleMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                    ],
                   ),
                   FilledButton(
                     onPressed: () {

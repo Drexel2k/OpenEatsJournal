@@ -21,17 +21,17 @@ import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class EatsJournalFoodEntryEditScreen extends StatefulWidget {
-  const EatsJournalFoodEntryEditScreen({super.key, required EatsJournalFoodEntryEditScreenViewModel eatsJournalFoodAddScreenViewModel})
-    : _eatsJournalFoodAddScreenViewModel = eatsJournalFoodAddScreenViewModel;
+  const EatsJournalFoodEntryEditScreen({super.key, required EatsJournalFoodEntryEditScreenViewModel eatsJournalFoodEntryEditScreenViewModel})
+    : _eatsJournalFoodEntryEditScreenViewModel = eatsJournalFoodEntryEditScreenViewModel;
 
-  final EatsJournalFoodEntryEditScreenViewModel _eatsJournalFoodAddScreenViewModel;
+  final EatsJournalFoodEntryEditScreenViewModel _eatsJournalFoodEntryEditScreenViewModel;
 
   @override
   State<EatsJournalFoodEntryEditScreen> createState() => _EatsJournalFoodEntryEditScreenState();
 }
 
 class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEditScreen> {
-  late EatsJournalFoodEntryEditScreenViewModel _eatsJournalFoodAddScreenViewModel;
+  late EatsJournalFoodEntryEditScreenViewModel _eatsJournalFoodEntryEditScreenViewModel;
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _eatsAmountController = TextEditingController();
@@ -41,7 +41,15 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
   @override
   void initState() {
-    _eatsJournalFoodAddScreenViewModel = widget._eatsJournalFoodAddScreenViewModel;
+    _eatsJournalFoodEntryEditScreenViewModel = widget._eatsJournalFoodEntryEditScreenViewModel;
+
+    _amountController.text = _eatsJournalFoodEntryEditScreenViewModel.amount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodEntryEditScreenViewModel.amount.value)
+        : OpenEatsJournalStrings.emptyString;
+    _eatsAmountController.text = _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value)
+        : OpenEatsJournalStrings.emptyString;
+
     super.initState();
   }
 
@@ -49,17 +57,10 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    _amountController.text = _eatsJournalFoodAddScreenViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.amount.value)
-        : OpenEatsJournalStrings.emptyString;
-    _eatsAmountController.text = _eatsJournalFoodAddScreenViewModel.eatsAmount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodAddScreenViewModel.eatsAmount.value)
-        : OpenEatsJournalStrings.emptyString;
-
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
       layoutMode: LayoutMode.intrinsicHeightFixedHeight,
-      title: _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
+      title: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
           ? AppLocalizations.of(context)!.add_eats_journal_entry
           : AppLocalizations.of(context)!.edit_eats_journal_entry,
       body: Column(
@@ -70,19 +71,19 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.currentEntryDate,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.currentEntryDate,
                   builder: (_, _, _) {
                     return OutlinedButton(
                       onPressed: () async {
                         //for creating entries take value from setting, for editing entries take value from entry
-                        DateTime initialDate = _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
-                            ? _eatsJournalFoodAddScreenViewModel.currentEntryDate.value
-                            : _eatsJournalFoodAddScreenViewModel.foodEntry.entryDate;
+                        DateTime initialDate = _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
+                            ? _eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value
+                            : _eatsJournalFoodEntryEditScreenViewModel.foodEntry.entryDate;
                         await _selectDate(initialDate: initialDate, context: context);
                       },
                       style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                       child: Text(
-                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodAddScreenViewModel.currentEntryDate.value),
+                        ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value),
                         textAlign: TextAlign.center,
                       ),
                     );
@@ -92,16 +93,16 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               SizedBox(width: 5),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.currentMeal,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.currentMeal,
                   builder: (_, _, _) {
                     //for creating entries take value from setting, for editing entries take value from entry
-                    int initialSelection = _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
-                        ? _eatsJournalFoodAddScreenViewModel.currentMeal.value.value
-                        : _eatsJournalFoodAddScreenViewModel.foodEntry.meal.value;
+                    int initialSelection = _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
+                        ? _eatsJournalFoodEntryEditScreenViewModel.currentMeal.value.value
+                        : _eatsJournalFoodEntryEditScreenViewModel.foodEntry.meal.value;
 
                     return OpenEatsJournalDropdownMenu<int>(
                       onSelected: (int? mealValue) {
-                        _eatsJournalFoodAddScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
+                        _eatsJournalFoodEntryEditScreenViewModel.currentMeal.value = Meal.getByValue(mealValue!);
                       },
                       dropdownMenuEntries: LocalizedDropDownEntries.getMealDropDownMenuEntries(context: context),
                       initialSelection: initialSelection,
@@ -122,14 +123,14 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     Text(
                       softWrap: true,
                       style: textTheme.headlineSmall,
-                      _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name != OpenEatsJournalStrings.emptyString
-                          ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.name
+                      _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.name != OpenEatsJournalStrings.emptyString
+                          ? _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.name
                           : AppLocalizations.of(context)!.no_name,
                     ),
                     Text(
                       style: textTheme.labelLarge,
-                      _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands.isNotEmpty
-                          ? _eatsJournalFoodAddScreenViewModel.foodEntry.food!.brands.join(", ")
+                      _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.brands.isNotEmpty
+                          ? _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.brands.join(", ")
                           : AppLocalizations.of(context)!.no_brand,
                     ),
                   ],
@@ -146,14 +147,14 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                         Navigator.pushNamed(
                           context,
                           OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                          arguments: Food.copyAsNewUserFood(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!),
+                          arguments: Food.copyAsNewUserFood(food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!),
                         );
                       },
                       child: Text(AppLocalizations.of(context)!.as_new_food),
                     ),
                   );
 
-                  if (_eatsJournalFoodAddScreenViewModel.foodEntry.id != null) {
+                  if (_eatsJournalFoodEntryEditScreenViewModel.foodEntry.id != null) {
                     menuItems.add(
                       PopupMenuItem(
                         onTap: () {
@@ -161,11 +162,11 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                             context,
                             OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
                             arguments: EatsJournalEntry.fromFood(
-                              entryDate: _eatsJournalFoodAddScreenViewModel.currentEntryDate.value,
-                              food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!,
-                              amount: _eatsJournalFoodAddScreenViewModel.eatsAmount.value,
-                              amountMeasurementUnit: _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value,
-                              meal: _eatsJournalFoodAddScreenViewModel.currentMeal.value,
+                              entryDate: _eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value,
+                              food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
+                              amount: _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value,
+                              amountMeasurementUnit: _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value,
+                              meal: _eatsJournalFoodEntryEditScreenViewModel.currentMeal.value,
                             ),
                           );
                         },
@@ -174,14 +175,14 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     );
                   }
 
-                  if (_eatsJournalFoodAddScreenViewModel.foodEntry.food!.foodSource == FoodSource.user) {
+                  if (_eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.foodSource == FoodSource.user) {
                     menuItems.add(
                       PopupMenuItem(
                         onTap: () {
                           Navigator.pushNamed(
                             context,
                             OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                            arguments: _eatsJournalFoodAddScreenViewModel.foodEntry.food!,
+                            arguments: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
                           );
                         },
                         child: Text(AppLocalizations.of(context)!.edit),
@@ -202,14 +203,14 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.kJoule,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.kJoule,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.kJoule.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.kJoule.value != null
                         ? Text(
                             style: textTheme.titleMedium,
                             AppLocalizations.of(context)!.amount_kcal(
                               ConvertValidate.numberFomatterInt.format(
-                                NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodAddScreenViewModel.kJoule.value!),
+                                NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodEntryEditScreenViewModel.kJoule.value!),
                               ),
                             ),
                           )
@@ -219,15 +220,16 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               ),
               Expanded(
                 child: ListenableBuilder(
-                  listenable: _eatsJournalFoodAddScreenViewModel.amountRelvantChanged,
+                  listenable: _eatsJournalFoodEntryEditScreenViewModel.amountRelvantChanged,
                   builder: (_, _) {
-                    String amountTotal = _eatsJournalFoodAddScreenViewModel.amount.value != null && _eatsJournalFoodAddScreenViewModel.eatsAmount.value != null
+                    String amountTotal =
+                        _eatsJournalFoodEntryEditScreenViewModel.amount.value != null && _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value != null
                         ? ConvertValidate.getCleanDoubleString(
-                            doubleValue: _eatsJournalFoodAddScreenViewModel.amount.value! * _eatsJournalFoodAddScreenViewModel.eatsAmount.value!,
+                            doubleValue: _eatsJournalFoodEntryEditScreenViewModel.amount.value! * _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value!,
                           )
                         : AppLocalizations.of(context)!.na;
 
-                    String amountInformation = _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                    String amountInformation = _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                         ? AppLocalizations.of(context)!.amount_gram(amountTotal)
                         : AppLocalizations.of(context)!.amount_milliliter(amountTotal);
 
@@ -241,12 +243,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.carbohydrates,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.carbohydrates,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.carbohydrates.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.carbohydrates.value != null
                         ? Text(
                             AppLocalizations.of(context)!.amount_carb(
-                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.carbohydrates.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.carbohydrates.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                             ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na));
@@ -255,12 +257,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               ),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.sugar,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.sugar,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.sugar.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.sugar.value != null
                         ? Text(
                             AppLocalizations.of(context)!.amount_sugar(
-                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.sugar.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.sugar.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                             ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_sugar(AppLocalizations.of(context)!.na));
@@ -273,12 +275,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.fat,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.fat,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.fat.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.fat.value != null
                         ? Text(
                             AppLocalizations.of(context)!.amount_fat(
-                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.fat.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.fat.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                             ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_fat(AppLocalizations.of(context)!.na));
@@ -287,12 +289,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               ),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.saturatedFat,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.saturatedFat,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.saturatedFat.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.saturatedFat.value != null
                         ? Text(
                             AppLocalizations.of(context)!.amount_saturated_fat(
-                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.saturatedFat.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.saturatedFat.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                             ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_saturated_fat(AppLocalizations.of(context)!.na));
@@ -305,12 +307,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             children: [
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.protein,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.protein,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.protein.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.protein.value != null
                         ? Text(
                             AppLocalizations.of(context)!.amount_prot(
-                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.protein.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.protein.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                             ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_prot(AppLocalizations.of(context)!.na));
@@ -319,12 +321,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               ),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.salt,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.salt,
                   builder: (_, _, _) {
-                    return _eatsJournalFoodAddScreenViewModel.salt.value != null
+                    return _eatsJournalFoodEntryEditScreenViewModel.salt.value != null
                         ? Text(
                             AppLocalizations.of(context)!.amount_salt(
-                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.salt.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                              "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.salt.value!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                             ),
                           )
                         : Text(AppLocalizations.of(context)!.amount_salt(AppLocalizations.of(context)!.na));
@@ -339,7 +341,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               Expanded(
                 flex: 3,
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.amount,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.amount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _amountController,
@@ -369,7 +371,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _eatsJournalFoodAddScreenViewModel.amount.value = doubleValue;
+                        _eatsJournalFoodEntryEditScreenViewModel.amount.value = doubleValue;
 
                         if (doubleValue != null) {
                           _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -385,7 +387,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               Expanded(
                 flex: 3,
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodAddScreenViewModel.eatsAmount,
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.eatsAmount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _eatsAmountController,
@@ -415,7 +417,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       },
                       onChanged: (value) {
                         double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _eatsJournalFoodAddScreenViewModel.eatsAmount.value = doubleValue;
+                        _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value = doubleValue;
 
                         if (doubleValue != null) {
                           _eatsAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
@@ -428,20 +430,20 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               Expanded(
                 flex: 2,
                 child: RoundOutlinedButton(
-                  onPressed: _eatsJournalFoodAddScreenViewModel.measurementSelectionEnabled
+                  onPressed: _eatsJournalFoodEntryEditScreenViewModel.measurementSelectionEnabled
                       ? () {
-                          if (_eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram) {
-                            _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.milliliter;
+                          if (_eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram) {
+                            _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.milliliter;
                           } else {
-                            _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.gram;
+                            _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.gram;
                           }
                         }
                       : null,
                   child: ValueListenableBuilder(
-                    valueListenable: _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit,
+                    valueListenable: _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit,
                     builder: (_, _, _) {
                       return Text(
-                        _eatsJournalFoodAddScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                        _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
                             ? AppLocalizations.of(context)!.gram_abbreviated
                             : AppLocalizations.of(context)!.milliliter_abbreviated,
                       );
@@ -455,7 +457,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                   onPressed: () async {
                     bool dataValid = true;
 
-                    if (_eatsJournalFoodAddScreenViewModel.amount.value == null) {
+                    if (_eatsJournalFoodEntryEditScreenViewModel.amount.value == null) {
                       dataValid = false;
                       SnackBar snackBar = SnackBar(
                         content: Text(AppLocalizations.of(context)!.enter_valid_amount),
@@ -472,7 +474,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       return;
                     }
 
-                    if (_eatsJournalFoodAddScreenViewModel.eatsAmount.value == null) {
+                    if (_eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value == null) {
                       dataValid = false;
                       SnackBar snackBar = SnackBar(
                         content: Text(AppLocalizations.of(context)!.enter_valid_eats_amount),
@@ -490,12 +492,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     }
 
                     if (dataValid) {
-                      await _eatsJournalFoodAddScreenViewModel.setFoodEntry();
+                      await _eatsJournalFoodEntryEditScreenViewModel.setFoodEntry();
                       Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
                   style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: _eatsJournalFoodAddScreenViewModel.foodEntry.id == null
+                  child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
                       ? Text(AppLocalizations.of(context)!.add)
                       : Text(AppLocalizations.of(context)!.update_abbreviated),
                 ),
@@ -507,7 +509,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _getFoodUnitButtons(food: _eatsJournalFoodAddScreenViewModel.foodEntry.food!, textTheme: textTheme, context: context),
+                children: _getFoodUnitButtons(food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!, textTheme: textTheme, context: context),
               ),
             ),
           ),
@@ -515,7 +517,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           Text(
             style: textTheme.labelSmall,
             AppLocalizations.of(context)!.per_100_measurement_unit(
-              _eatsJournalFoodAddScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null ? MeasurementUnit.gram.text : MeasurementUnit.milliliter.text,
+              _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null
+                  ? MeasurementUnit.gram.text
+                  : MeasurementUnit.milliliter.text,
             ),
           ),
           SizedBox(height: 10),
@@ -523,26 +527,26 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             style: textTheme.titleMedium,
             AppLocalizations.of(context)!.amount_kcal(
               ConvertValidate.numberFomatterInt.format(
-                NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.kJoule),
+                NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.kJoule),
               ),
             ),
           ),
           Row(
             children: [
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.carbohydrates != null
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_carb(
-                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.carbohydrates!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na)),
               ),
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.sugar != null
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_sugar(
-                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.sugar!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_sugar(AppLocalizations.of(context)!.na)),
@@ -552,19 +556,19 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           Row(
             children: [
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.fat != null
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_fat(
-                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.fat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_fat(AppLocalizations.of(context)!.na)),
               ),
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.saturatedFat != null
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.saturatedFat != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_saturated_fat(
-                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.saturatedFat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.saturatedFat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_saturated_fat(AppLocalizations.of(context)!.na)),
@@ -574,19 +578,19 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           Row(
             children: [
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.protein != null
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.protein != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_prot(
-                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.protein!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.protein!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_prot(AppLocalizations.of(context)!.na)),
               ),
               Expanded(
-                child: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt != null
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.salt != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_salt(
-                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodAddScreenViewModel.foodEntry.food!.salt!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.salt!)}${AppLocalizations.of(context)!.gram_abbreviated}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_salt(AppLocalizations.of(context)!.na)),
@@ -606,7 +610,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
         OutlinedButton(
           onPressed: () {
             _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(food.defaultFoodUnit!.amount);
-            _eatsJournalFoodAddScreenViewModel.eatsAmount.value = food.defaultFoodUnit!.amount;
+            _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value = food.defaultFoodUnit!.amount;
           },
           child: Column(
             children: [
@@ -634,7 +638,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           OutlinedButton(
             onPressed: () {
               _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(foodUnitWithOrder.object.amount);
-              _eatsJournalFoodAddScreenViewModel.eatsAmount.value = foodUnitWithOrder.object.amount;
+              _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value = foodUnitWithOrder.object.amount;
             },
             child: Column(
               children: [
@@ -662,7 +666,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
         OutlinedButton(
           onPressed: () {
             _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(food.nutritionPerGramAmount);
-            _eatsJournalFoodAddScreenViewModel.eatsAmount.value = food.nutritionPerGramAmount;
+            _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value = food.nutritionPerGramAmount;
           },
           child: Column(
             children: [
@@ -686,7 +690,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
         OutlinedButton(
           onPressed: () {
             _eatsAmountController.text = ConvertValidate.numberFomatterInt.format(food.nutritionPerMilliliterAmount);
-            _eatsJournalFoodAddScreenViewModel.eatsAmount.value = food.nutritionPerMilliliterAmount;
+            _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value = food.nutritionPerMilliliterAmount;
           },
           child: Column(
             children: [
@@ -721,15 +725,15 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
 
     if (date != null) {
-      _eatsJournalFoodAddScreenViewModel.currentEntryDate.value = date;
+      _eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value = date;
     }
   }
 
   @override
   void dispose() {
-    widget._eatsJournalFoodAddScreenViewModel.dispose();
-    if (widget._eatsJournalFoodAddScreenViewModel != _eatsJournalFoodAddScreenViewModel) {
-      _eatsJournalFoodAddScreenViewModel.dispose();
+    widget._eatsJournalFoodEntryEditScreenViewModel.dispose();
+    if (widget._eatsJournalFoodEntryEditScreenViewModel != _eatsJournalFoodEntryEditScreenViewModel) {
+      _eatsJournalFoodEntryEditScreenViewModel.dispose();
     }
 
     _amountController.dispose();

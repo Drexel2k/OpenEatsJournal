@@ -111,6 +111,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   controller: _searchTextController,
                   hintText: AppLocalizations.of(context)!.search_food,
                   decorationSuffixIcon: IconButton(onPressed: _searchTextController.clear, icon: Icon(Icons.clear), padding: EdgeInsets.zero),
+                  onSubmitted: (value) async {
+                    await _search(standardFoodUnitLocalizations: standardFoodUnitLocalizations);
+                  },
                 ),
               ),
               SizedBox(width: 5),

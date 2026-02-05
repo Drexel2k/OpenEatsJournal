@@ -28,7 +28,8 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
        _protein = ValueNotifier(quickEntry.protein),
        _salt = ValueNotifier(quickEntry.salt),
        _currentEntryDate = ValueNotifier(quickEntry.entryDate),
-       _currentMeal = ValueNotifier(quickEntry.meal) {
+       _currentMeal = ValueNotifier(quickEntry.meal),
+       _currentMeasurementUnit = ValueNotifier(quickEntry.amountMeasurementUnit != null ? quickEntry.amountMeasurementUnit! : MeasurementUnit.gram) {
     if (_quickEntry.food != null) {
       throw StateError("Quick entry must not have a food.");
     }
@@ -60,7 +61,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _protein;
   final ValueNotifier<double?> _salt;
 
-  final ValueNotifier<MeasurementUnit> _currentMeasurementUnit = ValueNotifier(MeasurementUnit.gram);
+  final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
   ValueNotifier<DateTime> get currentEntryDate => _currentEntryDate;

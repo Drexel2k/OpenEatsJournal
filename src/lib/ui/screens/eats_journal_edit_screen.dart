@@ -23,12 +23,13 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
   @override
   void initState() {
     _eatsJournalEditScreenViewModel = widget._eatsJournalEditScreenViewModel;
+    widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -61,6 +62,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                     }
 
                     return EatsJournalEntryRow(
+                      key: UniqueKey(),
                       eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
                       onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
                         if (eatsJournalEntry.food != null) {

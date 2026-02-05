@@ -17,6 +17,8 @@ class _OnboardingScreenPage2State extends State<OnboardingScreenPage2> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
+    double understandTextMaxWidth = MediaQuery.sizeOf(context).width - 75;
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
@@ -33,15 +35,34 @@ class _OnboardingScreenPage2State extends State<OnboardingScreenPage2> {
                   SizedBox(height: 40),
                   Text(AppLocalizations.of(context)!.welcome_message_stay_healthy, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   Spacer(),
-                  CheckboxListTile(
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(AppLocalizations.of(context)!.understood, style: textTheme.labelLarge, textAlign: TextAlign.center),
-                    value: _understood,
-                    onChanged: (value) {
-                      setState(() {
-                        _understood = value ?? false;
-                      });
-                    },
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Spacer(),
+                      Checkbox(
+                        value: _understood,
+                        onChanged: (value) {
+                          setState(() {
+                            _understood = value ?? false;
+                          });
+                        },
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(height: 9),
+                          Container(
+                            constraints: BoxConstraints(maxWidth: understandTextMaxWidth),
+                            child: Text(
+                              AppLocalizations.of(context)!.understood,
+                              style: textTheme.titleMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                    ],
                   ),
                   FilledButton(
                     onPressed: () {

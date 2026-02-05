@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-02-02 00-00-00,2026-01-15 00-00-00
+2026-02-04 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -163,3 +163,10 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Serving","Portion","200","g","true"
 "food","73","2026-02-02 00-00-00","Boiled beef","Tafelspitz",,,"100",,"682","7.4","2.5","0.4",,"23.6",,
 "foodunit","1","Serving","Portion","175","g","true"
+"food","74","2026-02-04 00-00-00","Meat sausage","Fleischwurst",,,"100",,"1298","30","12","0.9","0.8","9.6","2.1",
+"foodunit","1","Slice","Scheibe","20","g","true"
+"food","75","2026-02-04 00-00-00","Liver sausage","Leberwurst",,,"100",,"1439","33.3","12.9","0.9","0.6","11.8","2.1",
+"foodunit","1","Serving","Portion","35","g","true"
+"food","76","2026-02-04 00-00-00","Lye pastries / pretzel with cheese gratinated","Laugengebäck mit Käse überbacken",,,"100",,"1310","8.4","4.1","45.1","2.5","12","2.2",
+"foodunit","1","Pretzel stick","Laugenstange","100","g","true"
+"foodunit","2","Lye pretzel","Laugenbrezel","110","g","false"

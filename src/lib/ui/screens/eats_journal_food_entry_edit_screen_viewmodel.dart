@@ -27,13 +27,12 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
        _fat = ValueNotifier(foodEntry.fat),
        _saturatedFat = ValueNotifier(foodEntry.saturatedFat),
        _protein = ValueNotifier(foodEntry.protein),
-       _salt = ValueNotifier(foodEntry.salt) {
+       _salt = ValueNotifier(foodEntry.salt),
+       _currentMeal = ValueNotifier(foodEntry.meal),
+       _currentEntryDate = ValueNotifier(foodEntry.entryDate) {
     if (_foodEntry.food == null) {
       throw StateError("Food entry must not have a food.");
     }
-
-    _currentEntryDate.value = _settingsRepository.currentJournalDate.value;
-    _currentMeal.value = _settingsRepository.currentMeal.value;
 
     _currentEntryDate.addListener(_currentJournalDateChanged);
     _currentMeal.addListener(_currentMealChanged);
@@ -45,8 +44,8 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final FoodRepository _foodRepository;
 
-  final ValueNotifier<DateTime> _currentEntryDate = ValueNotifier(DateTime(1900));
-  final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
+  final ValueNotifier<DateTime> _currentEntryDate;
+  final ValueNotifier<Meal> _currentMeal;
 
   final EatsJournalEntry _foodEntry;
 

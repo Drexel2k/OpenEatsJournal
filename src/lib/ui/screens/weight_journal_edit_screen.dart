@@ -21,6 +21,7 @@ class _WeightJournalEditScreenState extends State<WeightJournalEditScreen> {
   @override
   void initState() {
     _weightEditScreenViewModel = widget._weightEditScreenViewModel;
+    _weightEditScreenViewModel.getWeightJournalEntries();
     super.initState();
   }
 
@@ -28,7 +29,6 @@ class _WeightJournalEditScreenState extends State<WeightJournalEditScreen> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    _weightEditScreenViewModel.getWeightJournalEntries();
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
 
@@ -52,6 +52,9 @@ class _WeightJournalEditScreenState extends State<WeightJournalEditScreen> {
                     }
 
                     return WeightRow(
+                      //Without this key it sometimes happens that the old state is reused after call of
+                      //_weightEditScreenViewModel.getWeightJournalEntries();. This may enable the user to delete the last weight journal entry...
+                      key: UniqueKey(),
                       weightRowViewModel: WeightRowViewModel(
                         weight: _weightEditScreenViewModel.weightEntriesResult[listViewItemIndex].weight,
                         date: _weightEditScreenViewModel.weightEntriesResult[listViewItemIndex].date,

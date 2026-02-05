@@ -172,7 +172,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                           iconBackGroundColor: _openEatsJournalAppViewModel.darkMode ? Color.fromARGB(255, 83, 83, 83) : Color.fromARGB(255, 255, 255, 255),
                         ),
                         OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) => EatsJournalFoodEntryEditScreen(
-                          eatsJournalFoodAddScreenViewModel: EatsJournalFoodEntryEditScreenViewModel(
+                          eatsJournalFoodEntryEditScreenViewModel: EatsJournalFoodEntryEditScreenViewModel(
                             foodEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
                             journalRepository: _repositories.journalRepository,
                             foodRepository: _repositories.foodRepository,
@@ -186,7 +186,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                           ),
                         ),
                         OpenEatsJournalStrings.navigatorRouteQuickEntryEdit: (contextBuilder) => EatsJournalQuickEntryEditScreen(
-                          eatsJournalQuickEntryAddScreenViewModel: EatsJournalQuickEntryEditScreenViewModel(
+                          eatsJournalQuickEntryEditScreenViewModel: EatsJournalQuickEntryEditScreenViewModel(
                             quickEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
                             journalRepository: _repositories.journalRepository,
                             settingsRepository: _repositories.settingsRepository,

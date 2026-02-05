@@ -42,6 +42,8 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
 
   ExternalTriggerChangedNotifier get currentWeightChanged => _currentWeightChanged;
 
+  bool get darkMode => _settingsRepository.darkMode.value;
+
   void updateCurrentJournalDateInSettingsRepository() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
   }

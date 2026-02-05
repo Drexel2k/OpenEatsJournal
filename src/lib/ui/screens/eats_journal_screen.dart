@@ -117,6 +117,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                     throw StateError("Something went wrong: ${snapshot.error}");
                   } else if (snapshot.hasData) {
                     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+                    final Color dayButtonsTextColor = _eatsJournalScreenViewModel.darkMode ? colorScheme.inversePrimary : colorScheme.primary;
 
                     GaugeData kJouleGaugeData = _getKJouleGaugeData(foodRepositoryGetDayDataResult: snapshot.data!, colorScheme: colorScheme);
                     GaugeData carbohydratesGaugeData = _getCarbohydratesGaugeData(foodRepositoryGetDayDataResult: snapshot.data!, colorScheme: colorScheme);
@@ -235,7 +236,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                       currentDate = currentDate.add(Duration(days: 1));
                                       DateTime chipDate = currentDate;
                                       TextStyle? style = snapshot.data![dayIndex]!
-                                          ? TextStyle(color: colorScheme.inversePrimary, fontWeight: FontWeight.w900)
+                                          ? TextStyle(color: dayButtonsTextColor, fontWeight: FontWeight.w900)
                                           : null;
 
                                       return RoundTransparentChoiceChip(

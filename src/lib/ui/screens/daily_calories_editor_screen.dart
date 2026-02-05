@@ -51,12 +51,6 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
     _dailyCaloriesEditorScreenViewModel = widget._dailyCaloriesEditorScreenViewModel;
     _dailyKJoule = widget._dailyKJoule;
     _originalDailyTargetKJoule = widget._originalDailyTargetKJoule;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
 
     _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(
       NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleMonday.value!),
@@ -79,6 +73,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
     _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(
       NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleSunday.value!),
     );
+    
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
@@ -152,7 +153,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleMondayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleMondayFocusNode,
+                              focusNode: _kJouleMondayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.
@@ -207,7 +208,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleTuesdayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleTuesdayFocusNode,
+                              focusNode: _kJouleTuesdayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.
@@ -262,7 +263,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleWednesdayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleWednesdayFocusNode,
+                              focusNode: _kJouleWednesdayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.
@@ -317,7 +318,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleThursdayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleThursdayFocusNode,
+                              focusNode: _kJouleThursdayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.
@@ -372,7 +373,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleFridayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleFridayFocusNode,
+                              focusNode: _kJouleFridayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.
@@ -427,7 +428,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleSaturdayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleSaturdayFocusNode,
+                              focusNode: _kJouleSaturdayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.
@@ -482,7 +483,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               controller: _kJouleSundayController,
                               keyboardType: TextInputType.numberWithOptions(signed: false),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                           focusNode: _kJouleSundayFocusNode,
+                              focusNode: _kJouleSundayFocusNode,
                               onTap: () {
                                 //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                                 //effect.

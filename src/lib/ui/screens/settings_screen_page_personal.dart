@@ -31,14 +31,19 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
   final FocusNode _weightFocusNode = FocusNode();
 
   @override
-  Widget build(BuildContext context) {
-    final String languageCode = Localizations.localeOf(context).toString();
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
+  void initState() {
     _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
 
     _heightController.text = ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.height.value);
     _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.weight.value!);
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String languageCode = Localizations.localeOf(context).toString();
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 0, 10),

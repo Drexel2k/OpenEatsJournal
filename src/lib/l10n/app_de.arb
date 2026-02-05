@@ -152,7 +152,7 @@
   "saturated_fat": "Gesätigte Fettsäuren:",
   "saturated_fat_capital": "Gesätigte Fettsäuren",
   "sugar": "Zucker:",
-  "sugar_capital": "Zucker:",
+  "sugar_capital": "Zucker",
   "salt": "Salz:",
   "salt_capital": "Salz",
   "add_eats_journal_entry": "Ernährungseintrag hinzufügen",
@@ -225,7 +225,7 @@
   "amount_gram": "{amount} Gramm",
   "amount_g": "{amount}g",
   "amount_milliliter": "{amount} Milliliter",
-  "amount_ml": "{amount}g",
+  "amount_ml": "{amount}ml",
   "basics": "Basisinformationen",
   "online": "Online",
   "offline": "Offline",
@@ -251,5 +251,6 @@
   "adding_online_data_1": "Open Eats journal nutzt",
   "adding_online_data_2": "als Online-Quelle für Lebensmitteldaten. Da dies Open Data ist, kannst Du helfen ihre Daten zu verbessern.\n\nInsbesondere Barcode Lebensmittel sollten in Open Food Facts verfügbar sein, wenn diese nicht in Open Eats Journal gefunden werden, fehlen diese ganz oder einige Daten, die Open Eats Journal benötigt, fehlen. Du kannst über ihre Website oder App Lebensmittel editieren oder hinzufügen. Für weitere Informationen besuche ihre Website.\n\nDiese Daten werden mindestens von Open Eats Journal benötigt:\nAllgemeine Informationen/Produkteigenschaften: Produktname, Menge (z.B. 750g oder 3x250g)\nNährwertangaben: Energie, Portionsgröße (z.B. 50g).",
   "open_food_facts": "Open Food Facts",
-  "could_not_parse_open_food_facts_answer": "Could not parse Open Food Facts answer."
+  "could_not_parse_open_food_facts_answer": "Could not parse Open Food Facts answer.",
+  "weight_impact": "Dein aktuelles Gewicht kann Einfluss auf Deinen Kalorienbedarf und Deine Kalorienziele haben, berechne diese Werte evtl. in den Einstellungen neu."
 }

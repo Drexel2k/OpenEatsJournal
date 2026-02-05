@@ -43,13 +43,14 @@ class _WeightRowState extends State<WeightRow> {
     _deleteEnabled = widget._deleteEnabled;
     _onDeletePressed = widget._onDeletePressed;
     _deleteIconColor = widget._deleteIconColor;
+
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
 
     return Column(
       children: [
@@ -79,7 +80,7 @@ class _WeightRowState extends State<WeightRow> {
                         }
                       }),
                     ],
-                                       focusNode: _weightFocusNode,
+                    focusNode: _weightFocusNode,
                     onTap: () {
                       //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                       //effect.

@@ -63,11 +63,7 @@ class EatsJournalEntryRow extends StatelessWidget {
                     ],
                   ),
                 ),
-                Column(children: [
-
-                  ],
-                ),
-                SizedBox(width: 10),
+                SizedBox(width: 5),
                 Badge(
                   label: Text(UiHelpers.getFoodSourceLabel(food: _eatsJournalEntry.food, context: context)),
                   backgroundColor: UiHelpers.getFoodSourceColor(food: _eatsJournalEntry.food, context: context),

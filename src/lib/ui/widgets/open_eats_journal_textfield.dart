@@ -4,40 +4,44 @@ import "package:flutter/services.dart";
 class OpenEatsJournalTextField extends StatelessWidget {
   const OpenEatsJournalTextField({
     super.key,
-    String? hintText,
-    GestureTapCallback? onTap,
     TextEditingController? controller,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-    bool? selectAllOnFocus,
     FocusNode? focusNode,
-    Widget? decorationSuffixIcon,
-    ValueChanged<String>? onChanged,
-    bool readOnly = false,
-    bool? enabled,
-  }) : _hintText = hintText,
-       _onTap = onTap,
-       _controller = controller,
-       _keyboardType = keyboardType,
-       _inputFormatters = inputFormatters,
-       _selectAllOnFocus = selectAllOnFocus,
-       _focusNode = focusNode,
-       _decorationSuffixIcon = decorationSuffixIcon,
-       _onChanged = onChanged,
-       _readOnly = readOnly,
-       _enabled = enabled;
+    String? hintText,
 
-  final String? _hintText;
-  final GestureTapCallback? _onTap;
+    Widget? decorationSuffixIcon,
+    TextInputType? keyboardType,
+    bool readOnly = false,
+    ValueChanged<String>? onChanged,
+    ValueChanged<String>? onSubmitted,
+    List<TextInputFormatter>? inputFormatters,
+    bool? enabled,
+    bool? selectAllOnFocus,
+    GestureTapCallback? onTap,
+  }) : _controller = controller,
+       _focusNode = focusNode,
+       _hintText = hintText,
+       _decorationSuffixIcon = decorationSuffixIcon,
+       _keyboardType = keyboardType,
+       _readOnly = readOnly,
+       _onChanged = onChanged,
+       _onSubmitted = onSubmitted,
+       _inputFormatters = inputFormatters,
+       _enabled = enabled,
+       _selectAllOnFocus = selectAllOnFocus,
+       _onTap = onTap;
+
   final TextEditingController? _controller;
-  final TextInputType? _keyboardType;
-  final List<TextInputFormatter>? _inputFormatters;
-  final bool? _selectAllOnFocus;
   final FocusNode? _focusNode;
+  final String? _hintText;
   final Widget? _decorationSuffixIcon;
-  final ValueChanged<String>? _onChanged;
+  final TextInputType? _keyboardType;
   final bool _readOnly;
+  final ValueChanged<String>? _onChanged;
+  final ValueChanged<String>? _onSubmitted;
+  final List<TextInputFormatter>? _inputFormatters;
   final bool? _enabled;
+  final bool? _selectAllOnFocus;
+  final GestureTapCallback? _onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +51,8 @@ class OpenEatsJournalTextField extends StatelessWidget {
     );
 
     return TextField(
+      controller: _controller,
+      focusNode: _focusNode,
       decoration: InputDecoration(
         hintText: _hintText,
         border: border,
@@ -57,15 +63,14 @@ class OpenEatsJournalTextField extends StatelessWidget {
         suffixIconConstraints: _decorationSuffixIcon != null ? BoxConstraints(maxHeight: 18) : null,
         contentPadding: EdgeInsets.all(7),
       ),
-      readOnly: _readOnly,
-      controller: _controller,
-      onTap: _onTap,
       keyboardType: _keyboardType,
-      inputFormatters: _inputFormatters,
-      selectAllOnFocus: _selectAllOnFocus,
-      focusNode: _focusNode,
+      readOnly: _readOnly,
       onChanged: _onChanged,
+      onSubmitted: _onSubmitted,
+      inputFormatters: _inputFormatters,
       enabled: _enabled,
+      selectAllOnFocus: _selectAllOnFocus,
+      onTap: _onTap,
     );
   }
 }

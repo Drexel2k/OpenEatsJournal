@@ -29,13 +29,15 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
       _searchFinished();
 
       if (result != null) {
-        _addToResult(result);
+        _weightEntriesResult.addAll(result);
 
         if (result.length >= 10) {
           _hasMore = true;
         }
       }
     });
+
+    _weightEntriesChanged.notify();
   }
 
   Future<void> getWeightJournalEntriesLoadMore() async {
@@ -43,7 +45,7 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
     _currentPage = _currentPage + 1;
     await _journalRepository.get10WeightJournalEntries(startIndex: _currentPage - 1).then((List<WeightJournalEntry>? result) {
       if (result != null) {
-        _addToResult(result);
+        _weightEntriesResult.addAll(result);
         if (result.length < 10) {
           _hasMore = false;
         }
@@ -51,10 +53,7 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
 
       _isLoading = false;
     });
-  }
 
-  void _addToResult(List<WeightJournalEntry> weightJournalEntries) {
-    _weightEntriesResult.addAll(weightJournalEntries);
     _weightEntriesChanged.notify();
   }
 
