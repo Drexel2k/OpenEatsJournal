@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -104,16 +103,14 @@ class FoodCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _food.kJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                           style: _textTheme.titleMedium,
-                          AppLocalizations.of(
-                            context,
-                          )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _food.kJoule))),
                         ),
                         Text(
+                          "${AppLocalizations.of(context)!.per} ${ConvertValidate.getCleanDoubleString(
+                            doubleValue: _food.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: _food.nutritionPerGramAmount!) : ConvertValidate.getDisplayVolume(volumeMl: _food.nutritionPerMilliliterAmount!),
+                          )}${_food.nutritionPerGramAmount != null ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}",
                           style: _textTheme.labelSmall,
-                          AppLocalizations.of(
-                            context,
-                          )!.per_100_measurement_unit(_food.nutritionPerGramAmount != null ? MeasurementUnit.gram.text : MeasurementUnit.milliliter.text),
                         ),
                       ],
                     ),
@@ -125,25 +122,25 @@ class FoodCard extends StatelessWidget {
                       children: [
                         _food.carbohydrates != null
                             ? Text(
-                                AppLocalizations.of(context)!.amount_carb(
-                                  "${ConvertValidate.getCleanDoubleString(doubleValue: _food.carbohydrates!)}${AppLocalizations.of(context)!.gram_abbreviated}",
-                                ),
+                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _food.carbohydrates!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
                               )
-                            : Text(AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na)),
+                            : Text(
+                                "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
+                              ),
                         _food.fat != null
                             ? Text(
-                                AppLocalizations.of(context)!.amount_fat(
-                                  "${ConvertValidate.getCleanDoubleString(doubleValue: _food.fat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
-                                ),
+                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _food.fat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
                               )
-                            : Text(AppLocalizations.of(context)!.amount_fat(AppLocalizations.of(context)!.na)),
+                            : Text(
+                                "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
+                              ),
                         _food.protein != null
                             ? Text(
-                                AppLocalizations.of(context)!.amount_prot(
-                                  "${ConvertValidate.getCleanDoubleString(doubleValue: _food.protein!)}${AppLocalizations.of(context)!.gram_abbreviated}",
-                                ),
+                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _food.protein!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
                               )
-                            : Text(AppLocalizations.of(context)!.amount_prot(AppLocalizations.of(context)!.na)),
+                            : Text(
+                                "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
+                              ),
                       ],
                     ),
                   ),
@@ -161,8 +158,8 @@ class FoodCard extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
+                            "+${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJoulesToAdd()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                             style: _textTheme.titleSmall,
-                            "+${AppLocalizations.of(context)!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _getKJoulesToAdd())))}",
                           ),
                           Text(
                             style: _textTheme.labelSmall,
@@ -183,11 +180,19 @@ class FoodCard extends StatelessWidget {
   }
 
   String _getKJoulesToAddText({required MeasurementUnit measurementUnit, required BuildContext context}) {
-    String kJoulsAddName = AppLocalizations.of(context)!.hundred_measurement_unit(measurementUnit.text);
-
+    String kJoulsAddName;
     if (_food.defaultFoodUnit != null) {
-      kJoulsAddName = "${_food.defaultFoodUnit!.name} (${ConvertValidate.numberFomatterInt.format(_food.defaultFoodUnit!.amount)}${measurementUnit.text})";
+      kJoulsAddName =
+          "${_food.defaultFoodUnit!.name} (${ConvertValidate.getCleanDoubleString(
+            doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: _food.defaultFoodUnit!.amount) : ConvertValidate.getDisplayVolume(volumeMl: _food.defaultFoodUnit!.amount),
+          )}${measurementUnit == MeasurementUnit.gram ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)})";
+    } else {
+      kJoulsAddName =
+          "${ConvertValidate.getCleanDoubleString(
+            doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: _food.nutritionPerGramAmount!) : ConvertValidate.getDisplayWeightG(weightG: _food.nutritionPerMilliliterAmount!),
+          )}${measurementUnit == MeasurementUnit.gram ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
     }
+
     return kJoulsAddName;
   }
 

@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:intl/intl.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/week_of_year.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -38,11 +37,11 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentDate)) {
                   dayData.add({
                     OpenEatsJournalStrings.chartDateInformation: currentDate,
-                    OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                      kJoules: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.kJoule,
+                    OpenEatsJournalStrings.chartKCalIntake: ConvertValidate.getDisplayEnergy(
+                      energyKJ: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.kJoule,
                     ),
-                    OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                      kJoules: snapshot.data!.groupNutritionTargets![currentDate]!.kJoule,
+                    OpenEatsJournalStrings.chartKCalTarget: ConvertValidate.getDisplayEnergy(
+                      energyKJ: snapshot.data!.groupNutritionTargets![currentDate]!.kJoule,
                     ),
                     OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentDate]!.entryCount,
                   });
@@ -83,11 +82,11 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
                   weekData.add({
                     OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                    OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                      kJoules: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.nutritions.kJoule,
+                    OpenEatsJournalStrings.chartKCalIntake: ConvertValidate.getDisplayEnergy(
+                      energyKJ: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.nutritions.kJoule,
                     ),
-                    OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                      kJoules: snapshot.data!.groupNutritionTargets![currentWeekStartDate]!.kJoule,
+                    OpenEatsJournalStrings.chartKCalTarget: ConvertValidate.getDisplayEnergy(
+                      energyKJ: snapshot.data!.groupNutritionTargets![currentWeekStartDate]!.kJoule,
                     ),
                     OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.entryCount,
                   });
@@ -131,11 +130,11 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
                   monthData.add({
                     OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                    OpenEatsJournalStrings.chartKCalIntake: NutritionCalculator.getKCalsFromKJoules(
-                      kJoules: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.nutritions.kJoule,
+                    OpenEatsJournalStrings.chartKCalIntake: ConvertValidate.getDisplayEnergy(
+                      energyKJ: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.nutritions.kJoule,
                     ),
-                    OpenEatsJournalStrings.chartKCalTarget: NutritionCalculator.getKCalsFromKJoules(
-                      kJoules: snapshot.data!.groupNutritionTargets![currentMonthStartDate]!.kJoule,
+                    OpenEatsJournalStrings.chartKCalTarget: ConvertValidate.getDisplayEnergy(
+                      energyKJ: snapshot.data!.groupNutritionTargets![currentMonthStartDate]!.kJoule,
                     ),
                     OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.entryCount,
                   });

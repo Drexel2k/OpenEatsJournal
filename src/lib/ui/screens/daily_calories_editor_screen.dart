@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -52,28 +51,14 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
     _dailyKJoule = widget._dailyKJoule;
     _originalDailyTargetKJoule = widget._originalDailyTargetKJoule;
 
-    _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleMonday.value!),
-    );
-    _kJouleTuesdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value!),
-    );
-    _kJouleWednesdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value!),
-    );
-    _kJouleThursdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleThursday.value!),
-    );
-    _kJouleFridayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleFriday.value!),
-    );
-    _kJouleSaturdayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value!),
-    );
-    _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(
-      NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleSunday.value!),
-    );
-    
+    _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyMonday.value!);
+    _kJouleTuesdayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyTuesday.value!);
+    _kJouleWednesdayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyWednesday.value!);
+    _kJouleThursdayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyThursday.value!);
+    _kJouleFridayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyFriday.value!);
+    _kJouleSaturdayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energySaturday.value!);
+    _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energySunday.value!);
+
     super.initState();
   }
 
@@ -94,17 +79,18 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.daily_target_new, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.daily_target} ${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)} ${AppLocalizations.of(context)!.new_word}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: ValueListenableBuilder(
                           valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleTargetDaily,
                           builder: (_, _, _) {
                             return Text(
-                              AppLocalizations.of(context)!.amount_kcal(
-                                ConvertValidate.numberFomatterInt.format(
-                                  NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value),
-                                ),
-                              ),
+                              "${ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.kJouleTargetDaily.value)}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                               style: textTheme.titleMedium,
                             );
                           },
@@ -115,12 +101,15 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.daily_target_original, style: textTheme.bodySmall)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.daily_target} ${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)} ${AppLocalizations.of(context)!.original}:",
+                          style: textTheme.bodySmall,
+                        ),
+                      ),
                       Flexible(
                         child: Text(
-                          AppLocalizations.of(context)!.amount_kcal(
-                            ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _originalDailyTargetKJoule)),
-                          ),
+                          "${ConvertValidate.numberFomatterInt.format(_originalDailyTargetKJoule)}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                           style: textTheme.bodySmall,
                         ),
                       ),
@@ -129,12 +118,15 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.daily_need} ${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}:",
+                          style: textTheme.bodySmall,
+                        ),
+                      ),
                       Flexible(
                         child: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.amount_kcal(ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyKJoule))),
+                          "${ConvertValidate.numberFomatterInt.format(_dailyKJoule)}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                           style: textTheme.bodySmall,
                         ),
                       ),
@@ -144,7 +136,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.monday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.monday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,9 +160,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleMonday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energyMonday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleMondayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -173,15 +168,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleMondayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energyMondayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleMondayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energyMondayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.monday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleMonday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.monday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleMonday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
@@ -199,7 +192,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.tuesday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.tuesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,9 +216,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleTuesday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energyTuesday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleTuesdayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -228,15 +224,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleTuesdayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energyTuesdayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleTuesdayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energyTuesdayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.tuesday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleTuesday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.tuesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleTuesday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
@@ -254,7 +248,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.wednesday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.wednesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,9 +272,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleWednesday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energyWednesday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleWednesdayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -283,15 +280,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleWednesdayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energyWednesdayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleWednesdayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energyWednesdayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.wednesday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleWednesday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.wednesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleWednesday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
@@ -309,7 +304,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.thursday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.thursday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,9 +328,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleThursday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energyThursday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleThursdayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -338,15 +336,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleThursdayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energyThursdayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleThursdayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energyThursdayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.thursday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleThursday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.thursday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleThursday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
@@ -364,7 +360,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.friday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.friday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,9 +384,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleFriday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energyFriday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleFridayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -393,15 +392,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleFridayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energyFridayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleFridayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energyFridayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.friday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleFriday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.friday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleFriday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
@@ -419,7 +416,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.saturday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.saturday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,9 +440,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleSaturday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energySaturday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleSaturdayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -448,15 +448,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleSaturdayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energySaturdayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleSaturdayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energySaturdayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.saturday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleSaturday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.saturday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleSaturday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
@@ -474,7 +472,12 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.sunday_kcals_label, style: textTheme.titleMedium)),
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.sunday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}:",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -493,9 +496,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                               onChanged: (value) {
                                 int? intValue = int.tryParse(value);
-                                _dailyCaloriesEditorScreenViewModel.kJouleSunday.value = intValue != null
-                                    ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                                    : intValue;
+                                _dailyCaloriesEditorScreenViewModel.energySunday.value = intValue ?? intValue;
 
                                 if (intValue != null) {
                                   _kJouleSundayController.text = ConvertValidate.numberFomatterInt.format(intValue);
@@ -503,15 +504,13 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: _dailyCaloriesEditorScreenViewModel.kJouleSundayValid,
+                              valueListenable: _dailyCaloriesEditorScreenViewModel.energySundayValid,
                               builder: (_, _, _) {
-                                if (!_dailyCaloriesEditorScreenViewModel.kJouleSundayValid.value) {
+                                if (!_dailyCaloriesEditorScreenViewModel.energySundayValid.value) {
                                   return Text(
                                     AppLocalizations.of(context)!.input_invalid_value(
-                                      AppLocalizations.of(context)!.sunday_kcals,
-                                      ConvertValidate.numberFomatterInt.format(
-                                        NutritionCalculator.getKCalsFromKJoules(kJoules: _dailyCaloriesEditorScreenViewModel.kJoulePerdayKJouleSunday),
-                                      ),
+                                      "${AppLocalizations.of(context)!.sunday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleSunday),
                                     ),
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );

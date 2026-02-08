@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -32,8 +31,8 @@ class EatsJournalEntryRow extends StatelessWidget {
     String amountInformation = AppLocalizations.of(context)!.na;
     if (_eatsJournalEntry.amount != null) {
       amountInformation = _eatsJournalEntry.amountMeasurementUnit == MeasurementUnit.gram
-          ? AppLocalizations.of(context)!.amount_g(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalEntry.amount!))
-          : AppLocalizations.of(context)!.amount_ml(ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalEntry.amount!));
+          ? "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}"
+          : "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayVolume(volumeMl: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
     }
 
     return Row(
@@ -54,7 +53,7 @@ class EatsJournalEntryRow extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalEntry.kJoule))} ${AppLocalizations.of(context)!.kcal}",
+                            "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _eatsJournalEntry.kJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                           ),
                           Spacer(),
                           Text(amountInformation),

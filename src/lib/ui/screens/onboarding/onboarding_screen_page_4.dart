@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -7,9 +6,11 @@ import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmode
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
 
 class OnboardingScreenPage4 extends StatelessWidget {
-  const OnboardingScreenPage4({super.key, required onDone, required OnboardingScreenViewModel onboardingScreenViewModel})
+  OnboardingScreenPage4({super.key, required onDone, required OnboardingScreenViewModel onboardingScreenViewModel})
     : _onDone = onDone,
-      _onboardingScreenViewModel = onboardingScreenViewModel;
+      _onboardingScreenViewModel = onboardingScreenViewModel {
+    onboardingScreenViewModel.calculateKJoule();
+  }
 
   final OnboardingScreenViewModel _onboardingScreenViewModel;
   final VoidCallback _onDone;
@@ -98,10 +99,8 @@ class OnboardingScreenPage4 extends StatelessWidget {
                     builder: (contextBuilder, _, _) {
                       return Center(
                         child: Text(
-                          _onboardingScreenViewModel.dailyNeedKJoule.value != null
-                              ? ConvertValidate.numberFomatterInt.format(
-                                  NutritionCalculator.getKCalsFromKJoules(kJoules: _onboardingScreenViewModel.dailyNeedKJoule.value!),
-                                )
+                          _onboardingScreenViewModel.dailyNeedEnergy.value != null
+                              ? ConvertValidate.numberFomatterInt.format(_onboardingScreenViewModel.dailyNeedEnergy.value)
                               : AppLocalizations.of(contextBuilder)!.na,
 
                           style: textTheme.titleLarge,
@@ -118,10 +117,8 @@ class OnboardingScreenPage4 extends StatelessWidget {
                     builder: (contextBuilder, _, _) {
                       return Center(
                         child: Text(
-                          _onboardingScreenViewModel.dailyTargetKJoule.value != null
-                              ? ConvertValidate.numberFomatterInt.format(
-                                  NutritionCalculator.getKCalsFromKJoules(kJoules: _onboardingScreenViewModel.dailyTargetKJoule.value!),
-                                )
+                          _onboardingScreenViewModel.dailyTargetEnergy.value != null
+                              ? ConvertValidate.numberFomatterInt.format(_onboardingScreenViewModel.dailyTargetEnergy.value)
                               : AppLocalizations.of(contextBuilder)!.na,
                           style: textTheme.titleLarge,
                           textAlign: TextAlign.center,

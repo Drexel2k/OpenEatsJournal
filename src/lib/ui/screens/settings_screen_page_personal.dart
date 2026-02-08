@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/kjoule_per_day.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
@@ -61,16 +61,20 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(flex: 8, child: Text(AppLocalizations.of(context)!.daily_target_calories, style: textTheme.titleSmall)),
+                          Expanded(
+                            flex: 8,
+                            child: Text(
+                              "${AppLocalizations.of(context)!.daily_target} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                              style: textTheme.titleSmall,
+                            ),
+                          ),
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
                               valueListenable: widget._settingsScreenViewModel.dailyTargetKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(kJoules: widget._settingsScreenViewModel.dailyTargetKJoule.value),
-                                  ),
+                                  ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.dailyTargetKJoule.value),
                                   style: textTheme.titleSmall,
                                 );
                               },
@@ -81,16 +85,20 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(flex: 8, child: Text(AppLocalizations.of(context)!.daily_need_calories, style: textTheme.bodySmall)),
+                          Expanded(
+                            flex: 8,
+                            child: Text(
+                              "${AppLocalizations.of(context)!.daily_need} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                              style: textTheme.bodySmall,
+                            ),
+                          ),
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
                               valueListenable: widget._settingsScreenViewModel.dailyKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  ConvertValidate.numberFomatterInt.format(
-                                    NutritionCalculator.getKCalsFromKJoules(kJoules: widget._settingsScreenViewModel.dailyKJoule.value),
-                                  ),
+                                  ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.dailyKJoule.value),
                                   style: textTheme.bodySmall,
                                 );
                               },
@@ -215,7 +223,12 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleSmall)),
+                Expanded(
+                  child: Text(
+                    "${AppLocalizations.of(context)!.your_height} (${ConvertValidate.getLocalizedHeightUnitAbbreviated(context: context)}):",
+                    style: textTheme.titleSmall,
+                  ),
+                ),
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,6 +236,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                       ValueListenableBuilder(
                         valueListenable: widget._settingsScreenViewModel.height,
                         builder: (_, _, _) {
+                          //when widget._settingsScreenViewModel.height was changed programatically we need to update the controller
+                          _heightController.text = ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.height.value);
+
                           return SettingsTextField(
                             controller: _heightController,
                             keyboardType: TextInputType.numberWithOptions(signed: false),
@@ -237,7 +253,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             },
                             onChanged: (value) {
                               int? intValue = int.tryParse(value);
-                              widget._settingsScreenViewModel.height.value = intValue;
+                              widget._settingsScreenViewModel.setHeight(height: intValue);
                               if (intValue != null) {
                                 _heightController.text = ConvertValidate.numberFomatterInt.format(intValue);
                               }
@@ -272,7 +288,10 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                 Expanded(
                   child: Row(
                     children: [
-                      Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleSmall),
+                      Text(
+                        "${AppLocalizations.of(context)!.your_height} (${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
+                        style: textTheme.titleSmall,
+                      ),
                       Tooltip(
                         triggerMode: TooltipTriggerMode.tap,
                         showDuration: Duration(seconds: 60),
@@ -286,6 +305,14 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                   child: ValueListenableBuilder(
                     valueListenable: widget._settingsScreenViewModel.weight,
                     builder: (_, _, _) {
+                      //when widget._settingsScreenViewModel.weight was changed programatically we need to update the controller
+                      if (widget._settingsScreenViewModel.weight.value != null) {
+                        _weightController.text = ConvertValidate.getCleanDoubleEditString(
+                          doubleValue: widget._settingsScreenViewModel.weight.value!,
+                          doubleValueString: OpenEatsJournalStrings.emptyString,
+                        );
+                      }
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -303,6 +330,10 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
                                 num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                                 if (doubleValue != null) {
+                                  if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                                    return oldValue;
+                                  }
+
                                   return newValue;
                                 } else {
                                   return oldValue;
@@ -317,7 +348,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             },
                             onChanged: (value) {
                               num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
-                              widget._settingsScreenViewModel.weight.value = doubleValue as double?;
+                              widget._settingsScreenViewModel.setWeight(weight: doubleValue as double?);
 
                               if (doubleValue != null) {
                                 _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);

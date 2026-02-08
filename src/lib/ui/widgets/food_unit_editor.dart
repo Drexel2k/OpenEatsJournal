@@ -29,10 +29,10 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
   @override
   void initState() {
     _foodUnitEditorViewModel = widget._foodUnitEditorViewModel;
-    
+
     _nameController.text = _foodUnitEditorViewModel.name.value;
     _amountController.text = _foodUnitEditorViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_foodUnitEditorViewModel.amount.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodUnitEditorViewModel.amount.value!)
         : OpenEatsJournalStrings.emptyString;
 
     super.initState();
@@ -95,6 +95,10 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
 
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                         if (doubleValue != null) {
+                          if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            return oldValue;
+                          }
+
                           return newValue;
                         } else {
                           return oldValue;
@@ -139,8 +143,8 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                         : null,
                     child: Text(
                       _foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
-                          ? AppLocalizations.of(context)!.gram_abbreviated
-                          : AppLocalizations.of(context)!.milliliter_abbreviated,
+                          ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)
+                          : ConvertValidate.getLocalizedVolumeUnit2char(context: context),
                     ),
                   );
                 },

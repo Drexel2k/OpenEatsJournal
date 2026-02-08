@@ -3,7 +3,6 @@ import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -30,7 +29,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _kCalController = TextEditingController();
+  final TextEditingController _energyController = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
   final TextEditingController _sugarController = TextEditingController();
   final TextEditingController _fatController = TextEditingController();
@@ -40,7 +39,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _amountFocusNode = FocusNode();
-  final FocusNode _kCalFocusNode = FocusNode();
+  final FocusNode _energyFocusNode = FocusNode();
   final FocusNode _carbohydratesFocusNode = FocusNode();
   final FocusNode _sugarFocusNode = FocusNode();
   final FocusNode _fatFocusNode = FocusNode();
@@ -56,12 +55,28 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     _amountController.text = _eatsJournalQuickEntryEditScreenViewModel.amount.value != null
         ? ConvertValidate.numberFomatterInt.format(_eatsJournalQuickEntryEditScreenViewModel.amount.value)
         : OpenEatsJournalStrings.emptyString;
-    _kCalController.text = _eatsJournalQuickEntryEditScreenViewModel.kJoule.value != null
-        ? ConvertValidate.numberFomatterInt.format(
-            NutritionCalculator.getKCalsFromKJoules(kJoules: _eatsJournalQuickEntryEditScreenViewModel.kJoule.value as int),
-          )
+    _energyController.text = _eatsJournalQuickEntryEditScreenViewModel.energy.value != null
+        ? ConvertValidate.numberFomatterInt.format(_eatsJournalQuickEntryEditScreenViewModel.energy.value)
         : OpenEatsJournalStrings.emptyString;
-        
+    _carbohydratesController.text = _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _sugarController.text = _eatsJournalQuickEntryEditScreenViewModel.sugar.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.sugar.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _fatController.text = _eatsJournalQuickEntryEditScreenViewModel.fat.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.fat.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _saturatedFatController.text = _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _proteinController.text = _eatsJournalQuickEntryEditScreenViewModel.protein.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.protein.value!)
+        : OpenEatsJournalStrings.emptyString;
+    _saltController.text = _eatsJournalQuickEntryEditScreenViewModel.salt.value != null
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.salt.value!)
+        : OpenEatsJournalStrings.emptyString;
+
     super.initState();
   }
 
@@ -133,7 +148,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                 child: Column(
                   children: [
                     Row(
-                      children: [Expanded(child: Text(AppLocalizations.of(context)!.name_capital, style: textTheme.titleSmall))],
+                      children: [Expanded(child: Text("${AppLocalizations.of(context)!.name}:", style: textTheme.titleSmall))],
                     ),
                     Row(
                       children: [
@@ -192,8 +207,8 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                                 arguments: EatsJournalEntry.quick(
                                   entryDate: _eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value,
                                   name: _eatsJournalQuickEntryEditScreenViewModel.name.value,
-                                  kJoule: _eatsJournalQuickEntryEditScreenViewModel.kJoule.value != null
-                                      ? _eatsJournalQuickEntryEditScreenViewModel.kJoule.value!
+                                  kJoule: _eatsJournalQuickEntryEditScreenViewModel.energy.value != null
+                                      ? _eatsJournalQuickEntryEditScreenViewModel.energy.value!
                                       : 1,
                                   meal: _eatsJournalQuickEntryEditScreenViewModel.currentMeal.value,
                                   amount: _eatsJournalQuickEntryEditScreenViewModel.amount.value,
@@ -220,8 +235,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           Text(AppLocalizations.of(context)!.nutrition_values, style: textTheme.titleMedium),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.kcal_label, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.amount_label, style: textTheme.titleSmall)),
+              Expanded(
+                child: Text("${ConvertValidate.getLocalizedEnergyUnit(context: context)}:", style: textTheme.titleSmall),
+              ),
+              Expanded(child: Text("${AppLocalizations.of(context)!.amount}:", style: textTheme.titleSmall)),
             ],
           ),
           Row(
@@ -229,27 +246,25 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalQuickEntryEditScreenViewModel.kJoule,
+                  valueListenable: _eatsJournalQuickEntryEditScreenViewModel.energy,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
-                      controller: _kCalController,
+                      controller: _energyController,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      focusNode: _kCalFocusNode,
+                      focusNode: _energyFocusNode,
                       onTap: () {
                         //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                         //effect.
-                        if (!_kCalFocusNode.hasFocus) {
-                          _kCalController.selection = TextSelection(baseOffset: 0, extentOffset: _kCalController.text.length);
+                        if (!_energyFocusNode.hasFocus) {
+                          _energyController.selection = TextSelection(baseOffset: 0, extentOffset: _energyController.text.length);
                         }
                       },
                       onChanged: (value) {
                         int? intValue = int.tryParse(value);
-                        _eatsJournalQuickEntryEditScreenViewModel.kJoule.value = intValue != null
-                            ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue)
-                            : null;
+                        _eatsJournalQuickEntryEditScreenViewModel.energy.value = intValue;
                         if (intValue != null) {
-                          _kCalController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                          _energyController.text = ConvertValidate.numberFomatterInt.format(intValue);
                         }
                       },
                     );
@@ -274,6 +289,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -308,15 +327,15 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                     builder: (_, _) {
                       return RoundOutlinedButton(
                         onPressed: () {
-                          _eatsJournalQuickEntryEditScreenViewModel.currentMeasurementUnit.value =
-                              _eatsJournalQuickEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                          _eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value =
+                              _eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value == MeasurementUnit.gram
                               ? MeasurementUnit.milliliter
                               : MeasurementUnit.gram;
                         },
                         child: Text(
-                          _eatsJournalQuickEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
-                              ? AppLocalizations.of(context)!.gram_abbreviated
-                              : AppLocalizations.of(context)!.milliliter_abbreviated,
+                          _eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value == MeasurementUnit.gram
+                              ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)
+                              : ConvertValidate.getLocalizedVolumeUnit2char(context: context),
                         ),
                       );
                     },
@@ -326,9 +345,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             ],
           ),
           ValueListenableBuilder(
-            valueListenable: _eatsJournalQuickEntryEditScreenViewModel.kJouleValid,
+            valueListenable: _eatsJournalQuickEntryEditScreenViewModel.energyValid,
             builder: (_, _, _) {
-              if (!_eatsJournalQuickEntryEditScreenViewModel.kJouleValid.value) {
+              if (!_eatsJournalQuickEntryEditScreenViewModel.energyValid.value) {
                 return Text(
                   AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.kjoule, AppLocalizations.of(context)!.nothing),
                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
@@ -340,8 +359,8 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.carbohydrates_label, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.sugar, style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.carbohydrates}:", style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.sugar}:", style: textTheme.titleSmall)),
             ],
           ),
           Row(
@@ -363,6 +382,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -407,6 +430,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -438,8 +465,8 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.fat_label, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.saturated_fat, style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.fat}:", style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.saturated_fat}:", style: textTheme.titleSmall)),
             ],
           ),
           Row(
@@ -461,6 +488,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -505,6 +536,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -536,8 +571,8 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.protein_label, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.salt, style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.protein}:", style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.salt}:", style: textTheme.titleSmall)),
             ],
           ),
           Row(
@@ -559,6 +594,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -603,6 +642,10 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -698,7 +741,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
     _nameController.dispose();
     _amountController.dispose();
-    _kCalController.dispose();
+    _energyController.dispose();
     _carbohydratesController.dispose();
     _sugarController.dispose();
     _fatController.dispose();
@@ -708,7 +751,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
     _nameFocusNode.dispose();
     _amountFocusNode.dispose();
-    _kCalFocusNode.dispose();
+    _energyFocusNode.dispose();
     _carbohydratesFocusNode.dispose();
     _sugarFocusNode.dispose();
     _fatFocusNode.dispose();

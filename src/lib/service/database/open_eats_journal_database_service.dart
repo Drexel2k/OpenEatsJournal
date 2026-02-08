@@ -478,7 +478,7 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.settingLanguageCode: await getStringSetting(setting: OpenEatsJournalStrings.settingLanguageCode),
       OpenEatsJournalStrings.settingGender: await getIntSetting(setting: OpenEatsJournalStrings.settingGender),
       OpenEatsJournalStrings.settingBirthday: await getDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday),
-      OpenEatsJournalStrings.settingHeight: await getIntSetting(setting: OpenEatsJournalStrings.settingHeight),
+      OpenEatsJournalStrings.settingHeight: await getDoubleSetting(setting: OpenEatsJournalStrings.settingHeight),
       OpenEatsJournalStrings.settingActivityFactor: await getDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor),
       OpenEatsJournalStrings.settingWeightTarget: await getIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget),
       OpenEatsJournalStrings.settingKJouleMonday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday),
@@ -491,6 +491,10 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate: await getDateTimeSetting(
         setting: OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate,
       ),
+      OpenEatsJournalStrings.settingEnergyUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingEnergyUnit),
+      OpenEatsJournalStrings.settingHeightUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingHeightUnit),
+      OpenEatsJournalStrings.settingWeightUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingWeightUnit),
+      OpenEatsJournalStrings.settingVolumeUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingVolumeUnit),
     };
   }
 
@@ -550,7 +554,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnKiloJoule} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnCarbohydrates} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryCarbohydrates},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSugar} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySugar},
-              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFat} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryFat},
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFat} AS eats_journal_entry_fat,
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSaturatedFat} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySaturatedFat},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnProtein} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryProtein},
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnSalt} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntrySalt},

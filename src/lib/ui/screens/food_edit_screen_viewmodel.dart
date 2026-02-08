@@ -6,6 +6,7 @@ import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/food_unit_editor_data.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
@@ -19,16 +20,20 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _brands = ValueNotifier(food.brands.join(", ")),
       _nameValid = ValueNotifier(food.name.trim() != OpenEatsJournalStrings.emptyString),
       _barcode = ValueNotifier(food.barcode),
-      _nutritionPerGramAmount = ValueNotifier(food.nutritionPerGramAmount),
-      _nutritionPerMilliliterAmount = ValueNotifier(food.nutritionPerMilliliterAmount),
+      _nutritionPerGramAmount = ValueNotifier(
+        food.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: food.nutritionPerGramAmount!) : null,
+      ),
+      _nutritionPerMilliliterAmount = ValueNotifier(
+        food.nutritionPerMilliliterAmount != null ? ConvertValidate.getDisplayVolume(volumeMl: food.nutritionPerMilliliterAmount!) : null,
+      ),
       _amountsValid = food.nutritionPerGramAmount != null || food.nutritionPerMilliliterAmount != null ? ValueNotifier(true) : ValueNotifier(false),
-      _kJoule = ValueNotifier(food.kJoule),
-      _carbohydrates = ValueNotifier(food.carbohydrates),
-      _sugar = ValueNotifier(food.sugar),
-      _fat = ValueNotifier(food.fat),
-      _saturatedFat = ValueNotifier(food.saturatedFat),
-      _protein = ValueNotifier(food.protein),
-      _salt = ValueNotifier(food.salt),
+      _energy = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: food.kJoule)),
+      _carbohydrates = ValueNotifier(food.carbohydrates != null ? ConvertValidate.getDisplayWeightG(weightG: food.carbohydrates!) : null),
+      _sugar = ValueNotifier(food.sugar != null ? ConvertValidate.getDisplayWeightG(weightG: food.sugar!) : null),
+      _fat = ValueNotifier(food.fat != null ? ConvertValidate.getDisplayWeightG(weightG: food.fat!) : null),
+      _saturatedFat = ValueNotifier(food.saturatedFat != null ? ConvertValidate.getDisplayWeightG(weightG: food.saturatedFat!) : null),
+      _protein = ValueNotifier(food.protein != null ? ConvertValidate.getDisplayWeightG(weightG: food.protein!) : null),
+      _salt = ValueNotifier(food.salt != null ? ConvertValidate.getDisplayWeightG(weightG: food.salt!) : null),
       _foodUnitEditorsData = food.foodUnitsWithOrder
           .map(
             (ObjectWithOrder<FoodUnit> foodUnitWithOrder) => FoodUnitEditorData(
@@ -49,7 +54,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     _name.addListener(_nameChanged);
     _nutritionPerGramAmount.addListener(_amountsChanged);
     _nutritionPerMilliliterAmount.addListener(_amountsChanged);
-    _kJoule.addListener(_kJouleChanged);
+    _energy.addListener(_energyChanged);
   }
 
   final Food _food;
@@ -62,8 +67,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _nutritionPerGramAmount;
   final ValueNotifier<double?> _nutritionPerMilliliterAmount;
   final ValueNotifier<bool> _amountsValid;
-  final ValueNotifier<int?> _kJoule;
-  final ValueNotifier<bool> _kJouleValid = ValueNotifier(true);
+  final ValueNotifier<int?> _energy;
+  final ValueNotifier<bool> _energyValid = ValueNotifier(true);
   final ValueNotifier<double?> _carbohydrates;
   final ValueNotifier<double?> _sugar;
   final ValueNotifier<double?> _fat;
@@ -91,8 +96,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get nutritionPerGramAmount => _nutritionPerGramAmount;
   ValueNotifier<double?> get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
   ValueNotifier<bool> get amountsValid => _amountsValid;
-  ValueNotifier<int?> get kJoule => _kJoule;
-  ValueNotifier<bool> get kJouleValid => _kJouleValid;
+  ValueNotifier<int?> get energy => _energy;
+  ValueNotifier<bool> get kJouleValid => _energyValid;
   ValueNotifier<double?> get carbohydrates => _carbohydrates;
   ValueNotifier<double?> get sugar => _sugar;
   ValueNotifier<double?> get fat => _fat;
@@ -201,11 +206,11 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     foodUnitEditorViewModel.defaultFoodUnit.value = false;
   }
 
-  void _kJouleChanged() {
-    if (_kJoule.value != null) {
-      _kJouleValid.value = true;
+  void _energyChanged() {
+    if (_energy.value != null) {
+      _energyValid.value = true;
     } else {
-      _kJouleValid.value = false;
+      _energyValid.value = false;
     }
   }
 
@@ -231,7 +236,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       foodValid = false;
     }
 
-    if (foodValid && _kJoule.value == null) {
+    if (foodValid && _energy.value == null) {
       foodValid = false;
     }
 
@@ -269,11 +274,11 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       //It is important to set non null values first, before setting null values, otherwise it can be that both ambounts may get null, which is throws an
       //exception in the food...
       if (_nutritionPerGramAmount.value != null) {
-        _food.nutritionPerGramAmount = _nutritionPerGramAmount.value;
+        _food.nutritionPerGramAmount = ConvertValidate.getWeightG(displayWeight: _nutritionPerGramAmount.value!);
       }
 
       if (_nutritionPerMilliliterAmount.value != null) {
-        _food.nutritionPerMilliliterAmount = _nutritionPerMilliliterAmount.value;
+        _food.nutritionPerMilliliterAmount = ConvertValidate.getVolumeMl(displayVolume: _nutritionPerMilliliterAmount.value!);
       }
 
       if (_nutritionPerGramAmount.value == null) {
@@ -284,13 +289,13 @@ class FoodEditScreenViewModel extends ChangeNotifier {
         _food.nutritionPerMilliliterAmount = null;
       }
 
-      _food.kJoule = _kJoule.value!;
-      _food.carbohydrates = _carbohydrates.value;
-      _food.sugar = _sugar.value;
-      _food.fat = _fat.value;
-      _food.saturatedFat = _saturatedFat.value;
-      _food.protein = _protein.value;
-      _food.salt = salt.value;
+      _food.kJoule = ConvertValidate.getEnergyKJ(displayEnergy: _energy.value!);
+      _food.carbohydrates = _carbohydrates.value != null ? ConvertValidate.getWeightG(displayWeight: _carbohydrates.value!) : null;
+      _food.sugar = _sugar.value != null ? ConvertValidate.getWeightG(displayWeight: _sugar.value!) : null;
+      _food.fat = _fat.value != null ? ConvertValidate.getWeightG(displayWeight: _fat.value!) : null;
+      _food.saturatedFat = _saturatedFat.value != null ? ConvertValidate.getWeightG(displayWeight: _saturatedFat.value!) : null;
+      _food.protein = _protein.value != null ? ConvertValidate.getWeightG(displayWeight: _protein.value!) : null;
+      _food.salt = _salt.value != null ? ConvertValidate.getWeightG(displayWeight: _salt.value!) : null;
 
       //remove deleted food units from food
       List<FoodUnit> foodUnitsToRemove = [];
@@ -308,7 +313,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
         }
       }
 
-      //updating food units in food and removing deleted ones, editors work only on temporary data and don't change the food.
+      //updating food units in food and add new ones, editors work only on temporary data and don't change the food.
       int order = 1;
       for (FoodUnitEditorData foodUnitEditorData in _foodUnitEditorsData) {
         //get food unit if it already existed and update
@@ -349,8 +354,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     _nutritionPerGramAmount.dispose();
     _nutritionPerMilliliterAmount.dispose();
     _amountsValid.dispose();
-    _kJoule.dispose();
-    _kJouleValid.dispose();
+    _energy.dispose();
+    _energyValid.dispose();
     _carbohydrates.dispose();
     _sugar.dispose();
     _fat.dispose();

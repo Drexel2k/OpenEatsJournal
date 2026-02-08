@@ -44,7 +44,7 @@ class _WeightRowState extends State<WeightRow> {
     _onDeletePressed = widget._onDeletePressed;
     _deleteIconColor = widget._deleteIconColor;
 
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeightDisplay);
     super.initState();
   }
 
@@ -74,6 +74,10 @@ class _WeightRowState extends State<WeightRow> {
 
                         num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                         if (doubleValue != null) {
+                          if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            return oldValue;
+                          }
+
                           return newValue;
                         } else {
                           return oldValue;
@@ -120,7 +124,7 @@ class _WeightRowState extends State<WeightRow> {
           builder: (_, _, _) {
             if (!_weightRowViewModel.weightValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeight),
+                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeightDisplay),
                 style: textTheme.labelSmall!.copyWith(color: Colors.red),
               );
             } else {

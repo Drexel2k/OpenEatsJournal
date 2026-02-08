@@ -150,29 +150,42 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           child: Column(
                             children: [
                               SizedBox(height: 55),
-                              Text(AppLocalizations.of(context)!.kcal, style: textTheme.titleLarge, textAlign: TextAlign.center),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
-                                  Text(
-                                    " ${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.maxValue - kJouleGaugeData.currentValue))}",
-                                    style: textTheme.titleMedium,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                "${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.currentValue))}/${ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: kJouleGaugeData.maxValue))}",
-                                style: textTheme.titleSmall,
-                                textAlign: TextAlign.center,
+                              ListenableBuilder(
+                                listenable: _eatsJournalScreenViewModel.settingsChanged,
+                                builder: (_, _) {
+                                  return Column(
+                                    children: [
+                                      Text(
+                                        ConvertValidate.getLocalizedEnergyUnit(context: context),
+                                        style: textTheme.titleLarge,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
+                                          Text(
+                                            " ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (kJouleGaugeData.maxValue - kJouleGaugeData.currentValue).toInt()))}",
+                                            style: textTheme.titleMedium,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.currentValue.toInt()))}/${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.maxValue.toInt()))}",
+                                        style: textTheme.titleSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                             ],
                           ),
                         ),
                         Column(
                           children: [
-                            SizedBox(height: 5,),
+                            SizedBox(height: 5),
                             Center(
                               child: SizedBox(
                                 height: dimension,
@@ -220,7 +233,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 ),
                               ],
                             ),
-                            
+
                             FutureBuilder<Map<int, bool>>(
                               future: _eatsJournalScreenViewModel.eatsJournalEntriesAvailableForLast8Days,
                               builder: (BuildContext context, AsyncSnapshot<Map<int, bool>> snapshot) {
@@ -235,9 +248,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                     children: [-7, -6, -5, -4, -3, -2, -1, 0].map((int dayIndex) {
                                       currentDate = currentDate.add(Duration(days: 1));
                                       DateTime chipDate = currentDate;
-                                      TextStyle? style = snapshot.data![dayIndex]!
-                                          ? TextStyle(color: dayButtonsTextColor, fontWeight: FontWeight.w900)
-                                          : null;
+                                      TextStyle? style = snapshot.data![dayIndex]! ? TextStyle(color: dayButtonsTextColor, fontWeight: FontWeight.w900) : null;
 
                                       return RoundTransparentChoiceChip(
                                         selected: _eatsJournalScreenViewModel.currentJournalDate.value == chipDate,
@@ -249,7 +260,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                     }).toList(),
                                   );
                                 } else {
-                                  return Text("No Data Available");
+                                  return Text(AppLocalizations.of(context)!.no_data);
                                 }
                               },
                             ),
@@ -404,10 +415,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                         } else if (snapshot.hasError) {
                                                           throw StateError("Something went wrong: ${snapshot.error}");
                                                         } else if (snapshot.hasData) {
-                                                          return Text(
-                                                            snapshot.data != null
-                                                                ? "${ConvertValidate.getCleanDoubleString(doubleValue: snapshot.data!.weight)}${AppLocalizations.of(context)!.kg}"
-                                                                : AppLocalizations.of(context)!.na,
+                                                          return ListenableBuilder(
+                                                            listenable: _eatsJournalScreenViewModel.settingsChanged,
+                                                            builder: (_, _) {
+                                                              return Text(
+                                                                snapshot.data != null
+                                                                    ? "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}"
+                                                                    : AppLocalizations.of(context)!.na,
+                                                              );
+                                                            },
                                                           );
                                                         } else {
                                                           return Text("No Data Available");
@@ -908,6 +924,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                         );
 
                                         _eatsJournalScreenViewModel.refreshWeightTarget();
+                                        _eatsJournalScreenViewModel.notifySettingsChanged();
                                       },
                                       icon: Icon(Icons.settings),
                                       iconSize: 36,

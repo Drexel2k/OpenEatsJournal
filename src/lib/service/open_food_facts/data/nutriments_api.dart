@@ -1,4 +1,4 @@
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 
 class NutrimentsApi {
@@ -67,7 +67,7 @@ class NutrimentsApi {
       energyKj: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy)
           ? _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergy])
           : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal)
-          ? NutritionCalculator.getKJoulesFromKCals(kCals: _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal]))
+          ? ConvertValidate.getKJoulesFromKCals(kCals: _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal]))
           : null,
       carbohydrates: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates)
           ? _getDoubleFromNumOrString(json[OpenFoodFactsApiStrings.fieldCarboHydrates])
@@ -82,7 +82,7 @@ class NutrimentsApi {
       energyKj100g: json.containsKey(OpenFoodFactsApiStrings.fieldEnergy100g)
           ? _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergy100g])
           : json.containsKey(OpenFoodFactsApiStrings.fieldEnergyKcal100g)
-          ? NutritionCalculator.getKJoulesFromKCals(kCals: _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal100g]))
+          ? ConvertValidate.getKJoulesFromKCals(kCals: _getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldEnergyKcal100g]))
           : null,
       carbohydrates100g: json.containsKey(OpenFoodFactsApiStrings.fieldCarboHydrates100g)
           ? _getDoubleFromNumOrString(json[OpenFoodFactsApiStrings.fieldCarboHydrates100g])

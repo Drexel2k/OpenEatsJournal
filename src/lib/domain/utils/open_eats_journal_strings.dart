@@ -67,6 +67,12 @@ class OpenEatsJournalStrings {
   static const String settingKJouleSunday = "kjoule_sunday";
   static const String settingLanguageCode = "language_code";
   static const String settingLastProcessedStandardFoodDataChangeDate = "last_processed_standard_food_data_change_date";
+  static const String settingEnergyUnit = "energy_unit";
+  static const String settingHeightUnit = "height_unit";
+  static const String settingWeightUnit = "weight_unit";
+  static const String settingVolumeUnit = "volume_unit";
+
+  
 
   static const String dbTableSetting = "t_setting";
   static const String dbTableWeightJournal = "t_weight_journal";
@@ -153,7 +159,7 @@ class OpenEatsJournalStrings {
   static const String dbResultEatsJournalEntryCarbohydrates = "eats_journal_entry_carbohydrates";
   static const String dbResultFoodSugar = "food_sugar";
   static const String dbResultEatsJournalEntrySugar = "eats_journal_entry_sugar";
-  static const String dbResultFoodFat = "eats_journal_entry_fat";
+  static const String dbResultFoodFat = "food_fat";
   static const String dbResultEatsJournalEntryFat = "eats_journal_entry_fat";
   static const String dbResultFoodSaturatedFat = "food_saturated_fat";
   static const String dbResultEatsJournalEntrySaturatedFat = "eats_journal_entry_saturated_fat";

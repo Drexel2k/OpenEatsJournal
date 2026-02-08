@@ -283,44 +283,52 @@ class FoodRepository {
         int order = 1;
         List<OrderedDefaultFoodUnit> orderedDefaultFoodUnits = [];
         if (_getMeasurementUnitFromApiString(value: foodApi.servingQuantityUnit) == nutrimentsMeasurementUnit) {
-          if (foodApi.servingQuantity != null && double.parse(foodApi.servingQuantity!) > 0) {
-            orderedDefaultFoodUnits.add(
-              OrderedDefaultFoodUnit(
-                foodUnitWithOrder: ObjectWithOrder(
-                  object: FoodUnit(
-                    name: OpenEatsJournalStrings.serving,
-                    amount: double.parse(foodApi.servingQuantity!),
-                    amountMeasurementUnit: nutrimentsMeasurementUnit,
-                    //dummy id, as serving/quantity info has no id in open food facts data
-                    originalFoodSourceFoodUnitId: "2",
+          //servingQuantity can also be String "null"...
+          if (foodApi.servingQuantity != null) {
+            double? quantity = double.tryParse(foodApi.servingQuantity!);
+            if (quantity != null && quantity > 0) {
+              orderedDefaultFoodUnits.add(
+                OrderedDefaultFoodUnit(
+                  foodUnitWithOrder: ObjectWithOrder(
+                    object: FoodUnit(
+                      name: OpenEatsJournalStrings.serving,
+                      amount: double.parse(foodApi.servingQuantity!),
+                      amountMeasurementUnit: nutrimentsMeasurementUnit,
+                      //dummy id, as serving/quantity info has no id in open food facts data
+                      originalFoodSourceFoodUnitId: "2",
+                    ),
+                    order: order,
                   ),
-                  order: order,
+                  isDefault: true,
                 ),
-                isDefault: true,
-              ),
-            );
+              );
 
-            order++;
+              order++;
+            }
           }
         }
 
         if (_getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit) == nutrimentsMeasurementUnit) {
-          if (foodApi.productQuantity != null && double.parse(foodApi.productQuantity!) > 0) {
-            orderedDefaultFoodUnits.add(
-              OrderedDefaultFoodUnit(
-                foodUnitWithOrder: ObjectWithOrder(
-                  object: FoodUnit(
-                    name: OpenEatsJournalStrings.piece,
-                    amount: double.parse(foodApi.productQuantity!),
-                    amountMeasurementUnit: nutrimentsMeasurementUnit,
-                    //dummy id, as serving/quantity info has no id in open food facts data
-                    originalFoodSourceFoodUnitId: "1",
+          //productQuantity can also be String "null"...
+          if (foodApi.productQuantity != null) {
+            double? quantity = double.tryParse(foodApi.productQuantity!);
+            if (quantity != null && quantity > 0) {
+              orderedDefaultFoodUnits.add(
+                OrderedDefaultFoodUnit(
+                  foodUnitWithOrder: ObjectWithOrder(
+                    object: FoodUnit(
+                      name: OpenEatsJournalStrings.piece,
+                      amount: double.parse(foodApi.productQuantity!),
+                      amountMeasurementUnit: nutrimentsMeasurementUnit,
+                      //dummy id, as serving/quantity info has no id in open food facts data
+                      originalFoodSourceFoodUnitId: "1",
+                    ),
+                    order: order,
                   ),
-                  order: order,
+                  isDefault: orderedDefaultFoodUnits.isEmpty,
                 ),
-                isDefault: orderedDefaultFoodUnits.isEmpty,
-              ),
-            );
+              );
+            }
           }
         }
 

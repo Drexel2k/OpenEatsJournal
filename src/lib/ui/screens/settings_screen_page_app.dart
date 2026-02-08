@@ -2,6 +2,10 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/domain/utils/energy_unit.dart";
+import "package:openeatsjournal/domain/utils/height_unit.dart";
+import "package:openeatsjournal/domain/utils/volume_unit.dart";
+import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/about_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
@@ -28,7 +32,7 @@ class SettingsScreenPageApp extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.about_label, style: textTheme.titleSmall)),
+                Expanded(flex: 1, child: Text("${AppLocalizations.of(context)!.about}:", style: textTheme.titleSmall)),
                 Flexible(
                   flex: 1,
                   child: OutlinedButton(
@@ -200,6 +204,179 @@ class SettingsScreenPageApp extends StatelessWidget {
                             selected: _settingsViewModel.languageCode.value == OpenEatsJournalStrings.de,
                             onSelected: (bool selected) {
                               _settingsViewModel.languageCode.value = OpenEatsJournalStrings.de;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.energy_unit, style: textTheme.titleSmall)),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.energyUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.kjoule,
+                            selected: _settingsViewModel.energyUnit.value == EnergyUnit.kj,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.energyUnit.value = EnergyUnit.kj;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.energyUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.kcal,
+                            selected: _settingsViewModel.energyUnit.value == EnergyUnit.kcal,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.energyUnit.value = EnergyUnit.kcal;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.height_unit, style: textTheme.titleSmall)),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.heightUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.cm,
+                            selected: _settingsViewModel.heightUnit.value == HeightUnit.cm,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.heightUnit.value = HeightUnit.cm;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.heightUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.inch,
+                            selected: _settingsViewModel.heightUnit.value == HeightUnit.inch,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.heightUnit.value = HeightUnit.inch;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.weight_unit, style: textTheme.titleSmall)),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.weightUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.gram_abbreviated,
+                            selected: _settingsViewModel.weightUnit.value == WeightUnit.g,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.weightUnit.value = WeightUnit.g;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.weightUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.ounce_abbreviated,
+                            selected: _settingsViewModel.weightUnit.value == WeightUnit.oz,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.weightUnit.value = WeightUnit.oz;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 1, child: Text(AppLocalizations.of(context)!.volume_unit, style: textTheme.titleSmall)),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.volumeUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.milliliter_abbreviated,
+                            selected: _settingsViewModel.volumeUnit.value == VolumeUnit.ml,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.volumeUnit.value = VolumeUnit.ml;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.volumeUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.fluid_ounce_gb_abbreviated,
+                            selected: _settingsViewModel.volumeUnit.value == VolumeUnit.flOzGb,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.volumeUnit.value = VolumeUnit.flOzGb;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _settingsViewModel.volumeUnit,
+                        builder: (_, _, _) {
+                          return TransparentChoiceChip(
+                            label: AppLocalizations.of(context)!.fluid_ounce_us_abbreviated,
+                            selected: _settingsViewModel.volumeUnit.value == VolumeUnit.flOzUs,
+                            onSelected: (bool selected) {
+                              _settingsViewModel.volumeUnit.value = VolumeUnit.flOzUs;
                             },
                           );
                         },

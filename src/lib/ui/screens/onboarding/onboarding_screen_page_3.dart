@@ -2,7 +2,11 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/energy_unit.dart";
+import "package:openeatsjournal/domain/utils/height_unit.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/domain/utils/volume_unit.dart";
+import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
@@ -24,6 +28,9 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
   final TextEditingController _birthDayController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
+
+  final FocusNode _heightFocusNode = FocusNode();
+  final FocusNode _weightFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -117,7 +124,17 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.your_height, style: textTheme.titleSmall)),
+                      Expanded(
+                        child: ValueListenableBuilder(
+                          valueListenable: widget._onboardingScreenViewModel.volumeUnit,
+                          builder: (_, _, _) {
+                            return Text(
+                              "${AppLocalizations.of(context)!.your_height} (${ConvertValidate.getLocalizedHeightUnitAbbreviated(context: context)}):",
+                              style: textTheme.titleSmall,
+                            );
+                          },
+                        ),
+                      ),
                       Flexible(
                         child: Align(
                           alignment: Alignment.topLeft,
@@ -128,8 +145,11 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                                 controller: _heightController,
                                 keyboardType: TextInputType.numberWithOptions(signed: false),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                focusNode: _heightFocusNode,
                                 onTap: () {
-                                  _heightController.selection = TextSelection(baseOffset: 0, extentOffset: _heightController.text.length);
+                                  if (!_heightFocusNode.hasFocus) {
+                                    _heightController.selection = TextSelection(baseOffset: 0, extentOffset: _heightController.text.length);
+                                  }
                                 },
                                 onChanged: (value) {
                                   int? intValue = int.tryParse(value);
@@ -149,7 +169,17 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.your_weight, style: textTheme.titleSmall)),
+                      Expanded(
+                        child: ValueListenableBuilder(
+                          valueListenable: widget._onboardingScreenViewModel.volumeUnit,
+                          builder: (_, _, _) {
+                            return Text(
+                              "${AppLocalizations.of(context)!.your_weight} (${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
+                              style: textTheme.titleSmall,
+                            );
+                          },
+                        ),
+                      ),
                       Flexible(
                         child: Align(
                           alignment: Alignment.topLeft,
@@ -168,14 +198,21 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
 
                                     num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                                     if (doubleValue != null) {
+                                      if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                                        return oldValue;
+                                      }
+
                                       return newValue;
                                     } else {
                                       return oldValue;
                                     }
                                   }),
                                 ],
+                                focusNode: _weightFocusNode,
                                 onTap: () {
-                                  _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                                  if (!_weightFocusNode.hasFocus) {
+                                    _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                                  }
                                 },
                                 onChanged: (value) {
                                   double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
@@ -297,6 +334,79 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                     ],
                   ),
                   Spacer(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: Text(AppLocalizations.of(context)!.your_units, style: textTheme.titleSmall)),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ValueListenableBuilder(
+                              valueListenable: widget._onboardingScreenViewModel.volumeUnit,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(contextBuilder)!.units_de,
+                                  selected: widget._onboardingScreenViewModel.volumeUnit.value == VolumeUnit.ml,
+                                  onSelected: (bool selected) {
+                                    widget._onboardingScreenViewModel.volumeUnit.value = VolumeUnit.ml;
+                                    ConvertValidate.init(
+                                      languageCode: widget._onboardingScreenViewModel.languageCode,
+                                      energyUnit: EnergyUnit.kcal,
+                                      heightUnit: HeightUnit.cm,
+                                      weightUnit: WeightUnit.g,
+                                      volumeUnit: VolumeUnit.ml,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable: widget._onboardingScreenViewModel.volumeUnit,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(contextBuilder)!.units_en_us,
+                                  selected: widget._onboardingScreenViewModel.volumeUnit.value == VolumeUnit.flOzUs,
+                                  onSelected: (bool selected) {
+                                    widget._onboardingScreenViewModel.volumeUnit.value = VolumeUnit.flOzUs;
+                                    ConvertValidate.init(
+                                      languageCode: widget._onboardingScreenViewModel.languageCode,
+                                      energyUnit: EnergyUnit.kcal,
+                                      heightUnit: HeightUnit.inch,
+                                      weightUnit: WeightUnit.oz,
+                                      volumeUnit: VolumeUnit.flOzUs,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            ValueListenableBuilder(
+                              valueListenable: widget._onboardingScreenViewModel.volumeUnit,
+                              builder: (contextBuilder, _, _) {
+                                return TransparentChoiceChip(
+                                  label: AppLocalizations.of(contextBuilder)!.units_en_gb,
+                                  selected: widget._onboardingScreenViewModel.volumeUnit.value == VolumeUnit.flOzGb,
+                                  onSelected: (bool selected) {
+                                    widget._onboardingScreenViewModel.volumeUnit.value = VolumeUnit.flOzGb;
+                                    ConvertValidate.init(
+                                      languageCode: widget._onboardingScreenViewModel.languageCode,
+                                      energyUnit: EnergyUnit.kcal,
+                                      heightUnit: HeightUnit.inch,
+                                      weightUnit: WeightUnit.oz,
+                                      volumeUnit: VolumeUnit.flOzGb,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
                   Center(
                     child: FilledButton(
                       onPressed: () {
@@ -411,6 +521,10 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
   @override
   void dispose() {
     _birthDayController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
+    _heightFocusNode.dispose();
+    _weightFocusNode.dispose();
 
     super.dispose();
   }

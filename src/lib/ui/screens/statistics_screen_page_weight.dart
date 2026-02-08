@@ -44,7 +44,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateBeforeEntry.compareTo(currentDate) < 0) {
                       dayData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateBeforeEntry,
-                        OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min],
+                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                          weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min]!,
+                        ),
                       });
                     }
                   }
@@ -53,7 +55,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentDate)) {
                     dayData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentDate,
-                      OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![currentDate]!,
+                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentDate]!),
                     });
                   }
 
@@ -66,7 +68,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateAfterEntry.compareTo(currentDate) > 0) {
                       dayData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateAfterEntry,
-                        OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max],
+                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                          weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max]!,
+                        ),
                       });
                     }
                   }
@@ -110,7 +114,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateBeforeEntry.compareTo(currentWeekStartDate) < 0) {
                       weekData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateBeforeEntry,
-                        OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min],
+                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                          weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min]!,
+                        ),
                       });
                     }
                   }
@@ -119,7 +125,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentWeekStartDate)) {
                     weekData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                      OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![currentWeekStartDate]!,
+                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        weightKg: snapshot.data!.groupMaxWeights![currentWeekStartDate]!,
+                      ),
                     });
                   }
 
@@ -130,7 +138,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateAfterEntry.compareTo(currentWeekStartDate) > 0) {
                       weekData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateAfterEntry,
-                        OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max],
+                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                          weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max]!,
+                        ),
                       });
                     }
                   }
@@ -176,7 +186,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateBeforeEntry.compareTo(currentMonthStartDate) < 0) {
                       monthData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateBeforeEntry,
-                        OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min],
+                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                          weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min]!,
+                        ),
                       });
                     }
                   }
@@ -185,7 +197,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentMonthStartDate)) {
                     monthData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                      OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![currentMonthStartDate]!,
+                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        weightKg: snapshot.data!.groupMaxWeights![currentMonthStartDate]!,
+                      ),
                     });
                   }
 
@@ -196,7 +210,9 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateAfterEntry.compareTo(currentMonthStartDate) > 0) {
                       monthData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateAfterEntry,
-                        OpenEatsJournalStrings.chartWeight: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max],
+                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                          weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max]!,
+                        ),
                       });
                     }
                   }

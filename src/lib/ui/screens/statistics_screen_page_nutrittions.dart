@@ -20,7 +20,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String statisticVar = _gatStatisticVar(statistic: _statistic);
+    String statisticVar = _getStatisticVar(statistic: _statistic);
 
     return Column(
       children: [
@@ -44,7 +44,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                     //don't put in empty days, as the line in the chart will drop to 0 then
                     dayData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentDate,
-                      statisticVar: _gatStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentDate),
+                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentDate),
                     });
                   }
 
@@ -88,7 +88,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                   if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
                     weekData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                      statisticVar: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.nutritions.fat,
+                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentWeekStartDate),
                     });
                   }
 
@@ -134,7 +134,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                   if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
                     monthData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                      statisticVar: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.nutritions.fat,
+                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentMonthStartDate),
                     });
                   }
 
@@ -166,39 +166,39 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
     );
   }
 
-  double? _gatStatisticData({
+  double? _getStatisticData({
     required StatisticType statistic,
     required DateTime currentDate,
     required AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot,
   }) {
     if (statistic == StatisticType.fat) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat;
+      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat!);
     }
 
     if (statistic == StatisticType.stauratedFat) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat;
+      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat!);
     }
 
     if (statistic == StatisticType.carbohydrates) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates;
+      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates!);
     }
 
     if (statistic == StatisticType.sugar) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar;
+      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar!);
     }
 
     if (statistic == StatisticType.protein) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein;
+      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein!);
     }
 
     if (statistic == StatisticType.salt) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt;
+      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt!);
     }
 
     throw StateError("Unknown statistic type.");
   }
 
-  String _gatStatisticVar({required StatisticType statistic}) {
+  String _getStatisticVar({required StatisticType statistic}) {
     if (statistic == StatisticType.fat) {
       return OpenEatsJournalStrings.chartfat;
     }

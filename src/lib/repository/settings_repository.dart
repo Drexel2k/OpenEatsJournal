@@ -2,6 +2,10 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/utils/energy_unit.dart";
+import "package:openeatsjournal/domain/utils/height_unit.dart";
+import "package:openeatsjournal/domain/utils/volume_unit.dart";
+import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -18,7 +22,7 @@ class SettingsRepository extends ChangeNotifier {
   final ValueNotifier<String> _languageCode = ValueNotifier(OpenEatsJournalStrings.en);
   late Gender _gender;
   late DateTime _birthday;
-  late int _height;
+  late double _height;
   late double _activityFactor;
   late WeightTarget _weightTarget;
   late int _kJouleMonday;
@@ -29,6 +33,10 @@ class SettingsRepository extends ChangeNotifier {
   late int _kJouleSaturday;
   late int _kJouleSunday;
   DateTime? _lastProcessedStandardFoodDataChangeDate;
+  late HeightUnit _heightUnit;
+  late WeightUnit _weightUnit;
+  late VolumeUnit _volumeUnit;
+  late EnergyUnit _energyUnit;
 
   set gender(Gender value) {
     _gender = value;
@@ -40,7 +48,7 @@ class SettingsRepository extends ChangeNotifier {
     _saveBirthday(birthday: value);
   }
 
-  set height(int value) {
+  set height(double value) {
     _height = value;
     _saveHeight(height: value);
   }
@@ -55,11 +63,31 @@ class SettingsRepository extends ChangeNotifier {
     _saveWeightTarget(weightTarget: value);
   }
 
+  set energyUnit(EnergyUnit value) {
+    _energyUnit = value;
+    _saveEnergyUnit(energyUnit: value);
+  }
+
+  set heightUnit(HeightUnit value) {
+    _heightUnit = value;
+    _saveHeightUnit(heightUnit: value);
+  }
+
+  set weightUnit(WeightUnit value) {
+    _weightUnit = value;
+    _saveWeightUnit(weightUnit: value);
+  }
+
+  set volumeUnit(VolumeUnit value) {
+    _volumeUnit = value;
+    _saveVolumeUnit(volumeUnit: value);
+  }
+
   ValueNotifier<bool> get darkMode => _darkMode;
   ValueNotifier<String> get languageCode => _languageCode;
   Gender get gender => _gender;
   DateTime get birthday => _birthday;
-  int get height => _height;
+  double get height => _height;
   double get activityFactor => _activityFactor;
   WeightTarget get weightTarget => _weightTarget;
   int get kJouleMonday => _kJouleMonday;
@@ -70,6 +98,10 @@ class SettingsRepository extends ChangeNotifier {
   int get kJouleSaturday => _kJouleSaturday;
   int get kJouleSunday => _kJouleSunday;
   DateTime? get lastProcessedStandardFoodDataChangeDate => _lastProcessedStandardFoodDataChangeDate;
+  EnergyUnit get energyUnit => _energyUnit;
+  HeightUnit get heightUnit => _heightUnit;
+  WeightUnit get weightUnit => _weightUnit;
+  VolumeUnit get volumeUnit => _volumeUnit;
 
   //non persistand app wide settings
   final ValueNotifier<bool> _onboarded = ValueNotifier(false);
@@ -81,7 +113,7 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get appName => "OpenEatsJournal";
-  String get appVersion => "1.0 RC3";
+  String get appVersion => "1.0 RC4";
   bool get useStagingServices => true;
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
@@ -97,13 +129,17 @@ class SettingsRepository extends ChangeNotifier {
 
     int? gender = settingData[OpenEatsJournalStrings.settingGender] as int?;
     int? weightTarget = settingData[OpenEatsJournalStrings.settingWeightTarget] as int?;
+    int? energyUnit = settingData[OpenEatsJournalStrings.settingEnergyUnit] as int?;
+    int? heightUnit = settingData[OpenEatsJournalStrings.settingHeightUnit] as int?;
+    int? weightUnit = settingData[OpenEatsJournalStrings.settingWeightUnit] as int?;
+    int? volumeUnit = settingData[OpenEatsJournalStrings.settingVolumeUnit] as int?;
 
     AllSettings allSettings = AllSettings(
       darkMode: settingData[OpenEatsJournalStrings.settingDarkmode] as bool?,
       languageCode: settingData[OpenEatsJournalStrings.settingLanguageCode] as String?,
       gender: gender != null ? Gender.getByValue(gender) : null,
       birthday: settingData[OpenEatsJournalStrings.settingBirthday] as DateTime?,
-      height: settingData[OpenEatsJournalStrings.settingHeight] as int?,
+      height: settingData[OpenEatsJournalStrings.settingHeight] as double?,
       activityFactor: settingData[OpenEatsJournalStrings.settingActivityFactor] as double?,
       weightTarget: weightTarget != null ? WeightTarget.getByValue(weightTarget) : null,
       kJouleMonday: settingData[OpenEatsJournalStrings.settingKJouleMonday] as int?,
@@ -114,6 +150,10 @@ class SettingsRepository extends ChangeNotifier {
       kJouleSaturday: settingData[OpenEatsJournalStrings.settingKJouleSaturday] as int?,
       kJouleSunday: settingData[OpenEatsJournalStrings.settingKJouleSunday] as int?,
       lastProcessedStandardFoodDataChangeDate: settingData[OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate] as DateTime?,
+      energyUnit: energyUnit != null ? EnergyUnit.getByValue(energyUnit) : null,
+      heightUnit: heightUnit != null ? HeightUnit.getByValue(heightUnit) : null,
+      weightUnit: weightUnit != null ? WeightUnit.getByValue(weightUnit) : null,
+      volumeUnit: volumeUnit != null ? VolumeUnit.getByValue(volumeUnit) : null,
     );
 
     if (allSettings.darkMode != null &&
@@ -129,7 +169,11 @@ class SettingsRepository extends ChangeNotifier {
         allSettings.kJouleThursday != null &&
         allSettings.kJouleFriday != null &&
         allSettings.kJouleSaturday != null &&
-        allSettings.kJouleSunday != null) {
+        allSettings.kJouleSunday != null &&
+        allSettings.energyUnit != null &&
+        allSettings.heightUnit != null &&
+        allSettings.weightUnit != null &&
+        allSettings.volumeUnit != null) {
       _onboarded.value = true;
       _darkMode.value = allSettings.darkMode!;
       _languageCode.value = allSettings.languageCode!;
@@ -146,6 +190,10 @@ class SettingsRepository extends ChangeNotifier {
       _kJouleSaturday = allSettings.kJouleSaturday!;
       _kJouleSunday = allSettings.kJouleSunday!;
       _lastProcessedStandardFoodDataChangeDate = allSettings.lastProcessedStandardFoodDataChangeDate;
+      _energyUnit = allSettings.energyUnit!;
+      _heightUnit = allSettings.heightUnit!;
+      _weightUnit = allSettings.weightUnit!;
+      _volumeUnit = allSettings.volumeUnit!;
 
       //don't need to save when settings were just loaded, there listeners are set only now
       //need saving only when onboarded
@@ -175,12 +223,17 @@ class SettingsRepository extends ChangeNotifier {
       OpenEatsJournalStrings.settingKJouleFriday: settings.kJouleFriday!,
       OpenEatsJournalStrings.settingKJouleSaturday: settings.kJouleSaturday!,
       OpenEatsJournalStrings.settingKJouleSunday: settings.kJouleSunday!,
+      OpenEatsJournalStrings.settingEnergyUnit: settings.energyUnit!.value,
+      OpenEatsJournalStrings.settingHeightUnit: settings.heightUnit!.value,
+      OpenEatsJournalStrings.settingWeightUnit: settings.weightUnit!.value,
+      OpenEatsJournalStrings.settingVolumeUnit: settings.volumeUnit!.value,
     };
 
     await _oejDatabase.setSettings(allSettings: settingData);
 
     _onboarded.value = true;
     _darkMode.value = settings.darkMode!;
+    _languageCode.value = settings.languageCode!;
     _gender = settings.gender!;
     _birthday = settings.birthday!;
     _height = settings.height!;
@@ -193,7 +246,10 @@ class SettingsRepository extends ChangeNotifier {
     _kJouleFriday = settings.kJouleFriday!;
     _kJouleSaturday = settings.kJouleSaturday!;
     _kJouleSunday = settings.kJouleSunday!;
-    _languageCode.value = settings.languageCode!;
+    _energyUnit = settings.energyUnit!;
+    _heightUnit = settings.heightUnit!;
+    _weightUnit = settings.weightUnit!;
+    _volumeUnit = settings.volumeUnit!;
 
     //add listeners when onboarding finished
     //need saving only when onboarded
@@ -216,8 +272,8 @@ class SettingsRepository extends ChangeNotifier {
     await _oejDatabase.setDateTimeSetting(setting: OpenEatsJournalStrings.settingBirthday, value: birthday);
   }
 
-  Future<void> _saveHeight({required int height}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingHeight, value: height);
+  Future<void> _saveHeight({required double height}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingHeight, value: height);
   }
 
   Future<void> _saveActivityFactor({required double activityFactor}) async {
@@ -226,6 +282,22 @@ class SettingsRepository extends ChangeNotifier {
 
   Future<void> _saveWeightTarget({required WeightTarget weightTarget}) async {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget, value: weightTarget.value);
+  }
+
+  Future<void> _saveEnergyUnit({required EnergyUnit energyUnit}) async {
+    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingEnergyUnit, value: energyUnit.value);
+  }
+
+  Future<void> _saveHeightUnit({required HeightUnit heightUnit}) async {
+    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingHeightUnit, value: heightUnit.value);
+  }
+
+  Future<void> _saveWeightUnit({required WeightUnit weightUnit}) async {
+    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingWeightUnit, value: weightUnit.value);
+  }
+
+  Future<void> _saveVolumeUnit({required VolumeUnit volumeUnit}) async {
+    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingVolumeUnit, value: volumeUnit.value);
   }
 
   Future<void> saveKJouleMonday({required int kJoule}) async {

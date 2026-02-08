@@ -3,7 +3,6 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/food_unit_editor_data.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -32,7 +31,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _gramAmountController = TextEditingController();
   final TextEditingController _milliliterAmountController = TextEditingController();
-  final TextEditingController _kCalController = TextEditingController();
+  final TextEditingController _energyontroller = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
   final TextEditingController _sugarController = TextEditingController();
   final TextEditingController _fatController = TextEditingController();
@@ -45,7 +44,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   final FocusNode _barcodeFocusNode = FocusNode();
   final FocusNode _gramAmountFocusNode = FocusNode();
   final FocusNode _milliliterAmountFocusNode = FocusNode();
-  final FocusNode _kCalFocusNode = FocusNode();
+  final FocusNode _energyFocusNode = FocusNode();
   final FocusNode _carbohydratesFocusNode = FocusNode();
   final FocusNode _sugarFocusNode = FocusNode();
   final FocusNode _fatFocusNode = FocusNode();
@@ -66,24 +65,24 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _milliliterAmountController.text = _foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
         ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerMilliliterAmount.value!)
         : OpenEatsJournalStrings.emptyString;
-    _kCalController.text = ConvertValidate.numberFomatterInt.format(NutritionCalculator.getKCalsFromKJoules(kJoules: _foodEditScreenViewModel.kJoule.value!));
+    _energyontroller.text = ConvertValidate.numberFomatterInt.format(_foodEditScreenViewModel.energy.value);
     _carbohydratesController.text = _foodEditScreenViewModel.carbohydrates.value != null
-        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.carbohydrates.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.carbohydrates.value!)
         : OpenEatsJournalStrings.emptyString;
     _sugarController.text = _foodEditScreenViewModel.sugar.value != null
-        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.sugar.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.sugar.value!)
         : OpenEatsJournalStrings.emptyString;
     _fatController.text = _foodEditScreenViewModel.fat.value != null
-        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.fat.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.fat.value!)
         : OpenEatsJournalStrings.emptyString;
     _saturatedFatController.text = _foodEditScreenViewModel.saturatedFat.value != null
-        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.saturatedFat.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.saturatedFat.value!)
         : OpenEatsJournalStrings.emptyString;
     _proteinController.text = _foodEditScreenViewModel.protein.value != null
-        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.protein.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.protein.value!)
         : OpenEatsJournalStrings.emptyString;
     _saltController.text = _foodEditScreenViewModel.salt.value != null
-        ? ConvertValidate.numberFomatterDouble.format(_foodEditScreenViewModel.salt.value)
+        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.salt.value!)
         : OpenEatsJournalStrings.emptyString;
 
     super.initState();
@@ -107,7 +106,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Row(children: [Text(AppLocalizations.of(context)!.name_label, style: textTheme.titleSmall)]),
+                    Row(children: [Text("${AppLocalizations.of(context)!.name}:", style: textTheme.titleSmall)]),
                     Row(
                       children: [
                         Expanded(
@@ -191,7 +190,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Row(children: [Text(AppLocalizations.of(context)!.brands_label, style: textTheme.titleSmall)]),
+                    Row(children: [Text("${AppLocalizations.of(context)!.brands}:", style: textTheme.titleSmall)]),
                     Row(
                       children: [
                         Expanded(
@@ -220,8 +219,12 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           Text(AppLocalizations.of(context)!.amount_for_nutrition_values, style: textTheme.titleMedium),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.gram, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.milliliter, style: textTheme.titleSmall)),
+              Expanded(
+                child: Text("${ConvertValidate.getLocalizedWeightUnitG(context: context)}:", style: textTheme.titleSmall),
+              ),
+              Expanded(
+                child: Text("${ConvertValidate.getLocalizedVolumeUnit(context: context)}:", style: textTheme.titleSmall),
+              ),
             ],
           ),
           Row(
@@ -243,6 +246,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -287,6 +294,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -332,32 +343,36 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           Divider(thickness: 2, height: 20),
           Text(AppLocalizations.of(context)!.nutrition_values, style: textTheme.titleMedium),
           Row(
-            children: [Expanded(child: Text(AppLocalizations.of(context)!.kcal_label, style: textTheme.titleSmall))],
+            children: [
+              Expanded(
+                child: Text("${ConvertValidate.getLocalizedEnergyUnit(context: context)}:", style: textTheme.titleSmall),
+              ),
+            ],
           ),
           Row(
             children: [
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.kJoule,
+                  valueListenable: _foodEditScreenViewModel.energy,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
-                      controller: _kCalController,
+                      controller: _energyontroller,
                       keyboardType: TextInputType.numberWithOptions(signed: false),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      focusNode: _kCalFocusNode,
+                      focusNode: _energyFocusNode,
                       onTap: () {
                         //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                         //effect.
-                        if (!_kCalFocusNode.hasFocus) {
-                          _kCalController.selection = TextSelection(baseOffset: 0, extentOffset: _kCalController.text.length);
+                        if (!_energyFocusNode.hasFocus) {
+                          _energyontroller.selection = TextSelection(baseOffset: 0, extentOffset: _energyontroller.text.length);
                         }
                       },
                       onChanged: (value) {
                         int? intValue = int.tryParse(value);
-                        _foodEditScreenViewModel.kJoule.value = intValue != null ? NutritionCalculator.getKJoulesFromKCals(kCals: intValue) : null;
+                        _foodEditScreenViewModel.energy.value = intValue;
                         if (intValue != null) {
-                          _kCalController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                          _energyontroller.text = ConvertValidate.numberFomatterInt.format(intValue);
                         }
                       },
                     );
@@ -381,7 +396,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.carbohydrates_label, style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.carbohydrates}:", style: textTheme.titleSmall)),
               Expanded(child: Text(AppLocalizations.of(context)!.sugar, style: textTheme.titleSmall)),
             ],
           ),
@@ -404,6 +419,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -448,6 +467,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -474,8 +497,8 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.fat_label, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.saturated_fat, style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.fat}:", style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.saturated_fat}:", style: textTheme.titleSmall)),
             ],
           ),
           Row(
@@ -497,6 +520,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -541,6 +568,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -572,8 +603,8 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           ),
           Row(
             children: [
-              Expanded(child: Text(AppLocalizations.of(context)!.protein_label, style: textTheme.titleSmall)),
-              Expanded(child: Text(AppLocalizations.of(context)!.salt, style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.protein}:", style: textTheme.titleSmall)),
+              Expanded(child: Text("${AppLocalizations.of(context)!.salt}:", style: textTheme.titleSmall)),
             ],
           ),
           Row(
@@ -595,6 +626,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -639,6 +674,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -852,7 +891,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _barcodeController.dispose();
     _gramAmountController.dispose();
     _milliliterAmountController.dispose();
-    _kCalController.dispose();
+    _energyontroller.dispose();
     _carbohydratesController.dispose();
     _sugarController.dispose();
     _fatController.dispose();
@@ -865,7 +904,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _barcodeFocusNode.dispose();
     _gramAmountFocusNode.dispose();
     _milliliterAmountFocusNode.dispose();
-    _kCalFocusNode.dispose();
+    _energyFocusNode.dispose();
     _carbohydratesFocusNode.dispose();
     _sugarFocusNode.dispose();
     _fatFocusNode.dispose();

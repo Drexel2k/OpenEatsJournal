@@ -1,6 +1,11 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/energy_unit.dart";
+import "package:openeatsjournal/domain/utils/height_unit.dart";
+import "package:openeatsjournal/domain/utils/volume_unit.dart";
+import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
@@ -12,21 +17,27 @@ class SettingsScreenViewModel extends ChangeNotifier {
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
-      _height = ValueNotifier(settingsRepository.height),
+      _height = ValueNotifier(ConvertValidate.getDisplayHeight(heightCm: settingsRepository.height).round()),
       _lastValidWeight = weight,
-      _weight = ValueNotifier(weight),
+      _weight = ValueNotifier(ConvertValidate.getDisplayWeightKg(weightKg: weight)),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
-      _weightTarget = ValueNotifier(settingsRepository.weightTarget) {
+      _weightTarget = ValueNotifier(settingsRepository.weightTarget),
+      _energyUnit = ValueNotifier(settingsRepository.energyUnit),
+      _heightUnit = ValueNotifier(settingsRepository.heightUnit),
+      _weightUnit = ValueNotifier(settingsRepository.weightUnit),
+      _volumeUnit = ValueNotifier(settingsRepository.volumeUnit) {
     _setDailyKJoule();
     _setDailyTargetKJoule();
     _darkMode.addListener(_darkModeChanged);
     _languageCode.addListener(_languageCodeChanged);
     _gender.addListener(_genderChanged);
     _birthday.addListener(_birthdayChanged);
-    _height.addListener(_heightChanged);
-    _weight.addListener(_weightChanged);
     _activityFactor.addListener(_activityFactorChanged);
     _weightTarget.addListener(_weightTargetChanged);
+    _energyUnit.addListener(_energyUnitChanged);
+    _heightUnit.addListener(_heightUnitChanged);
+    _weightUnit.addListener(_weightUnitChanged);
+    _volumeUnit.addListener(_volumeUnitChanged);
   }
 
   final SettingsRepository _settingsRepository;
@@ -45,6 +56,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _weightValid = ValueNotifier(true);
   final ValueNotifier<double> _activityFactor;
   final ValueNotifier<WeightTarget> _weightTarget;
+  final ValueNotifier<EnergyUnit> _energyUnit;
+  final ValueNotifier<HeightUnit> _heightUnit;
+  final ValueNotifier<WeightUnit> _weightUnit;
+  final ValueNotifier<VolumeUnit> _volumeUnit;
 
   final Debouncer _heightDebouncer = Debouncer();
   final Debouncer _weightDebouncer = Debouncer();
@@ -63,6 +78,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<bool> get weightValid => _weightValid;
   ValueNotifier<double> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget> get weightTarget => _weightTarget;
+  ValueNotifier<EnergyUnit> get energyUnit => _energyUnit;
+  ValueNotifier<HeightUnit> get heightUnit => _heightUnit;
+  ValueNotifier<WeightUnit> get weightUnit => _weightUnit;
+  ValueNotifier<VolumeUnit> get volumeUnit => _volumeUnit;
 
   int get kJouleMonday => _settingsRepository.kJouleMonday;
   int get kJouleTuesday => _settingsRepository.kJouleTuesday;
@@ -71,7 +90,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   int get kJouleFriday => _settingsRepository.kJouleFriday;
   int get kJouleSaturday => _settingsRepository.kJouleSaturday;
   int get kJouleSunday => _settingsRepository.kJouleSunday;
-  int get repositoryHeight => _settingsRepository.height;
+  double get repositoryHeight => _settingsRepository.height;
 
   SettingsRepository get settingsRepository => _settingsRepository;
 
@@ -79,16 +98,18 @@ class SettingsScreenViewModel extends ChangeNotifier {
   String get appVersion => _settingsRepository.appVersion;
 
   void _setDailyTargetKJoule() {
-    _dailyTargetKJoule.value =
-        ((_settingsRepository.kJouleMonday +
-                    _settingsRepository.kJouleTuesday +
-                    _settingsRepository.kJouleWednesday +
-                    _settingsRepository.kJouleThursday +
-                    _settingsRepository.kJouleFriday +
-                    _settingsRepository.kJouleSaturday +
-                    _settingsRepository.kJouleSunday) /
-                7)
-            .round();
+    _dailyTargetKJoule.value = ConvertValidate.getDisplayEnergy(
+      energyKJ:
+          ((_settingsRepository.kJouleMonday +
+                      _settingsRepository.kJouleTuesday +
+                      _settingsRepository.kJouleWednesday +
+                      _settingsRepository.kJouleThursday +
+                      _settingsRepository.kJouleFriday +
+                      _settingsRepository.kJouleSaturday +
+                      _settingsRepository.kJouleSunday) /
+                  7)
+              .round(),
+    );
   }
 
   int _getDailyKJoule() {
@@ -101,7 +122,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
       age = age - 1;
     }
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTotalKJoulePerDay(
+    int dailyKJoule = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _lastValidWeight,
         heightCm: _settingsRepository.height,
@@ -111,15 +132,15 @@ class SettingsScreenViewModel extends ChangeNotifier {
       activityFactor: _settingsRepository.activityFactor,
     ).round();
 
-    if (dailyTargetKJoule < 1) {
-      dailyTargetKJoule = 1;
+    if (dailyKJoule < 1) {
+      dailyKJoule = 1;
     }
 
-    return dailyTargetKJoule;
+    return dailyKJoule;
   }
 
   void _setDailyKJoule() {
-    _dailyKJoule.value = _getDailyKJoule();
+    _dailyKJoule.value = ConvertValidate.getDisplayEnergy(energyKJ: _getDailyKJoule());
   }
 
   void _darkModeChanged() {
@@ -140,35 +161,43 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _setDailyKJoule();
   }
 
-  void _heightChanged() {
-    if (_height.value != null && _height.value! > 0 && _height.value! < 1000) {
-      _heightValid.value = true;
+  void setHeight({required int? height, onlyUnitChange = false}) {
+    _height.value = height;
 
-      _heightDebouncer.run(
-        callback: () async {
-          _settingsRepository.height = _height.value!;
-          _setDailyKJoule();
-        },
-      );
-    } else {
-      _heightDebouncer.cancel();
-      _heightValid.value = false;
+    if (!onlyUnitChange) {
+      if (_height.value != null && _height.value! > 0 && _height.value! < 1000) {
+        _heightValid.value = true;
+
+        _heightDebouncer.run(
+          callback: () async {
+            _settingsRepository.height = ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble());
+            _setDailyKJoule();
+          },
+        );
+      } else {
+        _heightDebouncer.cancel();
+        _heightValid.value = false;
+      }
     }
   }
 
-  void _weightChanged() {
-    if (_weight.value != null && _weight.value! > 0 && _weight.value! <= 1000) {
-      _weightValid.value = true;
+  void setWeight({required double? weight, onlyUnitChange = false}) {
+    _weight.value = weight;
 
-      _weightDebouncer.run(
-        callback: () async {
-          _lastValidWeight = _weight.value!;
-          _setDailyKJoule();
-        },
-      );
-    } else {
-      _weightDebouncer.cancel();
-      _weightValid.value = false;
+    if (!onlyUnitChange) {
+      if (_weight.value != null && _weight.value! > 0 && _weight.value! <= 1000) {
+        _weightValid.value = true;
+
+        _weightDebouncer.run(
+          callback: () async {
+            _lastValidWeight = ConvertValidate.getWeightKg(displayWeight: _weight.value!);
+            _setDailyKJoule();
+          },
+        );
+      } else {
+        _weightDebouncer.cancel();
+        _weightValid.value = false;
+      }
     }
   }
 
@@ -179,6 +208,43 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   void _weightTargetChanged() {
     _settingsRepository.weightTarget = _weightTarget.value;
+  }
+
+  void _energyUnitChanged() {
+    _settingsRepository.energyUnit = _energyUnit.value;
+    _updateConvertValidate();
+
+    _setDailyKJoule();
+    _setDailyTargetKJoule();
+  }
+
+  void _heightUnitChanged() {
+    _settingsRepository.heightUnit = _heightUnit.value;
+    _updateConvertValidate();
+
+    setHeight(height: ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height).round(), onlyUnitChange: true);
+  }
+
+  void _weightUnitChanged() {
+    _settingsRepository.weightUnit = _weightUnit.value;
+    _updateConvertValidate();
+
+    setWeight(weight: ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight), onlyUnitChange: true);
+  }
+
+  void _volumeUnitChanged() {
+    _settingsRepository.volumeUnit = _volumeUnit.value;
+    _updateConvertValidate();
+  }
+
+  void _updateConvertValidate() {
+    ConvertValidate.init(
+      languageCode: _settingsRepository.languageCode.value,
+      energyUnit: _settingsRepository.energyUnit,
+      heightUnit: _settingsRepository.heightUnit,
+      weightUnit: _settingsRepository.weightUnit,
+      volumeUnit: _settingsRepository.volumeUnit,
+    );
   }
 
   Future<void> recalculateDailykJouleTargetsAndSave() async {
@@ -205,7 +271,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
     await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule: dailyTargetKJoule);
 
-    _dailyTargetKJoule.value = dailyTargetKJoule;
+    _dailyTargetKJoule.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyTargetKJoule);
   }
 
   Future<bool> exportDatabase() async {

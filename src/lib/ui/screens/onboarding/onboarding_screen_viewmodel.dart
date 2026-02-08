@@ -2,6 +2,11 @@ import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/energy_unit.dart";
+import "package:openeatsjournal/domain/utils/height_unit.dart";
+import "package:openeatsjournal/domain/utils/volume_unit.dart";
+import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
@@ -20,16 +25,17 @@ class OnboardingScreenViewModel extends ChangeNotifier {
        _weight = ValueNotifier(null),
        _activityFactor = ValueNotifier(null),
        _weightTarget = ValueNotifier(null),
-       _dailyNeedKJoule = ValueNotifier(0),
-       _dailyTargetKJoule = ValueNotifier(0),
+       _dailyNeedEnergy = ValueNotifier(null),
+       _dailyTargetEnergy = ValueNotifier(null),
+       _volumeUnit = ValueNotifier(VolumeUnit.ml),
        _darkMode = darkMode,
-       _languagaCode = languageCode {
-    _gender.addListener(_calculateKJoule);
-    _birthday.addListener(_calculateKJoule);
-    _height.addListener(_calculateKJoule);
-    _weight.addListener(_calculateKJoule);
-    _activityFactor.addListener(_calculateKJoule);
-    _weightTarget.addListener(_calculateKJoule);
+       _languageCode = languageCode {
+    _gender.addListener(calculateKJoule);
+    _birthday.addListener(calculateKJoule);
+    _height.addListener(calculateKJoule);
+    _weight.addListener(calculateKJoule);
+    _activityFactor.addListener(calculateKJoule);
+    _weightTarget.addListener(calculateKJoule);
   }
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
@@ -42,10 +48,12 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _weight;
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget?> _weightTarget;
-  final ValueNotifier<int?> _dailyNeedKJoule;
-  final ValueNotifier<int?> _dailyTargetKJoule;
+  final ValueNotifier<int?> _dailyNeedEnergy;
+  final ValueNotifier<int?> _dailyTargetEnergy;
+  //we use the volume unite here because with this we can uniquely identy all other unit settings.
+  final ValueNotifier<VolumeUnit> _volumeUnit;
   final bool _darkMode;
-  final String _languagaCode;
+  final String _languageCode;
 
   ValueNotifier<int> get currentPageIndex => _currentPageIndex;
   bool get darkMode => _darkMode;
@@ -55,11 +63,12 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<double?> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget?> get weightTarget => _weightTarget;
-  ValueNotifier<int?> get dailyNeedKJoule => _dailyNeedKJoule;
-  ValueNotifier<int?> get dailyTargetKJoule => _dailyTargetKJoule;
+  ValueNotifier<int?> get dailyNeedEnergy => _dailyNeedEnergy;
+  ValueNotifier<int?> get dailyTargetEnergy => _dailyTargetEnergy;
+  ValueNotifier<VolumeUnit> get volumeUnit => _volumeUnit;
 
   String get contactData => _settingsRepository.contactData!;
-  String get languageCode => _languagaCode;
+  String get languageCode => _languageCode;
 
   Future<void> saveOnboardingData() async {
     int age = 0;
@@ -86,8 +95,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
     double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-        weightKg: _weight.value!,
-        heightCm: _height.value!,
+        weightKg: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
+        heightCm: ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble()),
         ageYear: age,
         gender: _gender.value!,
       ),
@@ -108,7 +117,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         darkMode: _darkMode,
         gender: _gender.value!,
         birthday: _birthday.value!,
-        height: _height.value!,
+        height: ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble()),
         activityFactor: _activityFactor.value!,
         weightTarget: _weightTarget.value!,
         kJouleMonday: dailyTargetKJoule,
@@ -118,23 +127,30 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         kJouleFriday: dailyTargetKJoule,
         kJouleSaturday: dailyTargetKJoule,
         kJouleSunday: dailyTargetKJoule,
-        languageCode: _languagaCode,
+        languageCode: _languageCode,
+        energyUnit: EnergyUnit.kcal,
+        heightUnit: _getHeightUnit(),
+        weightUnit: _getWeightUnit(),
+        volumeUnit: _volumeUnit.value,
       ),
     );
 
-    await _journalRepository.setWeightJournalEntry(date: DateTime.now(), weight: _weight.value!);
+    await _journalRepository.setWeightJournalEntry(
+      date: DateTime.now(),
+      weight: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
+    );
   }
 
-  void _calculateKJoule() {
+  void calculateKJoule() {
     bool dailyNeedKJouleCalculationPossible = true;
     bool dailyTargetKJouleCalculationPossible = true;
     if (_gender.value == null || _birthday.value == null || _height.value == null || _weight.value == null || _activityFactor.value == null) {
-      _dailyNeedKJoule.value = null;
+      _dailyNeedEnergy.value = null;
       dailyNeedKJouleCalculationPossible = false;
     }
 
     if (_weightTarget.value == null) {
-      _dailyTargetKJoule.value = null;
+      _dailyTargetEnergy.value = null;
       dailyTargetKJouleCalculationPossible = false;
     }
 
@@ -163,8 +179,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
       double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
         kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-          weightKg: _weight.value!,
-          heightCm: _height.value!,
+          weightKg: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
+          heightCm: ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble()),
           ageYear: age,
           gender: _gender.value!,
         ),
@@ -175,7 +191,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         dailyNeedKJouleDouble = 1;
       }
 
-      _dailyNeedKJoule.value = dailyNeedKJouleDouble.round();
+      _dailyNeedEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyNeedKJouleDouble.round());
 
       if (dailyTargetKJouleCalculationPossible) {
         double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(
@@ -186,9 +202,25 @@ class OnboardingScreenViewModel extends ChangeNotifier {
           dailyTargetKJouleDouble = 1;
         }
 
-        _dailyTargetKJoule.value = dailyTargetKJouleDouble.round();
+        _dailyTargetEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyTargetKJouleDouble.round());
       }
     }
+  }
+
+  HeightUnit _getHeightUnit() {
+    if (_volumeUnit.value == VolumeUnit.ml) {
+      return HeightUnit.cm;
+    }
+
+    return HeightUnit.inch;
+  }
+
+  WeightUnit _getWeightUnit() {
+    if (_volumeUnit.value == VolumeUnit.ml) {
+      return WeightUnit.g;
+    }
+
+    return WeightUnit.oz;
   }
 
   @override

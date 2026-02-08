@@ -27,7 +27,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
   @override
   void initState() {
     _weightJournalEntryAddScreenViewModel = widget._weightJournalEntryAddScreenViewModel;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay);
 
     super.initState();
   }
@@ -66,6 +66,10 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
 
                           num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
                           if (doubleValue != null) {
+                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                              return oldValue;
+                            }
+
                             return newValue;
                           } else {
                             return oldValue;
@@ -94,6 +98,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
               ),
             ],
           ),
+          SizedBox(height: 10),
           Text(AppLocalizations.of(context)!.weight_impact),
           ValueListenableBuilder(
             valueListenable: _weightJournalEntryAddScreenViewModel.weightValid,
@@ -102,7 +107,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                 return Text(
                   AppLocalizations.of(
                     context,
-                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeight),
+                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay),
                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                 );
               } else {

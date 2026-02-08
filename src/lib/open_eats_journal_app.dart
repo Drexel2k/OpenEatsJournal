@@ -3,6 +3,10 @@ import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
+import "package:openeatsjournal/domain/utils/energy_unit.dart";
+import "package:openeatsjournal/domain/utils/height_unit.dart";
+import "package:openeatsjournal/domain/utils/volume_unit.dart";
+import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
 import "package:openeatsjournal/app_global.dart";
@@ -51,7 +55,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _openEatsJournalAppViewModel.darkModeOrLanguageCodeChanged,
+      listenable: _openEatsJournalAppViewModel.appWideSettingChanged,
       builder: (contextBuilder, _) {
         return FutureBuilder<void>(
           future: _openEatsJournalAppViewModel.settingsLoaded,
@@ -63,6 +67,10 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
             } else {
               ThemeMode themeMode = ThemeMode.light;
               String languageCode = OpenEatsJournalStrings.en;
+              EnergyUnit energyUnit = EnergyUnit.kcal;
+              HeightUnit heightUnit = HeightUnit.cm;
+              WeightUnit weightUnit = WeightUnit.g;
+              VolumeUnit volumeUnit = VolumeUnit.ml;
               String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
 
               if (_openEatsJournalAppViewModel.onboarded) {
@@ -72,6 +80,10 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                 }
 
                 languageCode = _openEatsJournalAppViewModel.languageCode;
+                energyUnit = _openEatsJournalAppViewModel.energyUnit;
+                heightUnit = _openEatsJournalAppViewModel.heightUnit;
+                weightUnit = _openEatsJournalAppViewModel.weightUnit;
+                volumeUnit = _openEatsJournalAppViewModel.volumeUnit;
               } else {
                 //MediaQuery.of(context) lets Textfields reset their TextSelection after display of virtual keybord e.g.!?! Also applies to date picker....
                 //see also main_layout.dart
@@ -86,10 +98,23 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                   languageCode = platformLanguageCode;
                 }
 
+                if (languageCode == OpenEatsJournalStrings.de) {
+                  heightUnit = HeightUnit.cm;
+                  weightUnit = WeightUnit.g;
+                  volumeUnit = VolumeUnit.ml;
+                }
+
                 initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
               }
+              
+              ConvertValidate.init(
+                languageCode: languageCode,
+                energyUnit: energyUnit,
+                heightUnit: heightUnit,
+                weightUnit: weightUnit,
+                volumeUnit: volumeUnit,
+              );
 
-              ConvertValidate.init(languageCode: languageCode);
               _openEatsJournalAppViewModel.initStandardFoodData(languageCode: languageCode);
 
               //we need a second future to ensure sequence of loading settings and loading standard food data that changes settings.

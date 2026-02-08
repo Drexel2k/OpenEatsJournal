@@ -1,6 +1,7 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/food_unit_editor_data.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
@@ -23,7 +24,13 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
        _foodNutritionPerMilliliter = foodNutritionPerMilliliter,
        _name = ValueNotifier(foodUnitEditorData.name),
        _nameValid = ValueNotifier(foodUnitEditorData.name.trim() != OpenEatsJournalStrings.emptyString),
-       _amount = ValueNotifier(foodUnitEditorData.amount),
+       _amount = ValueNotifier(
+         foodUnitEditorData.amount != null
+             ? (foodUnitEditorData.amountMeasurementUnit == MeasurementUnit.gram
+                   ? ConvertValidate.getDisplayWeightG(weightG: foodUnitEditorData.amount!)
+                   : ConvertValidate.getDisplayVolume(volumeMl: foodUnitEditorData.amount!))
+             : null,
+       ),
        _amountValid = ValueNotifier(foodUnitEditorData.amount != null),
        _currentMeasurementUnit = ValueNotifier(foodUnitEditorData.amountMeasurementUnit),
        _measurementUnitSwitchButtonEnabled = ValueNotifier(
@@ -81,7 +88,11 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   }
 
   void _amountChanged() {
-    _foodUnitEditorData.amount = _amount.value;
+    _foodUnitEditorData.amount = _amount.value != null
+        ? (_currentMeasurementUnit.value == MeasurementUnit.gram
+              ? ConvertValidate.getWeightG(displayWeight: _amount.value!)
+              : ConvertValidate.getVolumeMl(displayVolume: _amount.value!))
+        : null;
     if (_amount.value != null) {
       _amountValid.value = true;
     } else {

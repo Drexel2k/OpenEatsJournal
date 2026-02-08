@@ -27,6 +27,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   Future<WeightJournalEntry?> _currentWeight;
   Future<Map<int, bool>> _eatsJournalEntriesAvailableForLast8Days;
   final ExternalTriggerChangedNotifier _currentWeightChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangedNotifier _settingsChanged = ExternalTriggerChangedNotifier();
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
@@ -41,6 +42,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   JournalRepository get journalRepository => _journalRepository;
 
   ExternalTriggerChangedNotifier get currentWeightChanged => _currentWeightChanged;
+  ExternalTriggerChangedNotifier get settingsChanged => _settingsChanged;
 
   bool get darkMode => _settingsRepository.darkMode.value;
 
@@ -69,9 +71,13 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   }
 
   void refreshWeightTarget() {
-    //no need to refresh data _dayData, either the screen was opened with saved day targets then they remain the same,
+    //no need to refresh data _dayData, either the screen was opened with saved day targets then they remain the same in _dayData,
     //or the screen was opened without saved day targets then the target is requeried in EatsJournalScreen._getKJouleGaugeData e.g.
     _eatsJournalDataChanged.notify();
+  }
+
+  void notifySettingsChanged() {
+    _settingsChanged.notify();
   }
 
   void refreshCurrentWeight() {

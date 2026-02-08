@@ -1,5 +1,6 @@
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/kjoule_per_day.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
@@ -7,251 +8,257 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   DailyCaloriesEditorScreenViewModel({required KJoulePerDay kJoulePerDay, required SettingsRepository settingsRepository})
     : _settingsRepository = settingsRepository,
       _kJouleTargetDaily = ValueNotifier(
-        ((kJoulePerDay.kJouleMonday +
-                    kJoulePerDay.kJouleTuesday +
-                    kJoulePerDay.kJouleWednesday +
-                    kJoulePerDay.kJouleThursday +
-                    kJoulePerDay.kJouleFriday +
-                    kJoulePerDay.kJouleSaturday +
-                    kJoulePerDay.kJouleSunday) /
-                7)
-            .round(),
+        ConvertValidate.getDisplayEnergy(
+          energyKJ:
+              ((kJoulePerDay.kJouleMonday +
+                          kJoulePerDay.kJouleTuesday +
+                          kJoulePerDay.kJouleWednesday +
+                          kJoulePerDay.kJouleThursday +
+                          kJoulePerDay.kJouleFriday +
+                          kJoulePerDay.kJouleSaturday +
+                          kJoulePerDay.kJouleSunday) /
+                      7)
+                  .round(),
+        ),
       ),
       _kJoulePerDay = kJoulePerDay,
-      _kJouleMonday = ValueNotifier(kJoulePerDay.kJouleMonday),
-      _kJouleMondayValid = ValueNotifier(true),
-      _kJouleTuesday = ValueNotifier(kJoulePerDay.kJouleTuesday),
-      _kJouleTuesdayValid = ValueNotifier(true),
-      _kJouleWednesday = ValueNotifier(kJoulePerDay.kJouleWednesday),
-      _kJouleWednesdayValid = ValueNotifier(true),
-      _kJouleThursday = ValueNotifier(kJoulePerDay.kJouleThursday),
-      _kJouleThursdayValid = ValueNotifier(true),
-      _kJouleFriday = ValueNotifier(kJoulePerDay.kJouleFriday),
-      _kJouleFridayValid = ValueNotifier(true),
-      _kJouleSaturday = ValueNotifier(kJoulePerDay.kJouleSaturday),
-      _kJouleSaturdayValid = ValueNotifier(true),
-      _kJouleSunday = ValueNotifier(kJoulePerDay.kJouleSunday),
-      _kJouleSundayValid = ValueNotifier(true) {
-    _kJouleMonday.addListener(_kJouleMondayChanged);
-    _kJouleTuesday.addListener(_kJouleTuesdayChanged);
-    _kJouleWednesday.addListener(_kJouleWednesdayChanged);
-    _kJouleThursday.addListener(_kJouleThursdayChanged);
-    _kJouleFriday.addListener(_kJouleFridayChanged);
-    _kJouleSaturday.addListener(_kJouleSaturdayChanged);
-    _kJouleSunday.addListener(_kJouleSundayChanged);
+      _energyMonday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleMonday)),
+      _energyMondayValid = ValueNotifier(true),
+      _energyTuesday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleTuesday)),
+      _energyTuesdayValid = ValueNotifier(true),
+      _energyWednesday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleWednesday)),
+      _energyWednesdayValid = ValueNotifier(true),
+      _energyThursday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleThursday)),
+      _energyThursdayValid = ValueNotifier(true),
+      _energyFriday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleFriday)),
+      _energyFridayValid = ValueNotifier(true),
+      _energySaturday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleSaturday)),
+      _energySaturdayValid = ValueNotifier(true),
+      _energySunday = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: kJoulePerDay.kJouleSunday)),
+      _energySundayValid = ValueNotifier(true) {
+    _energyMonday.addListener(_kJouleMondayChanged);
+    _energyTuesday.addListener(_kJouleTuesdayChanged);
+    _energyWednesday.addListener(_kJouleWednesdayChanged);
+    _energyThursday.addListener(_kJouleThursdayChanged);
+    _energyFriday.addListener(_kJouleFridayChanged);
+    _energySaturday.addListener(_kJouleSaturdayChanged);
+    _energySunday.addListener(_kJouleSundayChanged);
   }
 
   final SettingsRepository _settingsRepository;
 
+  //last valid value
   final KJoulePerDay _kJoulePerDay;
   final ValueNotifier<int> _kJouleTargetDaily;
-  final ValueNotifier<int?> _kJouleMonday;
-  final ValueNotifier<bool> _kJouleMondayValid;
-  final ValueNotifier<int?> _kJouleTuesday;
-  final ValueNotifier<bool> _kJouleTuesdayValid;
-  final ValueNotifier<int?> _kJouleWednesday;
-  final ValueNotifier<bool> _kJouleWednesdayValid;
-  final ValueNotifier<int?> _kJouleThursday;
-  final ValueNotifier<bool> _kJouleThursdayValid;
-  final ValueNotifier<int?> _kJouleFriday;
-  final ValueNotifier<bool> _kJouleFridayValid;
-  final ValueNotifier<int?> _kJouleSaturday;
-  final ValueNotifier<bool> _kJouleSaturdayValid;
-  final ValueNotifier<int?> _kJouleSunday;
-  final ValueNotifier<bool> _kJouleSundayValid;
+  final ValueNotifier<int?> _energyMonday;
+  final ValueNotifier<bool> _energyMondayValid;
+  final ValueNotifier<int?> _energyTuesday;
+  final ValueNotifier<bool> _energyTuesdayValid;
+  final ValueNotifier<int?> _energyWednesday;
+  final ValueNotifier<bool> _energyWednesdayValid;
+  final ValueNotifier<int?> _energyThursday;
+  final ValueNotifier<bool> _energyThursdayValid;
+  final ValueNotifier<int?> _energyFriday;
+  final ValueNotifier<bool> _energyFridayValid;
+  final ValueNotifier<int?> _energySaturday;
+  final ValueNotifier<bool> _energySaturdayValid;
+  final ValueNotifier<int?> _energySunday;
+  final ValueNotifier<bool> _energySundayValid;
 
   // ignore: constant_identifier_names
-  static const int _10000kCalInKjoule = 41840;
+  final int _energy10000KCal = ConvertValidate.getDisplayEnergy(energyKJ: 41840);
 
-  final Debouncer _kCalMondayDebouncer = Debouncer();
-  final Debouncer _kCalTuesdayDebouncer = Debouncer();
-  final Debouncer _kCalWednesdayDebouncer = Debouncer();
-  final Debouncer _kCalThursdayDebouncer = Debouncer();
-  final Debouncer _kCalFridayDebouncer = Debouncer();
-  final Debouncer _kCalSaturdayDebouncer = Debouncer();
-  final Debouncer _kCalSundayDebouncer = Debouncer();
+  final Debouncer _energyMondayDebouncer = Debouncer();
+  final Debouncer _energyTuesdayDebouncer = Debouncer();
+  final Debouncer _energyWednesdayDebouncer = Debouncer();
+  final Debouncer _energyThursdayDebouncer = Debouncer();
+  final Debouncer _energyFridayDebouncer = Debouncer();
+  final Debouncer _energySaturdayDebouncer = Debouncer();
+  final Debouncer _energySundayDebouncer = Debouncer();
 
   ValueNotifier<int> get kJouleTargetDaily => _kJouleTargetDaily;
-  ValueNotifier<int?> get kJouleMonday => _kJouleMonday;
-  ValueNotifier<bool> get kJouleMondayValid => _kJouleMondayValid;
-  ValueNotifier<int?> get kJouleTuesday => _kJouleTuesday;
-  ValueNotifier<bool> get kJouleTuesdayValid => _kJouleTuesdayValid;
-  ValueNotifier<int?> get kJouleWednesday => _kJouleWednesday;
-  ValueNotifier<bool> get kJouleWednesdayValid => _kJouleWednesdayValid;
-  ValueNotifier<int?> get kJouleThursday => _kJouleThursday;
-  ValueNotifier<bool> get kJouleThursdayValid => _kJouleThursdayValid;
-  ValueNotifier<int?> get kJouleFriday => _kJouleFriday;
-  ValueNotifier<bool> get kJouleFridayValid => _kJouleFridayValid;
-  ValueNotifier<int?> get kJouleSaturday => _kJouleSaturday;
-  ValueNotifier<bool> get kJouleSaturdayValid => _kJouleSaturdayValid;
-  ValueNotifier<int?> get kJouleSunday => _kJouleSunday;
-  ValueNotifier<bool> get kJouleSundayValid => _kJouleSundayValid;
+  ValueNotifier<int?> get energyMonday => _energyMonday;
+  ValueNotifier<bool> get energyMondayValid => _energyMondayValid;
+  ValueNotifier<int?> get energyTuesday => _energyTuesday;
+  ValueNotifier<bool> get energyTuesdayValid => _energyTuesdayValid;
+  ValueNotifier<int?> get energyWednesday => _energyWednesday;
+  ValueNotifier<bool> get energyWednesdayValid => _energyWednesdayValid;
+  ValueNotifier<int?> get energyThursday => _energyThursday;
+  ValueNotifier<bool> get energyThursdayValid => _energyThursdayValid;
+  ValueNotifier<int?> get energyFriday => _energyFriday;
+  ValueNotifier<bool> get energyFridayValid => _energyFridayValid;
+  ValueNotifier<int?> get energySaturday => _energySaturday;
+  ValueNotifier<bool> get energySaturdayValid => _energySaturdayValid;
+  ValueNotifier<int?> get energySunday => _energySunday;
+  ValueNotifier<bool> get energySundayValid => _energySundayValid;
 
-  int get kJoulePerdayKJouleMonday => _kJoulePerDay.kJouleMonday;
-  int get kJoulePerdayKJouleTuesday => _kJoulePerDay.kJouleTuesday;
-  int get kJoulePerdayKJouleWednesday => _kJoulePerDay.kJouleWednesday;
-  int get kJoulePerdayKJouleThursday => _kJoulePerDay.kJouleThursday;
-  int get kJoulePerdayKJouleFriday => _kJoulePerDay.kJouleFriday;
-  int get kJoulePerdayKJouleSaturday => _kJoulePerDay.kJouleSaturday;
-  int get kJoulePerdayKJouleSunday => _kJoulePerDay.kJouleSunday;
+  int get energyPerdayKJouleMonday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleMonday);
+  int get energyPerdayKJouleTuesday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleTuesday);
+  int get energyPerdayKJouleWednesday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleWednesday);
+  int get energyPerdayKJouleThursday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleThursday);
+  int get energyPerdayKJouleFriday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleFriday);
+  int get energyPerdayKJouleSaturday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleSaturday);
+  int get energyPerdayKJouleSunday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleSunday);
 
   void _kJouleMondayChanged() async {
-    if (_kJouleMonday.value != null && _kJouleMonday.value! > 0 && _kJouleMonday.value! < _10000kCalInKjoule) {
-      _kJouleMondayValid.value = true;
-      _kCalMondayDebouncer.run(
+    if (_energyMonday.value != null && _energyMonday.value! > 0 && _energyMonday.value! < _energy10000KCal) {
+      _energyMondayValid.value = true;
+      _energyMondayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleMonday = _kJouleMonday.value!;
+          _kJoulePerDay.kJouleMonday = ConvertValidate.getEnergyKJ(displayEnergy: _energyMonday.value!);
           await _settingsRepository.saveKJouleMonday(kJoule: _kJoulePerDay.kJouleMonday);
         },
       );
     } else {
-      _kCalMondayDebouncer.cancel();
-      _kJouleMondayValid.value = false;
+      _energyMondayDebouncer.cancel();
+      _energyMondayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _kJouleTuesdayChanged() async {
-    if (_kJouleTuesday.value != null && _kJouleTuesday.value! > 0 && _kJouleTuesday.value! < _10000kCalInKjoule) {
-      _kJouleTuesdayValid.value = true;
-      _kCalTuesdayDebouncer.run(
+    if (_energyTuesday.value != null && _energyTuesday.value! > 0 && _energyTuesday.value! < _energy10000KCal) {
+      _energyTuesdayValid.value = true;
+      _energyTuesdayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleTuesday = _kJouleTuesday.value!;
+          _kJoulePerDay.kJouleTuesday = ConvertValidate.getEnergyKJ(displayEnergy: _energyTuesday.value!);
           await _settingsRepository.saveKJouleTuesday(kJoule: _kJoulePerDay.kJouleTuesday);
         },
       );
     } else {
-      _kCalTuesdayDebouncer.cancel();
-      _kJouleTuesdayValid.value = false;
+      _energyTuesdayDebouncer.cancel();
+      _energyTuesdayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _kJouleWednesdayChanged() async {
-    if (_kJouleWednesday.value != null && _kJouleWednesday.value! > 0 && _kJouleWednesday.value! < _10000kCalInKjoule) {
-      _kJouleWednesdayValid.value = true;
-      _kCalWednesdayDebouncer.run(
+    if (_energyWednesday.value != null && _energyWednesday.value! > 0 && _energyWednesday.value! < _energy10000KCal) {
+      _energyWednesdayValid.value = true;
+      _energyWednesdayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleWednesday = _kJouleWednesday.value!;
+          _kJoulePerDay.kJouleWednesday = ConvertValidate.getEnergyKJ(displayEnergy: _energyWednesday.value!);
           await _settingsRepository.saveKJouleWednesday(kJoule: _kJoulePerDay.kJouleWednesday);
         },
       );
     } else {
-      _kCalWednesdayDebouncer.cancel();
-      _kJouleWednesdayValid.value = false;
+      _energyWednesdayDebouncer.cancel();
+      _energyWednesdayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _kJouleThursdayChanged() async {
-    if (_kJouleThursday.value != null && _kJouleThursday.value! > 0 && _kJouleThursday.value! < _10000kCalInKjoule) {
-      _kJouleThursdayValid.value = true;
-      _kCalThursdayDebouncer.run(
+    if (_energyThursday.value != null && _energyThursday.value! > 0 && _energyThursday.value! < _energy10000KCal) {
+      _energyThursdayValid.value = true;
+      _energyThursdayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleThursday = _kJouleThursday.value!;
+          _kJoulePerDay.kJouleThursday = ConvertValidate.getEnergyKJ(displayEnergy: _energyThursday.value!);
           await _settingsRepository.saveKJouleThursday(kJoule: _kJoulePerDay.kJouleThursday);
         },
       );
     } else {
-      _kCalThursdayDebouncer.cancel();
-      _kJouleThursdayValid.value = false;
+      _energyThursdayDebouncer.cancel();
+      _energyThursdayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _kJouleFridayChanged() async {
-    if (_kJouleFriday.value != null && _kJouleFriday.value! > 0 && _kJouleFriday.value! < _10000kCalInKjoule) {
-      _kJouleFridayValid.value = true;
-      _kCalFridayDebouncer.run(
+    if (_energyFriday.value != null && _energyFriday.value! > 0 && _energyFriday.value! < _energy10000KCal) {
+      _energyFridayValid.value = true;
+      _energyFridayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleFriday = _kJouleFriday.value!;
+          _kJoulePerDay.kJouleFriday = ConvertValidate.getEnergyKJ(displayEnergy: _energyFriday.value!);
           await _settingsRepository.saveKJouleFriday(kJoule: _kJoulePerDay.kJouleFriday);
         },
       );
     } else {
-      _kCalFridayDebouncer.cancel();
-      _kJouleFridayValid.value = false;
+      _energyFridayDebouncer.cancel();
+      _energyFridayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _kJouleSaturdayChanged() async {
-    if (_kJouleSaturday.value != null && _kJouleSaturday.value! > 0 && _kJouleSaturday.value! < _10000kCalInKjoule) {
-      _kJouleSaturdayValid.value = true;
-      _kCalSaturdayDebouncer.run(
+    if (_energySaturday.value != null && _energySaturday.value! > 0 && _energySaturday.value! < _energy10000KCal) {
+      _energySaturdayValid.value = true;
+      _energySaturdayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleSaturday = _kJouleSaturday.value!;
+          _kJoulePerDay.kJouleSaturday = ConvertValidate.getEnergyKJ(displayEnergy: _energySaturday.value!);
           await _settingsRepository.saveKJouleSaturday(kJoule: _kJoulePerDay.kJouleSaturday);
         },
       );
     } else {
-      _kCalSaturdayDebouncer.cancel();
-      _kJouleSaturdayValid.value = false;
+      _energySaturdayDebouncer.cancel();
+      _energySaturdayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _kJouleSundayChanged() async {
-    if (_kJouleSunday.value != null && _kJouleSunday.value! > 0 && _kJouleSunday.value! < _10000kCalInKjoule) {
-      _kJouleSundayValid.value = true;
-      _kCalSundayDebouncer.run(
+    if (_energySunday.value != null && _energySunday.value! > 0 && _energySunday.value! < _energy10000KCal) {
+      _energySundayValid.value = true;
+      _energySundayDebouncer.run(
         callback: () async {
-          _kJoulePerDay.kJouleSunday = _kJouleSunday.value!;
+          _kJoulePerDay.kJouleSunday = ConvertValidate.getEnergyKJ(displayEnergy: _energySunday.value!);
           await _settingsRepository.saveKJouleSunday(kJoule: _kJoulePerDay.kJouleSunday);
         },
       );
     } else {
-      _kCalSundayDebouncer.cancel();
-      _kJouleSundayValid.value = false;
+      _energySundayDebouncer.cancel();
+      _energySundayValid.value = false;
     }
 
     _calculateKJouleTargetDaily();
   }
 
   void _calculateKJouleTargetDaily() {
-    if (_kJouleMonday.value != null &&
-        _kJouleTuesday.value != null &&
-        _kJouleWednesday.value != null &&
-        _kJouleThursday.value != null &&
-        _kJouleFriday.value != null &&
-        _kJouleSaturday.value != null &&
-        _kJouleSunday.value != null) {
-      _kJouleTargetDaily.value =
-          ((_kJouleMonday.value! +
-                      _kJouleTuesday.value! +
-                      _kJouleWednesday.value! +
-                      _kJouleThursday.value! +
-                      _kJouleFriday.value! +
-                      _kJouleSaturday.value! +
-                      _kJouleSunday.value!) /
-                  7)
-              .round();
+    if (_energyMonday.value != null &&
+        _energyTuesday.value != null &&
+        _energyWednesday.value != null &&
+        _energyThursday.value != null &&
+        _energyFriday.value != null &&
+        _energySaturday.value != null &&
+        _energySunday.value != null) {
+      _kJouleTargetDaily.value = ConvertValidate.getDisplayEnergy(
+        energyKJ:
+            (((_energyMonday.value! +
+                        _energyTuesday.value! +
+                        _energyWednesday.value! +
+                        _energyThursday.value! +
+                        _energyFriday.value! +
+                        _energySaturday.value! +
+                        _energySunday.value!) /
+                    7)
+                .round()),
+      );
     }
   }
 
   @override
   void dispose() {
     _kJouleTargetDaily.dispose();
-    _kJouleMonday.dispose();
-    _kJouleMondayValid.dispose();
-    _kJouleTuesday.dispose();
-    _kJouleTuesdayValid.dispose();
-    _kJouleWednesday.dispose();
-    _kJouleWednesdayValid.dispose();
-    _kJouleThursday.dispose();
-    _kJouleThursdayValid.dispose();
-    _kJouleFriday.dispose();
-    _kJouleFridayValid.dispose();
-    _kJouleSaturday.dispose();
-    _kJouleSaturdayValid.dispose();
-    _kJouleSunday.dispose();
-    _kJouleSundayValid.dispose();
+    _energyMonday.dispose();
+    _energyMondayValid.dispose();
+    _energyTuesday.dispose();
+    _energyTuesdayValid.dispose();
+    _energyWednesday.dispose();
+    _energyWednesdayValid.dispose();
+    _energyThursday.dispose();
+    _energyThursdayValid.dispose();
+    _energyFriday.dispose();
+    _energyFridayValid.dispose();
+    _energySaturday.dispose();
+    _energySaturdayValid.dispose();
+    _energySunday.dispose();
+    _energySundayValid.dispose();
 
     super.dispose();
   }

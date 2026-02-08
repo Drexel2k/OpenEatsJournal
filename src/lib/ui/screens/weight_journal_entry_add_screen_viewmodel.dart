@@ -1,8 +1,11 @@
 import "package:flutter/foundation.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class WeightJournalEntryAddScreenViewModel extends ChangeNotifier {
-  WeightJournalEntryAddScreenViewModel({required double initialWeight}) : _lastValidWeight = initialWeight, _weight = ValueNotifier(initialWeight) {
+  WeightJournalEntryAddScreenViewModel({required double initialWeight})
+    : _lastValidWeight = initialWeight,
+      _weight = ValueNotifier(ConvertValidate.getDisplayWeightKg(weightKg: initialWeight)) {
     _weight.addListener(_weightChangedInternal);
   }
 
@@ -18,6 +21,7 @@ class WeightJournalEntryAddScreenViewModel extends ChangeNotifier {
   }
 
   ValueNotifier<double?> get weight => _weight;
+  double get lastValidWeightDisplay => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
   double get lastValidWeight => _lastValidWeight;
   ValueNotifier<bool> get weightValid => _weightValid;
 
@@ -27,7 +31,7 @@ class WeightJournalEntryAddScreenViewModel extends ChangeNotifier {
 
       _weightDebouncer.run(
         callback: () async {
-          _lastValidWeight = _weight.value!;
+          _lastValidWeight = ConvertValidate.getWeightKg(displayWeight: _weight.value!);
           if (_weightChanged != null) {
             _weightChanged!();
           }

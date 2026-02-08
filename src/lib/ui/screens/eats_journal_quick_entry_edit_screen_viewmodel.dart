@@ -2,6 +2,7 @@ import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
@@ -17,19 +18,24 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
        _quickEntry = quickEntry,
        _name = ValueNotifier(quickEntry.name),
        _nameValid = ValueNotifier(quickEntry.name.trim() != OpenEatsJournalStrings.emptyString),
-       _amount = ValueNotifier(quickEntry.amount),
+       _amount = ValueNotifier(
+         quickEntry.amount != null
+             ? (quickEntry.amountMeasurementUnit! == MeasurementUnit.gram
+                   ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.amount!)
+                   : ConvertValidate.getDisplayVolume(volumeMl: quickEntry.amount!))
+             : null,
+       ),
        _amountMeasurementUnit = ValueNotifier(quickEntry.amountMeasurementUnit != null ? quickEntry.amountMeasurementUnit! : MeasurementUnit.gram),
-       _kJoule = ValueNotifier(quickEntry.kJoule),
-       _kJouleValid = ValueNotifier(quickEntry.kJoule > 0),
-       _carbohydrates = ValueNotifier(quickEntry.carbohydrates),
-       _sugar = ValueNotifier(quickEntry.sugar),
-       _fat = ValueNotifier(quickEntry.fat),
-       _saturatedFat = ValueNotifier(quickEntry.saturatedFat),
-       _protein = ValueNotifier(quickEntry.protein),
-       _salt = ValueNotifier(quickEntry.salt),
+       _energy = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: quickEntry.kJoule)),
+       _energyValid = ValueNotifier(quickEntry.kJoule > 0),
+       _carbohydrates = ValueNotifier(quickEntry.carbohydrates != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.carbohydrates!) : null),
+       _sugar = ValueNotifier(quickEntry.sugar != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.sugar!) : null),
+       _fat = ValueNotifier(quickEntry.fat != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.fat!) : null),
+       _saturatedFat = ValueNotifier(quickEntry.saturatedFat != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.saturatedFat!) : null),
+       _protein = ValueNotifier(quickEntry.protein != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.protein!) : null),
+       _salt = ValueNotifier(quickEntry.salt != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.salt!) : null),
        _currentEntryDate = ValueNotifier(quickEntry.entryDate),
-       _currentMeal = ValueNotifier(quickEntry.meal),
-       _currentMeasurementUnit = ValueNotifier(quickEntry.amountMeasurementUnit != null ? quickEntry.amountMeasurementUnit! : MeasurementUnit.gram) {
+       _currentMeal = ValueNotifier(quickEntry.meal) {
     if (_quickEntry.food != null) {
       throw StateError("Quick entry must not have a food.");
     }
@@ -37,8 +43,8 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
     _currentEntryDate.addListener(_currentJournalDateChanged);
     _currentMeal.addListener(_currentMealChanged);
     _name.addListener(_nameChanged);
-    _kJoule.addListener(_kJouleChanged);
-    _currentMeasurementUnit.addListener(_currentMeasurementUnitChanged);
+    _energy.addListener(_kJouleChanged);
+    _amountMeasurementUnit.addListener(_amountMeasurementUnitChanged);
   }
 
   final JournalRepository _journalRepository;
@@ -52,8 +58,8 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _nameValid;
   final ValueNotifier<double?> _amount;
   final ValueNotifier<MeasurementUnit> _amountMeasurementUnit;
-  final ValueNotifier<int?> _kJoule;
-  final ValueNotifier<bool> _kJouleValid;
+  final ValueNotifier<int?> _energy;
+  final ValueNotifier<bool> _energyValid;
   final ValueNotifier<double?> _carbohydrates;
   final ValueNotifier<double?> _sugar;
   final ValueNotifier<double?> _fat;
@@ -61,7 +67,6 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _protein;
   final ValueNotifier<double?> _salt;
 
-  final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
 
   ValueNotifier<DateTime> get currentEntryDate => _currentEntryDate;
@@ -73,8 +78,8 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<double?> get amount => _amount;
   ValueNotifier<MeasurementUnit> get amountMeasurementUnit => _amountMeasurementUnit;
-  ValueNotifier<int?> get kJoule => _kJoule;
-  ValueNotifier<bool> get kJouleValid => _kJouleValid;
+  ValueNotifier<int?> get energy => _energy;
+  ValueNotifier<bool> get energyValid => _energyValid;
   ValueNotifier<double?> get carbohydrates => _carbohydrates;
   ValueNotifier<double?> get sugar => _sugar;
   ValueNotifier<double?> get fat => _fat;
@@ -82,7 +87,6 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get protein => _protein;
   ValueNotifier<double?> get salt => _salt;
 
-  ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   ExternalTriggerChangedNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
 
   void _currentJournalDateChanged() {
@@ -108,10 +112,10 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleChanged() {
-    if (_kJoule.value != null) {
-      _kJouleValid.value = true;
+    if (_energy.value != null) {
+      _energyValid.value = true;
     } else {
-      _kJouleValid.value = false;
+      _energyValid.value = false;
     }
   }
 
@@ -122,7 +126,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
       quickEntryValid = false;
     }
 
-    if (quickEntryValid && _kJoule.value == null) {
+    if (quickEntryValid && _energy.value == null) {
       quickEntryValid = false;
     }
 
@@ -135,15 +139,15 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
       _quickEntry.entryDate = _currentEntryDate.value;
       _quickEntry.meal = _currentMeal.value;
       _quickEntry.name = _name.value;
-      _quickEntry.kJoule = _kJoule.value!;
-      _quickEntry.amount = _amount.value;
+      _quickEntry.kJoule = ConvertValidate.getEnergyKJ(displayEnergy: _energy.value!);
+      _quickEntry.amount = _amount.value != null ? ConvertValidate.getWeightG(displayWeight: _amount.value!) : null;
       _quickEntry.amountMeasurementUnit = _amount.value != null ? _amountMeasurementUnit.value : null;
-      _quickEntry.carbohydrates = _carbohydrates.value;
-      _quickEntry.sugar = _sugar.value;
-      _quickEntry.fat = _fat.value;
-      _quickEntry.saturatedFat = _saturatedFat.value;
-      _quickEntry.protein = _protein.value;
-      _quickEntry.salt = _salt.value;
+      _quickEntry.carbohydrates = _carbohydrates.value != null ? ConvertValidate.getWeightG(displayWeight: _carbohydrates.value!) : null;
+      _quickEntry.sugar = _sugar.value != null ? ConvertValidate.getWeightG(displayWeight: _sugar.value!) : null;
+      _quickEntry.fat = _fat.value != null ? ConvertValidate.getWeightG(displayWeight: _fat.value!) : null;
+      _quickEntry.saturatedFat = _saturatedFat.value != null ? ConvertValidate.getWeightG(displayWeight: _saturatedFat.value!) : null;
+      _quickEntry.protein = _protein.value != null ? ConvertValidate.getWeightG(displayWeight: _protein.value!) : null;
+      _quickEntry.salt = _salt.value != null ? ConvertValidate.getWeightG(displayWeight: _salt.value!) : null;
 
       await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _quickEntry);
     }
@@ -151,7 +155,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
     return quickEntryValid;
   }
 
-  void _currentMeasurementUnitChanged() {
+  void _amountMeasurementUnitChanged() {
     _measurementUnitSwitchButtonChanged.notify();
   }
 
@@ -163,8 +167,8 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
     _nameValid.dispose();
     _amount.dispose();
     _amountMeasurementUnit.dispose();
-    _kJoule.dispose();
-    _kJouleValid.dispose();
+    _energy.dispose();
+    _energyValid.dispose();
     _carbohydrates.dispose();
     _sugar.dispose();
     _fat.dispose();
