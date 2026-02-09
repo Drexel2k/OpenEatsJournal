@@ -442,11 +442,11 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                           return;
                         }
 
-                        if (widget._onboardingScreenViewModel.height.value == null ||
-                            widget._onboardingScreenViewModel.height.value! <= 0 ||
-                            widget._onboardingScreenViewModel.height.value! > 999) {
+                        if (!ConvertValidate.heightValid(displayHeight: widget._onboardingScreenViewModel.height.value?.toDouble())) {
                           SnackBar snackBar = SnackBar(
-                            content: Text(AppLocalizations.of(context)!.valid_height),
+                            content: Text(
+                              "${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
+                            ),
                             action: SnackBarAction(
                               label: AppLocalizations.of(context)!.close,
                               onPressed: () {
@@ -460,11 +460,11 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                           return;
                         }
 
-                        if (widget._onboardingScreenViewModel.weight.value == null ||
-                            widget._onboardingScreenViewModel.weight.value! <= 0 ||
-                            widget._onboardingScreenViewModel.weight.value! > 999) {
+                        if (!ConvertValidate.weightValid(displayWeight: widget._onboardingScreenViewModel.weight.value)) {
                           SnackBar snackBar = SnackBar(
-                            content: Text(AppLocalizations.of(context)!.valid_weight),
+                            content: Text(
+                              "${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                            ),
                             action: SnackBarAction(
                               label: AppLocalizations.of(context)!.close,
                               onPressed: () {

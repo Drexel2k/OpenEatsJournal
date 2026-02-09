@@ -73,7 +73,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<DateTime> get birthday => _birthday;
   ValueNotifier<int?> get height => _height;
   ValueNotifier<bool> get heightValid => _heightValid;
-  double get lastValidWeight => _lastValidWeight;
+  double get lastValidWeight => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<bool> get weightValid => _weightValid;
   ValueNotifier<double> get activityFactor => _activityFactor;
@@ -90,7 +90,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   int get kJouleFriday => _settingsRepository.kJouleFriday;
   int get kJouleSaturday => _settingsRepository.kJouleSaturday;
   int get kJouleSunday => _settingsRepository.kJouleSunday;
-  double get repositoryHeight => _settingsRepository.height;
+  double get repositoryHeight => ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height);
 
   SettingsRepository get settingsRepository => _settingsRepository;
 
@@ -166,7 +166,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _height.value = height;
 
     if (!onlyUnitChange) {
-      if (_height.value != null && _height.value! > 0 && _height.value! < 1000) {
+      if (ConvertValidate.heightValid(displayHeight: _height.value?.toDouble())) {
         _heightValid.value = true;
 
         _heightDebouncer.run(
@@ -186,7 +186,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _weight.value = weight;
 
     if (!onlyUnitChange) {
-      if (_weight.value != null && _weight.value! > 0 && _weight.value! <= 1000) {
+      if (ConvertValidate.weightValid(displayWeight: _weight.value)) {
         _weightValid.value = true;
 
         _weightDebouncer.run(

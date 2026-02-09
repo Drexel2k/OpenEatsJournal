@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-02-04 00-00-00,2026-01-15 00-00-00
+2026-02-09 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -74,7 +74,7 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","4","1l bottle","1l Flasche","1000","ml","false"
 "foodunit","5","1.5l bottle","1,5l Flasche","1500","ml","false"
 "foodunit","6","2l bottle","2l Flasche","2000","ml","false"
-"food","30","2026-01-15 01-00-00","Patatoe boiled/fresh","Kartoffel gekocht/frisch",,,"100",,"320",,,"15.6","0.7","1.9",,
+"food","30","2026-02-09 00-00-00","Patatoes boiled/fresh","Kartoffeln gekocht/frisch",,,"100",,"320",,,"15.6","0.7","1.9",,
 "foodunit","1","Piece","Stück","125","g","true"
 "food","31","2026-01-15 01-00-00","Strawberry","Erdbeere",,,"100",,"151","0.4",,"5.5","5.5","0.8",,
 "foodunit","1","Piece","Stück","15","g","true"
@@ -138,7 +138,10 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Tablespoon","Esslöffel","15","g","true"
 "food","57","2026-01-29 00-00-00","Pickled olives","Eingelegte Oliven",,,"100",,"780","18.8","2.3","1.3","0.3","1.3","4",
 "foodunit","1","Olive","Olive","5","g","true"
-"food","58","2026-01-29 00-00-00","Sugar","Zucker",,,"100",,"1700",,,"100","100",,,
+"food","58","2026-02-09 00-00-00","Sugar","Zucker",,,"100",,"1700",,,"100","100",,,
+"foodunit","1","Cube","Würfel","3","g","true"
+"foodunit","2","Teaspoon","Teelöffel","5","g","false"
+"foodunit","3","Table","Esslöffel","15","g","false"
 "food","59","2026-01-29 00-00-00","Vegetable oil","Pflanzenöl",,,,"100","3404","92","10",,,,,
 "food","60","2026-01-29 00-00-00","Fyring fat / Cooking fat / Clarified butter","Bratfett / Frittierfett / Butterschmalz",,,"100",,"3693","99.8","64.9",,,,,
 "food","61","2026-01-29 00-00-00","Rice pudding with full milk, butter and sugar","Milchreis mit Vollmilch, butter und Zucker",,,"100",,"586","3.9","2.5","22","7","4","0.1",
@@ -170,3 +173,5 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","76","2026-02-04 00-00-00","Lye pastries / pretzel with cheese gratinated","Laugengebäck mit Käse überbacken",,,"100",,"1310","8.4","4.1","45.1","2.5","12","2.2",
 "foodunit","1","Pretzel stick","Laugenstange","100","g","true"
 "foodunit","2","Lye pretzel","Laugenbrezel","110","g","false"
+"food","77","2026-02-09 00-00-00","Whole milk 3.5%","Vollmilch 3,5%",,,"100","100","269","3.5","2.3","4.7","4.7","3.5","0.1",
+"food","78","2026-02-09 00-00-00","Low-fat milk 1.5%","Fettarme Milch 1,5%",,,"100","100","199","1.5","1","4.9","4.9","3.5","0.1",

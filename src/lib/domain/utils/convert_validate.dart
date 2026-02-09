@@ -17,7 +17,7 @@ class ConvertValidate {
     required HeightUnit heightUnit,
     required WeightUnit weightUnit,
     required VolumeUnit volumeUnit,
-  })  {
+  }) {
     numberFomatterInt = NumberFormat(null, languageCode);
     //use onyl for parsing directly, for formatting use getCleanDoubleString or getCleanDoubleEditString
     numberFomatterDouble = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);
@@ -38,6 +38,9 @@ class ConvertValidate {
   static const double mlFlOzGbConversionFactor = 28.4130642624675; //https://de.wikipedia.org/wiki/Fluid_ounce
   static const double mlFlOzUsConversionFactor = 29.5735295625; //https://de.wikipedia.org/wiki/Fluid_ounce
   static const double gOzConversionFactor = 28.349523125; //https://de.wikipedia.org/wiki/Unze
+  static const int maxKJoulePerDay = 41840;
+  static const int maxHeightCm = 400;
+  static const int maxWeightKg = 1000;
 
   static late NumberFormat numberFomatterInt;
   static late NumberFormat numberFomatterDouble;
@@ -328,6 +331,30 @@ class ConvertValidate {
       if (numberParts[1].trim().length > 1) {
         return true;
       }
+    }
+
+    return false;
+  }
+
+  static bool dailyEnergyValid({required int? displayEnergy}) {
+    if (displayEnergy != null && displayEnergy > 0 && getEnergyKJ(displayEnergy: displayEnergy) <= maxKJoulePerDay) {
+      return true;
+    }
+
+    return false;
+  }
+
+  static bool heightValid({required double? displayHeight}) {
+    if (displayHeight != null && displayHeight > 0 && getHeightCm(displayHeight: displayHeight) <= maxHeightCm) {
+      return true;
+    }
+
+    return false;
+  }
+
+  static bool weightValid({required double? displayWeight}) {
+    if (displayWeight != null && displayWeight > 0 && getWeightKg(displayWeight: displayWeight) <= maxWeightKg) {
+      return true;
     }
 
     return false;

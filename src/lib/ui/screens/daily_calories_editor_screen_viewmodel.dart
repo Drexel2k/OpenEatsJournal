@@ -7,7 +7,7 @@ import "package:openeatsjournal/ui/utils/debouncer.dart";
 class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   DailyCaloriesEditorScreenViewModel({required KJoulePerDay kJoulePerDay, required SettingsRepository settingsRepository})
     : _settingsRepository = settingsRepository,
-      _kJouleTargetDaily = ValueNotifier(
+      _energyTargetDaily = ValueNotifier(
         ConvertValidate.getDisplayEnergy(
           energyKJ:
               ((kJoulePerDay.kJouleMonday +
@@ -49,7 +49,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
 
   //last valid value
   final KJoulePerDay _kJoulePerDay;
-  final ValueNotifier<int> _kJouleTargetDaily;
+  final ValueNotifier<int> _energyTargetDaily;
   final ValueNotifier<int?> _energyMonday;
   final ValueNotifier<bool> _energyMondayValid;
   final ValueNotifier<int?> _energyTuesday;
@@ -65,9 +65,6 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int?> _energySunday;
   final ValueNotifier<bool> _energySundayValid;
 
-  // ignore: constant_identifier_names
-  final int _energy10000KCal = ConvertValidate.getDisplayEnergy(energyKJ: 41840);
-
   final Debouncer _energyMondayDebouncer = Debouncer();
   final Debouncer _energyTuesdayDebouncer = Debouncer();
   final Debouncer _energyWednesdayDebouncer = Debouncer();
@@ -76,7 +73,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   final Debouncer _energySaturdayDebouncer = Debouncer();
   final Debouncer _energySundayDebouncer = Debouncer();
 
-  ValueNotifier<int> get kJouleTargetDaily => _kJouleTargetDaily;
+  ValueNotifier<int> get kJouleTargetDaily => _energyTargetDaily;
   ValueNotifier<int?> get energyMonday => _energyMonday;
   ValueNotifier<bool> get energyMondayValid => _energyMondayValid;
   ValueNotifier<int?> get energyTuesday => _energyTuesday;
@@ -92,16 +89,16 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   ValueNotifier<int?> get energySunday => _energySunday;
   ValueNotifier<bool> get energySundayValid => _energySundayValid;
 
-  int get energyPerdayKJouleMonday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleMonday);
-  int get energyPerdayKJouleTuesday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleTuesday);
-  int get energyPerdayKJouleWednesday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleWednesday);
-  int get energyPerdayKJouleThursday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleThursday);
-  int get energyPerdayKJouleFriday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleFriday);
-  int get energyPerdayKJouleSaturday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleSaturday);
-  int get energyPerdayKJouleSunday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleSunday);
+  int get energyPerdayMonday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleMonday);
+  int get energyPerdayTuesday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleTuesday);
+  int get energyPerdayWednesday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleWednesday);
+  int get energyPerdayThursday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleThursday);
+  int get energyPerdayFriday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleFriday);
+  int get energyPerdaySaturday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleSaturday);
+  int get energyPerdaySunday => ConvertValidate.getDisplayEnergy(energyKJ: _kJoulePerDay.kJouleSunday);
 
   void _kJouleMondayChanged() async {
-    if (_energyMonday.value != null && _energyMonday.value! > 0 && _energyMonday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energyMonday.value)) {
       _energyMondayValid.value = true;
       _energyMondayDebouncer.run(
         callback: () async {
@@ -118,7 +115,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleTuesdayChanged() async {
-    if (_energyTuesday.value != null && _energyTuesday.value! > 0 && _energyTuesday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energyTuesday.value)) {
       _energyTuesdayValid.value = true;
       _energyTuesdayDebouncer.run(
         callback: () async {
@@ -135,7 +132,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleWednesdayChanged() async {
-    if (_energyWednesday.value != null && _energyWednesday.value! > 0 && _energyWednesday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energyWednesday.value)) {
       _energyWednesdayValid.value = true;
       _energyWednesdayDebouncer.run(
         callback: () async {
@@ -152,7 +149,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleThursdayChanged() async {
-    if (_energyThursday.value != null && _energyThursday.value! > 0 && _energyThursday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energyThursday.value)) {
       _energyThursdayValid.value = true;
       _energyThursdayDebouncer.run(
         callback: () async {
@@ -169,7 +166,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleFridayChanged() async {
-    if (_energyFriday.value != null && _energyFriday.value! > 0 && _energyFriday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energyFriday.value)) {
       _energyFridayValid.value = true;
       _energyFridayDebouncer.run(
         callback: () async {
@@ -186,7 +183,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleSaturdayChanged() async {
-    if (_energySaturday.value != null && _energySaturday.value! > 0 && _energySaturday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energySaturday.value)) {
       _energySaturdayValid.value = true;
       _energySaturdayDebouncer.run(
         callback: () async {
@@ -203,7 +200,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
   }
 
   void _kJouleSundayChanged() async {
-    if (_energySunday.value != null && _energySunday.value! > 0 && _energySunday.value! < _energy10000KCal) {
+    if (ConvertValidate.dailyEnergyValid(displayEnergy: _energySunday.value)) {
       _energySundayValid.value = true;
       _energySundayDebouncer.run(
         callback: () async {
@@ -227,7 +224,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
         _energyFriday.value != null &&
         _energySaturday.value != null &&
         _energySunday.value != null) {
-      _kJouleTargetDaily.value = ConvertValidate.getDisplayEnergy(
+      _energyTargetDaily.value = ConvertValidate.getDisplayEnergy(
         energyKJ:
             (((_energyMonday.value! +
                         _energyTuesday.value! +
@@ -244,7 +241,7 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _kJouleTargetDaily.dispose();
+    _energyTargetDaily.dispose();
     _energyMonday.dispose();
     _energyMondayValid.dispose();
     _energyTuesday.dispose();

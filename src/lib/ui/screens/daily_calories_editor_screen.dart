@@ -172,10 +172,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energyMondayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.monday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleMonday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.monday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayMonday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {
@@ -228,10 +225,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energyTuesdayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.tuesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleTuesday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.tuesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayTuesday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {
@@ -284,10 +278,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energyWednesdayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.wednesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleWednesday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.wednesday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayWednesday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {
@@ -340,10 +331,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energyThursdayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.thursday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleThursday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.thursday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayThursday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {
@@ -396,10 +384,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energyFridayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.friday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleFriday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.friday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayFriday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {
@@ -452,10 +437,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energySaturdayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.saturday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleSaturday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.saturday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdaySaturday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {
@@ -508,10 +490,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
                               builder: (_, _, _) {
                                 if (!_dailyCaloriesEditorScreenViewModel.energySundayValid.value) {
                                   return Text(
-                                    AppLocalizations.of(context)!.input_invalid_value(
-                                      "${AppLocalizations.of(context)!.sunday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
-                                      ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdayKJouleSunday),
-                                    ),
+                                    "${AppLocalizations.of(context)!.input_invalid_value("${AppLocalizations.of(context)!.sunday} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}", ConvertValidate.numberFomatterInt.format(_dailyCaloriesEditorScreenViewModel.energyPerdaySunday))} ${AppLocalizations.of(context)!.valid_energy} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())}).",
                                     style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                   );
                                 } else {

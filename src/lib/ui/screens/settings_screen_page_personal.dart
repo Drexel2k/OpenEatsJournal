@@ -237,7 +237,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.height,
                         builder: (_, _, _) {
                           //when widget._settingsScreenViewModel.height was changed programatically we need to update the controller
-                          _heightController.text = ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.height.value);
+                          _heightController.text = widget._settingsScreenViewModel.height.value != null
+                              ? ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.height.value)
+                              : OpenEatsJournalStrings.emptyString;
 
                           return SettingsTextField(
                             controller: _heightController,
@@ -266,9 +268,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (_, _, _) {
                           if (!widget._settingsScreenViewModel.heightValid.value) {
                             return Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.input_invalid_value(AppLocalizations.of(context)!.height, widget._settingsScreenViewModel.repositoryHeight),
+                              "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.height, ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.repositoryHeight))} ${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
                               style: textTheme.labelSmall!.copyWith(color: Colors.red),
                             );
                           } else {
@@ -289,7 +289,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                   child: Row(
                     children: [
                       Text(
-                        "${AppLocalizations.of(context)!.your_height} (${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
+                        "${AppLocalizations.of(context)!.your_weight} (${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
                         style: textTheme.titleSmall,
                       ),
                       Tooltip(
@@ -360,10 +360,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             builder: (_, _, _) {
                               if (!widget._settingsScreenViewModel.weightValid.value) {
                                 return Text(
-                                  AppLocalizations.of(context)!.input_invalid_value(
-                                    AppLocalizations.of(context)!.weight_capital,
-                                    ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.lastValidWeight),
-                                  ),
+                                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                 );
                               } else {

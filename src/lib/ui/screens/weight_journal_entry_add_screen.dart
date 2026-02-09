@@ -105,9 +105,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
             builder: (_, _, _) {
               if (!_weightJournalEntryAddScreenViewModel.weightValid.value) {
                 return Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay),
+                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay)} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                 );
               } else {

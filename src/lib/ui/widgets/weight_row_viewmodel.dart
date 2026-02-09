@@ -22,11 +22,11 @@ class WeightRowViewModel extends ChangeNotifier {
 
   ValueNotifier<double?> get weight => _weight;
   DateTime get date => _date;
-  double get lastValidWeightDisplay => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
+  double get lastValidWeight => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
   ValueNotifier<bool> get weightValid => _weightValid;
 
   void _weightChangedInternal() {
-    if (_weight.value != null && _weight.value! > 0 && _weight.value! < 1000) {
+    if (ConvertValidate.weightValid(displayWeight: _weight.value)) {
       _weightValid.value = true;
 
       _weightDebouncer.run(

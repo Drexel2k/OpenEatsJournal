@@ -37,7 +37,7 @@ class _WeightRowState extends State<WeightRow> {
   @override
   void initState() {
     _weightRowViewModel = widget._weightRowViewModel;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeightDisplay);
+    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
     super.initState();
   }
 
@@ -117,7 +117,7 @@ class _WeightRowState extends State<WeightRow> {
           builder: (_, _, _) {
             if (!_weightRowViewModel.weightValid.value) {
               return Text(
-                AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight, _weightRowViewModel.lastValidWeightDisplay),
+                "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                 style: textTheme.labelSmall!.copyWith(color: Colors.red),
               );
             } else {

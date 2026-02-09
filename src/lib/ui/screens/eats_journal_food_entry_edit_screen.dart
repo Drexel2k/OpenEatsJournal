@@ -687,7 +687,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
     if (food.nutritionPerMilliliterAmount != null) {
       displayAmount = ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayVolume(volumeMl: 100));
-      amountInfo = "$displayAmount${ConvertValidate.getLocalizedVolumeUnit(context: context)}";
+      amountInfo = "$displayAmount${ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
 
       buttons.add(
         OutlinedButton(
