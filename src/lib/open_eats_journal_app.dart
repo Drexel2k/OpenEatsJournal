@@ -106,14 +106,8 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
 
                 initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
               }
-              
-              ConvertValidate.init(
-                languageCode: languageCode,
-                energyUnit: energyUnit,
-                heightUnit: heightUnit,
-                weightUnit: weightUnit,
-                volumeUnit: volumeUnit,
-              );
+
+              ConvertValidate.init(languageCode: languageCode, energyUnit: energyUnit, heightUnit: heightUnit, weightUnit: weightUnit, volumeUnit: volumeUnit);
 
               _openEatsJournalAppViewModel.initStandardFoodData(languageCode: languageCode);
 
@@ -144,6 +138,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                             openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
                             quickEntryColor: Color.fromARGB(255, 255, 0, 233),
                             cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
+                            confirmationBackgroundColor: Color.fromARGB(255, 207, 207, 207),
                           ),
                         ],
                       ),
@@ -163,6 +158,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                             openFoodFactsFoodColor: Color.fromARGB(255, 202, 136, 73),
                             quickEntryColor: Color.fromARGB(255, 198, 57, 186),
                             cacheFoodColor: Color.fromARGB(255, 158, 158, 158),
+                            confirmationBackgroundColor: Color.fromARGB(255, 68, 68, 68),
                           ),
                         ],
                       ),

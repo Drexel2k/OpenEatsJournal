@@ -1,3 +1,4 @@
+import "dart:async";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
@@ -5,39 +6,49 @@ import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 
-class FoodCard extends StatelessWidget {
+class FoodCard extends StatefulWidget {
   const FoodCard({
     super.key,
     required Food food,
     required TextTheme textTheme,
     required void Function({required Food food}) onCardTap,
     required Future<void> Function({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) onAddJournalEntryPressed,
-  }) : _textTheme = textTheme,
-       _food = food,
+  }) : _food = food,
        _onCardTap = onCardTap,
        _onAddJournalEntryPressed = onAddJournalEntryPressed;
 
-  final TextTheme _textTheme;
   final Food _food;
   final void Function({required Food food}) _onCardTap;
   final Future<void> Function({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) _onAddJournalEntryPressed;
 
   @override
+  State<FoodCard> createState() => _FoodCardState();
+}
+
+class _FoodCardState extends State<FoodCard> {
+  bool _checkVisible = false;
+  static const int _checkAnimationDuration = 150;
+  static const int _checkDisplayDuration = 500;
+
+  @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final OpenEatsJournalColors openEatsJournalColors = Theme.of(context).extension<OpenEatsJournalColors>()!;
     final borderRadius = BorderRadius.circular(8);
 
     MeasurementUnit measurementUnit = _getMeasurementUnit();
-    String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: _food, context: context);
-    Color foodSourceColor = UiHelpers.getFoodSourceColor(food: _food, context: context);
+    String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: widget._food, context: context);
+    Color foodSourceColor = UiHelpers.getFoodSourceColor(food: widget._food, context: context);
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       child: InkWell(
         borderRadius: borderRadius,
         onTap: () {
-          _onCardTap(food: _food);
+          widget._onCardTap(food: widget._food);
         },
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
@@ -53,10 +64,13 @@ class FoodCard extends StatelessWidget {
                       children: [
                         Text(
                           softWrap: true,
-                          style: _textTheme.headlineSmall,
-                          _food.name != OpenEatsJournalStrings.emptyString ? _food.name : AppLocalizations.of(context)!.no_name,
+                          style: textTheme.headlineSmall,
+                          widget._food.name != OpenEatsJournalStrings.emptyString ? widget._food.name : AppLocalizations.of(context)!.no_name,
                         ),
-                        Text(style: _textTheme.labelLarge, _food.brands.isNotEmpty ? _food.brands.join(", ") : AppLocalizations.of(context)!.no_brand),
+                        Text(
+                          style: textTheme.labelLarge,
+                          widget._food.brands.isNotEmpty ? widget._food.brands.join(", ") : AppLocalizations.of(context)!.no_brand,
+                        ),
                       ],
                     ),
                   ),
@@ -72,17 +86,17 @@ class FoodCard extends StatelessWidget {
                       menuItems.add(
                         PopupMenuItem(
                           onTap: () {
-                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.copyAsNewUserFood(food: _food));
+                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.copyAsNewUserFood(food: widget._food));
                           },
                           child: Text(AppLocalizations.of(context)!.as_new_food),
                         ),
                       );
 
-                      if (_food.foodSource == FoodSource.user) {
+                      if (widget._food.foodSource == FoodSource.user) {
                         menuItems.add(
                           PopupMenuItem(
                             onTap: () {
-                              Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: _food);
+                              Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: widget._food);
                             },
                             child: Text(AppLocalizations.of(context)!.edit),
                           ),
@@ -103,14 +117,14 @@ class FoodCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _food.kJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                          style: _textTheme.titleMedium,
+                          "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: widget._food.kJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                          style: textTheme.titleMedium,
                         ),
                         Text(
                           "${AppLocalizations.of(context)!.per} ${ConvertValidate.getCleanDoubleString(
-                            doubleValue: _food.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: _food.nutritionPerGramAmount!) : ConvertValidate.getDisplayVolume(volumeMl: _food.nutritionPerMilliliterAmount!),
-                          )}${_food.nutritionPerGramAmount != null ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}",
-                          style: _textTheme.labelSmall,
+                            doubleValue: widget._food.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: widget._food.nutritionPerGramAmount!) : ConvertValidate.getDisplayVolume(volumeMl: widget._food.nutritionPerMilliliterAmount!),
+                          )}${widget._food.nutritionPerGramAmount != null ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}",
+                          style: textTheme.labelSmall,
                         ),
                       ],
                     ),
@@ -120,23 +134,23 @@ class FoodCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _food.carbohydrates != null
+                        widget._food.carbohydrates != null
                             ? Text(
-                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _food.carbohydrates!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
+                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.carbohydrates!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
                               )
                             : Text(
                                 "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
                               ),
-                        _food.fat != null
+                        widget._food.fat != null
                             ? Text(
-                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _food.fat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
+                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.fat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
                               )
                             : Text(
                                 "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
                               ),
-                        _food.protein != null
+                        widget._food.protein != null
                             ? Text(
-                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _food.protein!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
+                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.protein!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
                               )
                             : Text(
                                 "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
@@ -145,30 +159,56 @@ class FoodCard extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  SizedBox(
-                    width: 145,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        _onAddJournalEntryPressed(
-                          food: _food,
-                          amount: _food.defaultFoodUnit != null ? _food.defaultFoodUnit!.amount : 100,
-                          amountMeasurementUnit: _getMeasurementUnit(),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          Text(
-                            "+${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJoulesToAdd()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                            style: _textTheme.titleSmall,
+                  Stack(
+                    children: [
+                      SizedBox(
+                        width: 145,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            widget._onAddJournalEntryPressed(
+                              food: widget._food,
+                              amount: widget._food.defaultFoodUnit != null ? widget._food.defaultFoodUnit!.amount : 100,
+                              amountMeasurementUnit: _getMeasurementUnit(),
+                            );
+                            setState(() {
+                              _checkVisible = true;
+                            });
+                            Timer(Duration(milliseconds: _checkAnimationDuration + _checkDisplayDuration), _fadeOutCheck);
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                "+${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJoulesToAdd()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                style: textTheme.titleSmall,
+                              ),
+                              Text(
+                                style: textTheme.labelSmall,
+                                _getKJoulesToAddText(measurementUnit: measurementUnit, context: context),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                          Text(
-                            style: _textTheme.labelSmall,
-                            _getKJoulesToAddText(measurementUnit: measurementUnit, context: context),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: IgnorePointer(
+                            child: AnimatedOpacity(
+                              // If the widget is visible, animate to 0.0 (invisible).
+                              // If the widget is hidden, animate to 1.0 (fully visible).
+                              opacity: _checkVisible ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: _checkAnimationDuration),
+                              // The green box must be a child of the AnimatedOpacity widget.
+                              child: Container(
+                                decoration: BoxDecoration(color: openEatsJournalColors.confirmationBackgroundColor, borderRadius: BorderRadius.circular(15)),
+                                child: Icon(Icons.check, color: Colors.green, size: 40),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -179,17 +219,23 @@ class FoodCard extends StatelessWidget {
     );
   }
 
+  void _fadeOutCheck() {
+    setState(() {
+      _checkVisible = false;
+    });
+  }
+
   String _getKJoulesToAddText({required MeasurementUnit measurementUnit, required BuildContext context}) {
     String kJoulsAddName;
-    if (_food.defaultFoodUnit != null) {
+    if (widget._food.defaultFoodUnit != null) {
       kJoulsAddName =
-          "${_food.defaultFoodUnit!.name} (${ConvertValidate.getCleanDoubleString(
-            doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: _food.defaultFoodUnit!.amount) : ConvertValidate.getDisplayVolume(volumeMl: _food.defaultFoodUnit!.amount),
+          "${widget._food.defaultFoodUnit!.name} (${ConvertValidate.getCleanDoubleString(
+            doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: widget._food.defaultFoodUnit!.amount) : ConvertValidate.getDisplayVolume(volumeMl: widget._food.defaultFoodUnit!.amount),
           )}${measurementUnit == MeasurementUnit.gram ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)})";
     } else {
       kJoulsAddName =
           "${ConvertValidate.getCleanDoubleString(
-            doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: _food.nutritionPerGramAmount!) : ConvertValidate.getDisplayWeightG(weightG: _food.nutritionPerMilliliterAmount!),
+            doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: widget._food.nutritionPerGramAmount!) : ConvertValidate.getDisplayWeightG(weightG: widget._food.nutritionPerMilliliterAmount!),
           )}${measurementUnit == MeasurementUnit.gram ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
     }
 
@@ -197,10 +243,10 @@ class FoodCard extends StatelessWidget {
   }
 
   MeasurementUnit _getMeasurementUnit() {
-    if (_food.defaultFoodUnit != null) {
-      return _food.defaultFoodUnit!.amountMeasurementUnit;
+    if (widget._food.defaultFoodUnit != null) {
+      return widget._food.defaultFoodUnit!.amountMeasurementUnit;
     } else {
-      if (_food.nutritionPerGramAmount != null) {
+      if (widget._food.nutritionPerGramAmount != null) {
         return MeasurementUnit.gram;
       } else {
         return MeasurementUnit.milliliter;
@@ -209,17 +255,17 @@ class FoodCard extends StatelessWidget {
   }
 
   int _getKJoulesToAdd() {
-    if (_food.defaultFoodUnit != null) {
-      if (_food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return (_food.kJoule * (_food.defaultFoodUnit!.amount / _food.nutritionPerGramAmount!)).round();
+    if (widget._food.defaultFoodUnit != null) {
+      if (widget._food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
+        return (widget._food.kJoule * (widget._food.defaultFoodUnit!.amount / widget._food.nutritionPerGramAmount!)).round();
       } else {
-        return (_food.kJoule * (_food.defaultFoodUnit!.amount / _food.nutritionPerMilliliterAmount!)).round();
+        return (widget._food.kJoule * (widget._food.defaultFoodUnit!.amount / widget._food.nutritionPerMilliliterAmount!)).round();
       }
     } else {
-      if (_food.nutritionPerGramAmount != null) {
-        return (_food.kJoule * (100 / _food.nutritionPerGramAmount!)).round();
+      if (widget._food.nutritionPerGramAmount != null) {
+        return (widget._food.kJoule * (100 / widget._food.nutritionPerGramAmount!)).round();
       } else {
-        return (_food.kJoule * (100 / _food.nutritionPerMilliliterAmount!)).round();
+        return (widget._food.kJoule * (100 / widget._food.nutritionPerMilliliterAmount!)).round();
       }
     }
   }

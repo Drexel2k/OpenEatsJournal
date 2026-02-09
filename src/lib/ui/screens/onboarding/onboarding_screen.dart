@@ -23,7 +23,6 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late OnboardingScreenViewModel _onboardingScreenViewModel;
-  late VoidCallback _onboardingFinishedCallback;
 
   final PageController _pageViewController = PageController();
 
@@ -31,7 +30,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     _onboardingScreenViewModel = widget._onboardingScreenViewModel;
-    _onboardingFinishedCallback = widget._onboardingFinishedCallback;
     super.initState();
   }
 
@@ -97,7 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingScreenPage5(
                     onDone: () async {
                       await _onboardingScreenViewModel.saveOnboardingData();
-                      _onboardingFinishedCallback();
+                      widget._onboardingFinishedCallback();
                       Navigator.pushReplacementNamed(AppGlobal.navigatorKey.currentContext!, OpenEatsJournalStrings.navigatorRouteEatsJournal);
                     },
                   ),

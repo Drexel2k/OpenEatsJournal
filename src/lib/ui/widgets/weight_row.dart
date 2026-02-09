@@ -28,9 +28,6 @@ class WeightRow extends StatefulWidget {
 
 class _WeightRowState extends State<WeightRow> {
   late WeightRowViewModel _weightRowViewModel;
-  late bool _deleteEnabled;
-  late Future<void> Function({required DateTime date}) _onDeletePressed;
-  late Color _deleteIconColor;
 
   final TextEditingController _weightController = TextEditingController();
 
@@ -40,10 +37,6 @@ class _WeightRowState extends State<WeightRow> {
   @override
   void initState() {
     _weightRowViewModel = widget._weightRowViewModel;
-    _deleteEnabled = widget._deleteEnabled;
-    _onDeletePressed = widget._onDeletePressed;
-    _deleteIconColor = widget._deleteIconColor;
-
     _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeightDisplay);
     super.initState();
   }
@@ -106,10 +99,10 @@ class _WeightRowState extends State<WeightRow> {
             ),
             Expanded(
               child: IconButton(
-                icon: Icon(Icons.delete, color: _deleteIconColor),
+                icon: Icon(Icons.delete, color: widget._deleteIconColor),
                 onPressed: () async {
-                  if (_deleteEnabled) {
-                    await _onDeletePressed(date: _weightRowViewModel.date);
+                  if (widget._deleteEnabled) {
+                    await widget._onDeletePressed(date: _weightRowViewModel.date);
                   } else {
                     await _showCantDeleteConfirmDialog(context: context);
                   }

@@ -23,7 +23,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
   @override
   void initState() {
     _eatsJournalEditScreenViewModel = widget._eatsJournalEditScreenViewModel;
-    widget._eatsJournalEditScreenViewModel.getEatsJournalEntries();
+    _eatsJournalEditScreenViewModel.getEatsJournalEntries();
 
     super.initState();
   }
