@@ -1,6 +1,6 @@
 enum EnergyUnit {
-  kj(1),
-  kcal(2);
+  kcal(1),
+  kj(2);
 
   final int value;
 

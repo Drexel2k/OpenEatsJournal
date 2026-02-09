@@ -6,14 +6,16 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key, required String languageCode, required String contactData, required String appVersion})
+  const AboutScreen({super.key, required String languageCode, required String contactData, required String appVersion, required bool useStagingServices})
     : _languageCode = languageCode,
       _contactData = contactData,
-      _appVersion = appVersion;
+      _appVersion = appVersion,
+      _useStagingServices = useStagingServices;
 
   final String _languageCode;
   final String _contactData;
   final String _appVersion;
+  final bool _useStagingServices;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +113,10 @@ class AboutScreen extends StatelessWidget {
                               );
                             },
                         ),
-                        TextSpan(text: "${_languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_3}", style: textTheme.bodyLarge),
+                        TextSpan(
+                          text: "${_languageCode == OpenEatsJournalStrings.en ? "" : " "}${AppLocalizations.of(context)!.welcome_message_license_3}",
+                          style: textTheme.bodyLarge,
+                        ),
                       ],
                     ),
                   ),
@@ -123,6 +128,10 @@ class AboutScreen extends StatelessWidget {
                   Text(AppLocalizations.of(context)!.welcome_message_local_database, style: textTheme.bodyLarge, textAlign: TextAlign.center),
                   SizedBox(height: 10),
                   Text(AppLocalizations.of(context)!.welcome_message_stay_healthy, style: textTheme.bodyLarge, textAlign: TextAlign.center),
+
+                  SizedBox(height: 30),
+                  Row(children: [Text(AppLocalizations.of(context)!.debug_info, style: textTheme.bodySmall)]),
+                  Row(children: [Text("useStagingServices: $_useStagingServices", style: textTheme.bodySmall)]),
                 ],
               ),
             ),

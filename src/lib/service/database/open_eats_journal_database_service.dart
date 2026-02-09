@@ -473,6 +473,30 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<Map<String, Object?>> getAllSettings() async {
+    int? energyUnit = await getIntSetting(setting: OpenEatsJournalStrings.settingEnergyUnit);
+    if (energyUnit == null) {
+      await setIntSetting(setting: OpenEatsJournalStrings.settingEnergyUnit, value: 1);
+      energyUnit = 1;
+    }
+
+    int? heightUnit = await getIntSetting(setting: OpenEatsJournalStrings.settingHeightUnit);
+    if (heightUnit == null) {
+      await setIntSetting(setting: OpenEatsJournalStrings.settingHeightUnit, value: 1);
+      heightUnit = 1;
+    }
+
+    int? weightUnit = await getIntSetting(setting: OpenEatsJournalStrings.settingWeightUnit);
+    if (weightUnit == null) {
+      await setIntSetting(setting: OpenEatsJournalStrings.settingWeightUnit, value: 1);
+      weightUnit = 1;
+    }
+
+    int? volumeUnit = await getIntSetting(setting: OpenEatsJournalStrings.settingVolumeUnit);
+    if (volumeUnit == null) {
+      await setIntSetting(setting: OpenEatsJournalStrings.settingVolumeUnit, value: 1);
+      volumeUnit = 1;
+    }
+
     return {
       OpenEatsJournalStrings.settingDarkmode: await getBoolSetting(setting: OpenEatsJournalStrings.settingDarkmode),
       OpenEatsJournalStrings.settingLanguageCode: await getStringSetting(setting: OpenEatsJournalStrings.settingLanguageCode),
@@ -491,10 +515,10 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate: await getDateTimeSetting(
         setting: OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate,
       ),
-      OpenEatsJournalStrings.settingEnergyUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingEnergyUnit),
-      OpenEatsJournalStrings.settingHeightUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingHeightUnit),
-      OpenEatsJournalStrings.settingWeightUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingWeightUnit),
-      OpenEatsJournalStrings.settingVolumeUnit: await getIntSetting(setting: OpenEatsJournalStrings.settingVolumeUnit),
+      OpenEatsJournalStrings.settingEnergyUnit: energyUnit,
+      OpenEatsJournalStrings.settingHeightUnit: heightUnit,
+      OpenEatsJournalStrings.settingWeightUnit: weightUnit,
+      OpenEatsJournalStrings.settingVolumeUnit: volumeUnit,
     };
   }
 

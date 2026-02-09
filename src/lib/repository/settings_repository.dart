@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
@@ -114,7 +115,7 @@ class SettingsRepository extends ChangeNotifier {
 
   String get appName => "OpenEatsJournal";
   String get appVersion => "1.0 RC4";
-  bool get useStagingServices => true;
+  bool get useStagingServices => kDebugMode ? true : false;
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
   String? get contactData => null;

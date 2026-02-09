@@ -255,5 +255,6 @@
   "fluid_ounce_2char": "fo",
   "fluid_ounce_gb": "Flüssigunze (GB)",
   "fluid_ounce_us": "Flüssigunze (US)",
-  "no_data": "Keine Daten vorhanden"
+  "no_data": "Keine Daten vorhanden",
+  "debug_info": "Debug Info"
 }

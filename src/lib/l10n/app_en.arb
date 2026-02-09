@@ -255,5 +255,6 @@
   "fluid_ounce_2char": "fo",
   "fluid_ounce_gb": "fluid ounce (GB)",
   "fluid_ounce_us": "fluid ounce (US)",
-  "no_data": "No Data Available"
+  "no_data": "No Data Available",
+  "debug_info": "Debug info"
 }

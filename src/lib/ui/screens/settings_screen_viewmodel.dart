@@ -94,6 +94,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   SettingsRepository get settingsRepository => _settingsRepository;
 
+  bool get useStagingServices => _settingsRepository.useStagingServices;
   String get contactData => _settingsRepository.contactData!;
   String get appVersion => _settingsRepository.appVersion;
 

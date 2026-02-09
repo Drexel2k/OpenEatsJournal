@@ -1,6 +1,6 @@
 enum HeightUnit {
-  inch(1),
-  cm(2);
+  cm(1),
+  inch(2);
 
   final int value;
 
