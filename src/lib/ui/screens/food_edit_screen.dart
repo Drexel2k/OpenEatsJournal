@@ -1,6 +1,7 @@
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit_editor_data.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -91,6 +92,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     double inputFieldsWidth = 90;
 
     return MainLayout(
@@ -807,11 +809,10 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
             },
           ),
           SizedBox(height: 10),
-          Align(
-            alignment: AlignmentGeometry.center,
-            child: SizedBox(
-              height: 48,
-              child: OutlinedButton(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutlinedButton(
                 onPressed: () async {
                   int? originalFoodId = _foodEditScreenViewModel.foodId;
                   if (!(await _foodEditScreenViewModel.saveFood())) {
@@ -845,7 +846,58 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                 },
                 child: _foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),
               ),
-            ),
+
+              Builder(
+                builder: (BuildContext context) {
+                  if (_foodEditScreenViewModel.foodId != null && _foodEditScreenViewModel.foodSource != FoodSource.standard) {
+                    return Row(
+                      children: [
+                        SizedBox(width: 10),
+                        RoundOutlinedButton(
+                          child: Icon(Icons.delete, color: colorScheme.error),
+                          onPressed: () async {
+                            bool continueDelete = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(AppLocalizations.of(context)!.delete_food_title),
+                                  content: Text(AppLocalizations.of(context)!.delete_food_text),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text(AppLocalizations.of(context)!.cancel),
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text(AppLocalizations.of(context)!.ok),
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (continueDelete) {
+                              await _foodEditScreenViewModel.deleteFood();
+                              await Navigator.pushNamedAndRemoveUntil(
+                                AppGlobal.navigatorKey.currentContext!,
+                                OpenEatsJournalStrings.navigatorRouteEatsJournal,
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                },
+              ),
+            ],
           ),
         ],
       ),

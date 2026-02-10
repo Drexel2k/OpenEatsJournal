@@ -226,8 +226,8 @@
   "database_import_hint": "Die Datenbank wird nach \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\export exportiert und wird von \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\import\\oej.db importiert. Alle Deine existierenden Daten werden während des Imports überschrieben. Die Datenbank ist im SQLite Format und kan z.B. mit DB Browser for SQLite (DB4S) geöffnet werden.",
   "export_data": "Daten exportieren",
   "import_data": "Daten importieren",
-  "warning": "Warnung",
-  "importing_data": "Der Datenbank Import wird all Deine existierenden Daten überschreiben!",
+  "import_data_title": "Datenbank importieren?",
+  "import_data_text": "ACHTUNG! Der Datenbank Import wird all Deine existierenden Daten überschreiben!\n\nMöchtest Du wirklich fortfahren?",
   "file_not_found": "Datei nicht gefunden",
   "no_file_to_import": "Keine Datei zum importieren gefunden.",
   "import_succeeded": "Import erfolgreich",
@@ -257,5 +257,7 @@
   "fluid_ounce_gb": "Flüssigunze (GB)",
   "fluid_ounce_us": "Flüssigunze (US)",
   "no_data": "Keine Daten vorhanden",
-  "debug_info": "Debug Info"
+  "debug_info": "Debug Info",
+  "delete_food_title": "Lebensmittel löschen?", 
+  "delete_food_text": "ACHTUNG! Wenn das Lebensmittel gelöscht wird, werden alle Essenstagebuch Einträge, die mit diesem Lebensmittel erstellt wurden zu Schnelleinträgen.\n\nMöchtest Du wirklich fortfahren?"
 }

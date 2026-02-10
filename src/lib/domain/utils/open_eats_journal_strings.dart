@@ -84,7 +84,6 @@ class OpenEatsJournalStrings {
   static const String dbTableMeasurementUnit = "t_measurement_unit";
   static const String dbTableDailyNutritionTarget = "t_daily_nutrition_target";
   static const String dbTableDateInfo = "t_date_info";
-  static const String dbTablTempTable = "t_temp_table";
   static const String dbTableFoodByUsage = "t_food_by_usage";
 
   static const String dbColumnId = "id";

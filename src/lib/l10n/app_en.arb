@@ -226,8 +226,8 @@
   "database_import_hint": "All your exisiting data is overwritten during import. The database is in SQLite format and can be opened with DB Browser for SQLite (DB4S) e.g.",
   "export_data": "Export data",
   "import_data": "Import data",
-  "warning": "Warning",
-  "importing_data": "The database import will overwrite all your existing data!",
+  "import_data_title": "Import database?",
+  "import_data_text": "ATTENTION! The database import will overwrite all your existing data!\n\nDo you really want to continue?",
   "file_not_found": "File not found",
   "no_file_to_import": "No file to import found.",
   "import_succeeded": "Import succeeded",
@@ -257,5 +257,7 @@
   "fluid_ounce_gb": "fluid ounce (GB)",
   "fluid_ounce_us": "fluid ounce (US)",
   "no_data": "No Data Available",
-  "debug_info": "Debug info"
+  "debug_info": "Debug info",
+  "delete_food_title": "Delete food?", 
+  "delete_food_text": "ATTENTION! If this food is deleted, all eats journal entries created with this food will become quick entries.\n\nDo you really want to continue?"
 }

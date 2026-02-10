@@ -1366,6 +1366,21 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
+  Future<void> removeFoodIdFromEatsJournalEntries({required int foodId}) async {
+    Database db = await instance.db;
+    await db.update(
+      OpenEatsJournalStrings.dbTableEatsJournal,
+      {OpenEatsJournalStrings.dbColumnFoodIdRef: null},
+      where: "${OpenEatsJournalStrings.dbColumnFoodIdRef} = ?",
+      whereArgs: [foodId],
+    );
+  }
+
+  Future<void> deleteFood({required int foodId}) async {
+    Database db = await instance.db;
+    await db.delete(OpenEatsJournalStrings.dbTableFood, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [foodId]);
+  }
+
   Future<void> deleteFoodUnits({required int foodId, required List<int> exceptIds}) async {
     Database db = await instance.db;
 

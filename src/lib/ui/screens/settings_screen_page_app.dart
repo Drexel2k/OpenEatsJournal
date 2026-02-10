@@ -228,10 +228,10 @@ class SettingsScreenPageApp extends StatelessWidget {
                         valueListenable: _settingsViewModel.energyUnit,
                         builder: (_, _, _) {
                           return TransparentChoiceChip(
-                            label: AppLocalizations.of(context)!.kjoule,
-                            selected: _settingsViewModel.energyUnit.value == EnergyUnit.kj,
+                            label: AppLocalizations.of(context)!.kcal,
+                            selected: _settingsViewModel.energyUnit.value == EnergyUnit.kcal,
                             onSelected: (bool selected) {
-                              _settingsViewModel.energyUnit.value = EnergyUnit.kj;
+                              _settingsViewModel.energyUnit.value = EnergyUnit.kcal;
                             },
                           );
                         },
@@ -241,10 +241,10 @@ class SettingsScreenPageApp extends StatelessWidget {
                         valueListenable: _settingsViewModel.energyUnit,
                         builder: (_, _, _) {
                           return TransparentChoiceChip(
-                            label: AppLocalizations.of(context)!.kcal,
-                            selected: _settingsViewModel.energyUnit.value == EnergyUnit.kcal,
+                            label: AppLocalizations.of(context)!.kjoule,
+                            selected: _settingsViewModel.energyUnit.value == EnergyUnit.kj,
                             onSelected: (bool selected) {
-                              _settingsViewModel.energyUnit.value = EnergyUnit.kcal;
+                              _settingsViewModel.energyUnit.value = EnergyUnit.kj;
                             },
                           );
                         },
@@ -447,8 +447,8 @@ class SettingsScreenPageApp extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text(AppLocalizations.of(context)!.warning),
-                                content: Text(AppLocalizations.of(context)!.importing_data),
+                                title: Text(AppLocalizations.of(context)!.import_data_title),
+                                content: Text(AppLocalizations.of(context)!.import_data_text),
                                 actions: <Widget>[
                                   TextButton(
                                     child: Text(AppLocalizations.of(context)!.cancel),

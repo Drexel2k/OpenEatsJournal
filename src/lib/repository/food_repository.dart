@@ -779,6 +779,20 @@ class FoodRepository {
     await _setFoodByExternalId(food: food);
   }
 
+  Future<void> deleteFood({required Food food}) async {
+    if (food.id == null) {
+      throw ArgumentError("Can't delete food without id.");
+    }
+
+    if (food.foodSource == FoodSource.standard) {
+      throw ArgumentError("Can't delete standard food.");
+    }
+
+    await _oejDatabaseService.removeFoodIdFromEatsJournalEntries(foodId: food.id!);
+    await _oejDatabaseService.deleteFoodUnits(foodId: food.id!, exceptIds: []);
+    await _oejDatabaseService.deleteFood(foodId: food.id!);
+  }
+
   String getFoodSearchText({required Food food}) {
     String searchText = food.name.trim();
     if (food.brands.isNotEmpty) {

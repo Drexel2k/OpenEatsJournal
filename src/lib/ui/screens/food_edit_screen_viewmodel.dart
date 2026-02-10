@@ -112,6 +112,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   List<FoodUnitEditorData> get foodUnitEditorsData => _foodUnitEditorsData;
   List<FoodUnitEditorViewModel> get foodUnitEditorViewModels => _foodUnitEditorViewModels;
   int? get foodId => _foodId;
+  FoodSource get foodSource => _food.foodSource;
 
   void addFoddUnit({required MeasurementUnit measurementUnit}) {
     FoodUnitEditorData foodUnitEditorData = FoodUnitEditorData(
@@ -345,6 +346,10 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     }
 
     return foodValid;
+  }
+
+  Future<void> deleteFood() async {
+    await _foodRepository.deleteFood(food: _food);
   }
 
   @override
