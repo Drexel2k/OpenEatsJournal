@@ -342,16 +342,16 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _foodSearchResultCache.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
       _foodSearchResultOpenFoodFacts.sort((food1, food2) => _compareNullFoodWithOrder(foodWithOrder1: food1, foodWithOrder2: food2, sortOrder: sortOrder));
     } else if (_sortOrder == SortOrder.kcal) {
-      _foodSearchResultUser.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
-      _foodSearchResultStandard.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
-      _foodSearchResultCache.sort((food1, food2) => food2.object.kJoule - food1.object.kJoule);
+      _foodSearchResultUser.sort((food1, food2) => food1.object.kJoule.compareTo(food2.object.kJoule));
+      _foodSearchResultStandard.sort((food1, food2) => food1.object.kJoule.compareTo(food2.object.kJoule));
+      _foodSearchResultCache.sort((food1, food2) => food1.object.kJoule.compareTo(food2.object.kJoule));
       _foodSearchResultOpenFoodFacts.sort((food1, food2) => _compareNullFoodWithOrder(foodWithOrder1: food1, foodWithOrder2: food2, sortOrder: sortOrder));
     } else if (_sortOrder == SortOrder.popularity) {
       if (searchMode != SearchMode.recent) {
-        _foodSearchResultUser.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
-        _foodSearchResultStandard.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
-        _foodSearchResultCache.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
-        _foodSearchResultOpenFoodFacts.sort((food1, food2) => food1.order > food2.order ? 1 : -1);
+        _foodSearchResultUser.sort((food1, food2) => food1.order.compareTo(food2.order));
+        _foodSearchResultStandard.sort((food1, food2) => food1.order.compareTo(food2.order));
+        _foodSearchResultCache.sort((food1, food2) => food1.order.compareTo(food2.order));
+        _foodSearchResultOpenFoodFacts.sort((food1, food2) => food1.order.compareTo(food2.order));
       }
     }
 

@@ -7,17 +7,17 @@ class FoodUnitEditorData {
     required String name,
     required MeasurementUnit amountMeasurementUnit,
     required bool isDefault,
-    FoodUnit? foodUnit,
+    FoodUnit? originalFoodUnit,
     double? amount,
     String? originalFoodSourceFoodUnitId,
-  }) : _foodUnit = foodUnit,
+  }) : _originalFoodUnit = originalFoodUnit,
        _name = name,
        _amount = amount,
        _amountMeasurementUnit = amountMeasurementUnit,
        _isDefault = isDefault,
        _originalFoodSourceFoodUnitId = originalFoodSourceFoodUnitId;
 
-  final FoodUnit? _foodUnit;
+  final FoodUnit? _originalFoodUnit;
   String _name;
   double? _amount;
   MeasurementUnit _amountMeasurementUnit;
@@ -30,7 +30,7 @@ class FoodUnitEditorData {
   set isDefault(bool value) => _isDefault = value;
   set originalFoodSourceFoodUnitId(String? value) => _originalFoodSourceFoodUnitId = value;
 
-  FoodUnit? get foodUnit => _foodUnit;
+  FoodUnit? get originalFoodUnit => _originalFoodUnit;
   String get name => _name;
   double? get amount => _amount;
   MeasurementUnit get amountMeasurementUnit => _amountMeasurementUnit;

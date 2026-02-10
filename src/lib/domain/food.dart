@@ -317,8 +317,7 @@ class Food {
     }
 
     ObjectWithOrder<FoodUnit> foodUnitWithOrder;
-    //ensure list ist sorted by sort order to generate the new order value.
-    _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+
     if (order == null) {
       foodUnitWithOrder = ObjectWithOrder(
         object: foodUnit,
@@ -330,8 +329,8 @@ class Food {
             1,
       );
     } else {
-      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
-
+      //ensure list ist sorted by sort order to increase old order number from food unit with requested insert order.
+      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit1.order.compareTo(foodUnit2.order));
       for (int foodUnitIndex = order - 1; foodUnitIndex < _foodUnitsWithOrder.length; foodUnitIndex++) {
         _foodUnitsWithOrder[foodUnitIndex].order = _foodUnitsWithOrder[foodUnitIndex].order + 1;
       }
@@ -356,7 +355,7 @@ class Food {
     );
 
     if (foodUnitWithOrder.order != newOrder) {
-      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit1.order.compareTo(foodUnit2.order));
 
       int currentIndex = foodUnitWithOrder.order - 1;
       int newIndex = newOrder - 1;
@@ -412,7 +411,7 @@ class Food {
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrder) => foodUnitWithOrder.object.amountMeasurementUnit == measurementUnit);
 
     if (_foodUnitsWithOrder.isNotEmpty) {
-      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit2.order - foodUnit1.order);
+      _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit1.order.compareTo(foodUnit2.order));
 
       int order = 1;
       for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _foodUnitsWithOrder) {

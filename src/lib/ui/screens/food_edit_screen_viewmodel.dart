@@ -40,7 +40,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
               name: foodUnitWithOrder.object.name,
               amountMeasurementUnit: foodUnitWithOrder.object.amountMeasurementUnit,
               isDefault: foodUnitWithOrder.object == food.defaultFoodUnit,
-              foodUnit: foodUnitWithOrder.object,
+              originalFoodUnit: foodUnitWithOrder.object,
               amount: foodUnitWithOrder.object.amount,
               originalFoodSourceFoodUnitId: foodUnitWithOrder.object.originalFoodSourceFoodUnitId,
             ),
@@ -302,28 +302,28 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       List<FoodUnit> foodUnitsToRemove = [];
       for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in _food.foodUnitsWithOrder) {
         FoodUnitEditorData? foodUnitEditorData = _foodUnitEditorsData.firstWhereOrNull(
-          (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.foodUnit == foodUnitWithOrder.object,
+          (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.originalFoodUnit == foodUnitWithOrder.object,
         );
 
         if (foodUnitEditorData == null) {
           foodUnitsToRemove.add(foodUnitWithOrder.object);
         }
+      }
 
-        for (FoodUnit foodUnit in foodUnitsToRemove) {
-          _food.removeFoodUnit(foodUnit: foodUnit);
-        }
+      for (FoodUnit foodUnit in foodUnitsToRemove) {
+        _food.removeFoodUnit(foodUnit: foodUnit);
       }
 
       //updating food units in food and add new ones, editors work only on temporary data and don't change the food.
       int order = 1;
       for (FoodUnitEditorData foodUnitEditorData in _foodUnitEditorsData) {
         //get food unit if it already existed and update
-        if (foodUnitEditorData.foodUnit != null) {
+        if (foodUnitEditorData.originalFoodUnit != null) {
           //update if exists already, other properties are noit editable in ui
-          foodUnitEditorData.foodUnit!.name = foodUnitEditorData.name;
-          foodUnitEditorData.foodUnit!.amount = foodUnitEditorData.amount!;
-          foodUnitEditorData.foodUnit!.amountMeasurementUnit = foodUnitEditorData.amountMeasurementUnit;
-          _food.upadteFoodUnitOrder(foodUnit: foodUnitEditorData.foodUnit!, newOrder: order);
+          foodUnitEditorData.originalFoodUnit!.name = foodUnitEditorData.name;
+          foodUnitEditorData.originalFoodUnit!.amount = foodUnitEditorData.amount!;
+          foodUnitEditorData.originalFoodUnit!.amountMeasurementUnit = foodUnitEditorData.amountMeasurementUnit;
+          _food.upadteFoodUnitOrder(foodUnit: foodUnitEditorData.originalFoodUnit!, newOrder: order);
         } else {
           //add to food's unit if not exists, other properties are not editable in ui
           FoodUnit foodUnit = FoodUnit(
