@@ -89,19 +89,19 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
   }
 
-  int getCurrentJournalDayTargetKJoule() {
+  double getCurrentJournalDayTargetKJoule() {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
   }
 
-  int getCurrentJournalDayTargeCarbohydrates() {
+  double getCurrentJournalDayTargeCarbohydrates() {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
   }
 
-  int getCurrentJournalDayTargetProtein() {
+  double getCurrentJournalDayTargetProtein() {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
   }
 
-  int getCurrentJournalDayTargetFat() {
+  double getCurrentJournalDayTargetFat() {
     return _settingsRepository.getCurrentJournalDayTargetKJoule();
   }
 

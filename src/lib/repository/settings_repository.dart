@@ -26,13 +26,13 @@ class SettingsRepository extends ChangeNotifier {
   late double _height;
   late double _activityFactor;
   late WeightTarget _weightTarget;
-  late int _kJouleMonday;
-  late int _kJouleTuesday;
-  late int _kJouleWednesday;
-  late int _kJouleThursday;
-  late int _kJouleFriday;
-  late int _kJouleSaturday;
-  late int _kJouleSunday;
+  late double _kJouleMonday;
+  late double _kJouleTuesday;
+  late double _kJouleWednesday;
+  late double _kJouleThursday;
+  late double _kJouleFriday;
+  late double _kJouleSaturday;
+  late double _kJouleSunday;
   DateTime? _lastProcessedStandardFoodDataChangeDate;
   late HeightUnit _heightUnit;
   late WeightUnit _weightUnit;
@@ -91,13 +91,13 @@ class SettingsRepository extends ChangeNotifier {
   double get height => _height;
   double get activityFactor => _activityFactor;
   WeightTarget get weightTarget => _weightTarget;
-  int get kJouleMonday => _kJouleMonday;
-  int get kJouleTuesday => _kJouleTuesday;
-  int get kJouleWednesday => _kJouleWednesday;
-  int get kJouleThursday => _kJouleThursday;
-  int get kJouleFriday => _kJouleFriday;
-  int get kJouleSaturday => _kJouleSaturday;
-  int get kJouleSunday => _kJouleSunday;
+  double get kJouleMonday => _kJouleMonday;
+  double get kJouleTuesday => _kJouleTuesday;
+  double get kJouleWednesday => _kJouleWednesday;
+  double get kJouleThursday => _kJouleThursday;
+  double get kJouleFriday => _kJouleFriday;
+  double get kJouleSaturday => _kJouleSaturday;
+  double get kJouleSunday => _kJouleSunday;
   DateTime? get lastProcessedStandardFoodDataChangeDate => _lastProcessedStandardFoodDataChangeDate;
   EnergyUnit get energyUnit => _energyUnit;
   HeightUnit get heightUnit => _heightUnit;
@@ -114,7 +114,7 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get appName => "OpenEatsJournal";
-  String get appVersion => "1.0 RC5";
+  String get appVersion => "1.0 RC6";
   bool get useStagingServices => kDebugMode ? true : false;
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
@@ -143,13 +143,13 @@ class SettingsRepository extends ChangeNotifier {
       height: settingData[OpenEatsJournalStrings.settingHeight] as double?,
       activityFactor: settingData[OpenEatsJournalStrings.settingActivityFactor] as double?,
       weightTarget: weightTarget != null ? WeightTarget.getByValue(weightTarget) : null,
-      kJouleMonday: settingData[OpenEatsJournalStrings.settingKJouleMonday] as int?,
-      kJouleTuesday: settingData[OpenEatsJournalStrings.settingKJouleTuesday] as int?,
-      kJouleWednesday: settingData[OpenEatsJournalStrings.settingKJouleWednesday] as int?,
-      kJouleThursday: settingData[OpenEatsJournalStrings.settingKJouleThursday] as int?,
-      kJouleFriday: settingData[OpenEatsJournalStrings.settingKJouleFriday] as int?,
-      kJouleSaturday: settingData[OpenEatsJournalStrings.settingKJouleSaturday] as int?,
-      kJouleSunday: settingData[OpenEatsJournalStrings.settingKJouleSunday] as int?,
+      kJouleMonday: settingData[OpenEatsJournalStrings.settingKJouleMonday] as double?,
+      kJouleTuesday: settingData[OpenEatsJournalStrings.settingKJouleTuesday] as double?,
+      kJouleWednesday: settingData[OpenEatsJournalStrings.settingKJouleWednesday] as double?,
+      kJouleThursday: settingData[OpenEatsJournalStrings.settingKJouleThursday] as double?,
+      kJouleFriday: settingData[OpenEatsJournalStrings.settingKJouleFriday] as double?,
+      kJouleSaturday: settingData[OpenEatsJournalStrings.settingKJouleSaturday] as double?,
+      kJouleSunday: settingData[OpenEatsJournalStrings.settingKJouleSunday] as double?,
       lastProcessedStandardFoodDataChangeDate: settingData[OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate] as DateTime?,
       energyUnit: energyUnit != null ? EnergyUnit.getByValue(energyUnit) : null,
       heightUnit: heightUnit != null ? HeightUnit.getByValue(heightUnit) : null,
@@ -301,42 +301,42 @@ class SettingsRepository extends ChangeNotifier {
     await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingVolumeUnit, value: volumeUnit.value);
   }
 
-  Future<void> saveKJouleMonday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday, value: kJoule);
+  Future<void> saveKJouleMonday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleMonday, value: kJoule);
     _kJouleMonday = kJoule;
   }
 
-  Future<void> saveKJouleTuesday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday, value: kJoule);
+  Future<void> saveKJouleTuesday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday, value: kJoule);
     _kJouleTuesday = kJoule;
   }
 
-  Future<void> saveKJouleWednesday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday, value: kJoule);
+  Future<void> saveKJouleWednesday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday, value: kJoule);
     _kJouleWednesday = kJoule;
   }
 
-  Future<void> saveKJouleThursday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleThursday, value: kJoule);
+  Future<void> saveKJouleThursday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleThursday, value: kJoule);
     _kJouleThursday = kJoule;
   }
 
-  Future<void> saveKJouleFriday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleFriday, value: kJoule);
+  Future<void> saveKJouleFriday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleFriday, value: kJoule);
     _kJouleFriday = kJoule;
   }
 
-  Future<void> saveKJouleSaturday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday, value: kJoule);
+  Future<void> saveKJouleSaturday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday, value: kJoule);
     _kJouleSaturday = kJoule;
   }
 
-  Future<void> saveKJouleSunday({required int kJoule}) async {
-    await _oejDatabase.setIntSetting(setting: OpenEatsJournalStrings.settingKJouleSunday, value: kJoule);
+  Future<void> saveKJouleSunday({required double kJoule}) async {
+    await _oejDatabase.setDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleSunday, value: kJoule);
     _kJouleSunday = kJoule;
   }
 
-  Future<void> saveDailyKJouleTargetsSame({required int dailyTargetKJoule}) async {
+  Future<void> saveDailyKJouleTargetsSame({required double dailyTargetKJoule}) async {
     await saveKJouleMonday(kJoule: dailyTargetKJoule);
     await saveKJouleTuesday(kJoule: dailyTargetKJoule);
     await saveKJouleWednesday(kJoule: dailyTargetKJoule);
@@ -351,12 +351,12 @@ class SettingsRepository extends ChangeNotifier {
     _lastProcessedStandardFoodDataChangeDate = date;
   }
 
-  int getCurrentJournalDayTargetKJoule() {
+  double getCurrentJournalDayTargetKJoule() {
     return getTargetKJouleForDay(day: currentJournalDate.value);
   }
 
-  int getTargetKJouleForDay({required DateTime day}) {
-    int dayTargetKJoule = 0;
+  double getTargetKJouleForDay({required DateTime day}) {
+    double dayTargetKJoule = 0;
     switch (day.weekday) {
       case 1:
         dayTargetKJoule = _kJouleMonday;

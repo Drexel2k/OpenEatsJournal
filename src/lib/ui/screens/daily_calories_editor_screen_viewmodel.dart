@@ -10,15 +10,14 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
       _energyTargetDaily = ValueNotifier(
         ConvertValidate.getDisplayEnergy(
           energyKJ:
-              ((kJoulePerDay.kJouleMonday +
-                          kJoulePerDay.kJouleTuesday +
-                          kJoulePerDay.kJouleWednesday +
-                          kJoulePerDay.kJouleThursday +
-                          kJoulePerDay.kJouleFriday +
-                          kJoulePerDay.kJouleSaturday +
-                          kJoulePerDay.kJouleSunday) /
-                      7)
-                  .round(),
+              (kJoulePerDay.kJouleMonday +
+                  kJoulePerDay.kJouleTuesday +
+                  kJoulePerDay.kJouleWednesday +
+                  kJoulePerDay.kJouleThursday +
+                  kJoulePerDay.kJouleFriday +
+                  kJoulePerDay.kJouleSaturday +
+                  kJoulePerDay.kJouleSunday) /
+              7,
         ),
       ),
       _kJoulePerDay = kJoulePerDay,
@@ -226,15 +225,14 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
         _energySunday.value != null) {
       _energyTargetDaily.value = ConvertValidate.getDisplayEnergy(
         energyKJ:
-            (((_energyMonday.value! +
-                        _energyTuesday.value! +
-                        _energyWednesday.value! +
-                        _energyThursday.value! +
-                        _energyFriday.value! +
-                        _energySaturday.value! +
-                        _energySunday.value!) /
-                    7)
-                .round()),
+            ((_energyMonday.value! +
+                _energyTuesday.value! +
+                _energyWednesday.value! +
+                _energyThursday.value! +
+                _energyFriday.value! +
+                _energySaturday.value! +
+                _energySunday.value!) /
+            7),
       );
     }
   }

@@ -38,7 +38,7 @@ class ConvertValidate {
   static const double mlFlOzGbConversionFactor = 28.4130642624675; //https://de.wikipedia.org/wiki/Fluid_ounce
   static const double mlFlOzUsConversionFactor = 29.5735295625; //https://de.wikipedia.org/wiki/Fluid_ounce
   static const double gOzConversionFactor = 28.349523125; //https://de.wikipedia.org/wiki/Unze
-  static const int maxKJoulePerDay = 41840;
+  static const double maxKJoulePerDay = 41840;
   static const int maxHeightCm = 400;
   static const int maxWeightKg = 1000;
 
@@ -167,12 +167,12 @@ class ConvertValidate {
     return g / ConvertValidate.gOzConversionFactor;
   }
 
-  static int getKCalsFromKJoules({required num kJoules}) {
-    return (kJoules / ConvertValidate.kJoulekCalConversionFactor).round();
+  static double getKCalsFromKJoules({required num kJoules}) {
+    return (kJoules / ConvertValidate.kJoulekCalConversionFactor);
   }
 
-  static int getKJoulesFromKCals({required num kCals}) {
-    return (kCals * ConvertValidate.kJoulekCalConversionFactor).round();
+  static double getKJoulesFromKCals({required num kCals}) {
+    return (kCals * ConvertValidate.kJoulekCalConversionFactor);
   }
 
   static double getDisplayHeight({required double heightCm}) {
@@ -247,17 +247,17 @@ class ConvertValidate {
     return _getMlFromFlOzUs(flOz: displayVolume);
   }
 
-  static int getDisplayEnergy({required int energyKJ}) {
+  static int getDisplayEnergy({required double energyKJ}) {
     if (_energyUnit == EnergyUnit.kj) {
-      return energyKJ;
+      return energyKJ.round();
     }
 
-    return getKCalsFromKJoules(kJoules: energyKJ);
+    return getKCalsFromKJoules(kJoules: energyKJ).round();
   }
 
-  static int getEnergyKJ({required int displayEnergy}) {
+  static double getEnergyKJ({required int displayEnergy}) {
     if (_energyUnit == EnergyUnit.kj) {
-      return displayEnergy;
+      return displayEnergy.toDouble();
     }
 
     return getKJoulesFromKCals(kCals: displayEnergy);

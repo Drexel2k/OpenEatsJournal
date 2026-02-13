@@ -240,7 +240,7 @@ class FoodRepository {
 
     if (foodApi.nutriments != null && (foodApi.productQuantityUnit != null || foodApi.servingQuantityUnit != null)) {
       double? servingAdjustFactor;
-      int? energyKjPer100Units;
+      double? energyKjPer100Units;
       MeasurementUnit? nutrimentsMeasurementUnit;
 
       //energyKjPer100Units comes from foodApi.nutriments!.energyKj100g or foodApi.nutriments!.energyKj! and is either asssociated to serving quantity or
@@ -263,7 +263,9 @@ class FoodRepository {
       if (energyKjPer100Units == null || nutrimentsMeasurementUnit == null) {
         //We don't have valid infos from the serving here, so we check the product data.
         //nutritionDataPer can only be 100g or serving, so if it is not serving, energyKj100g and energyKj should be the same.
-        energyKjPer100Units = foodApi.nutriments!.energyKj100g ?? foodApi.nutriments!.energyKj;
+        energyKjPer100Units = foodApi.nutriments!.energyKj100g?.toDouble();
+        energyKjPer100Units ??= foodApi.nutriments!.energyKj?.toDouble();
+
         nutrimentsMeasurementUnit = _getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit);
 
         //If we have energyKjPer100Units but no nutrimentsMeasurementUnit we just assume nutrimentsMeasurementUnit it's gram...
@@ -338,7 +340,7 @@ class FoodRepository {
           foodSource: FoodSource.openFoodFacts,
           fromDb: false,
           originalFoodSourceFoodId: foodApi.code,
-          barcode: int.tryParse(foodApi.code),
+          barcode: int.tryParse(foodApi.code!),
           nutritionPerGramAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? 100 : null,
           nutritionPerMilliliterAmount: nutrimentsMeasurementUnit == MeasurementUnit.gram ? null : 100,
           kJoule: energyKjPer100Units,
@@ -435,11 +437,11 @@ class FoodRepository {
     return name;
   }
 
-  int? _getEnergyPer100UnitsFromServing({required FoodApi foodApi, double? servingAdjustFactor}) {
-    int? energyKjPer100Units = foodApi.nutriments!.energyKj100g;
+  double? _getEnergyPer100UnitsFromServing({required FoodApi foodApi, double? servingAdjustFactor}) {
+    double? energyKjPer100Units = foodApi.nutriments!.energyKj100g?.toDouble();
 
     if (energyKjPer100Units == null && foodApi.nutriments!.energyKj != null && servingAdjustFactor != null) {
-      energyKjPer100Units = (foodApi.nutriments!.energyKj! * servingAdjustFactor).round();
+      energyKjPer100Units = (foodApi.nutriments!.energyKj! * servingAdjustFactor);
     }
 
     return energyKjPer100Units;
@@ -761,7 +763,7 @@ class FoodRepository {
       name: languageCode == OpenEatsJournalStrings.en ? foodDataCsv[3] : foodDataCsv[4],
       foodSource: FoodSource.standard,
       fromDb: true,
-      kJoule: int.parse(foodDataCsv[9]),
+      kJoule: double.parse(foodDataCsv[9]),
       brands: brands == OpenEatsJournalStrings.emptyString ? null : foodDataCsv[4].split(","),
       originalFoodSourceFoodId: foodDataCsv[1],
       nutritionPerGramAmount: foodDataCsv[7] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[7]),

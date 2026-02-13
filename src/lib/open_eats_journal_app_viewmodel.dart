@@ -60,7 +60,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
     _appWideSettingChanged.notify();
   }
 
-  Future<void> initStandardFoodData({required String languageCode}) async {
+  void initStandardFoodData({required String languageCode}) {
     _dataInitialized ??= _foodRepository.initializeStandardFoodData(
       languageCode: languageCode,
       lastProcessedStandardFoodDataChangeDate: _settingsRepository.lastProcessedStandardFoodDataChangeDate,

@@ -6,7 +6,7 @@ class NutritionCalculator {
 
   //Deutsche Gesellschaft für Ernährung
   //https://www.dge.de/wissenschaft/referenzwerte/energie/
-  static const int kJouleForOnekCal = 4;
+  static const double kJouleForOnekCal = 4;
 
   //calculation according to Mifflin St Jeor equation
   static double calculateBasalMetabolicRateInKJoule({required double weightKg, required double heightCm, required int ageYear, required Gender gender}) {
@@ -31,15 +31,15 @@ class NutritionCalculator {
   //55 (55-60) % Carbohydrates,  1g = 17kJ, 4kCal
   //15 (10-15) % Protein,  1g = 17kJ, 4kCal
   //30 % Fat,  1g = 37kJ, 7kCal
-  static double calculateCarbohydrateDemandByKJoule({required int kJoule}) {
+  static double calculateCarbohydrateDemandByKJoule({required double kJoule}) {
     return kJoule / 17 * 0.55;
   }
 
-  static double calculateProteinDemandByKJoule({required int kJoule}) {
+  static double calculateProteinDemandByKJoule({required double kJoule}) {
     return kJoule / 17 * 0.15;
   }
 
-  static double calculateFatDemandByKJoule({required int kJoule}) {
+  static double calculateFatDemandByKJoule({required double kJoule}) {
     return kJoule / 37 * 0.3;
   }
 }

@@ -107,7 +107,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       dailyNeedKJouleDouble = 1;
     }
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg).round();
+    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg);
     if (dailyTargetKJoule < 1) {
       dailyTargetKJoule = 1;
     }
@@ -191,7 +191,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         dailyNeedKJouleDouble = 1;
       }
 
-      _dailyNeedEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyNeedKJouleDouble.round());
+      _dailyNeedEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyNeedKJouleDouble);
 
       if (dailyTargetKJouleCalculationPossible) {
         double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(
@@ -202,7 +202,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
           dailyTargetKJouleDouble = 1;
         }
 
-        _dailyTargetEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyTargetKJouleDouble.round());
+        _dailyTargetEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyTargetKJouleDouble);
       }
     }
   }

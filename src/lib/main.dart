@@ -1,6 +1,7 @@
 import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:http/http.dart" as http show get;
 import "package:openeatsjournal/open_eats_journal_app.dart";
 import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
@@ -16,6 +17,9 @@ import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 
 void main() {
+  //required for database initialization
+  WidgetsFlutterBinding.ensureInitialized();
+
   //ErrorWidget.builder = ErrorHandlers.errorWidget;
   FlutterError.onError = (FlutterErrorDetails details) async {
     FlutterError.presentError(details);
@@ -40,6 +44,7 @@ void main() {
   repositories.settingsRepository.init(oejDatabase: oejDatabase);
 
   openFoodFactsService.init(
+    httpGet: http.get,
     appName: repositories.settingsRepository.appName,
     appVersion: repositories.settingsRepository.appVersion,
     appContactMail: repositories.settingsRepository.appContactMail!,
@@ -49,8 +54,6 @@ void main() {
   repositories.journalRepository.init(oejDatabase: oejDatabase);
   repositories.foodRepository.init(openFoodFactsService: openFoodFactsService, oejDatabaseService: oejDatabase, oejAssetsService: openEatsJournalAssetsService);
 
-  //required for database initialization
-  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   //debugPaintSizeEnabled=true;

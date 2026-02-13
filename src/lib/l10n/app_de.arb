@@ -5,7 +5,7 @@
   "eats_journal": "Essenstagebuch",
   "welcome": "Willkommen! ",
   "support_this_app": "Unterstütze Open Eats Journal",
-  "welcome_message_welcome": "Willkommen bei Open Eats Journal, eine freies, Open Source, datensparsarmes und datenschutzfreundliches Ernährungstagebuch um Deine Nahrungsaufnahme und Nährwerte nachzuverfolgen.",
+  "welcome_message_welcome": "Willkommen bei Open Eats Journal, ein freies, datensparsarmes und datenschutzfreundliches Open Source Ernährungstagebuch um Deine Nahrungsaufnahme und Nährwerte nachzuverfolgen.",
   "welcome_message_data": "Open Eats Journal braucht ein paar Daten von Dir um Zielwertvorschläge für Deine Nährwerte zu berechnen. Bitte beachte, dass das kein medizinischer Rat ist und dass die App nicht von einem Mediziner oder Ernährungsexperten erstellt wurde. Bei Zweifeln konsultiere einen Ernährungsexperten oder Arzt.",
   "welcome_message_data_storage": "Alle Daten werden nur auf Deinem Gerät gespeichert und mit niemandem geteilt, nur bei der Abfrage von Online Diensten zur Suche von Lebensmitteln und Nährwertdaten werden die für die Suche benötigten Daten übertragen.",
   "welcome_message_local_database": "Die lokale Standard Lebensmitteldatenbank wurde nach bestem Wissen und Gewissen erstellt, als Online Lebensmitteldatenquelle wird Open Food Facts genutzt.",

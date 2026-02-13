@@ -254,18 +254,18 @@ class _FoodCardState extends State<FoodCard> {
     }
   }
 
-  int _getKJoulesToAdd() {
+  double _getKJoulesToAdd() {
     if (widget._food.defaultFoodUnit != null) {
       if (widget._food.defaultFoodUnit!.amountMeasurementUnit == MeasurementUnit.gram) {
-        return (widget._food.kJoule * (widget._food.defaultFoodUnit!.amount / widget._food.nutritionPerGramAmount!)).round();
+        return (widget._food.kJoule * (widget._food.defaultFoodUnit!.amount / widget._food.nutritionPerGramAmount!));
       } else {
-        return (widget._food.kJoule * (widget._food.defaultFoodUnit!.amount / widget._food.nutritionPerMilliliterAmount!)).round();
+        return (widget._food.kJoule * (widget._food.defaultFoodUnit!.amount / widget._food.nutritionPerMilliliterAmount!));
       }
     } else {
       if (widget._food.nutritionPerGramAmount != null) {
-        return (widget._food.kJoule * (100 / widget._food.nutritionPerGramAmount!)).round();
+        return (widget._food.kJoule * (100 / widget._food.nutritionPerGramAmount!));
       } else {
-        return (widget._food.kJoule * (100 / widget._food.nutritionPerMilliliterAmount!)).round();
+        return (widget._food.kJoule * (100 / widget._food.nutritionPerMilliliterAmount!));
       }
     }
   }

@@ -1,7 +1,5 @@
 import "dart:convert";
 import "dart:io";
-
-import "package:http/http.dart" as http;
 import "package:http/http.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 
@@ -17,12 +15,21 @@ class OpenFoodFactsService {
   late String _appVersion;
   late String _appContactMail;
   late bool _useStaging;
+  late Future<Response> Function(Uri uri, {Map<String, String>? headers}) _httpGet;
 
-  void init({required String appName, required String appVersion, required String appContactMail, bool useStaging = false}) {
+  //httpGet as argument so that it can be mocked for testing
+  void init({
+    required Future<Response> Function(Uri url, {Map<String, String>? headers}) httpGet,
+    required String appName,
+    required String appVersion,
+    required String appContactMail,
+    bool useStaging = false,
+  }) {
     _appName = appName;
     _appVersion = appVersion;
     _appContactMail = appContactMail;
     _useStaging = useStaging;
+    _httpGet = httpGet;
 
     String domain = "org";
     if (_useStaging) {
@@ -53,7 +60,7 @@ class OpenFoodFactsService {
       headers[HttpHeaders.authorizationHeader] = "Basic ${base64.encode(utf8.encode("off:off"))}";
     }
 
-    Response resp = await http.get(
+    Response resp = await _httpGet(
       Uri.parse("$_apiV2Endpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}"),
       headers: headers,
     );
@@ -79,7 +86,7 @@ class OpenFoodFactsService {
       "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}&page=$page&page_size=$pageSize",
     );
 
-    Response resp = await http.get(uri, headers: headers);
+    Response resp = await _httpGet(uri, headers: headers);
 
     if (resp.statusCode == 200) {
       return resp.body;
@@ -87,33 +94,6 @@ class OpenFoodFactsService {
 
     return null;
   }
-
-  // Future<String?> getFoodBySearchTextSearchALicous({required String searchText, required String languageCode, required int page}) async {
-  //   Map<String, String> headers = {
-  //     HttpHeaders.userAgentHeader: "$_appName/$_appVersion ($_appContactMail)",
-  //     HttpHeaders.contentTypeHeader: "application/json; charset=UTF-8",
-  //   };
-
-  //   if (_useStaging) {
-  //     headers[HttpHeaders.authorizationHeader] = "Basic ${base64.encode(utf8.encode("off:off"))}";
-  //   }
-
-  //   String languageCodes = OpenEatsJournalStrings.en;
-  //   if (languageCode != OpenEatsJournalStrings.en) {
-  //     languageCodes = "$languageCode,$languageCodes";
-  //   }
-
-  //   searchText = OpenFoodFactsService._encodeSearchText(searchText);
-  //   //Uri uri = Uri.parse("${_textSearchEndpoint}q=$searchText&fields=${OpenFoodFactsApiStrings.searchALiciousAllFields.join(",")}&langs=$languageCodes&page_size=100&page=$page");
-  //   Uri uri = Uri.parse("${_searchALiciousEndPoint}q=$searchText&langs=$languageCodes&page_size=100&page=$page");
-  //   Response resp = await http.get(uri);
-
-  //   if (resp.statusCode == 200) {
-  //     return resp.body;
-  //   }
-
-  //   return null;
-  // }
 
   static String _encodeSearchText(String searchText) {
     List<String> searchWords = searchText.split(" ");

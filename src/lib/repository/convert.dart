@@ -48,7 +48,7 @@ class Convert {
       name: dbResult[0][OpenEatsJournalStrings.dbResultFoodName] as String,
       foodSource: FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbResultFoodFoodSourceIdRef] as int),
       fromDb: true,
-      kJoule: dbResult[0][OpenEatsJournalStrings.dbResultFoodKiloJoule] as int,
+      kJoule: dbResult[0][OpenEatsJournalStrings.dbResultFoodKiloJoule] as double,
       originalFoodSource: dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceIdRef] != null
           ? FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceIdRef] as int)
           : null,

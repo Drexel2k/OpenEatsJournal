@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-02-09 00-00-00,2026-01-15 00-00-00
+2026-02-13 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -18,8 +18,9 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","4","2026-01-10 00-00-00","Apple, raw","Apfel, roh",,,"100",,"226","0.1","0","14.4","10.3","0.3","0",
 "foodunit","1","middle","mittel","130","g","true"
 "foodunit","2","big","groß","200","g","false"
-"food","5","2026-01-10 00-00-00","Dinner rolls, wheat","Brötchen, Semmel, Weizen",,,"100",,"1142","6.3","1.5","46","1.6","8.6","0.9",
+"food","5","2026-02-11 00-00-00","Dinner rolls, wheat","Brötchen, Semmel, Weißbrot, Weizen",,,"100",,"1142","6.3","1.5","46","1.6","8.6","0.9",
 "foodunit","1","Roll","Brötchen","80","g","true"
+"foodunit","2","Slice","Scheibe","50","g","false"
 "food","6","2026-01-10 00-00-00","Onion mince","Zwiebelmett",,,"100",,"828","14","5.7","1","1","17","3.2",
 "foodunit","1","Serving","Portion","40","g","true"
 "food","7","2026-01-10 00-00-00","Cream Cheese","Frischkäse",,,"100",,"984","22.5","15.7","3","3","5.5","0.7",
@@ -57,12 +58,14 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","2","Slice","Riegel","16.7","g","true"
 "food","21","2026-01-15 00-00-00","Muesli/granola/cereal bar chocolate","Müsliriegel Schoko",,,"100",,"1764","13.8","9.4","66.8","31.2","5","0.4",
 "foodunit","1","Bar","Riegel","50","g","true"
-"food","22","2026-01-15 00-00-00","Rye mixed bread","Roggenmischbrot, Graubrot",,,"100",,"1047","1","0.2","50","0.6","7.6","1.6",
+"food","22","2026-02-11 00-00-00","Rye mixed bread, Röggelchen","Roggenmischbrot, Graubrot, Röggelchen",,,"100",,"1047","1","0.2","50","0.6","7.6","1.6",
 "foodunit","1","Slice","Scheibe","50","g","true"
+"foodunit","2","Röggelchen","Röggelchen","80","g","false"
 "food","23","2026-01-15 00-00-00","Wheat mixed bread","Weizenmischbrot, Graubrot",,,"100",,"1026","0.8","0.1","49","0.6","7.4","1.7",
 "foodunit","1","Slice","Scheibe","50","g","true"
-"food","24","2026-01-15 00-00-00","Wholemeal/whole-grain bread","Vollkornbrot",,,"100",,"995","7","0.8","32","3.5","7.5","1.1",
+"food","24","2026-02-11 00-00-00","Wholemeal/whole-grain bread/roll","Vollkornbrot/Vollkornrötchen",,,"100",,"995","7","0.8","32","3.5","7.5","1.1",
 "foodunit","1","Slice","Scheibe","50","g","true"
+"foodunit","2","Roll","Brötchen","80","g","false"
 "food","25","2026-01-15 00-00-00","Noodles durum wheat semolina boiled","Nudeln Hartweizengries gekocht",,,"100",,"599","0.5",,"28.1","0.2","5","0.1",
 "food","26","2026-01-15 00-00-00","Noodles durum wheat semolina dry","Nudeln Hartweizengries trocken",,,"100",,"1525","1.3","0.2","73","3","12.5","0.1",
 "food","27","2026-01-15 00-00-00","Rice boiled","Reis gekocht",,,"100",,"544","0.2","0.1","28.7",,"2.4",,
@@ -175,3 +178,15 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","2","Lye pretzel","Laugenbrezel","110","g","false"
 "food","77","2026-02-09 00-00-00","Whole milk 3.5%","Vollmilch 3,5%",,,"100","100","269","3.5","2.3","4.7","4.7","3.5","0.1",
 "food","78","2026-02-09 00-00-00","Low-fat milk 1.5%","Fettarme Milch 1,5%",,,"100","100","199","1.5","1","4.9","4.9","3.5","0.1",
+"food","79","2026-02-11 00-00-00","Sunflower seeds","Sonnenblumenkerne",,,"100",,"2245","51.5","4.5","20","2.6","20.8",,
+"food","80","2026-02-11 00-00-00","Cucurbita/pumpkin seeds","Kürbiskerne",,,"100",,"2413","46","9.4","2","1.4","37",,
+"food","81","2026-02-11 00-00-00","Zucchini, raw","Zucchini, roh",,,"100",,"96","0.3",,"2.3","2.3","2",,
+"foodunit","1","small","klein","120","g","false"
+"foodunit","2","middle","mittel","200","g","true"
+"foodunit","3","big","groß","300","g","false"
+"food","82","2026-02-13 00-00-00","Pita gyros","Gyros Pita",,,"100",,"741","8.1","2.7","14.4","1.2","9.3","1.2",
+"foodunit","1","Pita","pita","400","g","true"
+"food","83","2026-02-13 00-00-00","Cocktail Sauce / seaffod sauce","Cocktail Sauce",,,"100",,"1682","39","3.8","11","9.1","1.4","1.9",
+"food","84","2026-02-13 00-00-00","Tsatsiki","Tsatsiki / Zaziki",,,"100",,"512","8.8","4.4","6.9","4.9","4","1",
+"food","85","2026-02-13 00-00-00","Döner meat veal","Dönerfleisch Kalb",,,"100",,"1060","17","6.9","1","0.5","25","1.3",
+"food","86","2026-02-13 00-00-00","Gyros","Gyros",,,"100",,"821","11.1","2.5","1.4","1","22.7","1.4",

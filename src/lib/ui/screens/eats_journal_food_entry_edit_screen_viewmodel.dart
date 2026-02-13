@@ -111,7 +111,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
         eatsAmount = ConvertValidate.getWeightG(displayWeight: _eatsAmount.value!);
 
         _energy.value = ConvertValidate.getDisplayEnergy(
-          energyKJ: (_foodEntry.food!.kJoule * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!)).round(),
+          energyKJ: (_foodEntry.food!.kJoule * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!)),
         );
         _carbohydrates.value = _foodEntry.food!.carbohydrates != null
             ? ConvertValidate.getDisplayWeightG(
@@ -146,7 +146,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
       } else {
         eatsAmount = ConvertValidate.getVolumeMl(displayVolume: _eatsAmount.value!);
         _energy.value = ConvertValidate.getDisplayEnergy(
-          energyKJ: (_foodEntry.food!.kJoule * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!)).round(),
+          energyKJ: (_foodEntry.food!.kJoule * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!)),
         );
         _carbohydrates.value = _foodEntry.food!.carbohydrates != null
             ? ConvertValidate.getDisplayWeightG(

@@ -83,13 +83,13 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<WeightUnit> get weightUnit => _weightUnit;
   ValueNotifier<VolumeUnit> get volumeUnit => _volumeUnit;
 
-  int get kJouleMonday => _settingsRepository.kJouleMonday;
-  int get kJouleTuesday => _settingsRepository.kJouleTuesday;
-  int get kJouleWednesday => _settingsRepository.kJouleWednesday;
-  int get kJouleThursday => _settingsRepository.kJouleThursday;
-  int get kJouleFriday => _settingsRepository.kJouleFriday;
-  int get kJouleSaturday => _settingsRepository.kJouleSaturday;
-  int get kJouleSunday => _settingsRepository.kJouleSunday;
+  double get kJouleMonday => _settingsRepository.kJouleMonday;
+  double get kJouleTuesday => _settingsRepository.kJouleTuesday;
+  double get kJouleWednesday => _settingsRepository.kJouleWednesday;
+  double get kJouleThursday => _settingsRepository.kJouleThursday;
+  double get kJouleFriday => _settingsRepository.kJouleFriday;
+  double get kJouleSaturday => _settingsRepository.kJouleSaturday;
+  double get kJouleSunday => _settingsRepository.kJouleSunday;
   double get repositoryHeight => ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height);
 
   SettingsRepository get settingsRepository => _settingsRepository;
@@ -101,19 +101,18 @@ class SettingsScreenViewModel extends ChangeNotifier {
   void _setDailyTargetKJoule() {
     _dailyTargetKJoule.value = ConvertValidate.getDisplayEnergy(
       energyKJ:
-          ((_settingsRepository.kJouleMonday +
-                      _settingsRepository.kJouleTuesday +
-                      _settingsRepository.kJouleWednesday +
-                      _settingsRepository.kJouleThursday +
-                      _settingsRepository.kJouleFriday +
-                      _settingsRepository.kJouleSaturday +
-                      _settingsRepository.kJouleSunday) /
-                  7)
-              .round(),
+          (_settingsRepository.kJouleMonday +
+              _settingsRepository.kJouleTuesday +
+              _settingsRepository.kJouleWednesday +
+              _settingsRepository.kJouleThursday +
+              _settingsRepository.kJouleFriday +
+              _settingsRepository.kJouleSaturday +
+              _settingsRepository.kJouleSunday) /
+          7,
     );
   }
 
-  int _getDailyKJoule() {
+  double _getDailyKJoule() {
     int age = 0;
     final DateTime today = DateTime.now();
     age = today.year - _settingsRepository.birthday.year;
@@ -123,7 +122,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
       age = age - 1;
     }
 
-    int dailyKJoule = NutritionCalculator.calculateTotalKJoulePerDay(
+    double dailyKJoule = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
         weightKg: _lastValidWeight,
         heightCm: _settingsRepository.height,
@@ -131,7 +130,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
         gender: _settingsRepository.gender,
       ),
       activityFactor: _settingsRepository.activityFactor,
-    ).round();
+    );
 
     if (dailyKJoule < 1) {
       dailyKJoule = 1;
@@ -262,10 +261,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
       weightLossKg = 0.75;
     }
 
-    int dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(
-      kJoulePerDay: _getDailyKJoule().toDouble(),
-      weightLossPerWeekKg: weightLossKg,
-    ).round();
+    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule(), weightLossPerWeekKg: weightLossKg);
     if (dailyTargetKJoule < 1) {
       dailyTargetKJoule = 1;
     }

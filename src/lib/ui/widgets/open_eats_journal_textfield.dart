@@ -43,6 +43,8 @@ class OpenEatsJournalTextField extends StatelessWidget {
   final bool? _selectAllOnFocus;
   final GestureTapCallback? _onTap;
 
+  TextEditingController? get controller => _controller; 
+
   @override
   Widget build(BuildContext context) {
     OutlineInputBorder border = OutlineInputBorder(

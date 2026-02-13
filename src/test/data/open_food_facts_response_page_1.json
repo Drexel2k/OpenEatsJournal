@@ -1,0 +1,319 @@
+{
+    "count": 2,
+    "page": 1,
+    "page_count": 10,
+    "page_size": 10,
+    "products": [
+        {
+            "abbreviated_product_name": "Burger 1 nutr per 100g some null",
+            "brands_tags": [
+                "Brand 1 nutr per 100g some null"
+            ],
+            "code": "8722700125174",
+            "generic_name": "Sauce.",
+            "lang": "fr",
+            "nutriments": {
+                "energy": 1004,
+                "energy_100g": 1004,
+                "fat": 21,
+                "fat_100g": 21,
+                "proteins": 1.1,
+                "proteins_100g": 1.1,
+                "salt": 1.3,
+                "salt_100g": 1.3,
+                "saturated-fat": 1.7,
+                "saturated-fat_100g": 1.7
+            },
+            "nutrition_data_per": "100g",
+            "product_name": "Burger 1 nutr per 100g some null",
+            "product_quantity": 260.0,
+            "product_quantity_unit": "g",
+            "quantity": "260 g",
+            "serving_quantity": 15.0,
+            "serving_quantity_unit": "g",
+            "serving_size": "15 g (15 Gramme)"
+        },
+        {
+            "abbreviated_product_name": "Burger 1 nutr per 100g",
+            "brands_tags": [
+                "Brand 1 nutr per 100g"
+            ],
+            "code": "8722700125174",
+            "generic_name": "Sauce.",
+            "lang": "fr",
+            "nutriments": {
+                "carbohydrates": 11,
+                "carbohydrates_100g": 11,
+                "energy": 1004,
+                "energy_100g": 1004,
+                "fat": 21,
+                "fat_100g": 21,
+                "proteins": 1.1,
+                "proteins_100g": 1.1,
+                "salt": 1.3,
+                "salt_100g": 1.3,
+                "saturated-fat": 1.7,
+                "saturated-fat_100g": 1.7,
+                "sugars": 6.9,
+                "sugars_100g": 6.9
+            },
+            "nutrition_data_per": "100g",
+            "product_name": "Burger 1 nutr per 100g",
+            "product_quantity": 260.0,
+            "product_quantity_unit": "g",
+            "quantity": "260 g",
+            "serving_quantity": 15.0,
+            "serving_quantity_unit": "g",
+            "serving_size": "15 g (15 Gramme)"
+        },
+        {
+            "brands_tags": [
+                "Brand 2"
+            ],
+            "code": "5014008002237",
+            "generic_name": "Burger 2 nutr per serving",
+            "generic_name_en": "Burger 2 nutr per serving",
+            "lang": "en",
+            "nutriments": {
+                "carbohydrates": 8.2,
+                "carbohydrates_100g": 7.19,
+                "energy": 1109,
+                "energy_100g": 973,
+                "fat": 15.4,
+                "fat_100g": 13.5,
+                "proteins": 20.8,
+                "proteins_100g": 18.2,
+                "salt": 1.475,
+                "salt_100g": 1.29,
+                "saturated-fat": 2.2,
+                "saturated-fat_100g": 1.93,
+                "sugars": 0.9,
+                "sugars_100g": 0.789
+            },
+            "nutrition_data_per": "serving",
+            "product_name": "Burger 2 nutr per serving",
+            "product_name_en": "Burger 2 nutr per serving",
+            "product_quantity": 227.0,
+            "product_quantity_unit": "g",
+            "quantity": "227 g, 2 burgers",
+            "serving_quantity": 114.0,
+            "serving_quantity_unit": "g",
+            "serving_size": "1 burger (114 g)"
+        },
+        {
+            "brands_tags": [
+                "Brand 3"
+            ],
+            "code": "5014008002237",
+            "generic_name": "Burger 3 w/o product_quantity",
+            "generic_name_en": "Burger 3 w/o product_quantity",
+            "lang": "en",
+            "nutriments": {
+                "carbohydrates": 8.2,
+                "carbohydrates_100g": 7.19,
+                "energy": 1109,
+                "energy_100g": 973,
+                "fat": 15.4,
+                "fat_100g": 13.5,
+                "proteins": 20.8,
+                "proteins_100g": 18.2,
+                "salt": 1.475,
+                "salt_100g": 1.29,
+                "saturated-fat": 2.2,
+                "saturated-fat_100g": 1.93,
+                "sugars": 0.9,
+                "sugars_100g": 0.789
+            },
+            "nutrition_data_per": "serving",
+            "product_name": "Burger 3 w/o product_quantity",
+            "product_name_en": "Burger 3 w/o product_quantity",
+            "quantity": "227 g, 2 burgers",
+            "serving_quantity": 114.0,
+            "serving_quantity_unit": "g",
+            "serving_size": "1 burger (114 g)"
+        },
+        {
+            "brands_tags": [
+                "Brand 2"
+            ],
+            "code": "5014008002237",
+            "generic_name": "Burger 4 w/o serving_quantity",
+            "generic_name_en": "Burger 4 w/o serving_quantity",
+            "lang": "en",
+            "nutriments": {
+                "carbohydrates": 8.2,
+                "carbohydrates_100g": 7.19,
+                "energy": 1109,
+                "energy_100g": 973,
+                "fat": 15.4,
+                "fat_100g": 13.5,
+                "proteins": 20.8,
+                "proteins_100g": 18.2,
+                "salt": 1.475,
+                "salt_100g": 1.29,
+                "saturated-fat": 2.2,
+                "saturated-fat_100g": 1.93,
+                "sugars": 0.9,
+                "sugars_100g": 0.789
+            },
+            "nutrition_data_per": "serving",
+            "product_name": "Burger 4 w/o serving_quantity",
+            "product_name_en": "Burger 4 w/o serving_quantity",
+            "product_quantity": 227.0,
+            "product_quantity_unit": "g",
+            "quantity": "227 g, 2 burgers",
+            "serving_size": "1 burger (114 g)"
+        },
+        {
+            "brands_tags": [
+                "Brand 2"
+            ],
+            "code": "5014008002237",
+            "generic_name": "Burger 4 w/o product_quantity and serving_quantity",
+            "generic_name_en": "Burger 4 w/o product_quantity and serving_quantity",
+            "lang": "en",
+            "nutriments": {
+                "carbohydrates": 8.2,
+                "carbohydrates_100g": 7.19,
+                "energy": 1109,
+                "energy_100g": 973,
+                "fat": 15.4,
+                "fat_100g": 13.5,
+                "proteins": 20.8,
+                "proteins_100g": 18.2,
+                "salt": 1.475,
+                "salt_100g": 1.29,
+                "saturated-fat": 2.2,
+                "saturated-fat_100g": 1.93,
+                "sugars": 0.9,
+                "sugars_100g": 0.789
+            },
+            "nutrition_data_per": "serving",
+            "product_name": "Burger 4 w/o product_quantity and serving_quantity",
+            "product_name_en": "Burger 4 w/o product_quantity and serving_quantity",
+            "quantity": "227 g, 2 burgers",
+            "serving_size": "1 burger (114 g)"
+        },
+        {
+            "brands_tags": [
+                null
+            ],
+            "code": null,
+            "generic_name": null,
+            "generic_name_en": null,
+            "lang": null,
+            "nutriments": {
+                "carbohydrates": null,
+                "carbohydrates_100g": null,
+                "energy": null,
+                "energy_100g": null,
+                "fat": null,
+                "fat_100g": null,
+                "proteins": null,
+                "proteins_100g": null,
+                "salt": null,
+                "salt_100g": null,
+                "saturated-fat": null,
+                "saturated-fat_100g": null,
+                "sugars": null,
+                "sugars_100g": null
+            },
+            "nutrition_data_per": null,
+            "product_name": null,
+            "product_name_en": null,
+            "product_quantity": null,
+            "product_quantity_unit": null,
+            "quantity": null,
+            "serving_quantity": null,
+            "serving_quantity_unit": null,
+            "serving_size": null
+        },
+        {
+            "brands_tags": [
+                null
+            ],
+            "code": null,
+            "generic_name": "Null value test 2",
+            "generic_name_en": null,
+            "lang": null,
+            "nutrition_data_per": null,
+            "product_name": null,
+            "product_name_en": null,
+            "product_quantity": null,
+            "product_quantity_unit": null,
+            "quantity": null,
+            "serving_quantity": null,
+            "serving_quantity_unit": null,
+            "serving_size": null
+        },
+        {
+            "generic_name": "Null value test 3",
+            "nutriments": {
+                "energy": null
+            }
+        },
+        {
+            "brands_tags": [
+                "Null value test brand kj"
+            ],
+            "code": "5014008002237",
+            "generic_name": "Null value test energy",
+            "generic_name_en": "Null value test energy",
+            "lang": "en",
+            "nutriments": {
+                "carbohydrates": 8.2,
+                "carbohydrates_100g": 7.19,
+                "fat": 15.4,
+                "fat_100g": 13.5,
+                "proteins": 20.8,
+                "proteins_100g": 18.2,
+                "salt": 1.475,
+                "salt_100g": 1.29,
+                "saturated-fat": 2.2,
+                "saturated-fat_100g": 1.93,
+                "sugars": 0.9,
+                "sugars_100g": 0.789
+            },
+            "nutrition_data_per": "serving",
+            "product_name": "Null value test kj",
+            "product_name_en": "Null value test kj",
+            "product_quantity": 227.0,
+            "product_quantity_unit": "g",
+            "quantity": "227 g, 2 burgers",
+            "serving_quantity": 114.0,
+            "serving_quantity_unit": "g",
+            "serving_size": "1 burger (114 g)"
+        },
+        {
+            "brands_tags": [
+                "Brand 2"
+            ],
+            "code": "5014008002237",
+            "lang": "en",
+            "nutriments": {
+                "carbohydrates": 8.2,
+                "carbohydrates_100g": 7.19,
+                "energy": 1109,
+                "energy_100g": 973,
+                "fat": 15.4,
+                "fat_100g": 13.5,
+                "proteins": 20.8,
+                "proteins_100g": 18.2,
+                "salt": 1.475,
+                "salt_100g": 1.29,
+                "saturated-fat": 2.2,
+                "saturated-fat_100g": 1.93,
+                "sugars": 0.9,
+                "sugars_100g": 0.789
+            },
+            "nutrition_data_per": "serving",
+            "product_quantity": 227.0,
+            "product_quantity_unit": "g",
+            "quantity": "227 g, 2 burgers",
+            "serving_quantity": 114.0,
+            "serving_quantity_unit": "g",
+            "serving_size": "1 burger (114 g)"
+        }
+    ],
+    "skip": 0
+}

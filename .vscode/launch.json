@@ -4,22 +4,21 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "openeatsjournal (Debug)",
+            "name": "Open Eats Journal (Debug)",
             "cwd": "src",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "openeatsjournal (profile mode)",
+            "name": "Open Eats Journal (Profile)",
             "cwd": "src",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "openeatsjournal (release mode)",
+            "name": "Open Eats Journal (Release)",
             "cwd": "src",
             "request": "launch",
             "type": "dart",

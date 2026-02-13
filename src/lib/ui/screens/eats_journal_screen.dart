@@ -165,14 +165,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                         children: [
                                           Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
                                           Text(
-                                            " ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (kJouleGaugeData.maxValue - kJouleGaugeData.currentValue).toInt()))}",
+                                            " ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (kJouleGaugeData.maxValue - kJouleGaugeData.currentValue).toDouble()))}",
                                             style: textTheme.titleMedium,
                                             textAlign: TextAlign.center,
                                           ),
                                         ],
                                       ),
                                       Text(
-                                        "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.currentValue.toInt()))}/${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.maxValue.toInt()))}",
+                                        "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.currentValue.toDouble()))}/${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.maxValue.toDouble()))}",
                                         style: textTheme.titleSmall,
                                         textAlign: TextAlign.center,
                                       ),
@@ -1063,10 +1063,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   }
 
   GaugeData _getKJouleGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
-    int dayTargetKJoule = foodRepositoryGetDayDataResult.dayNutritionTargets != null
-        ? foodRepositoryGetDayDataResult.dayNutritionTargets!.kJoule
+    double dayTargetKJoule = foodRepositoryGetDayDataResult.dayNutritionTargets != null
+        ? foodRepositoryGetDayDataResult.dayNutritionTargets!.kJoule.toDouble()
         : _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule();
-    int daySumKJoule = foodRepositoryGetDayDataResult.mealNutritionSums != null
+    double daySumKJoule = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.kJoule)
               .reduce((kJouleEntry1, kJouleEntry2) => kJouleEntry1 + kJouleEntry2)

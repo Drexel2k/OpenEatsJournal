@@ -5,7 +5,7 @@
   "eats_journal": "Eats Journal",
   "welcome": "Welcome! ",
   "support_this_app": "Support this Open Eats Journal",
-  "welcome_message_welcome": "Welccome to Open Eats Journal, a free, open source, data minimized and privacy friendly eats journal to track your food intake and nutritions.",
+  "welcome_message_welcome": "Welccome to Open Eats Journal, a free, data minimized and privacy friendly open source eats journal to track your food intake and nutritions.",
   "welcome_message_data": "Open Eats Journal needs to know some data from you to calculate nutrition target value proposals. Please notice, that this is no medical advice and that the app was not made by a medic or nutrition expert. In any doubt consult a nutrition expert or a doctor.",
   "welcome_message_data_storage": "All data is only stored on your device is not shared with anyone, only on querying online services to search for food and nutrition data the data required for the search is transfered.",
   "welcome_message_local_database": "The local standard food database was made by best effort, as online food data source Open Food Facts is used.",

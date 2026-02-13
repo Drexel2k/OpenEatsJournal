@@ -11,9 +11,277 @@ class OpenEatsJournalDatabaseService {
   static final OpenEatsJournalDatabaseService instance = OpenEatsJournalDatabaseService._singleton();
 
   static Database? _database;
-  static final String _databaseFileName = "oej.db";
+  static String databaseFileName = "oej.db";
   static late String _databaseFile;
   static late String _databaseDirectory;
+
+  static final List<String> _currentTableCreations = [
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableSetting} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnSetting} TEXT,
+        ${OpenEatsJournalStrings.dbColumnDartType} TEXT,
+        ${OpenEatsJournalStrings.dbColumnvalue} TEXT
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableWeightJournal} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnEntryDate} DATE,
+        ${OpenEatsJournalStrings.dbColumnWeight} REAL
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableFood} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef} INT,
+        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} TEXT,
+        ${OpenEatsJournalStrings.dbColumnBarcode} INT,
+        ${OpenEatsJournalStrings.dbColumnName} TEXT,
+        ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
+        ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount} REAL,
+        ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount} REAL,
+        ${OpenEatsJournalStrings.dbColumnKiloJoule} REAL NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
+        ${OpenEatsJournalStrings.dbColumnSugar} REAL,
+        ${OpenEatsJournalStrings.dbColumnFat} REAL,
+        ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
+        ${OpenEatsJournalStrings.dbColumnProtein} REAL,
+        ${OpenEatsJournalStrings.dbColumnSalt} REAL,
+        ${OpenEatsJournalStrings.dbColumnQuantity} Text,
+        ${OpenEatsJournalStrings.dbColumnSearchText} Text
+      );""",
+    //removed fts4 table, as fts4 can only search in the beginning of words, not if a word contains a search text.
+    //fts5 would be able to search within words, but is not available on Android...
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUnit} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnName} TEXT,
+        ${OpenEatsJournalStrings.dbColumnAmount} REAL NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef} TEXT,
+        ${OpenEatsJournalStrings.dbColumnOrderNumber} INT NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnIsDefault} BOOLEAN NOT NULL
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableEatsJournal} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT,
+        ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnName} TEXT,
+        ${OpenEatsJournalStrings.dbColumnAmount} REAL,
+        ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} INT,
+        ${OpenEatsJournalStrings.dbColumnKiloJoule} REAL NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
+        ${OpenEatsJournalStrings.dbColumnSugar} REAL,
+        ${OpenEatsJournalStrings.dbColumnFat} REAL,
+        ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
+        ${OpenEatsJournalStrings.dbColumnProtein} REAL,
+        ${OpenEatsJournalStrings.dbColumnSalt} REAL,
+        ${OpenEatsJournalStrings.dbColumnMealIdRef} INT NOT NULL
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnKiloJoule} REAL NOT NULL
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableDateInfo} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnDate} DATE NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnMonthStartDate} DATE NOT NULL,
+        ${OpenEatsJournalStrings.dbColumnWeekStartDate} DATE NOT NULL
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodSource} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnName} TEXT,
+        ${OpenEatsJournalStrings.dbColumnDescription} TEXT,
+        ${OpenEatsJournalStrings.dbColumnUrl} Text
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableMeal} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnName} TEXT
+      );""",
+    """CREATE TABLE ${OpenEatsJournalStrings.dbTableMeasurementUnit} (
+        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
+        ${OpenEatsJournalStrings.dbColumnName} TEXT
+      );""",
+  ];
+
+  static final List<String> _currentIndexCreations = [
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexSettingTableSetting} ON
+        ${OpenEatsJournalStrings.dbTableSetting}(${OpenEatsJournalStrings.dbColumnSetting})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodSourceIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnFoodSourceIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceFoodIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexBarcodeTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnBarcode})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableFoodUnit} ON
+        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableFoodUnit} ON
+        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexEntryDateTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnEntryDate})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
+      ;""",
+    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexMealIdRefTableEatsJournal} ON
+        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnMealIdRef})
+      ;""",
+    """CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDailyNutritionTarget} ON
+        ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}(${OpenEatsJournalStrings.dbColumnEntryDate})
+      ;""",
+    """CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDateInfo} ON
+        ${OpenEatsJournalStrings.dbTableDateInfo}(${OpenEatsJournalStrings.dbColumnDate})
+      ;""",
+  ];
+
+  static final Map<String, List<Map<String, Object?>>> _currentInserts = {
+    OpenEatsJournalStrings.dbTableFoodSource: [
+      {
+        OpenEatsJournalStrings.dbColumnId: 1,
+        OpenEatsJournalStrings.dbColumnName: "Open Eats Journal Food Data",
+        OpenEatsJournalStrings.dbColumnDescription: "Food data that comes with this app.",
+      },
+      {
+        OpenEatsJournalStrings.dbColumnId: 2,
+        OpenEatsJournalStrings.dbColumnName: "User Food Data",
+        OpenEatsJournalStrings.dbColumnDescription: "Food data created by the user.",
+      },
+      {
+        OpenEatsJournalStrings.dbColumnId: 3,
+        OpenEatsJournalStrings.dbColumnName: "Open Food Facts",
+        OpenEatsJournalStrings.dbColumnDescription:
+            "Open Food Facts is a food products database made by everyone, for everyone. You can use it to make better food choices, and as it is open data, anyone can re-use it for any purpose. Open Food Facts is a non-profit project developed by thousands of volunteers from around the world. You can start contributing by adding a product from your kitchen with our app for iPhone or Android, and we have lots of exciting projects you can contribute to in many different ways.",
+        OpenEatsJournalStrings.dbColumnUrl: OpenEatsJournalStrings.urlOpenFoodFacts,
+      },
+    ],
+    OpenEatsJournalStrings.dbTableMeal: [
+      {OpenEatsJournalStrings.dbColumnId: 1, OpenEatsJournalStrings.dbColumnName: "breakfast"},
+      {OpenEatsJournalStrings.dbColumnId: 2, OpenEatsJournalStrings.dbColumnName: "lunch"},
+      {OpenEatsJournalStrings.dbColumnId: 3, OpenEatsJournalStrings.dbColumnName: "dinner"},
+      {OpenEatsJournalStrings.dbColumnId: 4, OpenEatsJournalStrings.dbColumnName: "snacks"},
+    ],
+    OpenEatsJournalStrings.dbTableMeasurementUnit: [
+      {OpenEatsJournalStrings.dbColumnId: 1, OpenEatsJournalStrings.dbColumnName: "g"},
+      {OpenEatsJournalStrings.dbColumnId: 2, OpenEatsJournalStrings.dbColumnName: "ml"},
+    ],
+  };
+
+  static final List<List<String>> _migrationScripts = [
+    //kilojoule data type change from int to real
+    [
+      """ALTER TABLE ${OpenEatsJournalStrings.dbTableFood}
+        RENAME TO ${OpenEatsJournalStrings.dbTableFood}_V1""",
+      """ALTER TABLE ${OpenEatsJournalStrings.dbTableEatsJournal}
+        RENAME TO ${OpenEatsJournalStrings.dbTableEatsJournal}_V1""",
+      """ALTER TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}
+        RENAME TO ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1""",
+      _currentTableCreations[2],
+      _currentTableCreations[4],
+      _currentTableCreations[5],
+      """INSERT INTO ${OpenEatsJournalStrings.dbTableFood} (
+          ${OpenEatsJournalStrings.dbColumnId},
+          ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+          ${OpenEatsJournalStrings.dbColumnBarcode},
+          ${OpenEatsJournalStrings.dbColumnName},
+          ${OpenEatsJournalStrings.dbColumnBrands},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+          ${OpenEatsJournalStrings.dbColumnKiloJoule},
+          ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+          ${OpenEatsJournalStrings.dbColumnSugar},
+          ${OpenEatsJournalStrings.dbColumnFat},
+          ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+          ${OpenEatsJournalStrings.dbColumnProtein},
+          ${OpenEatsJournalStrings.dbColumnSalt},
+          ${OpenEatsJournalStrings.dbColumnQuantity},
+          ${OpenEatsJournalStrings.dbColumnSearchText})  
+        SELECT 
+          ${OpenEatsJournalStrings.dbColumnId},
+          ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+          ${OpenEatsJournalStrings.dbColumnBarcode},
+          ${OpenEatsJournalStrings.dbColumnName},
+          ${OpenEatsJournalStrings.dbColumnBrands},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+          ${OpenEatsJournalStrings.dbColumnKiloJoule},
+          ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+          ${OpenEatsJournalStrings.dbColumnSugar},
+          ${OpenEatsJournalStrings.dbColumnFat},
+          ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+          ${OpenEatsJournalStrings.dbColumnProtein},
+          ${OpenEatsJournalStrings.dbColumnSalt},
+          ${OpenEatsJournalStrings.dbColumnQuantity},
+          ${OpenEatsJournalStrings.dbColumnSearchText}
+        FROM ${OpenEatsJournalStrings.dbTableFood}_V1;""",
+      """INSERT INTO 
+          ${OpenEatsJournalStrings.dbTableEatsJournal} (
+          ${OpenEatsJournalStrings.dbColumnId},
+          ${OpenEatsJournalStrings.dbColumnFoodIdRef},
+          ${OpenEatsJournalStrings.dbColumnEntryDate},
+          ${OpenEatsJournalStrings.dbColumnName},
+          ${OpenEatsJournalStrings.dbColumnAmount},
+          ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef},
+          ${OpenEatsJournalStrings.dbColumnKiloJoule},
+          ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+          ${OpenEatsJournalStrings.dbColumnSugar},
+          ${OpenEatsJournalStrings.dbColumnFat},
+          ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+          ${OpenEatsJournalStrings.dbColumnProtein},
+          ${OpenEatsJournalStrings.dbColumnSalt},
+          ${OpenEatsJournalStrings.dbColumnMealIdRef})
+        SELECT 
+          ${OpenEatsJournalStrings.dbColumnId},
+          ${OpenEatsJournalStrings.dbColumnFoodIdRef},
+          ${OpenEatsJournalStrings.dbColumnEntryDate},
+          ${OpenEatsJournalStrings.dbColumnName},
+          ${OpenEatsJournalStrings.dbColumnAmount},
+          ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef},
+          ${OpenEatsJournalStrings.dbColumnKiloJoule},
+          ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+          ${OpenEatsJournalStrings.dbColumnSugar},
+          ${OpenEatsJournalStrings.dbColumnFat},
+          ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+          ${OpenEatsJournalStrings.dbColumnProtein},
+          ${OpenEatsJournalStrings.dbColumnSalt},
+          ${OpenEatsJournalStrings.dbColumnMealIdRef}
+        FROM ${OpenEatsJournalStrings.dbTableEatsJournal}_V1;""",
+      """INSERT INTO ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} (
+            ${OpenEatsJournalStrings.dbColumnId},
+            ${OpenEatsJournalStrings.dbColumnEntryDate},
+            ${OpenEatsJournalStrings.dbColumnKiloJoule})
+          SELECT 
+            ${OpenEatsJournalStrings.dbColumnId},
+            ${OpenEatsJournalStrings.dbColumnEntryDate},
+            ${OpenEatsJournalStrings.dbColumnKiloJoule}
+          FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1;""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_V1""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableEatsJournal}_V1""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1""",
+      _currentIndexCreations[1],
+      _currentIndexCreations[2],
+      _currentIndexCreations[3],
+      _currentIndexCreations[4],
+      _currentIndexCreations[7],
+      _currentIndexCreations[8],
+      _currentIndexCreations[9],
+      _currentIndexCreations[10],
+      _currentIndexCreations[11],
+    ],
+  ];
 
   static final String _sqlFoodColumns =
       """
@@ -52,11 +320,6 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} = ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnFoodIdRef}
       """;
 
-  // final Map<int, String> _migrationScripts = {
-  //   2: """SQL...
-  //     """,
-  // };
-
   bool _fileTransfering = false;
 
   Future<Database> get db async {
@@ -74,170 +337,47 @@ class OpenEatsJournalDatabaseService {
 
   Future<Database> _initDb() async {
     _databaseDirectory = await getDatabasesPath();
-    _databaseFile = join(_databaseDirectory, _databaseFileName);
-    return await openDatabase(_databaseFile, version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
+    _databaseFile = join(_databaseDirectory, databaseFileName);
+    DatabaseFactory dbFactory = databaseFactory;
+    return await dbFactory.openDatabase(
+      _databaseFile,
+      options: OpenDatabaseOptions(version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade),
+    );
+  }
+
+  Future<String> getDatabasePath() async {
+    return await getDatabasesPath();
   }
 
   Future _onCreate(Database db, int version) async {
     Batch batch = db.batch();
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableSetting} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnSetting} TEXT,
-        ${OpenEatsJournalStrings.dbColumnDartType} TEXT,
-        ${OpenEatsJournalStrings.dbColumnvalue} TEXT
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableWeightJournal} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnEntryDate} DATE,
-        ${OpenEatsJournalStrings.dbColumnWeight} REAL
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFood} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef} INT,
-        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} TEXT,
-        ${OpenEatsJournalStrings.dbColumnBarcode} INT,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
-        ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount} REAL,
-        ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount} REAL,
-        ${OpenEatsJournalStrings.dbColumnKiloJoule} INT,
-        ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
-        ${OpenEatsJournalStrings.dbColumnSugar} REAL,
-        ${OpenEatsJournalStrings.dbColumnFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnProtein} REAL,
-        ${OpenEatsJournalStrings.dbColumnSalt} REAL,
-        ${OpenEatsJournalStrings.dbColumnQuantity} Text,
-        ${OpenEatsJournalStrings.dbColumnSearchText} Text
-      );""");
-    //removed fts4 table, as fts4 can only search in the beginning of words, not if a word contains a search text.
-    //fts5 would be able to search within words, but is not available on Android...
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUnit} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnAmount} REAL NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef} TEXT,
-        ${OpenEatsJournalStrings.dbColumnOrderNumber} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnIsDefault} BOOLEAN NOT NULL
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableEatsJournal} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT,
-        ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnAmount} REAL,
-        ${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef} INT,
-        ${OpenEatsJournalStrings.dbColumnKiloJoule} INT NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnCarbohydrates} REAL,
-        ${OpenEatsJournalStrings.dbColumnSugar} REAL,
-        ${OpenEatsJournalStrings.dbColumnFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnSaturatedFat} REAL,
-        ${OpenEatsJournalStrings.dbColumnProtein} REAL,
-        ${OpenEatsJournalStrings.dbColumnSalt} REAL,
-        ${OpenEatsJournalStrings.dbColumnMealIdRef} INT NOT NULL
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnKiloJoule} INT NOT NULL
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableDateInfo} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnDate} DATE NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnMonthStartDate} DATE NOT NULL,
-        ${OpenEatsJournalStrings.dbColumnWeekStartDate} DATE NOT NULL
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodSource} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT,
-        ${OpenEatsJournalStrings.dbColumnDescription} TEXT,
-        ${OpenEatsJournalStrings.dbColumnUrl} Text
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableMeal} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT
-      );""");
-    batch.execute("""CREATE TABLE ${OpenEatsJournalStrings.dbTableMeasurementUnit} (
-        ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
-        ${OpenEatsJournalStrings.dbColumnName} TEXT
-      );""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexSettingTableSetting} ON
-        ${OpenEatsJournalStrings.dbTableSetting}(${OpenEatsJournalStrings.dbColumnSetting})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodSourceIdRefTableFood} ON
-        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnFoodSourceIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceIdRefTableFood} ON
-        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceFoodIdRefTableFood} ON
-        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexBarcodeTableFood} ON
-        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnBarcode})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableFoodUnit} ON
-        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableFoodUnit} ON
-        ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableEatsJournal} ON
-        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexEntryDateTableEatsJournal} ON
-        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnEntryDate})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableEatsJournal} ON
-        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
-      ;""");
-    batch.execute("""CREATE INDEX ${OpenEatsJournalStrings.dbIndexMealIdRefTableEatsJournal} ON
-        ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnMealIdRef})
-      ;""");
 
-    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDailyNutritionTarget} ON
-        ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}(${OpenEatsJournalStrings.dbColumnEntryDate})
-      ;""");
-    batch.execute("""CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDateInfo} ON
-        ${OpenEatsJournalStrings.dbTableDateInfo}(${OpenEatsJournalStrings.dbColumnDate})
-      ;""");
+    for (String sql in _currentTableCreations) {
+      batch.execute(sql);
+    }
 
-    batch.insert(OpenEatsJournalStrings.dbTableFoodSource, {
-      OpenEatsJournalStrings.dbColumnId: 1,
-      OpenEatsJournalStrings.dbColumnName: "Open Eats Journal Food Data",
-      OpenEatsJournalStrings.dbColumnDescription: "Food data that comes with this app.",
-    });
-    batch.insert(OpenEatsJournalStrings.dbTableFoodSource, {
-      OpenEatsJournalStrings.dbColumnId: 2,
-      OpenEatsJournalStrings.dbColumnName: "User Food Data",
-      OpenEatsJournalStrings.dbColumnDescription: "Food data created by the user.",
-    });
-    batch.insert(OpenEatsJournalStrings.dbTableFoodSource, {
-      OpenEatsJournalStrings.dbColumnId: 3,
-      OpenEatsJournalStrings.dbColumnName: "Open Food Facts",
-      OpenEatsJournalStrings.dbColumnDescription:
-          "Open Food Facts is a food products database made by everyone, for everyone. You can use it to make better food choices, and as it is open data, anyone can re-use it for any purpose. Open Food Facts is a non-profit project developed by thousands of volunteers from around the world. You can start contributing by adding a product from your kitchen with our app for iPhone or Android, and we have lots of exciting projects you can contribute to in many different ways.",
-      "url": OpenEatsJournalStrings.urlOpenFoodFacts,
-    });
+    for (String sql in _currentIndexCreations) {
+      batch.execute(sql);
+    }
 
-    batch.insert(OpenEatsJournalStrings.dbTableMeal, {OpenEatsJournalStrings.dbColumnId: 1, OpenEatsJournalStrings.dbColumnName: "breakfast"});
-    batch.insert(OpenEatsJournalStrings.dbTableMeal, {OpenEatsJournalStrings.dbColumnId: 2, OpenEatsJournalStrings.dbColumnName: "lunch"});
-    batch.insert(OpenEatsJournalStrings.dbTableMeal, {OpenEatsJournalStrings.dbColumnId: 3, OpenEatsJournalStrings.dbColumnName: "dinner"});
-    batch.insert(OpenEatsJournalStrings.dbTableMeal, {OpenEatsJournalStrings.dbColumnId: 4, OpenEatsJournalStrings.dbColumnName: "snacks"});
-
-    batch.insert(OpenEatsJournalStrings.dbTableMeasurementUnit, {OpenEatsJournalStrings.dbColumnId: 1, OpenEatsJournalStrings.dbColumnName: "g"});
-    batch.insert(OpenEatsJournalStrings.dbTableMeasurementUnit, {OpenEatsJournalStrings.dbColumnId: 2, OpenEatsJournalStrings.dbColumnName: "ml"});
+    for (MapEntry<String, List<Map<String, Object?>>> tableInserts in _currentInserts.entries) {
+      for (Map<String, Object?> insert in tableInserts.value) {
+        batch.insert(tableInserts.key, insert);
+      }
+    }
 
     await batch.commit();
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // for (int i = oldVersion + 1; i <= newVersion; i++) {
-    //   await db.execute(_migrationScripts[i]!);
-    // }
+    Batch batch = db.batch();
+    for (int scriptIndex = oldVersion - 1; scriptIndex < newVersion - 1; scriptIndex++) {
+      for (String sql in _migrationScripts[scriptIndex]) {
+        batch.execute(sql);
+      }
+    }
+
+    await batch.commit();
   }
 
   Future<bool> exportDatabase() async {
@@ -248,7 +388,7 @@ class OpenEatsJournalDatabaseService {
       Directory exportDirectory = Directory(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.export));
       await exportDirectory.create(recursive: true);
 
-      File targetFile = File(join(exportDirectory.path, _databaseFileName));
+      File targetFile = File(join(exportDirectory.path, databaseFileName));
       if (targetFile.existsSync()) {
         targetFile.deleteSync();
       }
@@ -271,7 +411,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<bool> importDatabase() async {
     bool result = false;
-    File sourceFile = File(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.import, _databaseFileName));
+    File sourceFile = File(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.import, databaseFileName));
     if (sourceFile.existsSync()) {
       _fileTransfering = true;
       await _database!.close();
@@ -505,13 +645,13 @@ class OpenEatsJournalDatabaseService {
       OpenEatsJournalStrings.settingHeight: await getDoubleSetting(setting: OpenEatsJournalStrings.settingHeight),
       OpenEatsJournalStrings.settingActivityFactor: await getDoubleSetting(setting: OpenEatsJournalStrings.settingActivityFactor),
       OpenEatsJournalStrings.settingWeightTarget: await getIntSetting(setting: OpenEatsJournalStrings.settingWeightTarget),
-      OpenEatsJournalStrings.settingKJouleMonday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleMonday),
-      OpenEatsJournalStrings.settingKJouleTuesday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday),
-      OpenEatsJournalStrings.settingKJouleWednesday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday),
-      OpenEatsJournalStrings.settingKJouleThursday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleThursday),
-      OpenEatsJournalStrings.settingKJouleFriday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleFriday),
-      OpenEatsJournalStrings.settingKJouleSaturday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday),
-      OpenEatsJournalStrings.settingKJouleSunday: await getIntSetting(setting: OpenEatsJournalStrings.settingKJouleSunday),
+      OpenEatsJournalStrings.settingKJouleMonday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleMonday),
+      OpenEatsJournalStrings.settingKJouleTuesday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleTuesday),
+      OpenEatsJournalStrings.settingKJouleWednesday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleWednesday),
+      OpenEatsJournalStrings.settingKJouleThursday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleThursday),
+      OpenEatsJournalStrings.settingKJouleFriday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleFriday),
+      OpenEatsJournalStrings.settingKJouleSaturday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleSaturday),
+      OpenEatsJournalStrings.settingKJouleSunday: await getDoubleSetting(setting: OpenEatsJournalStrings.settingKJouleSunday),
       OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate: await getDateTimeSetting(
         setting: OpenEatsJournalStrings.settingLastProcessedStandardFoodDataChangeDate,
       ),
@@ -950,7 +1090,7 @@ class OpenEatsJournalDatabaseService {
         """, arguments);
   }
 
-  Future<void> insertOnceDayNutritionTarget({required DateTime day, required int dayTargetKJoule}) async {
+  Future<void> insertOnceDayNutritionTarget({required DateTime day, required double dayTargetKJoule}) async {
     Database db = await instance.db;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
@@ -1401,5 +1541,9 @@ class OpenEatsJournalDatabaseService {
 
   List<String> _getSearchWord({required String searchText}) {
     return searchText.split(" ").map((word) => word.trim()).toList();
+  }
+
+  void close() async {
+    await _database!.close();
   }
 }

@@ -32,11 +32,14 @@ Use paths for SDKs without spaces and sepcial characers.
 4. Configure the Flutter SDK: Edit the path of "dart.flutterSdkPath" in ".vscode\settings.json" file.
 5. Configure the Android SDK path for Flutter:  
 `flutter config --android-sdk "c:\path\to\androidSDK"`
-6. ⁠Get Dependencies. Switch to the src folder first.  
-`cd src`
+6. ⁠Get Dependencies, generate translations. Switch to the src folder first.  
+`cd src`   
 `flutter pub get` 
 7. ⁠Restart VSC, VSC detects now that this is a flutter project. On the Bottom Right "No Device" ist displayed, click on it, then select "Start Medium Phone" on the command Palette on the top. Wait for the phone to boot up.
 8. Press F5 to start a debug session (may take a while on the first time). Keep the virtual phone running all the time, just start and stop Debugging.
+9. Before running tests you have to generate the mocks. Switch to the src folder first.  
+`cd src`  
+`dart run build_runner build` 
 
 #### Tips for developing
 1. If you want to test barcode scanning, you need to add a barcode to the virtual camera environment on the virtual device. On the bar beside the virtual device click the 3 dots at the bottom, then "Camera", and upload a barcode image on the "Wall" section. When using the camera to scan a barcode, walk to that wall with the camera controls.

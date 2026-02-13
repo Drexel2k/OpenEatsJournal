@@ -30,7 +30,7 @@ class EatsJournalEntry {
   EatsJournalEntry.quick({
     required DateTime entryDate,
     required String name,
-    required int kJoule,
+    required double kJoule,
     required Meal meal,
     double? amount,
     MeasurementUnit? amountMeasurementUnit,
@@ -58,7 +58,7 @@ class EatsJournalEntry {
     required int id,
     required DateTime entryDate,
     required String name,
-    required int kJoule,
+    required double kJoule,
     required Meal meal,
     Food? food,
     double? amount,
@@ -107,7 +107,7 @@ class EatsJournalEntry {
   MeasurementUnit? _amountMeasurementUnit;
   Food? _food;
   String _name;
-  int _kJoule;
+  double _kJoule;
   double? _carbohydrates;
   double? _sugar;
   double? _fat;
@@ -219,7 +219,7 @@ class EatsJournalEntry {
     _name = value;
   }
 
-  set kJoule(int value) {
+  set kJoule(double value) {
     if (_food != null) {
       throw ArgumentError("Can't set kJoule manually on food entry.");
     }
@@ -285,7 +285,7 @@ class EatsJournalEntry {
   String get name => _name;
   double? get amount => _amount;
   MeasurementUnit? get amountMeasurementUnit => _amountMeasurementUnit;
-  int get kJoule => _kJoule;
+  double get kJoule => _kJoule;
   double? get carbohydrates => _carbohydrates;
   double? get sugar => _sugar;
   double? get fat => _fat;
@@ -296,8 +296,8 @@ class EatsJournalEntry {
   void _updateNutrionsValues() {
     if (_food != null && _amount != null && _amountMeasurementUnit != null) {
       _kJoule = _amountMeasurementUnit! == MeasurementUnit.gram
-          ? (_food!.kJoule * (_amount! / _food!.nutritionPerGramAmount!)).round()
-          : (_food!.kJoule * (_amount! / _food!.nutritionPerMilliliterAmount!)).round();
+          ? (_food!.kJoule * (_amount! / _food!.nutritionPerGramAmount!))
+          : (_food!.kJoule * (_amount! / _food!.nutritionPerMilliliterAmount!));
       _carbohydrates = _food!.carbohydrates != null
           ? (_amountMeasurementUnit! == MeasurementUnit.gram
                 ? _food!.carbohydrates! * (_amount! / _food!.nutritionPerGramAmount!)

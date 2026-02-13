@@ -431,7 +431,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: RoundOutlinedButton(
                   onPressed: _eatsJournalFoodEntryEditScreenViewModel.measurementSelectionEnabled
                       ? () {
@@ -455,7 +455,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 ),
               ),
               Expanded(
-                flex: 3,
+                flex: 2,
                 child: OutlinedButton(
                   onPressed: () async {
                     bool dataValid = true;
@@ -499,10 +499,8 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
-                  style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
-                      ? Text(AppLocalizations.of(context)!.add)
-                      : Text(AppLocalizations.of(context)!.update_abbreviated),
+                  style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap, padding: EdgeInsets.zero),
+                  child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null ? Icon(Icons.add_circle_outline, size: 36) : Icon(Icons.save_alt, size: 36),
                 ),
               ),
             ],
@@ -621,7 +619,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           child: Column(
             children: [
               Text(
-                "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJouleFromFoodUnit(food, food.defaultFoodUnit!).round()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJouleFromFoodUnit(food, food.defaultFoodUnit!)))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                 style: textTheme.titleSmall,
               ),
               Text("${food.defaultFoodUnit!.name} ($amountInfo)", style: textTheme.labelSmall),
@@ -651,7 +649,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             child: Column(
               children: [
                 Text(
-                  "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJouleFromFoodUnit(food, foodUnitWithOrder.object).round()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                  "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _getKJouleFromFoodUnit(food, foodUnitWithOrder.object)))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                   style: textTheme.titleSmall,
                 ),
                 Text("${foodUnitWithOrder.object.name} ($amountInfo)", style: textTheme.labelSmall),
@@ -675,7 +673,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           child: Column(
             children: [
               Text(
-                "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (food.kJoule * (100 / food.nutritionPerGramAmount!)).round()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (food.kJoule * (100 / food.nutritionPerGramAmount!))))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                 style: textTheme.titleSmall,
               ),
               Text(amountInfo, style: textTheme.labelSmall),
@@ -698,7 +696,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           child: Column(
             children: [
               Text(
-                "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (food.kJoule * (100 / food.nutritionPerMilliliterAmount!)).round()))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (food.kJoule * (100 / food.nutritionPerMilliliterAmount!))))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                 style: textTheme.titleSmall,
               ),
               Text(amountInfo, style: textTheme.labelSmall),

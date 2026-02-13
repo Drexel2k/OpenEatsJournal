@@ -9,7 +9,7 @@ class Food {
   Food({
     required String name,
     required FoodSource foodSource,
-    required int kJoule,
+    required double kJoule,
     required bool fromDb,
     int? id,
     FoodSource? originalFoodSource,
@@ -43,7 +43,11 @@ class Food {
        _protein = protein,
        _salt = salt,
        _quantity = quantity,
-       _foodUnitsWithOrder = [];
+       _foodUnitsWithOrder = [] {
+    if (nutritionPerGramAmount == null && nutritionPerMilliliterAmount == null) {
+      throw ArgumentError("nutritionPerGramAmount and nutritionPerMilliliterAmount must not both be null.");
+    }
+  }
 
   Food.copyAsNewUserFood({required Food food})
     : _name = food.name,
@@ -88,7 +92,7 @@ class Food {
   Food.fromData({
     required String name,
     required FoodSource foodSource,
-    required int kJoule,
+    required double kJoule,
     required bool fromDb,
     int? id,
     List<String>? brands,
@@ -152,7 +156,7 @@ class Food {
   final FoodSource? _originalFoodSource;
   final String? _originalFoodSourceFoodId;
   int? _barcode;
-  int _kJoule;
+  double _kJoule;
   double? _nutritionPerGramAmount;
   double? _nutritionPerMilliliterAmount;
   double? _carbohydrates;
@@ -217,7 +221,7 @@ class Food {
     }
   }
 
-  set kJoule(int value) {
+  set kJoule(double value) {
     _checkUserFood();
 
     _kJoule = value;
@@ -288,7 +292,7 @@ class Food {
   String? get originalFoodSourceFoodId => _originalFoodSourceFoodId;
   double? get nutritionPerGramAmount => _nutritionPerGramAmount;
   double? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
-  int get kJoule => _kJoule;
+  double get kJoule => _kJoule;
   double? get carbohydrates => _carbohydrates;
   double? get sugar => _sugar;
   double? get fat => _fat;
@@ -329,6 +333,11 @@ class Food {
             1,
       );
     } else {
+      if (_foodUnitsWithOrder.length < order - 1) {
+        //order being 1 greater than _foodUnitsWithOrder.length means adding at end, that is ok
+        throw ArgumentError("Can't add fodd unit at order $order, _foodUnitsWithOrder.length is ${_foodUnitsWithOrder.length}");
+      }
+
       //ensure list ist sorted by sort order to increase old order number from food unit with requested insert order.
       _foodUnitsWithOrder.sort((foodUnit1, foodUnit2) => foodUnit1.order.compareTo(foodUnit2.order));
       for (int foodUnitIndex = order - 1; foodUnitIndex < _foodUnitsWithOrder.length; foodUnitIndex++) {
@@ -349,6 +358,10 @@ class Food {
 
   void upadteFoodUnitOrder({required FoodUnit foodUnit, required int newOrder}) {
     _checkUserFood();
+
+    if (_foodUnitsWithOrder.length < newOrder) {
+      throw ArgumentError("Can't add fodd unit at newOrder $newOrder, _foodUnitsWithOrder.length is ${_foodUnitsWithOrder.length}");
+    }
 
     ObjectWithOrder<FoodUnit> foodUnitWithOrder = _foodUnitsWithOrder.firstWhere(
       (ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit,

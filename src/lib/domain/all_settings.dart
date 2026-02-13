@@ -14,13 +14,13 @@ class AllSettings {
     double? height,
     double? activityFactor,
     WeightTarget? weightTarget,
-    int? kJouleMonday,
-    int? kJouleTuesday,
-    int? kJouleWednesday,
-    int? kJouleThursday,
-    int? kJouleFriday,
-    int? kJouleSaturday,
-    int? kJouleSunday,
+    double? kJouleMonday,
+    double? kJouleTuesday,
+    double? kJouleWednesday,
+    double? kJouleThursday,
+    double? kJouleFriday,
+    double? kJouleSaturday,
+    double? kJouleSunday,
     DateTime? lastProcessedStandardFoodDataChangeDate,
     EnergyUnit? energyUnit,
     HeightUnit? heightUnit,
@@ -53,13 +53,13 @@ class AllSettings {
   final double? _height;
   final double? _activityFactor;
   final WeightTarget? _weightTarget;
-  final int? _kJouleMonday;
-  final int? _kJouleTuesday;
-  final int? _kJouleWednesday;
-  final int? _kJouleThursday;
-  final int? _kJouleFriday;
-  final int? _kJouleSaturday;
-  final int? _kJouleSunday;
+  final double? _kJouleMonday;
+  final double? _kJouleTuesday;
+  final double? _kJouleWednesday;
+  final double? _kJouleThursday;
+  final double? _kJouleFriday;
+  final double? _kJouleSaturday;
+  final double? _kJouleSunday;
   final DateTime? _lastProcessedStandardFoodDataChangeDate;
   final EnergyUnit? _energyUnit;
   final HeightUnit? _heightUnit;
@@ -73,13 +73,13 @@ class AllSettings {
   double? get height => _height;
   double? get activityFactor => _activityFactor;
   WeightTarget? get weightTarget => _weightTarget;
-  int? get kJouleMonday => _kJouleMonday;
-  int? get kJouleTuesday => _kJouleTuesday;
-  int? get kJouleWednesday => _kJouleWednesday;
-  int? get kJouleThursday => _kJouleThursday;
-  int? get kJouleFriday => _kJouleFriday;
-  int? get kJouleSaturday => _kJouleSaturday;
-  int? get kJouleSunday => _kJouleSunday;
+  double? get kJouleMonday => _kJouleMonday;
+  double? get kJouleTuesday => _kJouleTuesday;
+  double? get kJouleWednesday => _kJouleWednesday;
+  double? get kJouleThursday => _kJouleThursday;
+  double? get kJouleFriday => _kJouleFriday;
+  double? get kJouleSaturday => _kJouleSaturday;
+  double? get kJouleSunday => _kJouleSunday;
   DateTime? get lastProcessedStandardFoodDataChangeDate => _lastProcessedStandardFoodDataChangeDate;
   EnergyUnit? get energyUnit => _energyUnit;
   HeightUnit? get heightUnit => _heightUnit;
