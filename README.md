@@ -50,6 +50,10 @@ Root with the device name:
 `c:\path\to\android\sdk\platform-tools\adb -s device-name root`  
 Copy database file e.g. (push for the other directioon):  
 `c:\path\to\android\sdk\platform-tools\adb -s device-name pull /data/data/com.drexeldevelopment.openeatsjournal/databases/oej.db c:\target\path`  
+Maybe you have to adjust file system rights, after copying the file. Every time you reinstall the app a new user is created for the app, so you have to check the user first, e.g. by checking existing files in the directory (complete the onboarding in the app):  
+`c:\path\to\android\sdk\platform-tools\adb -s device-name shell ls -all /data/data/com.drexeldevelopment.openeatsjournal/databases/`  
+`c:\path\to\android\sdk\platform-tools\adb -s device-name shell chown u0_aXXX:u0_aXXX /data/data/com.drexeldevelopment.openeatsjournal/databases/oej.db`  
+(Replace u0_aXXX:u0_aXXX with the real user name)    
 Connect to shell to browse the file system e.g.:  
 `c:\path\to\android\sdk\platform-tools\adb -s device-name shell`  
 Exit:  

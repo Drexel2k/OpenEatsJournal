@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-02-13 00-00-00,2026-01-15 00-00-00
+2026-02-13 01-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -184,9 +184,14 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","small","klein","120","g","false"
 "foodunit","2","middle","mittel","200","g","true"
 "foodunit","3","big","groß","300","g","false"
-"food","82","2026-02-13 00-00-00","Pita gyros","Gyros Pita",,,"100",,"741","8.1","2.7","14.4","1.2","9.3","1.2",
-"foodunit","1","Pita","pita","400","g","true"
+"food","82","2026-02-13 01-00-00","Pita gyros","Gyros Pita",,,"100",,"741","8.1","2.7","14.4","1.2","9.3","1.2",
+"foodunit","1","Pita","Pita","400","g","true"
 "food","83","2026-02-13 00-00-00","Cocktail Sauce / seaffod sauce","Cocktail Sauce",,,"100",,"1682","39","3.8","11","9.1","1.4","1.9",
 "food","84","2026-02-13 00-00-00","Tsatsiki","Tsatsiki / Zaziki",,,"100",,"512","8.8","4.4","6.9","4.9","4","1",
 "food","85","2026-02-13 00-00-00","Döner meat veal","Dönerfleisch Kalb",,,"100",,"1060","17","6.9","1","0.5","25","1.3",
 "food","86","2026-02-13 00-00-00","Gyros","Gyros",,,"100",,"821","11.1","2.5","1.4","1","22.7","1.4",
+"food","87","2026-02-13 01-00-00","Curry saucage","Currywurst",,,"100",,"1155","25","10","2","2","13","2",
+"foodunit","1","Saucage","Wurst","185","g","true"
+"food","88","2026-02-13 01-00-00","Ketchup","Ketchup",,,"100",,"435","0.1",,"23.2","22.8","1.2","1.8",
+"food","89","2026-02-13 01-00-00","Mayonnaise","Mayonnaise",,,"100",,"2650","70","5.3","3","1.5","0.8","1",
+"food","90","2026-02-13 01-00-00","Curry ketchup","Curry Ketchup",,,"100",,"568","0.3",,"31.3","28.8","0.7","2",
