@@ -1545,5 +1545,6 @@ class OpenEatsJournalDatabaseService {
 
   void close() async {
     await _database!.close();
+    _database = null;
   }
 }

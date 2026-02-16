@@ -9,7 +9,7 @@ import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 
 class ConvertValidate {
-  ConvertValidate._();
+  ConvertValidate._static();
 
   static void init({
     required String languageCode,

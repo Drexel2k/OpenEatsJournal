@@ -2,7 +2,7 @@ import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 
 class NutritionCalculator {
-  NutritionCalculator._();
+  NutritionCalculator._static();
 
   //Deutsche Gesellschaft für Ernährung
   //https://www.dge.de/wissenschaft/referenzwerte/energie/

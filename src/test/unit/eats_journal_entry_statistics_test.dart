@@ -21,40 +21,9 @@ import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "../callbacks.mocks.dart";
 
 late Repositories _repositories;
-late double _addedKJoule;
-late double? _addedFat;
-late double? _addedSaturatedFat;
-late double? _addedCarbohydrates;
-late double? _addedSugar;
-late double? _addedProtein;
-late double? _addedSalt;
-
-late double _orignalKJouleDay;
-late double? _orignalFatDay;
-late double? _orignalSaturatedFatDay;
-late double? _orignalCarbohydratesDay;
-late double? _orignalSugarDay;
-late double? _orignalProteinDay;
-late double? _orignalSaltDay;
-
-late double _orignalKJouleWeek;
-late double? _orignalFatWeek;
-late double? _orignalSaturatedFatWeek;
-late double? _orignalCarbohydratesWeek;
-late double? _orignalSugarWeek;
-late double? _orignalProteinWeek;
-late double? _orignalSaltWeek;
-
-late double _orignalKJouleMonth;
-late double? _orignalFatMonth;
-late double? _orignalSaturatedFatMonth;
-late double? _orignalCarbohydratesMonth;
-late double? _orignalSugarMonth;
-late double? _orignalProteinMonth;
-late double? _orignalSaltMonth;
 
 void main() async {
-  setUpAll(() async {
+  setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
     final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
@@ -107,7 +76,7 @@ void main() async {
     );
   });
 
-  tearDownAll(() async {
+  tearDown(() async {
     File dbTargetFile = File(join(await OpenEatsJournalDatabaseService.instance.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
 
     if (dbTargetFile.existsSync()) {
@@ -131,7 +100,6 @@ void main() async {
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
     DateTime y2026m1d1 = DateTime(2026, 1, 1);
     DateTime y2026m2d1 = DateTime(2026, 2, 1);
-    DateTime y2026m2d10 = DateTime(2026, 2, 10);
 
     expect(journalRepositoryGetNutritionSumsResultDays.from, today.subtract(Duration(days: 31)));
     expect(journalRepositoryGetNutritionSumsResultDays.until, today);
@@ -237,33 +205,46 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.sugar, null);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.protein, 3191.2617647058823);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.salt, null);
-
-    _orignalKJouleDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.kJoule;
-    _orignalFatDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.fat;
-    _orignalSaturatedFatDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.saturatedFat;
-    _orignalCarbohydratesDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.carbohydrates;
-    _orignalSugarDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.sugar;
-    _orignalProteinDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.protein;
-    _orignalSaltDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.salt;
-
-    _orignalKJouleWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.kJoule;
-    _orignalFatWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.fat;
-    _orignalSaturatedFatWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.saturatedFat;
-    _orignalCarbohydratesWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.carbohydrates;
-    _orignalSugarWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.sugar;
-    _orignalProteinWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.protein;
-    _orignalSaltWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.salt;
-
-    _orignalKJouleMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.kJoule;
-    _orignalFatMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.fat;
-    _orignalSaturatedFatMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.saturatedFat;
-    _orignalCarbohydratesMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.carbohydrates;
-    _orignalSugarMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.sugar;
-    _orignalProteinMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.protein;
-    _orignalSaltMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.salt;
   });
 
   test("Receive open food facts data and add food entry", () async {
+    DateTime today = DateTime(2026, 2, 11);
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await _repositories.journalRepository
+        .getNutritionDaySumsForLast32Days(today: today);
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await _repositories.journalRepository
+        .getNutritionWeekSumsForLast15Weeks(today: today);
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await _repositories.journalRepository
+        .getNutritionMonthSumsForLast13Months(today: today);
+
+    DateTime y2026m2d9 = DateTime(2026, 2, 9);
+    DateTime y2026m2d1 = DateTime(2026, 2, 1);
+    DateTime y2026m2d10 = DateTime(2026, 2, 10);
+    DateTime y2026m2d12 = DateTime(2026, 1, 12);
+
+    double? orignalKJouleDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.kJoule;
+    double? orignalFatDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.fat;
+    double? orignalSaturatedFatDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.saturatedFat;
+    double? orignalCarbohydratesDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.carbohydrates;
+    double? orignalSugarDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.sugar;
+    double? orignalProteinDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.protein;
+    double? orignalSaltDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.salt;
+
+    double? orignalKJouleWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.kJoule;
+    double? orignalFatWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.fat;
+    double? orignalSaturatedFatWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.saturatedFat;
+    double? orignalCarbohydratesWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.carbohydrates;
+    double? orignalSugarWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.sugar;
+    double? orignalProteinWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.protein;
+    double? orignalSaltWeek = journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]!.nutritions.salt;
+
+    double? orignalKJouleMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.kJoule;
+    double? orignalFatMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.fat;
+    double? orignalSaturatedFatMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.saturatedFat;
+    double? orignalCarbohydratesMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.carbohydrates;
+    double? orignalSugarMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.sugar;
+    double? orignalProteinMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.protein;
+    double? orignalSaltMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.salt;
+
     FoodRepositoryResult foodRepositoryResult = await _repositories.foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(
       searchText: "",
       languageCode: _repositories.settingsRepository.languageCode.value,
@@ -273,48 +254,37 @@ void main() async {
     DateTime entryDate = DateTime(2026, 2, 10);
     EatsJournalEntry eatsJournalEntry = EatsJournalEntry.fromFood(entryDate: entryDate, food: foodRepositoryResult.foods![0], meal: Meal.lunch);
     eatsJournalEntry.amount = 500;
-    _addedKJoule = eatsJournalEntry.kJoule;
-    _addedFat = eatsJournalEntry.fat;
-    _addedSaturatedFat = eatsJournalEntry.saturatedFat;
-    _addedCarbohydrates = eatsJournalEntry.carbohydrates;
-    _addedSugar = eatsJournalEntry.sugar;
-    _addedProtein = eatsJournalEntry.protein;
-    _addedSalt = eatsJournalEntry.salt;
+    double? addedKJoule = eatsJournalEntry.kJoule;
+    double? addedFat = eatsJournalEntry.fat;
+    double? addedSaturatedFat = eatsJournalEntry.saturatedFat;
+    double? addedCarbohydrates = eatsJournalEntry.carbohydrates;
+    double? addedSugar = eatsJournalEntry.sugar;
+    double? addedProtein = eatsJournalEntry.protein;
+    double? addedSalt = eatsJournalEntry.salt;
 
     await _repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
-  });
 
-  test("Check result in statistics after added food entry", () async {
-    DateTime today = DateTime(2026, 2, 11);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await _repositories.journalRepository
-        .getNutritionDaySumsForLast32Days(today: today);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await _repositories.journalRepository
-        .getNutritionWeekSumsForLast15Weeks(today: today);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await _repositories.journalRepository
-        .getNutritionMonthSumsForLast13Months(today: today);
-
-    DateTime y2026m2d10 = DateTime(2026, 2, 10);
-    DateTime y2026m2d12 = DateTime(2026, 1, 12);
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m2d1 = DateTime(2026, 2, 1);
+    journalRepositoryGetNutritionSumsResultDays = await _repositories.journalRepository.getNutritionDaySumsForLast32Days(today: today);
+    journalRepositoryGetNutritionSumsResultWeeks = await _repositories.journalRepository.getNutritionWeekSumsForLast15Weeks(today: today);
+    journalRepositoryGetNutritionSumsResultMonths = await _repositories.journalRepository.getNutritionMonthSumsForLast13Months(today: today);
 
     expect(journalRepositoryGetNutritionSumsResultDays.from, today.subtract(Duration(days: 31)));
     expect(journalRepositoryGetNutritionSumsResultDays.until, today);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums!.entries.length, 27);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.entryCount, 1);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.kJoule, _orignalKJouleDay + _addedKJoule);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.fat, _orignalFatDay! + (_addedFat ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.kJoule, orignalKJouleDay + addedKJoule);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.fat, orignalFatDay! + (addedFat ?? 0));
     expect(
       journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.saturatedFat,
-      _orignalSaturatedFatDay! + (_addedSaturatedFat ?? 0),
+      orignalSaturatedFatDay! + (addedSaturatedFat ?? 0),
     );
     expect(
       journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.carbohydrates,
-      _orignalCarbohydratesDay! + (_addedCarbohydrates ?? 0),
+      orignalCarbohydratesDay! + (addedCarbohydrates ?? 0),
     );
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.sugar, _orignalSugarDay! + (_addedSugar ?? 0));
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.protein, _orignalProteinDay! + (_addedProtein ?? 0));
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.salt, _orignalSaltDay! + (_addedSalt ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.sugar, orignalSugarDay! + (addedSugar ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.protein, orignalProteinDay! + (addedProtein ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.salt, orignalSaltDay! + (addedSalt ?? 0));
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets!.entries.length, 27);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.kJoule, 8368.0);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.fat, 270.7294117647059);
@@ -328,19 +298,19 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultWeeks.until, ConvertValidate.getWeekStartDate(today));
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums!.entries.length, 5);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d12]?.entryCount, 3);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.kJoule, _orignalKJouleWeek + _addedKJoule);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.fat, _orignalFatWeek! + (_addedFat ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.kJoule, orignalKJouleWeek + addedKJoule);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.fat, orignalFatWeek! + (addedFat ?? 0));
     expect(
       journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.saturatedFat,
-      _orignalSaturatedFatWeek! + (_addedSaturatedFat ?? 0),
+      orignalSaturatedFatWeek! + (addedSaturatedFat ?? 0),
     );
     expect(
       journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.carbohydrates,
-      _orignalCarbohydratesWeek! + (_addedCarbohydrates ?? 0),
+      orignalCarbohydratesWeek! + (addedCarbohydrates ?? 0),
     );
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.sugar, _orignalSugarWeek! + (_addedSugar ?? 0));
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.protein, _orignalProteinWeek! + (_addedProtein ?? 0));
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.salt, _orignalSaltWeek! + (_addedSalt ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.sugar, orignalSugarWeek! + (addedSugar ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.protein, orignalProteinWeek! + (addedProtein ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.salt, orignalSaltWeek! + (addedSalt ?? 0));
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.kJoule, 25104.0);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.fat, 812.1882352941177);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.saturatedFat, null);
@@ -353,19 +323,19 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultMonths.until, DateTime(today.year, today.month, 1));
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums!.entries.length, 2);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.entryCount, 11);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.kJoule, _orignalKJouleMonth + _addedKJoule);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.fat, _orignalFatMonth! + (_addedFat ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.kJoule, orignalKJouleMonth + addedKJoule);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.fat, orignalFatMonth! + (addedFat ?? 0));
     expect(
       journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.saturatedFat,
-      _orignalSaturatedFatMonth! + (_addedSaturatedFat ?? 0),
+      orignalSaturatedFatMonth! + (addedSaturatedFat ?? 0),
     );
     expect(
       journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.carbohydrates,
-      _orignalCarbohydratesMonth! + (_addedCarbohydrates ?? 0),
+      orignalCarbohydratesMonth! + (addedCarbohydrates ?? 0),
     );
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.sugar, _orignalSugarMonth! + (_addedSugar ?? 0));
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.protein, _orignalProteinMonth! + (_addedProtein ?? 0));
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.salt, _orignalSaltMonth! + (_addedSalt ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.sugar, orignalSugarMonth! + (addedSugar ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.protein, orignalProteinMonth! + (addedProtein ?? 0));
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.salt, orignalSaltMonth! + (addedSalt ?? 0));
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.kJoule, 98639.0);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.fat, 3191.2617647058823);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.saturatedFat, null);
@@ -373,5 +343,28 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.sugar, null);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.protein, 3191.2617647058823);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.salt, null);
+  });
+
+  test("Change date and meal of eats journal entry", () async {
+    DateTime y2026m2d9 = DateTime(2026, 2, 9);
+    DateTime y2026m2d8 = DateTime(2026, 2, 8);
+
+    List<EatsJournalEntry>? eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    EatsJournalEntry eatsJournalEntry = eatsJournalEntries![0];
+    expect(eatsJournalEntry.meal, Meal.breakfast);
+
+    int eatsjJurnalEntryId = eatsJournalEntry.id!;
+    eatsJournalEntry.entryDate = y2026m2d8;
+    eatsJournalEntry.meal = Meal.lunch;
+
+    await _repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    expect(eatsJournalEntries, isNot(contains(predicate<EatsJournalEntry>((entry) => entry.id == eatsjJurnalEntryId))));
+
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d8);
+    expect(eatsJournalEntries, contains(predicate<EatsJournalEntry>((entry) => entry.id == eatsjJurnalEntryId)));
+
+    eatsJournalEntry = eatsJournalEntries!.firstWhere((entry) => entry.id == eatsjJurnalEntryId);
+    expect(eatsJournalEntry.meal, Meal.lunch);
   });
 }

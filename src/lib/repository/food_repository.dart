@@ -540,96 +540,49 @@ class FoodRepository {
 
   Future<void> _setFoodByExternalId({required Food food}) async {
     int foodId = await _oejDatabaseService.setFoodByExternalId(
-      foodData: {
-        OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
-        OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef: food.originalFoodSource?.value,
-        OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
-        OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
-        OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
-        OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,
-        OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
-        OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
-        OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
-        OpenEatsJournalStrings.dbColumnCarbohydrates: food.carbohydrates,
-        OpenEatsJournalStrings.dbColumnSugar: food.sugar,
-        OpenEatsJournalStrings.dbColumnFat: food.fat,
-        OpenEatsJournalStrings.dbColumnSaturatedFat: food.saturatedFat,
-        OpenEatsJournalStrings.dbColumnProtein: food.protein,
-        OpenEatsJournalStrings.dbColumnSalt: food.salt,
-        OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
-        OpenEatsJournalStrings.dbColumnSearchText: getFoodSearchText(food: food),
-      },
+      foodData: _getFoodData(food: food),
       id: food.id,
     );
 
     food.id ??= foodId;
 
-    List<int> foodUnitIds = [];
-    for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
-      int foodUnitId = await _oejDatabaseService.setFoodUnit(
-        foodUnitData: {
-          OpenEatsJournalStrings.dbColumnFoodIdRef: food.id,
-          OpenEatsJournalStrings.dbColumnName: foodUnitWithOrder.object.name,
-          OpenEatsJournalStrings.dbColumnAmount: foodUnitWithOrder.object.amount,
-          OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: foodUnitWithOrder.object.amountMeasurementUnit.value,
-          OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef: foodUnitWithOrder.object.originalFoodSourceFoodUnitId,
-          OpenEatsJournalStrings.dbColumnOrderNumber: foodUnitWithOrder.order,
-          OpenEatsJournalStrings.dbColumnIsDefault: foodUnitWithOrder.object == food.defaultFoodUnit,
-        },
-        id: foodUnitWithOrder.object.id,
-      );
-
-      foodUnitWithOrder.object.id ??= foodUnitId;
-      foodUnitIds.add(foodUnitId);
-    }
-
-    await _oejDatabaseService.deleteFoodUnits(foodId: foodId, exceptIds: foodUnitIds);
-
-    //If food changes its nutritionPerXXXmount to null possibly, associated eats journal entries associated to that food and measurement unit need to be
-    //updated, otherwise we have an inconsistent state leading to errors.
-    if (food.nutritionPerGramAmount == null) {
-      await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
-        foodId: foodId,
-        fromMeasurementUnitId: MeasurementUnit.gram.value,
-        toMeasurementUnitId: MeasurementUnit.milliliter.value,
-      );
-    }
-
-    if (food.nutritionPerMilliliterAmount == null) {
-      await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
-        foodId: foodId,
-        fromMeasurementUnitId: MeasurementUnit.milliliter.value,
-        toMeasurementUnitId: MeasurementUnit.gram.value,
-      );
-    }
+    await _setFoodUnits(food: food);
   }
 
   Future<void> setFood({required Food food}) async {
     int foodId = await _oejDatabaseService.setFood(
-      foodData: {
-        OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
-        OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef: food.originalFoodSource?.value,
-        OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
-        OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
-        OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
-        OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,
-        OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
-        OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
-        OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
-        OpenEatsJournalStrings.dbColumnCarbohydrates: food.carbohydrates,
-        OpenEatsJournalStrings.dbColumnSugar: food.sugar,
-        OpenEatsJournalStrings.dbColumnFat: food.fat,
-        OpenEatsJournalStrings.dbColumnSaturatedFat: food.saturatedFat,
-        OpenEatsJournalStrings.dbColumnProtein: food.protein,
-        OpenEatsJournalStrings.dbColumnSalt: food.salt,
-        OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
-        OpenEatsJournalStrings.dbColumnSearchText: getFoodSearchText(food: food),
-      },
+      foodData: _getFoodData(food: food),
       id: food.id,
     );
 
     food.id ??= foodId;
 
+    await _setFoodUnits(food: food);
+  }
+
+  Map<String, Object?> _getFoodData({required Food food}) {
+    return {
+      OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
+      OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef: food.originalFoodSource?.value,
+      OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
+      OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
+      OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
+      OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,
+      OpenEatsJournalStrings.dbColumnNutritionPerGramAmount: food.nutritionPerGramAmount,
+      OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount: food.nutritionPerMilliliterAmount,
+      OpenEatsJournalStrings.dbColumnKiloJoule: food.kJoule,
+      OpenEatsJournalStrings.dbColumnCarbohydrates: food.carbohydrates,
+      OpenEatsJournalStrings.dbColumnSugar: food.sugar,
+      OpenEatsJournalStrings.dbColumnFat: food.fat,
+      OpenEatsJournalStrings.dbColumnSaturatedFat: food.saturatedFat,
+      OpenEatsJournalStrings.dbColumnProtein: food.protein,
+      OpenEatsJournalStrings.dbColumnSalt: food.salt,
+      OpenEatsJournalStrings.dbColumnQuantity: food.quantity,
+      OpenEatsJournalStrings.dbColumnSearchText: getFoodSearchText(food: food),
+    };
+  }
+
+  Future<void> _setFoodUnits({required Food food}) async {
     List<int> foodUnitIds = [];
     for (ObjectWithOrder<FoodUnit> foodUnitWithOrder in food.foodUnitsWithOrder) {
       int foodUnitId = await _oejDatabaseService.setFoodUnit(
@@ -649,13 +602,13 @@ class FoodRepository {
       foodUnitIds.add(foodUnitId);
     }
 
-    await _oejDatabaseService.deleteFoodUnits(foodId: foodId, exceptIds: foodUnitIds);
+    await _oejDatabaseService.deleteFoodUnits(foodId: food.id!, exceptIds: foodUnitIds);
 
     //If food changes its nutritionPerXXXmount to null possibly, associated eats journal entries associated to that food and measurement unit need to be
     //updated (or deleted) otherwise we have an inconsistent state leading to errors.
     if (food.nutritionPerGramAmount == null) {
       await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
-        foodId: foodId,
+        foodId: food.id!,
         fromMeasurementUnitId: MeasurementUnit.gram.value,
         toMeasurementUnitId: MeasurementUnit.milliliter.value,
       );
@@ -663,7 +616,7 @@ class FoodRepository {
 
     if (food.nutritionPerMilliliterAmount == null) {
       await _oejDatabaseService.replaceFoodEntriesMeasurementUnit(
-        foodId: foodId,
+        foodId: food.id!,
         fromMeasurementUnitId: MeasurementUnit.milliliter.value,
         toMeasurementUnitId: MeasurementUnit.gram.value,
       );

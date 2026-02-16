@@ -1,5 +1,5 @@
 class OpenEatsJournalStrings {
-  OpenEatsJournalStrings._();
+  OpenEatsJournalStrings._static();
 
   static const String navigatorRouteEatsJournal = "/eatsjournal";
   static const String navigatorRouteFood = "/food";

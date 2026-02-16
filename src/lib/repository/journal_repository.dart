@@ -33,7 +33,7 @@ class JournalRepository {
 
   Future<void> setEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: eatsJournalEntry.entryDate);
-    eatsJournalEntry.id = await _oejDatabase.setEatsJournalEntry(
+    int eatsJournalEntryId = await _oejDatabase.setEatsJournalEntry(
       eatsJournalEntryData: {
         OpenEatsJournalStrings.dbColumnFoodIdRef: eatsJournalEntry.food?.id,
         OpenEatsJournalStrings.dbColumnEntryDate: ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate),
@@ -51,6 +51,8 @@ class JournalRepository {
       },
       id: eatsJournalEntry.id,
     );
+
+    eatsJournalEntry.id ??= eatsJournalEntryId;
   }
 
   Future<void> duplicateEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {

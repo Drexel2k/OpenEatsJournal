@@ -387,6 +387,10 @@ class SettingsRepository extends ChangeNotifier {
     return await _oejDatabase.importDatabase();
   }
 
+  void closeDatabase() {
+    _oejDatabase.close();
+  }
+
   @override
   void dispose() {
     _darkMode.dispose();

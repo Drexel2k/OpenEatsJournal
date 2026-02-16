@@ -5,7 +5,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class LocalizedDropDownEntries {
-  LocalizedDropDownEntries._();
+  LocalizedDropDownEntries._static();
   static List<DropdownMenuEntry<int>> getMealDropDownMenuEntries({required BuildContext context}) {
     List<DropdownMenuEntry<int>> entries = [];
 

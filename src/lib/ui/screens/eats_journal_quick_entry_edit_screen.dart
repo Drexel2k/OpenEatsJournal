@@ -10,6 +10,7 @@ import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -679,7 +680,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
           Align(
             alignment: AlignmentGeometry.center,
 
-            child: OutlinedButton(
+            child: RoundOutlinedButton(
               onPressed: () async {
                 int? originalQuickEntryId = _eatsJournalQuickEntryEditScreenViewModel.quickEntry.id;
 
@@ -709,11 +710,14 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                     ),
                   );
                   ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
+                  UiHelpers.closeSnackBarAfter3Sec();
+
                   Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                 }
               },
-              style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap, padding: EdgeInsets.zero),
-              child: _eatsJournalQuickEntryEditScreenViewModel.quickEntry.id == null ? Icon(Icons.add_circle_outline, size: 36) : Icon(Icons.save_alt, size: 36),
+              child: _eatsJournalQuickEntryEditScreenViewModel.quickEntry.id == null
+                  ? Icon(Icons.add_circle_outline, size: 36)
+                  : Icon(Icons.save_alt, size: 30),
             ),
           ),
         ],

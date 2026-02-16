@@ -231,4 +231,12 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
   void _onboardingFinished() {
     _openEatsJournalAppViewModel.startListening();
   }
+
+  @override
+  void dispose() {
+    _repositories.settingsRepository.closeDatabase();
+    _repositories.settingsRepository.dispose();
+
+    super.dispose();
+  }
 }

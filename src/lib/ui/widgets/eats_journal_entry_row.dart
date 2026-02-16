@@ -39,11 +39,11 @@ class EatsJournalEntryRow extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton(
+            style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
             onPressed: () {
               _onPressed(eatsJournalEntry: _eatsJournalEntry);
             },
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Column(

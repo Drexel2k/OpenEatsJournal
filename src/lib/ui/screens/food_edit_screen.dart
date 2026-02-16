@@ -10,6 +10,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
@@ -841,6 +842,8 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                       ),
                     );
                     ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
+                    UiHelpers.closeSnackBarAfter3Sec();
+
                     Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                   }
                 },

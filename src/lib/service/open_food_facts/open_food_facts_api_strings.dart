@@ -1,5 +1,5 @@
 class OpenFoodFactsApiStrings {
-  OpenFoodFactsApiStrings._();
+  OpenFoodFactsApiStrings._static();
 
   static const product = "product";
   static const serving = "serving";

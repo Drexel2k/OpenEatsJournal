@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
@@ -12,7 +14,7 @@ import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewm
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
 class UiHelpers {
-  UiHelpers._();
+  UiHelpers._static();
   static Color getFoodSourceColor({Food? food, required BuildContext context}) {
     final OpenEatsJournalColors openEatsJournalColors = Theme.of(context).extension<OpenEatsJournalColors>()!;
 
@@ -100,5 +102,9 @@ class UiHelpers {
         meal: initialMeal,
       ),
     );
+  }
+
+  static void closeSnackBarAfter3Sec() {
+    Timer(Duration(seconds: 3), () => ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).hideCurrentSnackBar());
   }
 }

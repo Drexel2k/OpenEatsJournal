@@ -61,32 +61,37 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                       return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                     }
 
-                    return EatsJournalEntryRow(
-                      key: UniqueKey(),
-                      eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
-                      onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
-                        if (eatsJournalEntry.food != null) {
-                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
-                        } else {
-                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
-                        }
+                    return Column(
+                      children: [
+                        EatsJournalEntryRow(
+                          key: UniqueKey(),
+                          eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
+                          onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
+                            if (eatsJournalEntry.food != null) {
+                              await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
+                            } else {
+                              await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
+                            }
 
-                        _eatsJournalEditScreenViewModel.getEatsJournalEntries();
-                      },
-                      onDeletePressed: ({required int eatsJournalEntryId}) async {
-                        bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
+                            _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                          },
+                          onDeletePressed: ({required int eatsJournalEntryId}) async {
+                            bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
 
-                        if (deleted) {
-                          _eatsJournalEditScreenViewModel.getEatsJournalEntries();
-                        }
-                      },
+                            if (deleted) {
+                              _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                            }
+                          },
 
-                      onDuplicatePressed: ({required EatsJournalEntry eatsJournalEntry}) async {
-                        await _eatsJournalEditScreenViewModel.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+                          onDuplicatePressed: ({required EatsJournalEntry eatsJournalEntry}) async {
+                            await _eatsJournalEditScreenViewModel.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
 
-                        _eatsJournalEditScreenViewModel.getEatsJournalEntries();
-                      },
-                      deleteIconColor: colorScheme.primary,
+                            _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                          },
+                          deleteIconColor: colorScheme.primary,
+                        ),
+                        SizedBox(height: 5),
+                      ],
                     );
                   },
                 );

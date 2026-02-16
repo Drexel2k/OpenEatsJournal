@@ -211,6 +211,8 @@
   "dinner_capital": "Abendessen",
   "snacks_capital": "Snacks",
   "cant_create_quick_entry": "Kann Schnelleintrag nicht erstellen, bitte korrigiere die Fehler.",
+  "food_entry_added": "Lebensmitteleintrag hinzugefügt.",
+  "food_entry_updated": "Lebensmitteleintrag aktualisiert.",
   "quick_entry_added": "Schnelleintrag hinzugefügt.",
   "quick_entry_updated": "Schnelleintrag aktualisiert.",
   "add": "Hzf.",

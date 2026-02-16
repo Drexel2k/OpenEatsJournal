@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
@@ -15,6 +17,7 @@ import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_v
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -55,6 +58,8 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+
+    double inputFieldsWidth = 110;
 
     return MainLayout(
       route: OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
@@ -196,7 +201,6 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
             ],
           ),
           SizedBox(height: 10),
-
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -333,12 +337,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           SizedBox(height: 10),
           Row(
             children: [
-              Expanded(
-                flex: 3,
-                child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.amount,
-                  builder: (_, _, _) {
-                    return OpenEatsJournalTextField(
+              ValueListenableBuilder(
+                valueListenable: _eatsJournalFoodEntryEditScreenViewModel.amount,
+                builder: (_, _, _) {
+                  return SizedBox(
+                    width: inputFieldsWidth,
+                    child: OpenEatsJournalTextField(
                       controller: _amountController,
                       keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                       inputFormatters: [
@@ -376,19 +380,19 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                           _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-              Expanded(
-                child: Align(alignment: AlignmentGeometry.center, child: Text("x")),
-              ),
-              Expanded(
-                flex: 3,
-                child: ValueListenableBuilder(
-                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.eatsAmount,
-                  builder: (_, _, _) {
-                    return OpenEatsJournalTextField(
+              SizedBox(width: 5),
+              Text("x"),
+              SizedBox(width: 5),
+              ValueListenableBuilder(
+                valueListenable: _eatsJournalFoodEntryEditScreenViewModel.eatsAmount,
+                builder: (_, _, _) {
+                  return SizedBox(
+                    width: inputFieldsWidth,
+                    child: OpenEatsJournalTextField(
                       controller: _eatsAmountController,
                       keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                       inputFormatters: [
@@ -426,82 +430,97 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                           _eatsAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
+                    ),
+                  );
+                },
+              ),
+              SizedBox(width: 5),
+              RoundOutlinedButton(
+                onPressed: _eatsJournalFoodEntryEditScreenViewModel.measurementSelectionEnabled
+                    ? () {
+                        if (_eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram) {
+                          _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.milliliter;
+                        } else {
+                          _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.gram;
+                        }
+                      }
+                    : null,
+                child: ValueListenableBuilder(
+                  valueListenable: _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit,
+                  builder: (_, _, _) {
+                    return Text(
+                      _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
+                          ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)
+                          : ConvertValidate.getLocalizedVolumeUnit2char(context: context),
                     );
                   },
                 ),
               ),
-              Expanded(
-                flex: 3,
-                child: RoundOutlinedButton(
-                  onPressed: _eatsJournalFoodEntryEditScreenViewModel.measurementSelectionEnabled
-                      ? () {
-                          if (_eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram) {
-                            _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.milliliter;
-                          } else {
-                            _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value = MeasurementUnit.gram;
-                          }
-                        }
-                      : null,
-                  child: ValueListenableBuilder(
-                    valueListenable: _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit,
-                    builder: (_, _, _) {
-                      return Text(
-                        _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
-                            ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)
-                            : ConvertValidate.getLocalizedVolumeUnit2char(context: context),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: OutlinedButton(
-                  onPressed: () async {
-                    bool dataValid = true;
+              Spacer(),
+              RoundOutlinedButton(
+                onPressed: () async {
+                  bool dataValid = true;
 
-                    if (_eatsJournalFoodEntryEditScreenViewModel.amount.value == null) {
-                      dataValid = false;
-                      SnackBar snackBar = SnackBar(
-                        content: Text(AppLocalizations.of(context)!.enter_valid_amount),
-                        action: SnackBarAction(
-                          label: AppLocalizations.of(context)!.close,
-                          onPressed: () {
-                            //Click on SnackbarAction closes the SnackBar,
-                            //nothing else to do here...
-                          },
-                        ),
-                      );
+                  if (_eatsJournalFoodEntryEditScreenViewModel.amount.value == null) {
+                    dataValid = false;
+                    SnackBar snackBar = SnackBar(
+                      content: Text(AppLocalizations.of(context)!.enter_valid_amount),
+                      action: SnackBarAction(
+                        label: AppLocalizations.of(context)!.close,
+                        onPressed: () {
+                          //Click on SnackbarAction closes the SnackBar,
+                          //nothing else to do here...
+                        },
+                      ),
+                    );
 
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
 
-                    if (_eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value == null) {
-                      dataValid = false;
-                      SnackBar snackBar = SnackBar(
-                        content: Text(AppLocalizations.of(context)!.enter_valid_eats_amount),
-                        action: SnackBarAction(
-                          label: AppLocalizations.of(context)!.close,
-                          onPressed: () {
-                            //Click on SnackbarAction closes the SnackBar,
-                            //nothing else to do here...
-                          },
-                        ),
-                      );
+                  if (_eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value == null) {
+                    dataValid = false;
+                    SnackBar snackBar = SnackBar(
+                      content: Text(AppLocalizations.of(context)!.enter_valid_eats_amount),
+                      action: SnackBarAction(
+                        label: AppLocalizations.of(context)!.close,
+                        onPressed: () {
+                          //Click on SnackbarAction closes the SnackBar,
+                          //nothing else to do here...
+                        },
+                      ),
+                    );
 
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
 
-                    if (dataValid) {
-                      await _eatsJournalFoodEntryEditScreenViewModel.setFoodEntry();
-                      Navigator.pop(AppGlobal.navigatorKey.currentContext!);
-                    }
-                  },
-                  style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap, padding: EdgeInsets.zero),
-                  child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null ? Icon(Icons.add_circle_outline, size: 36) : Icon(Icons.save_alt, size: 36),
-                ),
+                  if (dataValid) {
+                    int? originalFoodEntryId = _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id;
+
+                    await _eatsJournalFoodEntryEditScreenViewModel.setFoodEntry();
+
+                    SnackBar snackBar = SnackBar(
+                      content: originalFoodEntryId == null
+                          ? Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added)
+                          : Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated),
+                      action: SnackBarAction(
+                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
+                        onPressed: () {
+                          //Click on SnackbarAction closes the SnackBar,
+                          //nothing else to do here...
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
+                    UiHelpers.closeSnackBarAfter3Sec();
+
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!);
+                  }
+                },
+                child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
+                    ? Icon(Icons.add_circle_outline, size: 36)
+                    : Icon(Icons.save_alt, size: 30),
               ),
             ],
           ),
