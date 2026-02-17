@@ -127,6 +127,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                     GaugeData proteinGaugeData = _getProteinGaugeData(foodRepositoryGetDayDataResult: snapshot.data!, colorScheme: colorScheme);
                     GaugeData fatGaugeData = _getFatGaugeData(foodRepositoryGetDayDataResult: snapshot.data!, colorScheme: colorScheme);
 
+                    double breakfastKJoule = _getBreakfastKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                     double breakfastPercent = _getBreakfastKJoulePercent(
                       foodRepositoryGetDayDataResult: snapshot.data!,
                       dayKJoule: kJouleGaugeData.currentValue,
@@ -135,14 +136,17 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                     double breakfastStartPoint = 0;
                     double breakfastEndpoint = breakfastPercent;
 
+                    double lunchKJoule = _getLunchKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                     double lunchPercent = _getLunchKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
                     double lunchStartPoint = breakfastPercent;
                     double lunchEndpoint = breakfastPercent + lunchPercent;
 
+                    double dinnerKJoule = _getDinnerKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                     double dinnerPercent = _getDinnerKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
                     double dinnerStartPoint = breakfastPercent + lunchPercent;
                     double dinnerEndpoint = breakfastPercent + lunchPercent + dinnerPercent;
 
+                    double snacksKJoule = _getSnacksKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                     double snacksPercent = _getSnacksKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
                     double snacksStartPoint = breakfastPercent + lunchPercent + dinnerPercent;
                     double snacksEndpoint = breakfastPercent + lunchPercent + dinnerPercent + snacksPercent;
@@ -291,7 +295,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(AppLocalizations.of(context)!.breakfast),
-                                            Text("${ConvertValidate.getCleanDoubleString(doubleValue: breakfastPercent)}%"),
+                                            Text(
+                                              "${ConvertValidate.getCleanDoubleString(doubleValue: breakfastPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: breakfastKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -318,7 +324,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(AppLocalizations.of(context)!.lunch),
-                                                Text("${ConvertValidate.getCleanDoubleString(doubleValue: lunchPercent)}%"),
+                                                Text(
+                                                  "${ConvertValidate.getCleanDoubleString(doubleValue: lunchPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: lunchKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -347,7 +355,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(AppLocalizations.of(context)!.dinner),
-                                                Text("${ConvertValidate.getCleanDoubleString(doubleValue: dinnerPercent)}%"),
+                                                Text(
+                                                  "${ConvertValidate.getCleanDoubleString(doubleValue: dinnerPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: dinnerKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -376,7 +386,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(AppLocalizations.of(context)!.snacks),
-                                                Text("${ConvertValidate.getCleanDoubleString(doubleValue: snacksPercent)}%"),
+                                                Text(
+                                                  "${ConvertValidate.getCleanDoubleString(doubleValue: snacksPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: snacksKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -1201,6 +1213,42 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
     }
 
     return percent;
+  }
+
+  double _getBreakfastKJoule({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult}) {
+    double kJoule = 0;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.breakfast)) {
+      return foodRepositoryGetDayDataResult.mealNutritionSums![Meal.breakfast]!.kJoule;
+    }
+
+    return kJoule;
+  }
+
+  double _getLunchKJoule({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult}) {
+    double kJoule = 0;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.lunch)) {
+      kJoule = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.lunch]!.kJoule;
+    }
+
+    return kJoule;
+  }
+
+  double _getDinnerKJoule({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult}) {
+    double kJoule = 0;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.dinner)) {
+      kJoule = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.dinner]!.kJoule;
+    }
+
+    return kJoule;
+  }
+
+  double _getSnacksKJoule({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult}) {
+    double kJoule = 0;
+    if (foodRepositoryGetDayDataResult.mealNutritionSums != null && foodRepositoryGetDayDataResult.mealNutritionSums!.containsKey(Meal.snacks)) {
+      kJoule = foodRepositoryGetDayDataResult.mealNutritionSums![Meal.snacks]!.kJoule;
+    }
+
+    return kJoule;
   }
 
   void _changeMeal({required Meal meal}) {
