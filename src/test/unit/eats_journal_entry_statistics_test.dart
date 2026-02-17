@@ -122,18 +122,18 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d11]?.nutritions.salt, 5.2419);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets!.entries.length, 27);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.kJoule, 8368.0);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.fat, 270.7294117647059);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.fat, 67.84864864864865);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.carbohydrates, 270.7294117647059);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.protein, 270.7294117647059);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.protein, 73.83529411764705);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m1d16]?.salt, null);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.kJoule, 8368.0);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.fat, 270.7294117647059);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.fat, 67.84864864864865);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.carbohydrates, 270.7294117647059);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.protein, 270.7294117647059);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.protein, 73.83529411764705);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.salt, null);
 
     expect(journalRepositoryGetNutritionSumsResultWeeks.from, ConvertValidate.getWeekStartDate(today).subtract(Duration(days: 98)));
@@ -157,18 +157,18 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.salt, 15.9262);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets!.entries.length, 5);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.kJoule, 29498.0);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.fat, 954.3470588235296);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.fat, 239.17297297297296);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.carbohydrates, 954.3470588235296);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.protein, 954.3470588235296);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.protein, 260.27647058823527);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d12]?.salt, null);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.kJoule, 25104.0);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.fat, 812.1882352941177);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.fat, 203.54594594594593);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.carbohydrates, 812.1882352941177);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.protein, 812.1882352941177);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.protein, 221.50588235294117);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.salt, null);
 
     expect(journalRepositoryGetNutritionSumsResultMonths.from, DateTime(today.year - 1, today.month, 1));
@@ -192,18 +192,18 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.salt, 75.18767763157895);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets!.entries.length, 2);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.kJoule, 144873.0);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.fat, 4687.067647058823);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.fat, 1174.6459459459459);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.carbohydrates, 4687.067647058823);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.protein, 4687.067647058823);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.protein, 1278.291176470588);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m1d1]?.salt, null);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.kJoule, 98639.0);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.fat, 3191.2617647058823);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.fat, 799.7756756756756);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.carbohydrates, 3191.2617647058823);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.protein, 3191.2617647058823);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.protein, 870.3441176470587);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.salt, null);
   });
 
@@ -287,11 +287,11 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]?.nutritions.salt, orignalSaltDay! + (addedSalt ?? 0));
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets!.entries.length, 27);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.kJoule, 8368.0);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.fat, 270.7294117647059);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.fat, 67.84864864864865);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.carbohydrates, 270.7294117647059);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.protein, 270.7294117647059);
+    expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.protein, 73.83529411764705);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.salt, null);
 
     expect(journalRepositoryGetNutritionSumsResultWeeks.from, ConvertValidate.getWeekStartDate(today).subtract(Duration(days: 98)));
@@ -312,11 +312,11 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.protein, orignalProteinWeek! + (addedProtein ?? 0));
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.salt, orignalSaltWeek! + (addedSalt ?? 0));
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.kJoule, 25104.0);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.fat, 812.1882352941177);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.fat, 203.54594594594593);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.carbohydrates, 812.1882352941177);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.protein, 812.1882352941177);
+    expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.protein, 221.50588235294117);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.salt, null);
 
     expect(journalRepositoryGetNutritionSumsResultMonths.from, DateTime(today.year - 1, today.month, 1));
@@ -337,11 +337,11 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.protein, orignalProteinMonth! + (addedProtein ?? 0));
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.salt, orignalSaltMonth! + (addedSalt ?? 0));
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.kJoule, 98639.0);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.fat, 3191.2617647058823);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.fat, 799.7756756756756);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.saturatedFat, null);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.carbohydrates, 3191.2617647058823);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.sugar, null);
-    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.protein, 3191.2617647058823);
+    expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.protein, 870.3441176470587);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.salt, null);
   });
 

@@ -213,5 +213,8 @@ void main() async {
     expect(find.text("dinner"), findsOneWidget);
     expect(find.text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(entryDateValue)), findsOneWidget);
     expect(find.text("ml"), findsOneWidget);
+
+    //let timer end, otherwise the test will fail/throw an internal exception.
+    await tester.pumpAndSettle(const Duration(seconds:3));
   });
 }

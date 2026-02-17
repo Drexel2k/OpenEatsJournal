@@ -1091,7 +1091,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   GaugeData _getProteinGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetProtein = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.protein!
-        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
+        : NutritionCalculator.calculateProteinDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumProtein = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.protein != null ? mealNutritionsEntry.value.protein! : 0.0)
@@ -1104,7 +1104,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   GaugeData _getFatGaugeData({required FoodRepositoryGetDayMealSumsResult foodRepositoryGetDayDataResult, required ColorScheme colorScheme}) {
     double dayTargetFat = foodRepositoryGetDayDataResult.dayNutritionTargets != null
         ? foodRepositoryGetDayDataResult.dayNutritionTargets!.fat!
-        : NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
+        : NutritionCalculator.calculateFatDemandByKJoule(kJoule: _eatsJournalScreenViewModel.getCurrentJournalDayTargetKJoule());
     double daySumFat = foodRepositoryGetDayDataResult.mealNutritionSums != null
         ? foodRepositoryGetDayDataResult.mealNutritionSums!.entries
               .map((mealNutritionsEntry) => mealNutritionsEntry.value.fat != null ? mealNutritionsEntry.value.fat! : 0.0)

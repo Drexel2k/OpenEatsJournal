@@ -169,8 +169,8 @@ class JournalRepository {
           dayNutritionTargets: Nutritions(
             kJoule: dayKJouleTarget.entries.first.value,
             carbohydrates: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: dayKJouleTarget.entries.first.value),
-            protein: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: dayKJouleTarget.entries.first.value),
-            fat: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: dayKJouleTarget.entries.first.value),
+            protein: NutritionCalculator.calculateProteinDemandByKJoule(kJoule: dayKJouleTarget.entries.first.value),
+            fat: NutritionCalculator.calculateFatDemandByKJoule(kJoule: dayKJouleTarget.entries.first.value),
           ),
           mealNutritionSums: sumsPerMeal,
         );
@@ -241,8 +241,8 @@ class JournalRepository {
             result.groupNutritionTargets![dayNutrionSum.key] = Nutritions(
               kJoule: dayKJouleTargets[dayNutrionSum.key]!,
               carbohydrates: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: dayKJouleTargets[dayNutrionSum.key]!),
-              protein: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: dayKJouleTargets[dayNutrionSum.key]!),
-              fat: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: dayKJouleTargets[dayNutrionSum.key]!),
+              protein: NutritionCalculator.calculateProteinDemandByKJoule(kJoule: dayKJouleTargets[dayNutrionSum.key]!),
+              fat: NutritionCalculator.calculateFatDemandByKJoule(kJoule: dayKJouleTargets[dayNutrionSum.key]!),
             );
           } else {
             throw StateError("Day data and day targets must both exist or both not exist.");
@@ -320,8 +320,8 @@ class JournalRepository {
             result.groupNutritionTargets![dayNutrionSum.key] = Nutritions(
               kJoule: weekKJouleTargets[dayNutrionSum.key]!,
               carbohydrates: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: weekKJouleTargets[dayNutrionSum.key]!),
-              protein: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: weekKJouleTargets[dayNutrionSum.key]!),
-              fat: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: weekKJouleTargets[dayNutrionSum.key]!),
+              protein: NutritionCalculator.calculateProteinDemandByKJoule(kJoule: weekKJouleTargets[dayNutrionSum.key]!),
+              fat: NutritionCalculator.calculateFatDemandByKJoule(kJoule: weekKJouleTargets[dayNutrionSum.key]!),
             );
           } else {
             throw StateError("Day data and day targets must both exist or both not exist.");
@@ -405,8 +405,8 @@ class JournalRepository {
             result.groupNutritionTargets![dayNutrionSum.key] = Nutritions(
               kJoule: monthKJouleTargets[dayNutrionSum.key]!,
               carbohydrates: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: monthKJouleTargets[dayNutrionSum.key]!),
-              protein: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: monthKJouleTargets[dayNutrionSum.key]!),
-              fat: NutritionCalculator.calculateCarbohydrateDemandByKJoule(kJoule: monthKJouleTargets[dayNutrionSum.key]!),
+              protein: NutritionCalculator.calculateProteinDemandByKJoule(kJoule: monthKJouleTargets[dayNutrionSum.key]!),
+              fat: NutritionCalculator.calculateFatDemandByKJoule(kJoule: monthKJouleTargets[dayNutrionSum.key]!),
             );
           } else {
             throw StateError("Day data and day targets must both exist or both not exist.");
