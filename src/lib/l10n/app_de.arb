@@ -261,5 +261,11 @@
   "no_data": "Keine Daten vorhanden",
   "debug_info": "Debug Info",
   "delete_food_title": "Lebensmittel löschen?", 
-  "delete_food_text": "ACHTUNG! Wenn das Lebensmittel gelöscht wird, werden alle Essenstagebuch Einträge, die mit diesem Lebensmittel erstellt wurden zu Schnelleinträgen.\n\nMöchtest Du wirklich fortfahren?"
+  "delete_food_text": "ACHTUNG! Wenn das Lebensmittel gelöscht wird, werden alle Essenstagebuch Einträge, die mit diesem Lebensmittel erstellt wurden zu Schnelleinträgen.\n\nMöchtest Du wirklich fortfahren?",
+  "copy_target_title": "Ziel wählen",
+  "copy_target_text": "Bitte wähle ein Ziel zum Kopieren der Essenstagebucheinträge.",
+  "date": "Datum",
+  "meal": "Mahlzeit",
+  "as_is": "wie es ist",
+  "eats_journal_entries_copied": "Essenstagebucheinträge kopiert."
 }

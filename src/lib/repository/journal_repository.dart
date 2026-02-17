@@ -33,26 +33,27 @@ class JournalRepository {
 
   Future<void> setEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: eatsJournalEntry.entryDate);
-    int eatsJournalEntryId = await _oejDatabase.setEatsJournalEntry(
-      eatsJournalEntryData: {
-        OpenEatsJournalStrings.dbColumnFoodIdRef: eatsJournalEntry.food?.id,
-        OpenEatsJournalStrings.dbColumnEntryDate: ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate),
-        OpenEatsJournalStrings.dbColumnName: eatsJournalEntry.name,
-        OpenEatsJournalStrings.dbColumnAmount: eatsJournalEntry.amount,
-        OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: eatsJournalEntry.amountMeasurementUnit?.value,
-        OpenEatsJournalStrings.dbColumnKiloJoule: eatsJournalEntry.kJoule,
-        OpenEatsJournalStrings.dbColumnCarbohydrates: eatsJournalEntry.carbohydrates,
-        OpenEatsJournalStrings.dbColumnSugar: eatsJournalEntry.sugar,
-        OpenEatsJournalStrings.dbColumnFat: eatsJournalEntry.fat,
-        OpenEatsJournalStrings.dbColumnSaturatedFat: eatsJournalEntry.saturatedFat,
-        OpenEatsJournalStrings.dbColumnProtein: eatsJournalEntry.protein,
-        OpenEatsJournalStrings.dbColumnSalt: eatsJournalEntry.salt,
-        OpenEatsJournalStrings.dbColumnMealIdRef: eatsJournalEntry.meal.value,
-      },
-      id: eatsJournalEntry.id,
-    );
+    int eatsJournalEntryId = await _oejDatabase.setEatsJournalEntry(eatsJournalEntryData: _getEatsJournalEntryData(eatsJournalEntry), id: eatsJournalEntry.id);
 
     eatsJournalEntry.id ??= eatsJournalEntryId;
+  }
+
+  Map<String, Object?> _getEatsJournalEntryData(EatsJournalEntry eatsJournalEntry) {
+    return {
+      OpenEatsJournalStrings.dbColumnFoodIdRef: eatsJournalEntry.food?.id,
+      OpenEatsJournalStrings.dbColumnEntryDate: ConvertValidate.dateformatterDatabaseDateOnly.format(eatsJournalEntry.entryDate),
+      OpenEatsJournalStrings.dbColumnName: eatsJournalEntry.name,
+      OpenEatsJournalStrings.dbColumnAmount: eatsJournalEntry.amount,
+      OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: eatsJournalEntry.amountMeasurementUnit?.value,
+      OpenEatsJournalStrings.dbColumnKiloJoule: eatsJournalEntry.kJoule,
+      OpenEatsJournalStrings.dbColumnCarbohydrates: eatsJournalEntry.carbohydrates,
+      OpenEatsJournalStrings.dbColumnSugar: eatsJournalEntry.sugar,
+      OpenEatsJournalStrings.dbColumnFat: eatsJournalEntry.fat,
+      OpenEatsJournalStrings.dbColumnSaturatedFat: eatsJournalEntry.saturatedFat,
+      OpenEatsJournalStrings.dbColumnProtein: eatsJournalEntry.protein,
+      OpenEatsJournalStrings.dbColumnSalt: eatsJournalEntry.salt,
+      OpenEatsJournalStrings.dbColumnMealIdRef: eatsJournalEntry.meal.value,
+    };
   }
 
   Future<void> duplicateEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
@@ -718,5 +719,20 @@ class JournalRepository {
     }
 
     return result;
+  }
+
+  Future<void> copyEatsJournalEntries({required List<EatsJournalEntry> eatsJournalEntries, required DateTime toDate, required int toMeal}) async {
+    await _oejDatabase.insertOnceDaDateInfo(date: toDate);
+
+    EatsJournalEntry eatsJournalEntryCopy;
+    for (EatsJournalEntry eatsJournalEntry in eatsJournalEntries) {
+      eatsJournalEntryCopy = EatsJournalEntry.copyAsNew(eatsJournalEntry: eatsJournalEntry);
+      eatsJournalEntryCopy.entryDate = toDate;
+      if (toMeal != -1) {
+        eatsJournalEntryCopy.meal = Meal.getByValue(toMeal);
+      }
+
+      _oejDatabase.setEatsJournalEntry(eatsJournalEntryData: _getEatsJournalEntryData(eatsJournalEntryCopy));
+    }
   }
 }

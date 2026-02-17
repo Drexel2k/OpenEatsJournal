@@ -113,6 +113,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
               }
             },
           ),
+          SizedBox(height: 10),
           Row(
             children: [
               Spacer(),
@@ -143,7 +144,6 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
     }
 
     _weightController.dispose();
-
     _weightFocusNode.dispose();
 
     super.dispose();

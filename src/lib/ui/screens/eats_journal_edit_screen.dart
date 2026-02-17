@@ -5,10 +5,13 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/screens/copy_target_screen.dart";
+import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
+import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class EatsJournalEditScreen extends StatefulWidget {
   const EatsJournalEditScreen({super.key, required EatsJournalEditScreenViewModel eatsJournalEditScreenViewModel})
@@ -51,6 +54,44 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
               Text(
                 _getLocalizedMeal(meal: _eatsJournalEditScreenViewModel.meal, context: context),
                 style: textTheme.titleMedium,
+              ),
+              SizedBox(width: 5),
+              RoundOutlinedButton(
+                onPressed: () async {
+                  CopyTargetScreenViewModel copyTargetScreenViewModel = CopyTargetScreenViewModel(
+                    currentDate: _eatsJournalEditScreenViewModel.currentJournalDate,
+                    currentMeal: _eatsJournalEditScreenViewModel.meal,
+                  );
+
+                  bool copy = await showDialog(
+                    useSafeArea: true,
+                    barrierDismissible: false,
+                    context: AppGlobal.navigatorKey.currentContext!,
+                    builder: (BuildContext contextBuilder) {
+                      double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.075;
+                      double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.045;
+
+                      return Dialog(
+                        insetPadding: EdgeInsets.fromLTRB(dialogHorizontalPadding, dialogVerticalPadding, dialogHorizontalPadding, dialogVerticalPadding),
+                        child: CopyTargetScreen(copyTargetScreenViewModel: copyTargetScreenViewModel),
+                      );
+                    },
+                  );
+
+                  if (copy) {
+                    await _eatsJournalEditScreenViewModel.copyEatsJournalEntries(
+                      toDate: copyTargetScreenViewModel.currentDate.value,
+                      toMeal: copyTargetScreenViewModel.currentMeal.value,
+                    );
+                    
+                    UiHelpers.showOverlay(
+                      context: AppGlobal.navigatorKey.currentContext!,
+                      displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
+                      animationController: _animationController,
+                    );
+                  }
+                },
+                child: Icon(Icons.copy),
               ),
             ],
           ),

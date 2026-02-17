@@ -63,6 +63,14 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
     await _journalRepository.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
   }
 
+  Future<void> copyEatsJournalEntries({required DateTime toDate, required int toMeal}) async {
+    await _journalRepository.saveOnceDayNutritionTarget(
+      entryDate: toDate,
+      dayTargetKJoule: _settingsRepository.getTargetKJouleForDay(day: toDate),
+    );
+    await _journalRepository.copyEatsJournalEntries(eatsJournalEntries: _eatsJournalEntriesResult, toDate: toDate, toMeal: toMeal);
+  }
+
   @override
   void dispose() {
     _showInitialLoading.dispose();

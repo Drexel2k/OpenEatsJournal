@@ -80,7 +80,7 @@ void main() async {
     File dbTargetFile = File(join(await OpenEatsJournalDatabaseService.instance.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
 
     if (dbTargetFile.existsSync()) {
-      OpenEatsJournalDatabaseService.instance.close();
+      await OpenEatsJournalDatabaseService.instance.close();
       dbTargetFile.deleteSync();
     }
   });
@@ -366,5 +366,73 @@ void main() async {
 
     eatsJournalEntry = eatsJournalEntries!.firstWhere((entry) => entry.id == eatsjJurnalEntryId);
     expect(eatsJournalEntry.meal, Meal.lunch);
+  });
+
+  test("Copy eats journal entries from meal", () async {
+    DateTime y2026m2d9 = DateTime(2026, 2, 9);
+    DateTime y2026m2d16 = DateTime(2026, 2, 16);
+
+    List<EatsJournalEntry>? eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
+    int entryCount = eatsJournalEntries!.length;
+    double kJouleSumOriginal = eatsJournalEntries.fold(0.0, (sum, entry) => sum + entry.kJoule);
+
+    await _repositories.journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: Meal.snacks.value);
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16, meal: Meal.snacks);
+
+    //check if expected amount was copied
+    expect(entryCount, eatsJournalEntries!.length);
+    expect(kJouleSumOriginal, eatsJournalEntries.fold(0.0, (sum, entry) => sum + entry.kJoule));
+
+    //modify copied and check if it has no effect on existing entries
+    double kJouleOld = eatsJournalEntries[0].kJoule;
+    eatsJournalEntries[0].amount = 100;
+    double kJouleNew = eatsJournalEntries[0].kJoule;
+    await _repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntries[0]);
+
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16, meal: Meal.snacks);
+    expect(kJouleSumOriginal + (kJouleNew - kJouleOld), eatsJournalEntries!.fold(0.0, (sum, entry) => sum + entry.kJoule));
+
+    await _repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntries[0]);
+
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
+    expect(kJouleSumOriginal, eatsJournalEntries!.fold(0.0, (sum, entry) => sum + entry.kJoule));
+  });
+
+  test("Copy eats journal entries from whole day as is", () async {
+    DateTime y2026m2d9 = DateTime(2026, 2, 9);
+    DateTime y2026m2d16 = DateTime(2026, 2, 16);
+
+    List<EatsJournalEntry>? eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    int entryCountBreakfast = eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length;
+    int entryCountLunch = eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length;
+    int entryCountDinner = eatsJournalEntries.where((entry) => entry.meal == Meal.dinner).length;
+    int entryCountSnacks = eatsJournalEntries.where((entry) => entry.meal == Meal.snacks).length;
+
+    await _repositories.journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: -1);
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16);
+
+    expect(entryCountBreakfast, eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length);
+    expect(entryCountLunch, eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length);
+    expect(entryCountDinner, eatsJournalEntries.where((entry) => entry.meal == Meal.dinner).length);
+    expect(entryCountSnacks, eatsJournalEntries.where((entry) => entry.meal == Meal.snacks).length);
+  });
+
+  test("Copy eats journal entries from whole day to meal", () async {
+    DateTime y2026m2d9 = DateTime(2026, 2, 9);
+    DateTime y2026m2d16 = DateTime(2026, 2, 16);
+
+    List<EatsJournalEntry>? eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    int entryCountBreakfast = eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length;
+    int entryCountLunch = eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length;
+    int entryCountDinner = eatsJournalEntries.where((entry) => entry.meal == Meal.dinner).length;
+    int entryCountSnacks = eatsJournalEntries.where((entry) => entry.meal == Meal.snacks).length;
+
+    await _repositories.journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: Meal.lunch.value);
+    eatsJournalEntries = await _repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16);
+
+    expect(0, eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length);
+    expect(entryCountBreakfast + entryCountLunch + entryCountDinner + entryCountSnacks, eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length);
+    expect(0, eatsJournalEntries.where((entry) => entry.meal == Meal.dinner).length);
+    expect(0, eatsJournalEntries.where((entry) => entry.meal == Meal.snacks).length);
   });
 }

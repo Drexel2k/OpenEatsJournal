@@ -233,8 +233,8 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
   }
 
   @override
-  void dispose() {
-    _repositories.settingsRepository.closeDatabase();
+  Future<void> dispose() async {
+    await _repositories.settingsRepository.closeDatabase();
     _repositories.settingsRepository.dispose();
 
     super.dispose();

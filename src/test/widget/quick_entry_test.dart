@@ -26,7 +26,7 @@ import "../callbacks.mocks.dart";
 late Repositories _repositories;
 
 void main() async {
-  setUpAll(() async {
+  setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
     final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
@@ -72,11 +72,11 @@ void main() async {
     );
   });
 
-  tearDownAll(() async {
+  tearDown(() async {
     File dbTargetFile = File(join(await OpenEatsJournalDatabaseService.instance.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
 
     if (dbTargetFile.existsSync()) {
-      OpenEatsJournalDatabaseService.instance.close();
+      await OpenEatsJournalDatabaseService.instance.close();
       dbTargetFile.deleteSync();
     }
   });
@@ -215,6 +215,6 @@ void main() async {
     expect(find.text("ml"), findsOneWidget);
 
     //let timer end, otherwise the test will fail/throw an internal exception.
-    await tester.pumpAndSettle(const Duration(seconds:3));
+    await tester.pumpAndSettle(const Duration(seconds: 3));
   });
 }

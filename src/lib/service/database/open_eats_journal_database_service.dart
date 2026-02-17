@@ -11,6 +11,7 @@ class OpenEatsJournalDatabaseService {
   static final OpenEatsJournalDatabaseService instance = OpenEatsJournalDatabaseService._singleton();
 
   static Database? _database;
+  //for testing, when tests run in parallel when running them.
   static String databaseFileName = "oej.db";
   static late String _databaseFile;
   static late String _databaseDirectory;
@@ -1543,7 +1544,7 @@ class OpenEatsJournalDatabaseService {
     return searchText.split(" ").map((word) => word.trim()).toList();
   }
 
-  void close() async {
+  Future<void> close() async {
     await _database!.close();
     _database = null;
   }

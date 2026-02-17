@@ -6,8 +6,12 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class LocalizedDropDownEntries {
   LocalizedDropDownEntries._static();
-  static List<DropdownMenuEntry<int>> getMealDropDownMenuEntries({required BuildContext context}) {
+  static List<DropdownMenuEntry<int>> getMealDropDownMenuEntries({required BuildContext context, String? addOnTop}) {
     List<DropdownMenuEntry<int>> entries = [];
+
+    if (addOnTop != null) {
+      entries.add(DropdownMenuEntry<int>(value: -1, label: addOnTop));
+    }
 
     String label = OpenEatsJournalStrings.emptyString;
     for (var value in Meal.values) {

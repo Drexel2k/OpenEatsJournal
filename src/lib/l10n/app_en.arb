@@ -261,5 +261,11 @@
   "no_data": "No Data Available",
   "debug_info": "Debug info",
   "delete_food_title": "Delete food?", 
-  "delete_food_text": "ATTENTION! If this food is deleted, all eats journal entries created with this food will become quick entries.\n\nDo you really want to continue?"
+  "delete_food_text": "ATTENTION! If this food is deleted, all eats journal entries created with this food will become quick entries.\n\nDo you really want to continue?",
+  "copy_target_title": "Chose target",
+  "copy_target_text": "Please chose a target for copying the eats journal entries.",
+  "date": "Date",
+  "meal": "Meal",
+  "as_is": "as is",
+  "eats_journal_entries_copied": "Eats journal entries copied."
 }
