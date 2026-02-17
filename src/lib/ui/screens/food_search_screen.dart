@@ -12,6 +12,7 @@ import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
@@ -32,8 +33,9 @@ class FoodSearchScreen extends StatefulWidget {
   State<FoodSearchScreen> createState() => _FoodSearchScreenState();
 }
 
-class _FoodSearchScreenState extends State<FoodSearchScreen> {
+class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerProviderStateMixin {
   late FoodSearchScreenViewModel _foodSearchScreenViewModel;
+  late AnimationController _animationController;
 
   final TextEditingController _searchTextController = TextEditingController();
   late SearchMode _searchMode;
@@ -42,6 +44,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   @override
   void initState() {
     _foodSearchScreenViewModel = widget._foodSearchScreenViewModel;
+    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
     _searchMode = SearchMode.online;
     super.initState();
   }
@@ -318,17 +321,29 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       return FoodCard(
                         food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object!,
                         textTheme: textTheme,
-                        onCardTap: ({required Food food}) {
-                          Navigator.pushNamed(
-                            context,
-                            OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
-                            arguments: EatsJournalEntry.fromFood(
-                              entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
-                              food: food,
-                              amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
-                              meal: _foodSearchScreenViewModel.currentMeal.value,
-                            ),
-                          );
+                        onCardTap: ({required Food food}) async {
+                          EatsJournalEntryEdited? eatsJournalEntryEdited =
+                              await Navigator.pushNamed(
+                                    context,
+                                    OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                                    arguments: EatsJournalEntry.fromFood(
+                                      entryDate: _foodSearchScreenViewModel.currentJournalDate.value,
+                                      food: food,
+                                      amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
+                                      meal: _foodSearchScreenViewModel.currentMeal.value,
+                                    ),
+                                  )
+                                  as EatsJournalEntryEdited?;
+
+                          if (eatsJournalEntryEdited != null) {
+                            UiHelpers.showOverlay(
+                              context: AppGlobal.navigatorKey.currentContext!,
+                              displayText: eatsJournalEntryEdited.originalId == null
+                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                              animationController: _animationController,
+                            );
+                          }
                         },
                         onAddJournalEntryPressed: ({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) async {
                           await _foodSearchScreenViewModel.addEatsJournalEntry(
@@ -465,11 +480,21 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           heroTag: "2",
                           onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
-                            await UiHelpers.pushQuickEntryRoute(
+                            EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                               context: context,
                               initialEntryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                               initialMeal: _foodSearchScreenViewModel.currentMeal.value,
                             );
+
+                            if (eatsJournalEntryEdited != null) {
+                              UiHelpers.showOverlay(
+                                context: AppGlobal.navigatorKey.currentContext!,
+                                displayText: eatsJournalEntryEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                animationController: _animationController,
+                              );
+                            }
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
                         ),

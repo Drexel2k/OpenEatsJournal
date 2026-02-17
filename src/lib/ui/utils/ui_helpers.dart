@@ -11,6 +11,7 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
 class UiHelpers {
@@ -91,20 +92,55 @@ class UiHelpers {
     return false;
   }
 
-  static Future<void> pushQuickEntryRoute({required BuildContext context, required DateTime initialEntryDate, required Meal initialMeal}) async {
-    await Navigator.pushNamed(
-      context,
-      OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-      arguments: EatsJournalEntry.quick(
-        entryDate: initialEntryDate,
-        name: OpenEatsJournalStrings.emptyString,
-        kJoule: NutritionCalculator.kJouleForOnekCal,
-        meal: initialMeal,
-      ),
-    );
+  static Future<EatsJournalEntryEdited?> pushQuickEntryRoute({
+    required BuildContext context,
+    required DateTime initialEntryDate,
+    required Meal initialMeal,
+  }) async {
+    return await Navigator.pushNamed(
+          context,
+          OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+          arguments: EatsJournalEntry.quick(
+            entryDate: initialEntryDate,
+            name: OpenEatsJournalStrings.emptyString,
+            kJoule: NutritionCalculator.kJouleForOnekCal,
+            meal: initialMeal,
+          ),
+        )
+        as EatsJournalEntryEdited?;
   }
 
-  static void closeSnackBarAfter3Sec() {
-    Timer(Duration(seconds: 3), () => ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).hideCurrentSnackBar());
+  static void showOverlay({required BuildContext context, required String displayText, required AnimationController animationController}) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    OverlayEntry entry = OverlayEntry(
+      builder: (context) => FadeTransition(
+        opacity: animationController,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spacer(),
+              Container(
+                alignment: AlignmentGeometry.center,
+                color: colorScheme.surfaceContainerHighest,
+                child: Padding(
+                  padding: EdgeInsetsGeometry.all(10),
+                  child: Text(displayText, style: textTheme.bodyMedium),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    AppGlobal.navigatorKey.currentState!.overlay!.insert(entry);
+    animationController.forward();
+    Timer(Duration(milliseconds: 3150), () {
+      animationController.reverse();
+      entry.remove();
+    });
   }
 }

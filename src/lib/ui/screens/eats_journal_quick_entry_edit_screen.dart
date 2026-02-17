@@ -9,6 +9,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
@@ -25,8 +26,9 @@ class EatsJournalQuickEntryEditScreen extends StatefulWidget {
   State<EatsJournalQuickEntryEditScreen> createState() => _EatsJournalQuickEntryEditScreenState();
 }
 
-class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryEditScreen> {
+class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryEditScreen> with SingleTickerProviderStateMixin {
   late EatsJournalQuickEntryEditScreenViewModel _eatsJournalQuickEntryEditScreenViewModel;
+  late AnimationController _animationController;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
@@ -51,6 +53,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
   @override
   void initState() {
     _eatsJournalQuickEntryEditScreenViewModel = widget._eatsJournalQuickEntryEditScreenViewModel;
+    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
 
     _nameController.text = _eatsJournalQuickEntryEditScreenViewModel.name.value;
     _amountController.text = _eatsJournalQuickEntryEditScreenViewModel.amount.value != null
@@ -201,27 +204,39 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                       itemBuilder: (BuildContext context) {
                         return [
                           PopupMenuItem(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                                arguments: EatsJournalEntry.quick(
-                                  entryDate: _eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value,
-                                  name: _eatsJournalQuickEntryEditScreenViewModel.name.value,
-                                  kJoule: _eatsJournalQuickEntryEditScreenViewModel.energy.value != null
-                                      ? ConvertValidate.getEnergyKJ(displayEnergy: _eatsJournalQuickEntryEditScreenViewModel.energy.value!)
-                                      : 1,
-                                  meal: _eatsJournalQuickEntryEditScreenViewModel.currentMeal.value,
-                                  amount: _eatsJournalQuickEntryEditScreenViewModel.amount.value,
-                                  amountMeasurementUnit: _eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value,
-                                  carbohydrates: _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value,
-                                  sugar: _eatsJournalQuickEntryEditScreenViewModel.sugar.value,
-                                  fat: _eatsJournalQuickEntryEditScreenViewModel.fat.value,
-                                  saturatedFat: _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value,
-                                  protein: _eatsJournalQuickEntryEditScreenViewModel.protein.value,
-                                  salt: _eatsJournalQuickEntryEditScreenViewModel.salt.value,
-                                ),
-                              );
+                            onTap: () async {
+                              EatsJournalEntryEdited? eatsJournalEntryEdited =
+                                  await Navigator.pushNamed(
+                                        context,
+                                        OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                                        arguments: EatsJournalEntry.quick(
+                                          entryDate: _eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value,
+                                          name: _eatsJournalQuickEntryEditScreenViewModel.name.value,
+                                          kJoule: _eatsJournalQuickEntryEditScreenViewModel.energy.value != null
+                                              ? ConvertValidate.getEnergyKJ(displayEnergy: _eatsJournalQuickEntryEditScreenViewModel.energy.value!)
+                                              : 1,
+                                          meal: _eatsJournalQuickEntryEditScreenViewModel.currentMeal.value,
+                                          amount: _eatsJournalQuickEntryEditScreenViewModel.amount.value,
+                                          amountMeasurementUnit: _eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value,
+                                          carbohydrates: _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value,
+                                          sugar: _eatsJournalQuickEntryEditScreenViewModel.sugar.value,
+                                          fat: _eatsJournalQuickEntryEditScreenViewModel.fat.value,
+                                          saturatedFat: _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value,
+                                          protein: _eatsJournalQuickEntryEditScreenViewModel.protein.value,
+                                          salt: _eatsJournalQuickEntryEditScreenViewModel.salt.value,
+                                        ),
+                                      )
+                                      as EatsJournalEntryEdited?;
+
+                              if (eatsJournalEntryEdited != null) {
+                                UiHelpers.showOverlay(
+                                  context: AppGlobal.navigatorKey.currentContext!,
+                                  displayText: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                  animationController: _animationController,
+                                );
+                              }
                             },
                             child: Text(AppLocalizations.of(context)!.as_new_eats_journal_entry),
                           ),
@@ -697,22 +712,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   );
                   ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                 } else {
-                  SnackBar snackBar = SnackBar(
-                    content: originalQuickEntryId == null
-                        ? Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added)
-                        : Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated),
-                    action: SnackBarAction(
-                      label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
-                      onPressed: () {
-                        //Click on SnackbarAction closes the SnackBar,
-                        //nothing else to do here...
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
-                  UiHelpers.closeSnackBarAfter3Sec();
-
-                  Navigator.pop(AppGlobal.navigatorKey.currentContext!);
+                  Navigator.pop(AppGlobal.navigatorKey.currentContext!, EatsJournalEntryEdited(originalId: originalQuickEntryId));
                 }
               },
               child: _eatsJournalQuickEntryEditScreenViewModel.quickEntry.id == null

@@ -1,10 +1,13 @@
 import "package:flutter/material.dart";
+import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 
 class EatsJournalEditScreen extends StatefulWidget {
@@ -17,12 +20,14 @@ class EatsJournalEditScreen extends StatefulWidget {
   State<EatsJournalEditScreen> createState() => _EatsJournalEditScreenState();
 }
 
-class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
+class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with SingleTickerProviderStateMixin {
   late EatsJournalEditScreenViewModel _eatsJournalEditScreenViewModel;
+  late AnimationController _animationController;
 
   @override
   void initState() {
     _eatsJournalEditScreenViewModel = widget._eatsJournalEditScreenViewModel;
+    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
     _eatsJournalEditScreenViewModel.getEatsJournalEntries();
 
     super.initState();
@@ -68,9 +73,33 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                           eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
                           onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
                             if (eatsJournalEntry.food != null) {
-                              await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
+                              EatsJournalEntryEdited? eatsJournalEntryEdited =
+                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry)
+                                      as EatsJournalEntryEdited?;
+
+                              if (eatsJournalEntryEdited != null) {
+                                UiHelpers.showOverlay(
+                                  context: AppGlobal.navigatorKey.currentContext!,
+                                  displayText: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                  animationController: _animationController,
+                                );
+                              }
                             } else {
-                              await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
+                              EatsJournalEntryEdited? eatsJournalEntryEdited =
+                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry)
+                                      as EatsJournalEntryEdited?;
+
+                              if (eatsJournalEntryEdited != null) {
+                                UiHelpers.showOverlay(
+                                  context: AppGlobal.navigatorKey.currentContext!,
+                                  displayText: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                  animationController: _animationController,
+                                );
+                              }
                             }
 
                             _eatsJournalEditScreenViewModel.getEatsJournalEntries();

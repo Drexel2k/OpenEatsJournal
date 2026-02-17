@@ -18,6 +18,7 @@ import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -37,12 +38,14 @@ class EatsJournalScreen extends StatefulWidget {
   State<EatsJournalScreen> createState() => _EatsJournalScreenState();
 }
 
-class _EatsJournalScreenState extends State<EatsJournalScreen> {
+class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTickerProviderStateMixin {
   late EatsJournalScreenViewModel _eatsJournalScreenViewModel;
+  late AnimationController _animationController;
 
   @override
   void initState() {
     _eatsJournalScreenViewModel = widget._eatsJournalScreenViewModel;
+    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
     super.initState();
   }
 
@@ -499,13 +502,23 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.breakfast);
-                                                await UiHelpers.pushQuickEntryRoute(
+                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
                                                 );
                                                 _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
+
+                                                if (eatsJournalEntryEdited != null) {
+                                                  UiHelpers.showOverlay(
+                                                    context: AppGlobal.navigatorKey.currentContext!,
+                                                    displayText: eatsJournalEntryEdited.originalId == null
+                                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                    animationController: _animationController,
+                                                  );
+                                                }
                                               },
                                               icon: Icon(Icons.speed),
                                             ),
@@ -583,13 +596,23 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.lunch);
-                                                await UiHelpers.pushQuickEntryRoute(
+                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
                                                 );
                                                 _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
+
+                                                if (eatsJournalEntryEdited != null) {
+                                                  UiHelpers.showOverlay(
+                                                    context: AppGlobal.navigatorKey.currentContext!,
+                                                    displayText: eatsJournalEntryEdited.originalId == null
+                                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                    animationController: _animationController,
+                                                  );
+                                                }
                                               },
                                               icon: Icon(Icons.speed),
                                             ),
@@ -667,13 +690,23 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.dinner);
-                                                await UiHelpers.pushQuickEntryRoute(
+                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
                                                 );
                                                 _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
+
+                                                if (eatsJournalEntryEdited != null) {
+                                                  UiHelpers.showOverlay(
+                                                    context: AppGlobal.navigatorKey.currentContext!,
+                                                    displayText: eatsJournalEntryEdited.originalId == null
+                                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                    animationController: _animationController,
+                                                  );
+                                                }
                                               },
                                               icon: Icon(Icons.speed),
                                             ),
@@ -751,13 +784,23 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.snacks);
-                                                await UiHelpers.pushQuickEntryRoute(
+                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
                                                 );
                                                 _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                 _eatsJournalScreenViewModel.refreshNutritionData();
+
+                                                if (eatsJournalEntryEdited != null) {
+                                                  UiHelpers.showOverlay(
+                                                    context: AppGlobal.navigatorKey.currentContext!,
+                                                    displayText: eatsJournalEntryEdited.originalId == null
+                                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                    animationController: _animationController,
+                                                  );
+                                                }
                                               },
                                               icon: Icon(Icons.speed),
                                             ),
@@ -1022,13 +1065,23 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           heroTag: "2",
                           onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
-                            await UiHelpers.pushQuickEntryRoute(
+                            EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                               context: (context),
                               initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                               initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
                             );
                             _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                             _eatsJournalScreenViewModel.refreshNutritionData();
+
+                            if (eatsJournalEntryEdited != null) {
+                              UiHelpers.showOverlay(
+                                context: AppGlobal.navigatorKey.currentContext!,
+                                displayText: eatsJournalEntryEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                animationController: _animationController,
+                              );
+                            }
                           },
                           label: Text(AppLocalizations.of(context)!.quick_entry),
                         ),

@@ -15,6 +15,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -32,8 +33,9 @@ class EatsJournalFoodEntryEditScreen extends StatefulWidget {
   State<EatsJournalFoodEntryEditScreen> createState() => _EatsJournalFoodEntryEditScreenState();
 }
 
-class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEditScreen> {
+class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEditScreen> with SingleTickerProviderStateMixin {
   late EatsJournalFoodEntryEditScreenViewModel _eatsJournalFoodEntryEditScreenViewModel;
+  late AnimationController _animationController;
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _eatsAmountController = TextEditingController();
@@ -44,6 +46,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
   @override
   void initState() {
     _eatsJournalFoodEntryEditScreenViewModel = widget._eatsJournalFoodEntryEditScreenViewModel;
+    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
 
     _amountController.text = _eatsJournalFoodEntryEditScreenViewModel.amount.value != null
         ? ConvertValidate.numberFomatterInt.format(_eatsJournalFoodEntryEditScreenViewModel.amount.value)
@@ -161,18 +164,30 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                   if (_eatsJournalFoodEntryEditScreenViewModel.foodEntry.id != null) {
                     menuItems.add(
                       PopupMenuItem(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
-                            arguments: EatsJournalEntry.fromFood(
-                              entryDate: _eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value,
-                              food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
-                              amount: _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value,
-                              amountMeasurementUnit: _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value,
-                              meal: _eatsJournalFoodEntryEditScreenViewModel.currentMeal.value,
-                            ),
-                          );
+                        onTap: () async {
+                          EatsJournalEntryEdited? eatsJournalEntryEdited =
+                              await Navigator.pushNamed(
+                                    context,
+                                    OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                                    arguments: EatsJournalEntry.fromFood(
+                                      entryDate: _eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value,
+                                      food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
+                                      amount: _eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value,
+                                      amountMeasurementUnit: _eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value,
+                                      meal: _eatsJournalFoodEntryEditScreenViewModel.currentMeal.value,
+                                    ),
+                                  )
+                                  as EatsJournalEntryEdited?;
+
+                          if (eatsJournalEntryEdited != null) {
+                            UiHelpers.showOverlay(
+                              context: AppGlobal.navigatorKey.currentContext!,
+                              displayText: eatsJournalEntryEdited.originalId == null
+                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                              animationController: _animationController,
+                            );
+                          }
                         },
                         child: Text(AppLocalizations.of(context)!.as_new_eats_journal_entry),
                       ),
@@ -497,25 +512,9 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                   if (dataValid) {
                     int? originalFoodEntryId = _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id;
-
                     await _eatsJournalFoodEntryEditScreenViewModel.setFoodEntry();
 
-                    SnackBar snackBar = SnackBar(
-                      content: originalFoodEntryId == null
-                          ? Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added)
-                          : Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated),
-                      action: SnackBarAction(
-                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
-                        onPressed: () {
-                          //Click on SnackbarAction closes the SnackBar,
-                          //nothing else to do here...
-                        },
-                      ),
-                    );
-                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
-                    UiHelpers.closeSnackBarAfter3Sec();
-
-                    Navigator.pop(AppGlobal.navigatorKey.currentContext!);
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!, EatsJournalEntryEdited(originalId: originalFoodEntryId));
                   }
                 },
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
