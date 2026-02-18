@@ -11,7 +11,7 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
 class UiHelpers {
@@ -92,7 +92,7 @@ class UiHelpers {
     return false;
   }
 
-  static Future<EatsJournalEntryEdited?> pushQuickEntryRoute({
+  static Future<EntityEdited?> pushQuickEntryRoute({
     required BuildContext context,
     required DateTime initialEntryDate,
     required Meal initialMeal,
@@ -107,7 +107,7 @@ class UiHelpers {
             meal: initialMeal,
           ),
         )
-        as EatsJournalEntryEdited?;
+        as EntityEdited?;
   }
 
   static void showOverlay({required BuildContext context, required String displayText, required AnimationController animationController}) {

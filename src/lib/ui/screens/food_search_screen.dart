@@ -12,7 +12,7 @@ import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
-import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
@@ -322,7 +322,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                         food: _foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object!,
                         textTheme: textTheme,
                         onCardTap: ({required Food food}) async {
-                          EatsJournalEntryEdited? eatsJournalEntryEdited =
+                          EntityEdited? eatsJournalEntryEdited =
                               await Navigator.pushNamed(
                                     context,
                                     OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
@@ -333,7 +333,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                       meal: _foodSearchScreenViewModel.currentMeal.value,
                                     ),
                                   )
-                                  as EatsJournalEntryEdited?;
+                                  as EntityEdited?;
 
                           if (eatsJournalEntryEdited != null) {
                             UiHelpers.showOverlay(
@@ -354,6 +354,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                               amountMeasurementUnit: amountMeasurementUnit,
                               meal: _foodSearchScreenViewModel.currentMeal.value,
                             ),
+                          );
+                        },
+                        onFoodEdited: ({required EntityEdited entityEdited}) {
+                          UiHelpers.showOverlay(
+                            context: AppGlobal.navigatorKey.currentContext!,
+                            displayText: entityEdited.originalId == null
+                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                            animationController: _animationController,
                           );
                         },
                       );
@@ -440,12 +449,18 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                           heroTag: "4",
                           onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
-                            await UiHelpers.showAddWeightDialog(
+                            if (await UiHelpers.showAddWeightDialog(
                               context: AppGlobal.navigatorKey.currentContext!,
                               initialDate: _foodSearchScreenViewModel.currentJournalDate.value,
                               initialWeight: await _foodSearchScreenViewModel.getLastWeightJournalEntry(),
                               saveCallback: _addWeightJournalEntry,
-                            );
+                            )) {
+                              UiHelpers.showOverlay(
+                                context: AppGlobal.navigatorKey.currentContext!,
+                                displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                animationController: _animationController,
+                              );
+                            }
                           },
                           label: Text(AppLocalizations.of(context)!.weight_journal_entry),
                         ),
@@ -455,20 +470,32 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                         width: fabMenuWidth,
                         child: FloatingActionButton.extended(
                           heroTag: "3",
-                          onPressed: () {
+                          onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
 
-                            Navigator.pushNamed(
-                              context,
-                              OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                              arguments: Food(
-                                name: OpenEatsJournalStrings.emptyString,
-                                foodSource: FoodSource.user,
-                                fromDb: true,
-                                kJoule: NutritionCalculator.kJouleForOnekCal,
-                                nutritionPerGramAmount: 100,
-                              ),
-                            );
+                            EntityEdited? foodEdited =
+                                await Navigator.pushNamed(
+                                      context,
+                                      OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                                      arguments: Food(
+                                        name: OpenEatsJournalStrings.emptyString,
+                                        foodSource: FoodSource.user,
+                                        fromDb: true,
+                                        kJoule: NutritionCalculator.kJouleForOnekCal,
+                                        nutritionPerGramAmount: 100,
+                                      ),
+                                    )
+                                    as EntityEdited?;
+
+                            if (foodEdited != null) {
+                              UiHelpers.showOverlay(
+                                context: AppGlobal.navigatorKey.currentContext!,
+                                displayText: foodEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                animationController: _animationController,
+                              );
+                            }
                           },
                           label: Text(AppLocalizations.of(context)!.food),
                         ),
@@ -480,7 +507,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                           heroTag: "2",
                           onPressed: () async {
                             _foodSearchScreenViewModel.toggleFloatingActionButtons();
-                            EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
+                            EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                               context: context,
                               initialEntryDate: _foodSearchScreenViewModel.currentJournalDate.value,
                               initialMeal: _foodSearchScreenViewModel.currentMeal.value,

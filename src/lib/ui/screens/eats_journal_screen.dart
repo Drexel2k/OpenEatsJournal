@@ -18,7 +18,7 @@ import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -514,7 +514,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.breakfast);
-                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
+                                                EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
@@ -608,7 +608,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.lunch);
-                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
+                                                EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
@@ -702,7 +702,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.dinner);
-                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
+                                                EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
@@ -796,7 +796,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                             IconButton.outlined(
                                               onPressed: () async {
                                                 _changeMeal(meal: Meal.snacks);
-                                                EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
+                                                EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                                                   context: (context),
                                                   initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                                                   initialMeal: _eatsJournalScreenViewModel.currentMeal.value,
@@ -888,6 +888,11 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   saveCallback: _setWeightJournalEntry,
                                                 )) {
                                                   _eatsJournalScreenViewModel.refreshCurrentWeight();
+                                                  UiHelpers.showOverlay(
+                                                    context: AppGlobal.navigatorKey.currentContext!,
+                                                    displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                                    animationController: _animationController,
+                                                  );
                                                 }
                                               },
                                               icon: Icon(Icons.add),
@@ -1042,6 +1047,11 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                               saveCallback: _setWeightJournalEntry,
                             )) {
                               _eatsJournalScreenViewModel.refreshCurrentWeight();
+                              UiHelpers.showOverlay(
+                                context: AppGlobal.navigatorKey.currentContext!,
+                                displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                animationController: _animationController,
+                              );
                             }
                           },
                           label: Text(AppLocalizations.of(context)!.weight_journal_entry),
@@ -1052,20 +1062,32 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                         width: fabMenuWidth,
                         child: FloatingActionButton.extended(
                           heroTag: "3",
-                          onPressed: () {
+                          onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                            Navigator.pushNamed(
-                              context,
-                              OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                              arguments: Food(
-                                name: OpenEatsJournalStrings.emptyString,
-                                foodSource: FoodSource.user,
-                                fromDb: true,
-                                kJoule: NutritionCalculator.kJouleForOnekCal,
-                                nutritionPerGramAmount: 100,
-                              ),
-                            );
+                            EntityEdited? foodEdited =
+                                await Navigator.pushNamed(
+                                      context,
+                                      OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                                      arguments: Food(
+                                        name: OpenEatsJournalStrings.emptyString,
+                                        foodSource: FoodSource.user,
+                                        fromDb: true,
+                                        kJoule: NutritionCalculator.kJouleForOnekCal,
+                                        nutritionPerGramAmount: 100,
+                                      ),
+                                    )
+                                    as EntityEdited?;
+
+                            if (foodEdited != null) {
+                              UiHelpers.showOverlay(
+                                context: AppGlobal.navigatorKey.currentContext!,
+                                displayText: foodEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                animationController: _animationController,
+                              );
+                            }
                           },
                           label: Text(AppLocalizations.of(context)!.food),
                         ),
@@ -1077,7 +1099,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                           heroTag: "2",
                           onPressed: () async {
                             _eatsJournalScreenViewModel.toggleFloatingActionButtons();
-                            EatsJournalEntryEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
+                            EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
                               context: (context),
                               initialEntryDate: _eatsJournalScreenViewModel.currentJournalDate.value,
                               initialMeal: _eatsJournalScreenViewModel.currentMeal.value,

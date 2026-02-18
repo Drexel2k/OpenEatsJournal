@@ -8,7 +8,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -114,9 +114,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                           eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
                           onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
                             if (eatsJournalEntry.food != null) {
-                              EatsJournalEntryEdited? eatsJournalEntryEdited =
+                              EntityEdited? eatsJournalEntryEdited =
                                   await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry)
-                                      as EatsJournalEntryEdited?;
+                                      as EntityEdited?;
 
                               if (eatsJournalEntryEdited != null) {
                                 UiHelpers.showOverlay(
@@ -128,9 +128,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                 );
                               }
                             } else {
-                              EatsJournalEntryEdited? eatsJournalEntryEdited =
+                              EntityEdited? eatsJournalEntryEdited =
                                   await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry)
-                                      as EatsJournalEntryEdited?;
+                                      as EntityEdited?;
 
                               if (eatsJournalEntryEdited != null) {
                                 UiHelpers.showOverlay(

@@ -10,6 +10,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
@@ -828,21 +829,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     );
                     ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                   } else {
-                    SnackBar snackBar = SnackBar(
-                      content: originalFoodId == null
-                          ? Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created)
-                          : Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated),
-                      action: SnackBarAction(
-                        label: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.close,
-                        onPressed: () {
-                          //Click on SnackbarAction closes the SnackBar,
-                          //nothing else to do here...
-                        },
-                      ),
-                    );
-                    ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
-
-                    Navigator.pop(AppGlobal.navigatorKey.currentContext!);
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!, EntityEdited(originalId: originalFoodId));
                   }
                 },
                 child: _foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),

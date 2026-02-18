@@ -9,7 +9,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
@@ -205,7 +205,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         return [
                           PopupMenuItem(
                             onTap: () async {
-                              EatsJournalEntryEdited? eatsJournalEntryEdited =
+                              EntityEdited? eatsJournalEntryEdited =
                                   await Navigator.pushNamed(
                                         context,
                                         OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
@@ -226,7 +226,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                                           salt: _eatsJournalQuickEntryEditScreenViewModel.salt.value,
                                         ),
                                       )
-                                      as EatsJournalEntryEdited?;
+                                      as EntityEdited?;
 
                               if (eatsJournalEntryEdited != null) {
                                 UiHelpers.showOverlay(
@@ -712,7 +712,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                   );
                   ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                 } else {
-                  Navigator.pop(AppGlobal.navigatorKey.currentContext!, EatsJournalEntryEdited(originalId: originalQuickEntryId));
+                  Navigator.pop(AppGlobal.navigatorKey.currentContext!, EntityEdited(originalId: originalQuickEntryId));
                 }
               },
               child: _eatsJournalQuickEntryEditScreenViewModel.quickEntry.id == null

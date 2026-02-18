@@ -6,6 +6,7 @@ import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 
@@ -16,13 +17,16 @@ class FoodCard extends StatefulWidget {
     required TextTheme textTheme,
     required void Function({required Food food}) onCardTap,
     required Future<void> Function({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) onAddJournalEntryPressed,
+    required Function({required EntityEdited entityEdited}) onFoodEdited,
   }) : _food = food,
        _onCardTap = onCardTap,
-       _onAddJournalEntryPressed = onAddJournalEntryPressed;
+       _onAddJournalEntryPressed = onAddJournalEntryPressed,
+       _onFoodEdited = onFoodEdited;
 
   final Food _food;
   final void Function({required Food food}) _onCardTap;
   final Future<void> Function({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) _onAddJournalEntryPressed;
+  final void Function({required EntityEdited entityEdited}) _onFoodEdited;
 
   @override
   State<FoodCard> createState() => _FoodCardState();
@@ -85,8 +89,18 @@ class _FoodCardState extends State<FoodCard> {
 
                       menuItems.add(
                         PopupMenuItem(
-                          onTap: () {
-                            Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: Food.copyAsNewUserFood(food: widget._food));
+                          onTap: () async {
+                            EntityEdited? foodEdited =
+                                await Navigator.pushNamed(
+                                      context,
+                                      OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                                      arguments: Food.copyAsNewUserFood(food: widget._food),
+                                    )
+                                    as EntityEdited?;
+
+                            if (foodEdited != null) {
+                              widget._onFoodEdited(entityEdited: foodEdited);
+                            }
                           },
                           child: Text(AppLocalizations.of(context)!.as_new_food),
                         ),
@@ -95,8 +109,13 @@ class _FoodCardState extends State<FoodCard> {
                       if (widget._food.foodSource == FoodSource.user) {
                         menuItems.add(
                           PopupMenuItem(
-                            onTap: () {
-                              Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: widget._food);
+                            onTap: () async {
+                              EntityEdited? foodEdited =
+                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: widget._food) as EntityEdited?;
+
+                              if (foodEdited != null) {
+                                widget._onFoodEdited(entityEdited: foodEdited);
+                              }
                             },
                             child: Text(AppLocalizations.of(context)!.edit),
                           ),

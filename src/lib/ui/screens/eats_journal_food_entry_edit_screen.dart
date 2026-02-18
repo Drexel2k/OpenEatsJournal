@@ -15,7 +15,7 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
-import "package:openeatsjournal/ui/utils/eats_journal_entry_edited.dart";
+import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -150,12 +150,24 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                   menuItems.add(
                     PopupMenuItem(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                          arguments: Food.copyAsNewUserFood(food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!),
-                        );
+                      onTap: () async {
+                        EntityEdited? foodEdited =
+                            await Navigator.pushNamed(
+                                  context,
+                                  OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                                  arguments: Food.copyAsNewUserFood(food: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!),
+                                )
+                                as EntityEdited?;
+
+                        if (foodEdited != null) {
+                          UiHelpers.showOverlay(
+                            context: AppGlobal.navigatorKey.currentContext!,
+                            displayText: foodEdited.originalId == null
+                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                            animationController: _animationController,
+                          );
+                        }
                       },
                       child: Text(AppLocalizations.of(context)!.as_new_food),
                     ),
@@ -165,7 +177,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     menuItems.add(
                       PopupMenuItem(
                         onTap: () async {
-                          EatsJournalEntryEdited? eatsJournalEntryEdited =
+                          EntityEdited? eatsJournalEntryEdited =
                               await Navigator.pushNamed(
                                     context,
                                     OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
@@ -177,7 +189,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                                       meal: _eatsJournalFoodEntryEditScreenViewModel.currentMeal.value,
                                     ),
                                   )
-                                  as EatsJournalEntryEdited?;
+                                  as EntityEdited?;
 
                           if (eatsJournalEntryEdited != null) {
                             UiHelpers.showOverlay(
@@ -197,12 +209,24 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                   if (_eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.foodSource == FoodSource.user) {
                     menuItems.add(
                       PopupMenuItem(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                            arguments: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
-                          );
+                        onTap: () async {
+                          EntityEdited? foodEdited =
+                              await Navigator.pushNamed(
+                                    context,
+                                    OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                                    arguments: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
+                                  )
+                                  as EntityEdited?;
+
+                          if (foodEdited != null) {
+                            UiHelpers.showOverlay(
+                              context: AppGlobal.navigatorKey.currentContext!,
+                              displayText: foodEdited.originalId == null
+                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                              animationController: _animationController,
+                            );
+                          }
                         },
                         child: Text(AppLocalizations.of(context)!.edit),
                       ),
@@ -514,7 +538,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     int? originalFoodEntryId = _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id;
                     await _eatsJournalFoodEntryEditScreenViewModel.setFoodEntry();
 
-                    Navigator.pop(AppGlobal.navigatorKey.currentContext!, EatsJournalEntryEdited(originalId: originalFoodEntryId));
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!, EntityEdited(originalId: originalFoodEntryId));
                   }
                 },
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
