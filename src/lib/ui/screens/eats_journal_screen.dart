@@ -296,7 +296,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                           children: [
                                             Text(AppLocalizations.of(context)!.breakfast),
                                             Text(
-                                              "${ConvertValidate.getCleanDoubleString(doubleValue: breakfastPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: breakfastKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                              "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: breakfastPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: breakfastKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                             ),
                                           ],
                                         ),
@@ -325,7 +325,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                               children: [
                                                 Text(AppLocalizations.of(context)!.lunch),
                                                 Text(
-                                                  "${ConvertValidate.getCleanDoubleString(doubleValue: lunchPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: lunchKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                  "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: lunchPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: lunchKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                                 ),
                                               ],
                                             ),
@@ -356,7 +356,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                               children: [
                                                 Text(AppLocalizations.of(context)!.dinner),
                                                 Text(
-                                                  "${ConvertValidate.getCleanDoubleString(doubleValue: dinnerPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: dinnerKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                  "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: dinnerPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: dinnerKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                                 ),
                                               ],
                                             ),
@@ -387,7 +387,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                               children: [
                                                 Text(AppLocalizations.of(context)!.snacks),
                                                 Text(
-                                                  "${ConvertValidate.getCleanDoubleString(doubleValue: snacksPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: snacksKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                  "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: snacksPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: snacksKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                                 ),
                                               ],
                                             ),
@@ -435,7 +435,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                             builder: (_, _) {
                                                               return Text(
                                                                 snapshot.data != null
-                                                                    ? "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}"
+                                                                    ? "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}"
                                                                     : AppLocalizations.of(context)!.na,
                                                               );
                                                             },

@@ -20,10 +20,10 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       _brands = ValueNotifier(food.brands.join(", ")),
       _nameValid = ValueNotifier(food.name.trim() != OpenEatsJournalStrings.emptyString),
       _barcode = ValueNotifier(food.barcode),
-      _nutritionPerGramAmount = ValueNotifier(
+      _nutritionPerWeightUnitAmount = ValueNotifier(
         food.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: food.nutritionPerGramAmount!) : null,
       ),
-      _nutritionPerMilliliterAmount = ValueNotifier(
+      _nutritionPerVolumeUnitAmount = ValueNotifier(
         food.nutritionPerMilliliterAmount != null ? ConvertValidate.getDisplayVolume(volumeMl: food.nutritionPerMilliliterAmount!) : null,
       ),
       _amountsValid = food.nutritionPerGramAmount != null || food.nutritionPerMilliliterAmount != null ? ValueNotifier(true) : ValueNotifier(false),
@@ -52,8 +52,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     }
 
     _name.addListener(_nameChanged);
-    _nutritionPerGramAmount.addListener(_amountsChanged);
-    _nutritionPerMilliliterAmount.addListener(_amountsChanged);
+    _nutritionPerWeightUnitAmount.addListener(_amountsChanged);
+    _nutritionPerVolumeUnitAmount.addListener(_amountsChanged);
     _energy.addListener(_energyChanged);
   }
 
@@ -64,8 +64,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<String> _brands;
   final ValueNotifier<bool> _nameValid;
   final ValueNotifier<int?> _barcode;
-  final ValueNotifier<double?> _nutritionPerGramAmount;
-  final ValueNotifier<double?> _nutritionPerMilliliterAmount;
+  final ValueNotifier<double?> _nutritionPerWeightUnitAmount;
+  final ValueNotifier<double?> _nutritionPerVolumeUnitAmount;
   final ValueNotifier<bool> _amountsValid;
   final ValueNotifier<int?> _energy;
   final ValueNotifier<bool> _energyValid = ValueNotifier(true);
@@ -93,8 +93,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<String> get brands => _brands;
   ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<int?> get barcode => _barcode;
-  ValueNotifier<double?> get nutritionPerGramAmount => _nutritionPerGramAmount;
-  ValueNotifier<double?> get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
+  ValueNotifier<double?> get nutritionPerWeightUnitAmount => _nutritionPerWeightUnitAmount;
+  ValueNotifier<double?> get nutritionPerVolumeUnitAmount => _nutritionPerVolumeUnitAmount;
   ValueNotifier<bool> get amountsValid => _amountsValid;
   ValueNotifier<int?> get energy => _energy;
   ValueNotifier<bool> get kJouleValid => _energyValid;
@@ -130,8 +130,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
         changeDefaultCallback: changeDefaultFoodUnit,
         removeFoodUnitCallback: removeFoodUnit,
         foodUnitsEditMode: _foodUnitsEditMode,
-        foodNutritionPerGram: _nutritionPerGramAmount,
-        foodNutritionPerMilliliter: _nutritionPerMilliliterAmount,
+        foodNutritionPerGram: _nutritionPerWeightUnitAmount,
+        foodNutritionPerMilliliter: _nutritionPerVolumeUnitAmount,
       ),
     );
 
@@ -168,7 +168,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   }
 
   void _amountsChanged() {
-    if (_nutritionPerGramAmount.value != null || _nutritionPerMilliliterAmount.value != null) {
+    if (_nutritionPerWeightUnitAmount.value != null || _nutritionPerVolumeUnitAmount.value != null) {
       _amountsValid.value = true;
       checkFoodUnitsCopyValid();
     } else {
@@ -178,7 +178,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
   void checkFoodUnitsCopyValid() {
     bool foodUnitsValid = true;
-    if (_nutritionPerGramAmount.value == null) {
+    if (_nutritionPerWeightUnitAmount.value == null) {
       FoodUnitEditorData? foodUnitEditorData = _foodUnitEditorsData.firstWhereOrNull(
         (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.amountMeasurementUnit == MeasurementUnit.gram,
       );
@@ -187,7 +187,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       }
     }
 
-    if (_nutritionPerMilliliterAmount.value == null) {
+    if (_nutritionPerVolumeUnitAmount.value == null) {
       FoodUnitEditorData? foodUnitEditorData = _foodUnitEditorsData.firstWhereOrNull(
         (FoodUnitEditorData foodUnitEditorDataInternal) => foodUnitEditorDataInternal.amountMeasurementUnit == MeasurementUnit.milliliter,
       );
@@ -233,7 +233,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
       foodValid = false;
     }
 
-    if (foodValid && _nutritionPerGramAmount.value == null && _nutritionPerMilliliterAmount.value == null) {
+    if (foodValid && _nutritionPerWeightUnitAmount.value == null && _nutritionPerVolumeUnitAmount.value == null) {
       foodValid = false;
     }
 
@@ -257,8 +257,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
     if (foodValid) {
       for (FoodUnitEditorData foodUnitEditorData in _foodUnitEditorsData) {
         if (!foodUnitEditorData.isValid(
-          foodNutritionPerGramAmount: _nutritionPerGramAmount.value,
-          foodNutritionPerMilliliterAmount: _nutritionPerMilliliterAmount.value,
+          foodNutritionPerGramAmount: _nutritionPerWeightUnitAmount.value,
+          foodNutritionPerMilliliterAmount: _nutritionPerVolumeUnitAmount.value,
         )) {
           foodValid = false;
           break;
@@ -274,19 +274,19 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
       //It is important to set non null values first, before setting null values, otherwise it can be that both ambounts may get null, which is throws an
       //exception in the food...
-      if (_nutritionPerGramAmount.value != null) {
-        _food.nutritionPerGramAmount = ConvertValidate.getWeightG(displayWeight: _nutritionPerGramAmount.value!);
+      if (_nutritionPerWeightUnitAmount.value != null) {
+        _food.nutritionPerGramAmount = ConvertValidate.getWeightG(displayWeight: _nutritionPerWeightUnitAmount.value!);
       }
 
-      if (_nutritionPerMilliliterAmount.value != null) {
-        _food.nutritionPerMilliliterAmount = ConvertValidate.getVolumeMl(displayVolume: _nutritionPerMilliliterAmount.value!);
+      if (_nutritionPerVolumeUnitAmount.value != null) {
+        _food.nutritionPerMilliliterAmount = ConvertValidate.getVolumeMl(displayVolume: _nutritionPerVolumeUnitAmount.value!);
       }
 
-      if (_nutritionPerGramAmount.value == null) {
+      if (_nutritionPerWeightUnitAmount.value == null) {
         _food.nutritionPerGramAmount = null;
       }
 
-      if (_nutritionPerMilliliterAmount.value == null) {
+      if (_nutritionPerVolumeUnitAmount.value == null) {
         _food.nutritionPerMilliliterAmount = null;
       }
 
@@ -356,8 +356,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   void dispose() {
     _name.dispose();
     _nameValid.dispose();
-    _nutritionPerGramAmount.dispose();
-    _nutritionPerMilliliterAmount.dispose();
+    _nutritionPerWeightUnitAmount.dispose();
+    _nutritionPerVolumeUnitAmount.dispose();
     _amountsValid.dispose();
     _energy.dispose();
     _energyValid.dispose();

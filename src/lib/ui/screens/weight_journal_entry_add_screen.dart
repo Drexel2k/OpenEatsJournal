@@ -27,7 +27,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
   @override
   void initState() {
     _weightJournalEntryAddScreenViewModel = widget._weightJournalEntryAddScreenViewModel;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay);
+    _weightController.text = ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay);
 
     super.initState();
   }
@@ -64,9 +64,9 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -85,11 +85,11 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                         }
                       },
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                        num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(value);
                         _weightJournalEntryAddScreenViewModel.weight.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -105,7 +105,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
             builder: (_, _, _) {
               if (!_weightJournalEntryAddScreenViewModel.weightValid.value) {
                 return Text(
-                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay)} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, _weightJournalEntryAddScreenViewModel.lastValidWeightDisplay)} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                   style: textTheme.labelSmall!.copyWith(color: Colors.red),
                 );
               } else {

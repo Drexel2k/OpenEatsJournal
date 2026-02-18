@@ -140,7 +140,7 @@ class _FoodCardState extends State<FoodCard> {
                           style: textTheme.titleMedium,
                         ),
                         Text(
-                          "${AppLocalizations.of(context)!.per} ${ConvertValidate.getCleanDoubleString(
+                          "${AppLocalizations.of(context)!.per} ${ConvertValidate.getCleanDoubleString1DecimalDigit(
                             doubleValue: widget._food.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: widget._food.nutritionPerGramAmount!) : ConvertValidate.getDisplayVolume(volumeMl: widget._food.nutritionPerMilliliterAmount!),
                           )}${widget._food.nutritionPerGramAmount != null ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}",
                           style: textTheme.labelSmall,
@@ -155,21 +155,21 @@ class _FoodCardState extends State<FoodCard> {
                       children: [
                         widget._food.carbohydrates != null
                             ? Text(
-                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.carbohydrates!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
+                                "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.carbohydrates!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
                               )
                             : Text(
                                 "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
                               ),
                         widget._food.fat != null
                             ? Text(
-                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.fat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
+                                "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.fat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
                               )
                             : Text(
                                 "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.fat}",
                               ),
                         widget._food.protein != null
                             ? Text(
-                                "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.protein!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
+                                "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: widget._food.protein!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
                               )
                             : Text(
                                 "${AppLocalizations.of(context)!.na}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.protein_abbreviated}",
@@ -248,12 +248,12 @@ class _FoodCardState extends State<FoodCard> {
     String kJoulsAddName;
     if (widget._food.defaultFoodUnit != null) {
       kJoulsAddName =
-          "${widget._food.defaultFoodUnit!.name} (${ConvertValidate.getCleanDoubleString(
+          "${widget._food.defaultFoodUnit!.name} (${ConvertValidate.getCleanDoubleString1DecimalDigit(
             doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: widget._food.defaultFoodUnit!.amount) : ConvertValidate.getDisplayVolume(volumeMl: widget._food.defaultFoodUnit!.amount),
           )}${measurementUnit == MeasurementUnit.gram ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)})";
     } else {
       kJoulsAddName =
-          "${ConvertValidate.getCleanDoubleString(
+          "${ConvertValidate.getCleanDoubleString1DecimalDigit(
             doubleValue: measurementUnit == MeasurementUnit.gram ? ConvertValidate.getDisplayWeightG(weightG: widget._food.nutritionPerGramAmount!) : ConvertValidate.getDisplayWeightG(weightG: widget._food.nutritionPerMilliliterAmount!),
           )}${measurementUnit == MeasurementUnit.gram ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
     }

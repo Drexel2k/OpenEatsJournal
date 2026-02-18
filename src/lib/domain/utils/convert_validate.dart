@@ -20,7 +20,8 @@ class ConvertValidate {
   }) {
     numberFomatterInt = NumberFormat(null, languageCode);
     //use onyl for parsing directly, for formatting use getCleanDoubleString or getCleanDoubleEditString
-    numberFomatterDouble = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);
+    numberFomatterDouble1DecimalDigit = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 1);
+    numberFomatterDouble3DecimalDigits = NumberFormat.decimalPatternDigits(locale: languageCode, decimalDigits: 3);
     _decimalSeparator = NumberFormat.decimalPattern(languageCode).symbols.DECIMAL_SEP;
 
     dateFormatterDisplayLongDateOnly = DateFormat.yMMMMd(languageCode);
@@ -43,7 +44,8 @@ class ConvertValidate {
   static const int maxWeightKg = 1000;
 
   static late NumberFormat numberFomatterInt;
-  static late NumberFormat numberFomatterDouble;
+  static late NumberFormat numberFomatterDouble1DecimalDigit;
+  static late NumberFormat numberFomatterDouble3DecimalDigits;
   static final DateFormat dateformatterDatabaseDateOnly = DateFormat(OpenEatsJournalStrings.dbDateFormatDateOnly);
   static final DateFormat dateFormatterDatabaseDateAndTime = DateFormat(OpenEatsJournalStrings.dbDateFormatDateAndTime);
   static late DateFormat dateFormatterDisplayLongDateOnly;
@@ -264,8 +266,8 @@ class ConvertValidate {
   }
 
   //cuts off trailing comma or 0
-  static String getCleanDoubleString({required double doubleValue}) {
-    String decimalString = numberFomatterDouble.format(doubleValue);
+  static String getCleanDoubleString1DecimalDigit({required double doubleValue}) {
+    String decimalString = numberFomatterDouble1DecimalDigit.format(doubleValue);
     bool cleaned = false;
 
     while (!cleaned) {
@@ -280,8 +282,35 @@ class ConvertValidate {
   }
 
   //if original string ended with decimal separator, leave it to allow adding of decimals durign editing.
-  static String getCleanDoubleEditString({required double doubleValue, required String doubleValueString}) {
-    String decimalString = getCleanDoubleString(doubleValue: doubleValue);
+  static String getCleanDoubleEditString1DecimalDigit({required double doubleValue, required String doubleValueString}) {
+    String decimalString = getCleanDoubleString1DecimalDigit(doubleValue: doubleValue);
+
+    if (doubleValueString.endsWith(_decimalSeparator)) {
+      decimalString = "$decimalString$_decimalSeparator";
+    }
+
+    return decimalString;
+  }
+
+  //cuts off trailing comma or 0
+  static String getCleanDoubleString3DecimalDigits({required double doubleValue}) {
+    String decimalString = numberFomatterDouble3DecimalDigits.format(doubleValue);
+    bool cleaned = false;
+
+    while (!cleaned) {
+      if (decimalString.contains(_decimalSeparator) && (decimalString.endsWith(_decimalSeparator) || decimalString.endsWith("0"))) {
+        decimalString = decimalString.substring(0, decimalString.length - 1);
+      } else {
+        cleaned = true;
+      }
+    }
+
+    return decimalString;
+  }
+
+  //if original string ended with decimal separator, leave it to allow adding of decimals durign editing.
+  static String getCleanDoubleEditString3DecimalDigits({required double doubleValue, required String doubleValueString}) {
+    String decimalString = getCleanDoubleString3DecimalDigits(doubleValue: doubleValue);
 
     if (doubleValueString.endsWith(_decimalSeparator)) {
       decimalString = "$decimalString$_decimalSeparator";
@@ -321,7 +350,7 @@ class ConvertValidate {
 
   //Currently all editors accept only decimal numbers with one number after the decimal separator. Returning the old value if the user wants to enter a 2nd
   //number after the decimal separator ensures that there are no rounding issues, when parsing the number first and then let the getCleanDouble... beautify it.
-  static bool decimalHasMoreThan1Fraction({required String decimalstring}) {
+  static bool decimalHasMoreThan1DecimalDigit({required String decimalstring}) {
     List<String> numberParts = decimalstring.split(_decimalSeparator);
     if (numberParts.isEmpty || numberParts.length > 2) {
       throw ArgumentError("Unexpected number part count.");
@@ -329,6 +358,21 @@ class ConvertValidate {
 
     if (numberParts.length == 2) {
       if (numberParts[1].trim().length > 1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  static bool decimalHasMoreThan3DecimalDigits({required String decimalstring}) {
+    List<String> numberParts = decimalstring.split(_decimalSeparator);
+    if (numberParts.isEmpty || numberParts.length > 2) {
+      throw ArgumentError("Unexpected number part count.");
+    }
+
+    if (numberParts.length == 2) {
+      if (numberParts[1].trim().length > 3) {
         return true;
       }
     }

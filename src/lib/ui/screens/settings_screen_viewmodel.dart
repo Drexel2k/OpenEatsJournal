@@ -17,7 +17,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
-      _height = ValueNotifier(ConvertValidate.getDisplayHeight(heightCm: settingsRepository.height).round()),
+      _height = ValueNotifier(ConvertValidate.getDisplayHeight(heightCm: settingsRepository.height)),
       _lastValidWeight = weight,
       _weight = ValueNotifier(ConvertValidate.getDisplayWeightKg(weightKg: weight)),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
@@ -49,7 +49,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int> _dailyTargetKJoule = ValueNotifier(1);
   final ValueNotifier<Gender> _gender;
   final ValueNotifier<DateTime> _birthday;
-  final ValueNotifier<int?> _height;
+  final ValueNotifier<double?> _height;
   final ValueNotifier<bool> _heightValid = ValueNotifier(true);
   double _lastValidWeight;
   final ValueNotifier<double?> _weight;
@@ -71,7 +71,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<int> get dailyTargetKJoule => _dailyTargetKJoule;
   ValueNotifier<Gender> get gender => _gender;
   ValueNotifier<DateTime> get birthday => _birthday;
-  ValueNotifier<int?> get height => _height;
+  ValueNotifier<double?> get height => _height;
   ValueNotifier<bool> get heightValid => _heightValid;
   double get lastValidWeight => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
   ValueNotifier<double?> get weight => _weight;
@@ -161,7 +161,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _setDailyKJoule();
   }
 
-  void setHeight({required int? height, onlyUnitChange = false}) {
+  void setHeight({required double? height, onlyUnitChange = false}) {
     _height.value = height;
 
     if (!onlyUnitChange) {
@@ -222,7 +222,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _settingsRepository.heightUnit = _heightUnit.value;
     _updateConvertValidate();
 
-    setHeight(height: ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height).round(), onlyUnitChange: true);
+    setHeight(height: ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height), onlyUnitChange: true);
   }
 
   void _weightUnitChanged() {

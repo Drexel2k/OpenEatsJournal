@@ -31,8 +31,8 @@ class EatsJournalEntryRow extends StatelessWidget {
     String amountInformation = AppLocalizations.of(context)!.na;
     if (_eatsJournalEntry.amount != null) {
       amountInformation = _eatsJournalEntry.amountMeasurementUnit == MeasurementUnit.gram
-          ? "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}"
-          : "${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayVolume(volumeMl: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
+          ? "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}"
+          : "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayVolume(volumeMl: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
     }
 
     return Row(

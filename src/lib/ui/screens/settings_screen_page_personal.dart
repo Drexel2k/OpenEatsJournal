@@ -34,8 +34,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
   void initState() {
     _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
 
-    _heightController.text = ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.height.value);
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.weight.value!);
+    _heightController.text = ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
+    _weightController.text = ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.weight.value!);
 
     super.initState();
   }
@@ -243,8 +243,26 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
                           return SettingsTextField(
                             controller: _heightController,
-                            keyboardType: TextInputType.numberWithOptions(signed: false),
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                            inputFormatters: [
+                              TextInputFormatter.withFunction((oldValue, newValue) {
+                                final String text = newValue.text.trim();
+                                if (text.isEmpty) {
+                                  return newValue;
+                                }
+
+                                num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
+                                if (doubleValue != null) {
+                                  if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
+                                    return oldValue;
+                                  }
+
+                                  return newValue;
+                                } else {
+                                  return oldValue;
+                                }
+                              }),
+                            ],
                             focusNode: _heightFocusNode,
                             onTap: () {
                               //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
@@ -254,10 +272,14 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                               }
                             },
                             onChanged: (value) {
-                              int? intValue = int.tryParse(value);
-                              widget._settingsScreenViewModel.setHeight(height: intValue);
-                              if (intValue != null) {
-                                _heightController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                              double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                              widget._settingsScreenViewModel.setHeight(height: doubleValue);
+
+                              if (doubleValue != null) {
+                                _heightController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(
+                                  doubleValue: doubleValue,
+                                  doubleValueString: value,
+                                );
                               }
                             },
                           );
@@ -268,7 +290,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (_, _, _) {
                           if (!widget._settingsScreenViewModel.heightValid.value) {
                             return Text(
-                              "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.height, ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.repositoryHeight))} ${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
+                              "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.height, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.repositoryHeight))} ${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
                               style: textTheme.labelSmall!.copyWith(color: Colors.red),
                             );
                           } else {
@@ -307,7 +329,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                     builder: (_, _, _) {
                       //when widget._settingsScreenViewModel.weight was changed programatically we need to update the controller
                       if (widget._settingsScreenViewModel.weight.value != null) {
-                        _weightController.text = ConvertValidate.getCleanDoubleEditString(
+                        _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(
                           doubleValue: widget._settingsScreenViewModel.weight.value!,
                           doubleValueString: OpenEatsJournalStrings.emptyString,
                         );
@@ -328,9 +350,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                   return newValue;
                                 }
 
-                                num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                                num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(text);
                                 if (doubleValue != null) {
-                                  if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                                  if (ConvertValidate.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
                                     return oldValue;
                                   }
 
@@ -347,11 +369,14 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                               }
                             },
                             onChanged: (value) {
-                              num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                              num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(value);
                               widget._settingsScreenViewModel.setWeight(weight: doubleValue as double?);
 
                               if (doubleValue != null) {
-                                _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                                _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(
+                                  doubleValue: doubleValue,
+                                  doubleValueString: value,
+                                );
                               }
                             },
                           ),
@@ -360,7 +385,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             builder: (_, _, _) {
                               if (!widget._settingsScreenViewModel.weightValid.value) {
                                 return Text(
-                                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString(doubleValue: widget._settingsScreenViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                 );
                               } else {
@@ -505,7 +530,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: AppLocalizations.of(contextBuilder)!.lose025,
+                            label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.25))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose025,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose025;
@@ -518,7 +543,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: AppLocalizations.of(contextBuilder)!.lose05,
+                            label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.5))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose05,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose05;
@@ -531,7 +556,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: AppLocalizations.of(contextBuilder)!.lose075,
+                            label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.75))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose075,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose075;

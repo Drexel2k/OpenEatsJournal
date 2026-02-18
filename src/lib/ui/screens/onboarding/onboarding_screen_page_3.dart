@@ -41,7 +41,7 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
         ? ConvertValidate.numberFomatterInt.format(widget._onboardingScreenViewModel.height.value!)
         : OpenEatsJournalStrings.emptyString;
     _weightController.text = widget._onboardingScreenViewModel.weight.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: widget._onboardingScreenViewModel.weight.value!)
+        ? ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._onboardingScreenViewModel.weight.value!)
         : OpenEatsJournalStrings.emptyString;
 
     super.initState();
@@ -143,8 +143,26 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                             builder: (_, _, _) {
                               return SettingsTextField(
                                 controller: _heightController,
-                                keyboardType: TextInputType.numberWithOptions(signed: false),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                                inputFormatters: [
+                                  TextInputFormatter.withFunction((oldValue, newValue) {
+                                    final String text = newValue.text.trim();
+                                    if (text.isEmpty) {
+                                      return newValue;
+                                    }
+
+                                    num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
+                                    if (doubleValue != null) {
+                                      if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
+                                        return oldValue;
+                                      }
+
+                                      return newValue;
+                                    } else {
+                                      return oldValue;
+                                    }
+                                  }),
+                                ],
                                 focusNode: _heightFocusNode,
                                 onTap: () {
                                   if (!_heightFocusNode.hasFocus) {
@@ -152,10 +170,14 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                                   }
                                 },
                                 onChanged: (value) {
-                                  int? intValue = int.tryParse(value);
-                                  widget._onboardingScreenViewModel.height.value = intValue;
-                                  if (intValue != null) {
-                                    _heightController.text = ConvertValidate.numberFomatterInt.format(intValue);
+                                  double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                                  widget._onboardingScreenViewModel.height.value = doubleValue;
+
+                                  if (doubleValue != null) {
+                                    _heightController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(
+                                      doubleValue: doubleValue,
+                                      doubleValueString: value,
+                                    );
                                   }
                                 },
                               );
@@ -196,9 +218,9 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                                       return newValue;
                                     }
 
-                                    num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                                    num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(text);
                                     if (doubleValue != null) {
-                                      if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                                      if (ConvertValidate.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
                                         return oldValue;
                                       }
 
@@ -215,11 +237,14 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                                   }
                                 },
                                 onChanged: (value) {
-                                  double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                                  double? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(value) as double?;
                                   widget._onboardingScreenViewModel.weight.value = doubleValue;
 
                                   if (doubleValue != null) {
-                                    _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                                    _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(
+                                      doubleValue: doubleValue,
+                                      doubleValueString: value,
+                                    );
                                   }
                                 },
                               );
@@ -445,7 +470,7 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                         if (!ConvertValidate.heightValid(displayHeight: widget._onboardingScreenViewModel.height.value?.toDouble())) {
                           SnackBar snackBar = SnackBar(
                             content: Text(
-                              "${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
+                              "${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
                             ),
                             action: SnackBarAction(
                               label: AppLocalizations.of(context)!.close,
@@ -463,7 +488,7 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                         if (!ConvertValidate.weightValid(displayWeight: widget._onboardingScreenViewModel.weight.value)) {
                           SnackBar snackBar = SnackBar(
                             content: Text(
-                              "${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                              "${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                             ),
                             action: SnackBarAction(
                               label: AppLocalizations.of(context)!.close,

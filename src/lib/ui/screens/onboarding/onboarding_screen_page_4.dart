@@ -54,7 +54,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                               valueListenable: _onboardingScreenViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(contextBuilder)!.lose025,
+                                  label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.25))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                                   selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose025,
                                   onSelected: (bool selected) {
                                     _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose025;
@@ -67,7 +67,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                               valueListenable: _onboardingScreenViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(contextBuilder)!.lose05,
+                                  label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.5))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                                   selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose05,
                                   onSelected: (bool selected) {
                                     _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose05;
@@ -80,7 +80,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                               valueListenable: _onboardingScreenViewModel.weightTarget,
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
-                                  label: AppLocalizations.of(contextBuilder)!.lose075,
+                                  label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.75))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                                   selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose075,
                                   onSelected: (bool selected) {
                                     _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose075;
