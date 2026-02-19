@@ -530,7 +530,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.25))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            label:
+                                "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget1)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose025,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose025;
@@ -543,7 +544,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.5))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            label:
+                                "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget2)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose05,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose05;
@@ -556,7 +558,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         valueListenable: widget._settingsScreenViewModel.weightTarget,
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
-                            label: "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: 0.75))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            label:
+                                "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget3)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose075,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose075;
