@@ -59,7 +59,7 @@
   "select_activity_level": "Please select your activity level.",
   "your_weight_target": "Your weight target:",
   "keep_weight": "Keep weight",
-  "per_week": "pro Woche",
+  "per_week": "per week",
   "proposed_values": "Calories need is based on the Mifflin-St. Jeor formula and the Physical Activity Level Factor of the Food and Agriculture Organization of the United Nations. The target is calculated based on the assumption that 1 kg of body fat has approximately 7,000 kcal. These values can be adjusted in the settings (target values also per weekday).",
   "in_doubt_consult_doctor": "Individual values may differ, losing weight too fast is unhealthy and may be dangerous. In doubt consult a nutrition expert or doctor.",
   "select_target": "Please select a target.",

@@ -29,13 +29,17 @@ class OnboardingScreenViewModel extends ChangeNotifier {
        _dailyTargetEnergy = ValueNotifier(null),
        _volumeUnit = ValueNotifier(VolumeUnit.ml),
        _darkMode = darkMode,
-       _languageCode = languageCode {
+       _languageCode = languageCode,
+       _displayWeightTarget1 = _getDisplayWeightTarget1(volumeUnit: VolumeUnit.ml),
+       _displayWeightTarget2 = _getDisplayWeightTarget2(volumeUnit: VolumeUnit.ml),
+       _displayWeightTarget3 = _getDisplayWeightTarget3(volumeUnit: VolumeUnit.ml) {
     _gender.addListener(calculateKJoule);
     _birthday.addListener(calculateKJoule);
     _height.addListener(calculateKJoule);
     _weight.addListener(calculateKJoule);
     _activityFactor.addListener(calculateKJoule);
     _weightTarget.addListener(calculateKJoule);
+    _volumeUnit.addListener(_setWeightTargets);
   }
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
@@ -52,6 +56,11 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int?> _dailyTargetEnergy;
   //we use the volume unite here because with this we can uniquely identy all other unit settings.
   final ValueNotifier<VolumeUnit> _volumeUnit;
+  //needed for display and use of nice weight target values depending on weight unit setting, e.g. 0.5kg/1lb instead of 0.5kg/1.102lb
+  double _displayWeightTarget1;
+  double _displayWeightTarget2;
+  double _displayWeightTarget3;
+
   final bool _darkMode;
   final String _languageCode;
 
@@ -66,6 +75,9 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   ValueNotifier<int?> get dailyNeedEnergy => _dailyNeedEnergy;
   ValueNotifier<int?> get dailyTargetEnergy => _dailyTargetEnergy;
   ValueNotifier<VolumeUnit> get volumeUnit => _volumeUnit;
+  double get displayWeightTarget1 => _displayWeightTarget1;
+  double get displayWeightTarget2 => _displayWeightTarget2;
+  double get displayWeightTarget3 => _displayWeightTarget3;
 
   String get contactData => _settingsRepository.contactData!;
   String get languageCode => _languageCode;
@@ -80,18 +92,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       age = age - 1;
     }
 
-    double weightLossKg = 0;
-    if (_weightTarget.value == WeightTarget.lose025) {
-      weightLossKg = 0.25;
-    }
-
-    if (_weightTarget.value == WeightTarget.lose05) {
-      weightLossKg = 0.5;
-    }
-
-    if (_weightTarget.value == WeightTarget.lose075) {
-      weightLossKg = 0.75;
-    }
+    double weightLossKg = _getWeightLossKg();
 
     double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
@@ -164,18 +165,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         age = age - 1;
       }
 
-      double weightLossKg = 0;
-      if (_weightTarget.value == WeightTarget.lose025) {
-        weightLossKg = 0.25;
-      }
-
-      if (_weightTarget.value == WeightTarget.lose05) {
-        weightLossKg = 0.5;
-      }
-
-      if (_weightTarget.value == WeightTarget.lose075) {
-        weightLossKg = 0.75;
-      }
+      double weightLossKg = _getWeightLossKg();
 
       double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
         kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
@@ -207,6 +197,23 @@ class OnboardingScreenViewModel extends ChangeNotifier {
     }
   }
 
+  double _getWeightLossKg() {
+    double weightLossKg = 0;
+    if (_weightTarget.value == WeightTarget.lose025) {
+      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget1);
+    }
+
+    if (_weightTarget.value == WeightTarget.lose05) {
+      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget2);
+    }
+
+    if (_weightTarget.value == WeightTarget.lose075) {
+      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget3);
+    }
+
+    return weightLossKg;
+  }
+
   HeightUnit _getHeightUnit() {
     if (_volumeUnit.value == VolumeUnit.ml) {
       return HeightUnit.cm;
@@ -221,6 +228,24 @@ class OnboardingScreenViewModel extends ChangeNotifier {
     }
 
     return WeightUnit.oz;
+  }
+
+  void _setWeightTargets() {
+    _displayWeightTarget1 = _getDisplayWeightTarget1(volumeUnit: _volumeUnit.value);
+    _displayWeightTarget2 = _getDisplayWeightTarget2(volumeUnit: _volumeUnit.value);
+    _displayWeightTarget3 = _getDisplayWeightTarget3(volumeUnit: _volumeUnit.value);
+  }
+
+  static double _getDisplayWeightTarget1({required VolumeUnit volumeUnit}) {
+    return volumeUnit == VolumeUnit.ml ? 0.25 : 0.5;
+  }
+
+  static double _getDisplayWeightTarget2({required VolumeUnit volumeUnit}) {
+    return volumeUnit == VolumeUnit.ml ? 0.5 : 1;
+  }
+
+  static double _getDisplayWeightTarget3({required VolumeUnit volumeUnit}) {
+    return volumeUnit == VolumeUnit.ml ? 0.75 : 1.5;
   }
 
   @override

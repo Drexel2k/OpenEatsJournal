@@ -25,7 +25,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
       _energyUnit = ValueNotifier(settingsRepository.energyUnit),
       _heightUnit = ValueNotifier(settingsRepository.heightUnit),
       _weightUnit = ValueNotifier(settingsRepository.weightUnit),
-      _volumeUnit = ValueNotifier(settingsRepository.volumeUnit) {
+      _volumeUnit = ValueNotifier(settingsRepository.volumeUnit),
+      _displayWeightTarget1 = _getDisplayWeightTarget1(weightUnit: settingsRepository.weightUnit),
+      _displayWeightTarget2 = _getDisplayWeightTarget2(weightUnit: settingsRepository.weightUnit),
+      _displayWeightTarget3 = _getDisplayWeightTarget3(weightUnit: settingsRepository.weightUnit) {
     _setDailyKJoule();
     _setDailyTargetKJoule();
     _darkMode.addListener(_darkModeChanged);
@@ -60,6 +63,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
   final ValueNotifier<HeightUnit> _heightUnit;
   final ValueNotifier<WeightUnit> _weightUnit;
   final ValueNotifier<VolumeUnit> _volumeUnit;
+  //needed for display and use of nice weight target values depending on weight unit setting, e.g. 0.5kg/1lb instead of 0.5kg/1.102lb
+  double _displayWeightTarget1;
+  double _displayWeightTarget2;
+  double _displayWeightTarget3;
 
   final Debouncer _heightDebouncer = Debouncer();
   final Debouncer _weightDebouncer = Debouncer();
@@ -82,6 +89,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<HeightUnit> get heightUnit => _heightUnit;
   ValueNotifier<WeightUnit> get weightUnit => _weightUnit;
   ValueNotifier<VolumeUnit> get volumeUnit => _volumeUnit;
+  double get displayWeightTarget1 => _displayWeightTarget1;
+  double get displayWeightTarget2 => _displayWeightTarget2;
+  double get displayWeightTarget3 => _displayWeightTarget3;
 
   double get kJouleMonday => _settingsRepository.kJouleMonday;
   double get kJouleTuesday => _settingsRepository.kJouleTuesday;
@@ -230,6 +240,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _updateConvertValidate();
 
     setWeight(weight: ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight), onlyUnitChange: true);
+
+    _displayWeightTarget1 = _getDisplayWeightTarget1(weightUnit: _settingsRepository.weightUnit);
+    _displayWeightTarget2 = _getDisplayWeightTarget2(weightUnit: _settingsRepository.weightUnit);
+    _displayWeightTarget3 = _getDisplayWeightTarget3(weightUnit: _settingsRepository.weightUnit);
   }
 
   void _volumeUnitChanged() {
@@ -250,15 +264,15 @@ class SettingsScreenViewModel extends ChangeNotifier {
   Future<void> recalculateDailykJouleTargetsAndSave() async {
     double weightLossKg = 0;
     if (_settingsRepository.weightTarget == WeightTarget.lose025) {
-      weightLossKg = 0.25;
+      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget1);
     }
 
     if (_settingsRepository.weightTarget == WeightTarget.lose05) {
-      weightLossKg = 0.5;
+      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget2);
     }
 
     if (_settingsRepository.weightTarget == WeightTarget.lose075) {
-      weightLossKg = 0.75;
+      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget3);
     }
 
     double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule(), weightLossPerWeekKg: weightLossKg);
@@ -277,6 +291,18 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   Future<bool> importDatabase() async {
     return await _settingsRepository.importDatabase();
+  }
+
+  static double _getDisplayWeightTarget1({required WeightUnit weightUnit}) {
+    return weightUnit == WeightUnit.g ? 0.25 : 0.5;
+  }
+
+  static double _getDisplayWeightTarget2({required WeightUnit weightUnit}) {
+    return weightUnit == WeightUnit.g ? 0.5 : 1;
+  }
+
+  static double _getDisplayWeightTarget3({required WeightUnit weightUnit}) {
+    return weightUnit == WeightUnit.g ? 0.75 : 1.5;
   }
 
   @override
