@@ -32,7 +32,7 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
 
     _nameController.text = _foodUnitEditorViewModel.name.value;
     _amountController.text = _foodUnitEditorViewModel.amount.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodUnitEditorViewModel.amount.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodUnitEditorViewModel.amount.value!)
         : OpenEatsJournalStrings.emptyString;
 
     super.initState();
@@ -93,9 +93,9 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                           return newValue;
                         }
 
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                        num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                         if (doubleValue != null) {
-                          if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                          if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                             return oldValue;
                           }
 
@@ -115,10 +115,10 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                       }
                     },
                     onChanged: (value) {
-                      double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                      double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                       _foodUnitEditorViewModel.amount.value = doubleValue;
                       if (doubleValue != null) {
-                        _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        _amountController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                       }
                     },
                   );

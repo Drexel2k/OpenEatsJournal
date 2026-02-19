@@ -37,7 +37,7 @@ class _WeightRowState extends State<WeightRow> {
   @override
   void initState() {
     _weightRowViewModel = widget._weightRowViewModel;
-    _weightController.text = ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight);
+    _weightController.text = ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _weightRowViewModel.lastValidWeight);
     super.initState();
   }
 
@@ -65,9 +65,9 @@ class _WeightRowState extends State<WeightRow> {
                           return newValue;
                         }
 
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                        num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(text);
                         if (doubleValue != null) {
-                          if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                          if (ConvertValidate.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
                             return oldValue;
                           }
 
@@ -86,11 +86,11 @@ class _WeightRowState extends State<WeightRow> {
                       }
                     },
                     onChanged: (value) {
-                      num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                      num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(value);
                       _weightRowViewModel.weight.value = doubleValue as double?;
 
                       if (doubleValue != null) {
-                        _weightController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                        _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(doubleValue: doubleValue, doubleValueString: value);
                       }
                     },
                   );
@@ -117,7 +117,7 @@ class _WeightRowState extends State<WeightRow> {
           builder: (_, _, _) {
             if (!_weightRowViewModel.weightValid.value) {
               return Text(
-                "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString(doubleValue: _weightRowViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _weightRowViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                 style: textTheme.labelSmall!.copyWith(color: Colors.red),
               );
             } else {

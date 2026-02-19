@@ -150,7 +150,7 @@ class Linechart extends StatelessWidget {
                   encoder: (Map<dynamic, dynamic> map) {
                     if (map[OpenEatsJournalStrings.chartDateVar] != _displayUntil) {
                       return Label(
-                        ConvertValidate.getCleanDoubleString(doubleValue:  map[_chartVar]),
+                        ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue:  map[_chartVar]),
                         LabelStyle(
                           textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                           offset: Offset(6, -15),

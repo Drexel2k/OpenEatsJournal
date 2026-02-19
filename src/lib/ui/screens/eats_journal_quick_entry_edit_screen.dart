@@ -57,28 +57,28 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
     _nameController.text = _eatsJournalQuickEntryEditScreenViewModel.name.value;
     _amountController.text = _eatsJournalQuickEntryEditScreenViewModel.amount.value != null
-        ? ConvertValidate.numberFomatterInt.format(_eatsJournalQuickEntryEditScreenViewModel.amount.value)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.amount.value!)
         : OpenEatsJournalStrings.emptyString;
     _energyController.text = _eatsJournalQuickEntryEditScreenViewModel.energy.value != null
         ? ConvertValidate.numberFomatterInt.format(_eatsJournalQuickEntryEditScreenViewModel.energy.value)
         : OpenEatsJournalStrings.emptyString;
     _carbohydratesController.text = _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value!)
         : OpenEatsJournalStrings.emptyString;
     _sugarController.text = _eatsJournalQuickEntryEditScreenViewModel.sugar.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.sugar.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.sugar.value!)
         : OpenEatsJournalStrings.emptyString;
     _fatController.text = _eatsJournalQuickEntryEditScreenViewModel.fat.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.fat.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.fat.value!)
         : OpenEatsJournalStrings.emptyString;
     _saturatedFatController.text = _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value!)
         : OpenEatsJournalStrings.emptyString;
     _proteinController.text = _eatsJournalQuickEntryEditScreenViewModel.protein.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.protein.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.protein.value!)
         : OpenEatsJournalStrings.emptyString;
     _saltController.text = _eatsJournalQuickEntryEditScreenViewModel.salt.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.salt.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _eatsJournalQuickEntryEditScreenViewModel.salt.value!)
         : OpenEatsJournalStrings.emptyString;
 
     super.initState();
@@ -303,9 +303,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -324,11 +324,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _eatsJournalQuickEntryEditScreenViewModel.amount.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _amountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _amountController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -396,9 +396,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -417,11 +417,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -444,9 +444,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -465,11 +465,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _eatsJournalQuickEntryEditScreenViewModel.sugar.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _sugarController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -502,9 +502,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -523,11 +523,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _eatsJournalQuickEntryEditScreenViewModel.fat.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _fatController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -550,9 +550,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -571,11 +571,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -608,9 +608,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -629,11 +629,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _eatsJournalQuickEntryEditScreenViewModel.protein.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _proteinController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -656,9 +656,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -677,11 +677,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         }
                       },
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                        num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value);
                         _eatsJournalQuickEntryEditScreenViewModel.salt.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          _saltController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _saltController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );

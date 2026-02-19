@@ -61,30 +61,30 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _nameController.text = _foodEditScreenViewModel.name.value;
     _brandsController.text = _foodEditScreenViewModel.brands.value;
     _barcodeController.text = _foodEditScreenViewModel.barcode.value != null ? "${_foodEditScreenViewModel.barcode.value}" : OpenEatsJournalStrings.emptyString;
-    _gramAmountController.text = _foodEditScreenViewModel.nutritionPerGramAmount.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerGramAmount.value!)
+    _gramAmountController.text = _foodEditScreenViewModel.nutritionPerWeightUnitAmount.value != null
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.nutritionPerWeightUnitAmount.value!)
         : OpenEatsJournalStrings.emptyString;
-    _milliliterAmountController.text = _foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.nutritionPerMilliliterAmount.value!)
+    _milliliterAmountController.text = _foodEditScreenViewModel.nutritionPerVolumeUnitAmount.value != null
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.nutritionPerVolumeUnitAmount.value!)
         : OpenEatsJournalStrings.emptyString;
     _energyontroller.text = ConvertValidate.numberFomatterInt.format(_foodEditScreenViewModel.energy.value);
     _carbohydratesController.text = _foodEditScreenViewModel.carbohydrates.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.carbohydrates.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.carbohydrates.value!)
         : OpenEatsJournalStrings.emptyString;
     _sugarController.text = _foodEditScreenViewModel.sugar.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.sugar.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.sugar.value!)
         : OpenEatsJournalStrings.emptyString;
     _fatController.text = _foodEditScreenViewModel.fat.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.fat.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.fat.value!)
         : OpenEatsJournalStrings.emptyString;
     _saturatedFatController.text = _foodEditScreenViewModel.saturatedFat.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.saturatedFat.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.saturatedFat.value!)
         : OpenEatsJournalStrings.emptyString;
     _proteinController.text = _foodEditScreenViewModel.protein.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.protein.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.protein.value!)
         : OpenEatsJournalStrings.emptyString;
     _saltController.text = _foodEditScreenViewModel.salt.value != null
-        ? ConvertValidate.getCleanDoubleString(doubleValue: _foodEditScreenViewModel.salt.value!)
+        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _foodEditScreenViewModel.salt.value!)
         : OpenEatsJournalStrings.emptyString;
 
     super.initState();
@@ -235,7 +235,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.nutritionPerGramAmount,
+                  valueListenable: _foodEditScreenViewModel.nutritionPerWeightUnitAmount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _gramAmountController,
@@ -247,9 +247,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -268,11 +268,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.nutritionPerGramAmount.value = doubleValue;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                        _foodEditScreenViewModel.nutritionPerWeightUnitAmount.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _gramAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _gramAmountController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -283,7 +283,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
               SizedBox(
                 width: inputFieldsWidth,
                 child: ValueListenableBuilder(
-                  valueListenable: _foodEditScreenViewModel.nutritionPerMilliliterAmount,
+                  valueListenable: _foodEditScreenViewModel.nutritionPerVolumeUnitAmount,
                   builder: (_, _, _) {
                     return OpenEatsJournalTextField(
                       controller: _milliliterAmountController,
@@ -295,9 +295,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -316,11 +316,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
-                        _foodEditScreenViewModel.nutritionPerMilliliterAmount.value = doubleValue;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                        _foodEditScreenViewModel.nutritionPerVolumeUnitAmount.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _milliliterAmountController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _milliliterAmountController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -420,9 +420,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -441,11 +441,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _foodEditScreenViewModel.carbohydrates.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _carbohydratesController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -468,9 +468,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -484,11 +484,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         _sugarController.selection = TextSelection(baseOffset: 0, extentOffset: _sugarController.text.length);
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _foodEditScreenViewModel.sugar.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _sugarController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _sugarController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -521,9 +521,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -542,11 +542,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _foodEditScreenViewModel.fat.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _fatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _fatController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -569,9 +569,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -590,11 +590,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _foodEditScreenViewModel.saturatedFat.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _saturatedFatController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -627,9 +627,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -648,11 +648,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value) as double?;
+                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         _foodEditScreenViewModel.protein.value = doubleValue;
 
                         if (doubleValue != null) {
-                          _proteinController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _proteinController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -675,9 +675,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(text);
+                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan1Fraction(decimalstring: text)) {
+                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -696,11 +696,11 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         }
                       },
                       onChanged: (value) {
-                        num? doubleValue = ConvertValidate.numberFomatterDouble.tryParse(value);
+                        num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value);
                         _foodEditScreenViewModel.salt.value = doubleValue as double?;
 
                         if (doubleValue != null) {
-                          _saltController.text = ConvertValidate.getCleanDoubleEditString(doubleValue: doubleValue, doubleValueString: value);
+                          _saltController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -721,9 +721,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                 child: RoundOutlinedButton(
                   onPressed: () {
                     _foodEditScreenViewModel.addFoddUnit(
-                      measurementUnit: _foodEditScreenViewModel.nutritionPerGramAmount.value != null
+                      measurementUnit: _foodEditScreenViewModel.nutritionPerWeightUnitAmount.value != null
                           ? MeasurementUnit.gram
-                          : _foodEditScreenViewModel.nutritionPerMilliliterAmount.value != null
+                          : _foodEditScreenViewModel.nutritionPerVolumeUnitAmount.value != null
                           ? MeasurementUnit.milliliter
                           : MeasurementUnit.gram,
                     );
@@ -907,8 +907,8 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           changeDefaultCallback: _foodEditScreenViewModel.changeDefaultFoodUnit,
           removeFoodUnitCallback: _foodEditScreenViewModel.removeFoodUnit,
           foodUnitsEditMode: _foodEditScreenViewModel.foodUnitsEditMode,
-          foodNutritionPerGram: _foodEditScreenViewModel.nutritionPerGramAmount,
-          foodNutritionPerMilliliter: _foodEditScreenViewModel.nutritionPerMilliliterAmount,
+          foodNutritionPerGram: _foodEditScreenViewModel.nutritionPerWeightUnitAmount,
+          foodNutritionPerMilliliter: _foodEditScreenViewModel.nutritionPerVolumeUnitAmount,
         );
 
         _foodEditScreenViewModel.foodUnitEditorViewModels.add(foodUnitEditorViewModel);

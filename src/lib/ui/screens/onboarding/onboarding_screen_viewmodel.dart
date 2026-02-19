@@ -44,7 +44,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
   final ValueNotifier<Gender?> _gender;
   final ValueNotifier<DateTime?> _birthday;
-  final ValueNotifier<int?> _height;
+  final ValueNotifier<double?> _height;
   final ValueNotifier<double?> _weight;
   final ValueNotifier<double?> _activityFactor;
   final ValueNotifier<WeightTarget?> _weightTarget;
@@ -59,7 +59,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   bool get darkMode => _darkMode;
   ValueNotifier<Gender?> get gender => _gender;
   ValueNotifier<DateTime?> get birthday => _birthday;
-  ValueNotifier<int?> get height => _height;
+  ValueNotifier<double?> get height => _height;
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<double?> get activityFactor => _activityFactor;
   ValueNotifier<WeightTarget?> get weightTarget => _weightTarget;

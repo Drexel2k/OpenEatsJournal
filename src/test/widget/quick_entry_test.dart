@@ -180,31 +180,31 @@ void main() async {
       }
 
       if (textFieldIndex == 2) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: amountValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: amountValue));
       }
 
       if (textFieldIndex == 3) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: carbohydratesValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: carbohydratesValue));
       }
 
       if (textFieldIndex == 4) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: sugarValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: sugarValue));
       }
 
       if (textFieldIndex == 5) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: fatValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: fatValue));
       }
 
       if (textFieldIndex == 6) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: saturatedFatValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: saturatedFatValue));
       }
 
       if (textFieldIndex == 7) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: proteinValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: proteinValue));
       }
 
       if (textFieldIndex == 8) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString(doubleValue: saltValue));
+        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: saltValue));
       }
 
       textFieldIndex++;
