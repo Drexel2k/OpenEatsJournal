@@ -31,7 +31,6 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
   void initState() {
     _eatsJournalEditScreenViewModel = widget._eatsJournalEditScreenViewModel;
     _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
-    _eatsJournalEditScreenViewModel.getEatsJournalEntries();
 
     super.initState();
   }
@@ -44,131 +43,145 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 7, 10),
 
-      child: Column(
-        children: [
-          AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.eats_journal)),
-          Row(
-            children: [
-              Text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalEditScreenViewModel.currentJournalDate), style: textTheme.titleMedium),
-              Spacer(),
-              Text(
-                _getLocalizedMeal(meal: _eatsJournalEditScreenViewModel.meal, context: context),
-                style: textTheme.titleMedium,
-              ),
-              SizedBox(width: 5),
-              RoundOutlinedButton(
-                onPressed: () async {
-                  CopyTargetScreenViewModel copyTargetScreenViewModel = CopyTargetScreenViewModel(
-                    currentDate: _eatsJournalEditScreenViewModel.currentJournalDate,
-                    currentMeal: _eatsJournalEditScreenViewModel.meal,
-                  );
-
-                  bool copy = await showDialog(
-                    useSafeArea: true,
-                    barrierDismissible: false,
-                    context: AppGlobal.navigatorKey.currentContext!,
-                    builder: (BuildContext contextBuilder) {
-                      double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.075;
-                      double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.045;
-
-                      return Dialog(
-                        insetPadding: EdgeInsets.fromLTRB(dialogHorizontalPadding, dialogVerticalPadding, dialogHorizontalPadding, dialogVerticalPadding),
-                        child: CopyTargetScreen(copyTargetScreenViewModel: copyTargetScreenViewModel),
-                      );
-                    },
-                  );
-
-                  if (copy) {
-                    await _eatsJournalEditScreenViewModel.copyEatsJournalEntries(
-                      toDate: copyTargetScreenViewModel.currentDate.value,
-                      toMeal: copyTargetScreenViewModel.currentMeal.value,
-                    );
-                    
-                    UiHelpers.showOverlay(
-                      context: AppGlobal.navigatorKey.currentContext!,
-                      displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
-                      animationController: _animationController,
-                    );
-                  }
-                },
-                child: Icon(Icons.copy),
-              ),
-            ],
-          ),
-          SizedBox(height: 5),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: _eatsJournalEditScreenViewModel.eatsJournalEntriesChanged,
-              builder: (_, _) {
-                return ListView.builder(
-                  itemCount: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length,
-                  itemBuilder: (context, listViewItemIndex) {
-                    if (listViewItemIndex >= _eatsJournalEditScreenViewModel.eatsJournalEntriesResult.length) {
-                      return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
-                    }
-
-                    return Column(
+      child: ListenableBuilder(
+        listenable: _eatsJournalEditScreenViewModel.eatsJournalEntriesChanged,
+        builder: (_, _) {
+          return FutureBuilder<List<EatsJournalEntry>?>(
+            future: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult,
+            builder: (BuildContext context, AsyncSnapshot<List<EatsJournalEntry>?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
+              } else if (snapshot.hasError) {
+                throw StateError("Something went wrong: ${snapshot.error}");
+              } else {
+                return Column(
+                  children: [
+                    AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.eats_journal)),
+                    Row(
                       children: [
-                        EatsJournalEntryRow(
-                          key: UniqueKey(),
-                          eatsJournalEntry: _eatsJournalEditScreenViewModel.eatsJournalEntriesResult[listViewItemIndex],
-                          onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
-                            if (eatsJournalEntry.food != null) {
-                              EntityEdited? eatsJournalEntryEdited =
-                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry)
-                                      as EntityEdited?;
-
-                              if (eatsJournalEntryEdited != null) {
-                                UiHelpers.showOverlay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                                  animationController: _animationController,
-                                );
-                              }
-                            } else {
-                              EntityEdited? eatsJournalEntryEdited =
-                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry)
-                                      as EntityEdited?;
-
-                              if (eatsJournalEntryEdited != null) {
-                                UiHelpers.showOverlay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                  animationController: _animationController,
-                                );
-                              }
-                            }
-
-                            _eatsJournalEditScreenViewModel.getEatsJournalEntries();
-                          },
-                          onDeletePressed: ({required int eatsJournalEntryId}) async {
-                            bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
-
-                            if (deleted) {
-                              _eatsJournalEditScreenViewModel.getEatsJournalEntries();
-                            }
-                          },
-
-                          onDuplicatePressed: ({required EatsJournalEntry eatsJournalEntry}) async {
-                            await _eatsJournalEditScreenViewModel.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
-
-                            _eatsJournalEditScreenViewModel.getEatsJournalEntries();
-                          },
-                          deleteIconColor: colorScheme.primary,
+                        Text(
+                          ConvertValidate.dateFormatterDisplayLongDateOnly.format(_eatsJournalEditScreenViewModel.currentJournalDate),
+                          style: textTheme.titleMedium,
                         ),
-                        SizedBox(height: 5),
+                        Spacer(),
+                        Text(
+                          _getLocalizedMeal(meal: _eatsJournalEditScreenViewModel.meal, context: context),
+                          style: textTheme.titleMedium,
+                        ),
+                        SizedBox(width: 5),
+                        snapshot.data != null
+                            ? RoundOutlinedButton(
+                                onPressed: () async {
+                                  CopyTargetScreenViewModel copyTargetScreenViewModel = CopyTargetScreenViewModel(
+                                    currentDate: _eatsJournalEditScreenViewModel.currentJournalDate,
+                                    currentMeal: _eatsJournalEditScreenViewModel.meal,
+                                  );
+
+                                  bool copy = await showDialog(
+                                    useSafeArea: true,
+                                    barrierDismissible: false,
+                                    context: AppGlobal.navigatorKey.currentContext!,
+                                    builder: (BuildContext contextBuilder) {
+                                      double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.075;
+                                      double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.045;
+
+                                      return Dialog(
+                                        insetPadding: EdgeInsets.fromLTRB(
+                                          dialogHorizontalPadding,
+                                          dialogVerticalPadding,
+                                          dialogHorizontalPadding,
+                                          dialogVerticalPadding,
+                                        ),
+                                        child: CopyTargetScreen(copyTargetScreenViewModel: copyTargetScreenViewModel),
+                                      );
+                                    },
+                                  );
+
+                                  if (copy) {
+                                    await _eatsJournalEditScreenViewModel.copyEatsJournalEntries(
+                                      eatsJournalEntries: snapshot.data!,
+                                      toDate: copyTargetScreenViewModel.currentDate.value,
+                                      toMeal: copyTargetScreenViewModel.currentMeal.value,
+                                    );
+
+                                    UiHelpers.showOverlay(
+                                      context: AppGlobal.navigatorKey.currentContext!,
+                                      displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
+                                      animationController: _animationController,
+                                    );
+                                  }
+                                },
+                                child: Icon(Icons.copy),
+                              )
+                            : SizedBox(),
                       ],
-                    );
-                  },
+                    ),
+                    SizedBox(height: 5),
+                    snapshot.data != null
+                        ? Expanded(
+                            child: ListView(
+                              children: snapshot.data!.map((EatsJournalEntry entry) {
+                                return EatsJournalEntryRow(
+                                  key: UniqueKey(),
+                                  eatsJournalEntry: entry,
+                                  onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
+                                    if (eatsJournalEntry.food != null) {
+                                      EntityEdited? eatsJournalEntryEdited =
+                                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry)
+                                              as EntityEdited?;
+
+                                      if (eatsJournalEntryEdited != null) {
+                                        UiHelpers.showOverlay(
+                                          context: AppGlobal.navigatorKey.currentContext!,
+                                          displayText: eatsJournalEntryEdited.originalId == null
+                                              ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                              : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                          animationController: _animationController,
+                                        );
+                                      }
+                                    } else {
+                                      EntityEdited? eatsJournalEntryEdited =
+                                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry)
+                                              as EntityEdited?;
+
+                                      if (eatsJournalEntryEdited != null) {
+                                        UiHelpers.showOverlay(
+                                          context: AppGlobal.navigatorKey.currentContext!,
+                                          displayText: eatsJournalEntryEdited.originalId == null
+                                              ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                              : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                          animationController: _animationController,
+                                        );
+                                      }
+                                    }
+
+                                    _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                                  },
+                                  onDeletePressed: ({required int eatsJournalEntryId}) async {
+                                    bool deleted = await _eatsJournalEditScreenViewModel.deleteEatsJournalEntry(id: eatsJournalEntryId);
+
+                                    if (deleted) {
+                                      _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                                    }
+                                  },
+
+                                  onDuplicatePressed: ({required EatsJournalEntry eatsJournalEntry}) async {
+                                    await _eatsJournalEditScreenViewModel.duplicateEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+
+                                    _eatsJournalEditScreenViewModel.getEatsJournalEntries();
+                                  },
+                                  deleteIconColor: colorScheme.primary,
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        : SizedBox(),
+                  ],
                 );
-              },
-            ),
-          ),
-        ],
+              }
+            },
+          );
+        },
       ),
     );
   }

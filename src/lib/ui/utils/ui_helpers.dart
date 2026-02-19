@@ -92,11 +92,7 @@ class UiHelpers {
     return false;
   }
 
-  static Future<EntityEdited?> pushQuickEntryRoute({
-    required BuildContext context,
-    required DateTime initialEntryDate,
-    required Meal initialMeal,
-  }) async {
+  static Future<EntityEdited?> pushQuickEntryRoute({required BuildContext context, required DateTime initialEntryDate, required Meal initialMeal}) async {
     return await Navigator.pushNamed(
           context,
           OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
@@ -140,7 +136,10 @@ class UiHelpers {
     animationController.forward();
     Timer(Duration(milliseconds: 3150), () {
       animationController.reverse();
-      entry.remove();
+      Timer(Duration(milliseconds: 150), () {
+        animationController.reverse();
+        entry.remove();
+      });
     });
   }
 }
