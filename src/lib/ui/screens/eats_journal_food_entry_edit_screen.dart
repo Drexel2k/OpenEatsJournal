@@ -561,12 +561,14 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
           ),
           Divider(thickness: 2, height: 20),
           Text(
-            "${AppLocalizations.of(context)!.per} ${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null ? _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount! : _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerMilliliterAmount!)}${_eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}",
+            "${AppLocalizations.of(context)!.per} ${ConvertValidate.getCleanDoubleString3DecimalDigits(
+              doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null ? ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount!) : ConvertValidate.getDisplayVolume(volumeMl: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerMilliliterAmount!),
+            )}${_eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.nutritionPerGramAmount != null ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context) : ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}",
             style: textTheme.labelSmall,
           ),
           SizedBox(height: 10),
           Text(
-            "${ConvertValidate.numberFomatterInt.format(_eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.kJoule)}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+            "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.kJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
             style: textTheme.titleMedium,
           ),
           Row(
@@ -575,7 +577,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_carb(
-                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na)),
@@ -584,7 +586,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_sugar(
-                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_sugar(AppLocalizations.of(context)!.na)),
@@ -597,7 +599,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_fat(
-                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_fat(AppLocalizations.of(context)!.na)),
@@ -606,7 +608,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.saturatedFat != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_saturated_fat(
-                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.saturatedFat!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.saturatedFat!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_saturated_fat(AppLocalizations.of(context)!.na)),
@@ -619,7 +621,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.protein != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_prot(
-                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.protein!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.protein!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_prot(AppLocalizations.of(context)!.na)),
@@ -628,7 +630,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                 child: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.salt != null
                     ? Text(
                         AppLocalizations.of(context)!.amount_salt(
-                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.salt!)}${AppLocalizations.of(context)!.gram_abbreviated}",
+                          "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.salt!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}",
                         ),
                       )
                     : Text(AppLocalizations.of(context)!.amount_salt(AppLocalizations.of(context)!.na)),
