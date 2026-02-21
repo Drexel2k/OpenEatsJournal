@@ -82,8 +82,9 @@ class OpenFoodFactsService {
 
     searchText = OpenFoodFactsService._encodeSearchText(searchText);
 
+    //currently requesting specific nutriment fields results in HTTP 500, therefore we request all nutriments, this works.
     Uri uri = Uri.parse(
-      "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}&page=$page&page_size=$pageSize",
+      "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFieldsAllNutriments.join(",")}&page=$page&page_size=$pageSize",
     );
 
     Response resp = await _httpGet(uri, headers: headers);

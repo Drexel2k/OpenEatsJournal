@@ -89,20 +89,26 @@ class OpenFoodFactsApiStrings {
     "$nutrimentsPrefix$fieldSalt100g",
   ];
 
-  // static const List<String> searchALiciousAllFields = [
-  //   fieldCode,
-  //   fieldProductName,
-  //   fieldProductNameEn,
-  //   fieldProductNameDe,
-  //   fieldAbbreviatedProductName,
-  //   fieldAbbreviatedProductNameEn,
-  //   fieldAbbreviatedProductNameDe,
-  //   fieldGenericName,
-  //   fieldGenericNameEn,
-  //   fieldGenericNameDe,
-  //   fieldBrands,
-  //   fieldQuantity,
-  //   fieldNutriments,
-  //   fieldLang
-  // ];
+  static const List<String> apiV1V2AllFieldsAllNutriments = [
+    fieldCode,
+    fieldProductName,
+    fieldProductNameEn,
+    fieldProductNameDe,
+    fieldAbbreviatedProductName,
+    fieldAbbreviatedProductNameEn,
+    fieldAbbreviatedProductNameDe,
+    fieldGenericName,
+    fieldGenericNameEn,
+    fieldGenericNameDe,
+    fieldBrandsTags,
+    fieldQuantity,
+    fieldProductQuantity,
+    fieldProductQuantityUnit,
+    fieldServingSize,
+    fieldServingQuantity,
+    fieldServingQuantityUnit,
+    fieldNutritionDataPer,
+    fieldLang,
+    fieldNutriments,
+  ];
 }
