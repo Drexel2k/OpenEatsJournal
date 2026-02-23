@@ -358,6 +358,8 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                       ),
                     ],
                   ),
+                  //if space is not needed and zero, this sized box ensures a minimum space between the controls.
+                  SizedBox(height: 10),
                   Spacer(),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

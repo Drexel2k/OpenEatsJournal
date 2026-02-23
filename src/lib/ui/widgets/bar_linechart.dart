@@ -10,14 +10,21 @@ import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 //on switching charts.
 //See issue https://github.com/entronad/graphic/issues/358
 class BarLinechart extends StatelessWidget {
-  const BarLinechart({super.key, required List<Tuple> data, required Map<DateTime, String> xAxisInfo, required StatisticInterval statisticsType})
-    : _data = data,
-      _xAxisInfo = xAxisInfo,
-      _statisticsType = statisticsType;
+  const BarLinechart({
+    super.key,
+    required List<Tuple> data,
+    required Map<DateTime, String> xAxisInfo,
+    required StatisticInterval statisticsType,
+    required double width,
+  }) : _data = data,
+       _xAxisInfo = xAxisInfo,
+       _statisticsType = statisticsType,
+       _width = width;
 
   final List<Tuple> _data;
   final Map<DateTime, String> _xAxisInfo;
   final StatisticInterval _statisticsType;
+  final double _width;
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +159,7 @@ class BarLinechart extends StatelessWidget {
         ),
         SizedBox(height: 5),
         SizedBox(
-          width: 400,
+          width: _width,
           height: 150,
           child: Chart(
             data: _data,

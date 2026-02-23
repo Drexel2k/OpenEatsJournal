@@ -17,6 +17,7 @@ class Linechart extends StatelessWidget {
     required Map<DateTime, String> xAxisInfo,
     required bool yAxisStartAtZero,
     required StatisticInterval statisticsType,
+    required double width,
   }) : _data = data,
        _dataVar = dataVar,
        _displayFrom = displayFrom,
@@ -24,7 +25,8 @@ class Linechart extends StatelessWidget {
        _xAxisInfo = xAxisInfo,
        _statisticsType = statisticsType,
        _yAxisStartAtZero = yAxisStartAtZero,
-       _chartVar = "$dataVar${OpenEatsJournalStrings.chartDateVar}";
+       _chartVar = "$dataVar${OpenEatsJournalStrings.chartDateVar}",
+       _width = width;
 
   final List<Tuple> _data;
   final String _dataVar;
@@ -34,6 +36,7 @@ class Linechart extends StatelessWidget {
   final bool _yAxisStartAtZero;
   final StatisticInterval _statisticsType;
   final String _chartVar;
+  final double _width;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +122,7 @@ class Linechart extends StatelessWidget {
         Text(header, style: textTheme.titleMedium),
         SizedBox(height: 5),
         SizedBox(
-          width: 400,
+          width: _width,
           height: 150,
           child: Chart(
             data: _data,
@@ -150,7 +153,7 @@ class Linechart extends StatelessWidget {
                   encoder: (Map<dynamic, dynamic> map) {
                     if (map[OpenEatsJournalStrings.chartDateVar] != _displayUntil) {
                       return Label(
-                        ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue:  map[_chartVar]),
+                        ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: map[_chartVar]),
                         LabelStyle(
                           textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                           offset: Offset(6, -15),

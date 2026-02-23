@@ -21,6 +21,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String statisticVar = _getStatisticVar(statistic: _statistic);
+    double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
     return Column(
       children: [
@@ -60,6 +61,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                 xAxisInfo: xAxisInfo,
                 yAxisStartAtZero: true,
                 statisticsType: StatisticInterval.daily,
+                width: chartsWidth,
               );
             } else {
               return Text("No Data Available");
@@ -104,6 +106,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                 xAxisInfo: xAxisInfo,
                 yAxisStartAtZero: true,
                 statisticsType: StatisticInterval.weekly,
+                width: chartsWidth,
               );
             } else {
               return Text("No Data Available");
@@ -156,12 +159,15 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                 xAxisInfo: xAxisInfo,
                 yAxisStartAtZero: true,
                 statisticsType: StatisticInterval.monthly,
+                width: chartsWidth,
               );
             } else {
               return Text("No Data Available");
             }
           },
         ),
+        //rotated axis label hangs over the widget, this prevents the label from being cut off if charts need more place than screen size...
+        SizedBox(height: 20),
       ],
     );
   }

@@ -17,6 +17,8 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
+
     return Column(
       children: [
         FutureBuilder<JournalRepositoryGetNutritionSumsResult>(
@@ -56,7 +58,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 xAxisInfo[currentDate] = dateFormatter.format(currentDate);
               }
 
-              return BarLinechart(data: dayData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.daily);
+              return BarLinechart(data: dayData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.daily, width: chartsWidth);
             } else {
               return Text("No Data Available");
             }
@@ -101,7 +103,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 xAxisInfo[currentWeekStartDate] = ("${currentWeekOfYear.week}/${currentWeekOfYear.year}");
               }
 
-              return BarLinechart(data: weekData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.weekly);
+              return BarLinechart(data: weekData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.weekly, width: chartsWidth);
             } else {
               return Text("No Data Available");
             }
@@ -155,12 +157,14 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 }
               }
 
-              return BarLinechart(data: monthData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.monthly);
+              return BarLinechart(data: monthData, xAxisInfo: xAxisInfo, statisticsType: StatisticInterval.monthly, width: chartsWidth);
             } else {
               return Text("No Data Available");
             }
           },
         ),
+        //rotated axis label hangs over the widget, this prevents the label from being cut off if charts need more place than screen size...
+        SizedBox(height: 20),
       ],
     );
   }

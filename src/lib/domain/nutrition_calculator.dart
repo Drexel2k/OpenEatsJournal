@@ -26,11 +26,11 @@ class NutritionCalculator {
   //https://www.dge.de/wissenschaft/referenzwerte/energie/
   //https://www.dge.de/gesunde-ernaehrung/faq/energiezufuhr/
   //https://www.dge.de/blog/2023/fett-in-der-ernaehrung-fakten-rund-um-die-bedeutung-von-fett-fuer-den-koerper/
-  //https://www.dge.de/wissenschaft/stellungnahmen-und-fachinformationen/positionen/richtwerte-fuer-die-energiezufuhr-aus-kohlenhydraten-und-fett/
-  //https://www.ernaehrung.de/tipps/allgemeine_infos/ernaehr13.php
+  //https://www.dge.de/fileadmin/dok/wissenschaft/referenzwerte/energie/DGE-Positionspapier-Richtwerte-Energiezufuhr-KH-und-Fett.pdf
+  //https://ernaehrung.de/tipps/allgemeine-ernaehrungsinformationen/
   //55 (55-60) % Carbohydrates,  1g = 17kJ, 4kCal
   //15 (10-15) % Protein,  1g = 17kJ, 4kCal
-  //30 % Fat,  1g = 37kJ, 7kCal
+  //30 (30-35)% Fat,  1g = 37kJ, 7kCal
   static double calculateCarbohydrateDemandByKJoule({required double kJoule}) {
     return kJoule / 17 * 0.55;
   }

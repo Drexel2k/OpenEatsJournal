@@ -18,6 +18,8 @@ class StatisticsScreenPageWeight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
+
     return Column(
       children: [
         FutureBuilder<JournalRepositoryGetWeightMaxResult>(
@@ -85,6 +87,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                 xAxisInfo: xAxisInfo,
                 yAxisStartAtZero: false,
                 statisticsType: StatisticInterval.daily,
+                width: chartsWidth,
               );
             } else {
               return Text("No Data Available");
@@ -125,9 +128,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentWeekStartDate)) {
                     weekData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
-                        weightKg: snapshot.data!.groupMaxWeights![currentWeekStartDate]!,
-                      ),
+                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentWeekStartDate]!),
                     });
                   }
 
@@ -155,6 +156,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                 xAxisInfo: xAxisInfo,
                 yAxisStartAtZero: false,
                 statisticsType: StatisticInterval.weekly,
+                width: chartsWidth,
               );
             } else {
               return Text("No Data Available");
@@ -197,9 +199,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentMonthStartDate)) {
                     monthData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
-                        weightKg: snapshot.data!.groupMaxWeights![currentMonthStartDate]!,
-                      ),
+                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentMonthStartDate]!),
                     });
                   }
 
@@ -233,12 +233,15 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                 xAxisInfo: xAxisInfo,
                 yAxisStartAtZero: false,
                 statisticsType: StatisticInterval.monthly,
+                width: chartsWidth,
               );
             } else {
               return Text("No Data Available");
             }
           },
         ),
+        //rotated axis label hangs over the widget, this prevents the label from being cut off if charts need more place than screen size...
+        SizedBox(height: 20),
       ],
     );
   }
