@@ -43,7 +43,6 @@ class MainLayout extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
                   //constraints enable SingleChildScrollview on fix height large screen-widgets for small display phones, exception: pages with lazy loaders like
                   //ListView.builder()...
-                  //Used MediaQuery.of(context) to get size of SafeArea, but this lets Textfields reset their TextSelction after display of virtual keybord e.g.!?!
                   child: Builder(
                     builder: (BuildContext context) {
                       //for content with fixed height (no spacers, expands e.g. on vertical directions ) that just scroll if there is too less space

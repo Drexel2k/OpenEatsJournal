@@ -901,6 +901,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                         ),
                                       ],
                                     ),
+                                    //empty space to ensure that floating action button is not blocking controls, so controls can be scrolled higher than
+                                    //the FAB's position
+                                    SizedBox(height: 70),
                                   ],
                                 ),
                               ],

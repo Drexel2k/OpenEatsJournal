@@ -85,10 +85,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                 weightUnit = _openEatsJournalAppViewModel.weightUnit;
                 volumeUnit = _openEatsJournalAppViewModel.volumeUnit;
               } else {
-                //MediaQuery.of(context) lets Textfields reset their TextSelection after display of virtual keybord e.g.!?! Also applies to date picker....
-                //see also main_layout.dart
-                //Brightness brightness = MediaQuery.of(context).platformBrightness;
-                Brightness brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+                Brightness brightness = MediaQuery.platformBrightnessOf(context);
                 if (brightness == Brightness.dark) {
                   themeMode = ThemeMode.dark;
                 }
