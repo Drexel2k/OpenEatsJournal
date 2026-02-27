@@ -70,19 +70,7 @@ class MainLayout extends StatelessWidget {
                           },
                         );
                       }
-
-                      //for content with fixed header and footer but dynamic height in between e.g.
-                      if (_layoutMode == LayoutMode.intrinsicHeightFixedHeight) {
-                        return LayoutBuilder(
-                          builder: (BuildContext context, BoxConstraints viewportConstraints) {
-                            return ConstrainedBox(
-                              constraints: BoxConstraints(maxHeight: viewportConstraints.maxHeight, minHeight: viewportConstraints.maxHeight),
-                              child: IntrinsicHeight(child: _body),
-                            );
-                          },
-                        );
-                      }
-
+                      
                       return _body;
                     },
                   ),

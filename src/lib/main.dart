@@ -15,12 +15,13 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.
 //import "package:flutter/rendering.dart";
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
+import "package:provider/provider.dart";
 
 void main() {
   //required for database initialization
   WidgetsFlutterBinding.ensureInitialized();
 
-  //ErrorWidget.builder = ErrorHandlers.errorWidget;
+  ErrorWidget.builder = ErrorHandlers.errorWidget;
   FlutterError.onError = (FlutterErrorDetails details) async {
     FlutterError.presentError(details);
     ErrorHandlers.showException(error: details.exception, stackTrace: details.stack);
@@ -59,12 +60,15 @@ void main() {
   //debugPaintSizeEnabled=true;
 
   runApp(
-    OpenEatsJournalApp(
-      openEatsJournalAppViewModel: OpenEatsJournalAppViewModel(
-        settingsRepository: repositories.settingsRepository,
-        foodRepository: repositories.foodRepository,
+    Provider<Repositories>(
+      create: (context) => repositories,
+      child: OpenEatsJournalApp(
+        openEatsJournalAppViewModel: OpenEatsJournalAppViewModel(
+          settingsRepository: repositories.settingsRepository,
+          foodRepository: repositories.foodRepository,
+        ),
+        repositories: repositories,
       ),
-      repositories: repositories,
     ),
   );
 }

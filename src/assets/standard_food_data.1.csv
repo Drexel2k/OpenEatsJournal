@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-02-18 00-00-00,2026-01-15 00-00-00
+2026-02-26 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -63,7 +63,7 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","2","Röggelchen","Röggelchen","80","g","false"
 "food","23","2026-01-15 00-00-00","Wheat mixed bread","Weizenmischbrot, Graubrot",,,"100",,"1026","0.8","0.1","49","0.6","7.4","1.7",
 "foodunit","1","Slice","Scheibe","50","g","true"
-"food","24","2026-02-11 00-00-00","Wholemeal/whole-grain bread/roll","Vollkornbrot/Vollkornrötchen",,,"100",,"995","7","0.8","32","3.5","7.5","1.1",
+"food","24","2026-02-26 00-00-00","Wholemeal/whole-grain bread/roll","Vollkornbrot/Vollkornbrötchen",,,"100",,"995","7","0.8","32","3.5","7.5","1.1",
 "foodunit","1","Slice","Scheibe","50","g","true"
 "foodunit","2","Roll","Brötchen","80","g","false"
 "food","25","2026-01-15 00-00-00","Noodles durum wheat semolina boiled","Nudeln Hartweizengries gekocht",,,"100",,"599","0.5",,"28.1","0.2","5","0.1",
@@ -228,3 +228,13 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Sausage","Würstchen","22","g","true"
 "food","105","2026-02-15 00-00-00","Fruit yogurt (Strawberry, raspberry, blueberry, banana...)","Fruchtjoghurt (Erdbeere, Himbeere, Blaubeere, Banane...)",,,"100",,"380","3","2","12.1","12","3.5","0.1",
 "foodunit","1","Cup","Becher","200","g","true"
+"food","106","2026-02-26 00-00-00","Orange / Mandarin","Orange / Apfelsine / Mandarine",,,"100",,"197","0.1","0","11.8","9","0.9","0",
+"foodunit","1","Mandarin small","Mandarine klein","75","g","false"
+"foodunit","2","Mandarin middle","Mandarine mittel","110","g","false"
+"foodunit","3","Mandarin big","Mandarine groß","180","g","false"
+"foodunit","4","Orange small","Orange klein","150","g","false"
+"foodunit","5","Orange middle","Orange mittel","200","g","true"
+"foodunit","6","Orange big","Orange groß","250","g","false"
+"food","107","2026-02-26 00-00-00","Lemon","Zitrone",,,"100",,"121","0.3","0","9.3","2.5","1.1","0",
+"foodunit","1","Middle","Mittel","80","g","true"
+"foodunit","2","Big","Groß","125","g","false"

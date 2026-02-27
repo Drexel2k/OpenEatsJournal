@@ -34,6 +34,8 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
 
   @override
   void initState() {
+    super.initState();
+
     _birthDayController.text = widget._onboardingScreenViewModel.birthday.value != null
         ? ConvertValidate.dateFormatterDisplayMediumDateOnly.format(widget._onboardingScreenViewModel.birthday.value!)
         : OpenEatsJournalStrings.emptyString;
@@ -43,8 +45,6 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
     _weightController.text = widget._onboardingScreenViewModel.weight.value != null
         ? ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._onboardingScreenViewModel.weight.value!)
         : OpenEatsJournalStrings.emptyString;
-
-    super.initState();
   }
 
   @override

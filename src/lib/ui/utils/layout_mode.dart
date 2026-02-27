@@ -1,1 +1,1 @@
-enum LayoutMode { noScroll, scroll, intrinsicHeightMinHeight, intrinsicHeightFixedHeight }
+enum LayoutMode { noScroll, scroll, intrinsicHeightMinHeight }

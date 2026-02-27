@@ -20,6 +20,7 @@ import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:path/path.dart";
+import "package:provider/provider.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "../callbacks.mocks.dart";
 
@@ -32,6 +33,11 @@ void main() async {
     final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
     OpenEatsJournalDatabaseService.databaseFileName = "oej_onboarded_with_data.db";
     File dbSourceFile = File(join(Directory.current.path, r"test\data\oej_onboarded_with_data.db"));
+
+    String targetDirectoryPath = await oejDatabase.getDatabasePath();
+    Directory targetDirectory = Directory(targetDirectoryPath);
+    await targetDirectory.create(recursive: true);
+
     dbSourceFile.copySync(join(await oejDatabase.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
 
     final OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
@@ -116,12 +122,13 @@ void main() async {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale(_repositories.settingsRepository.languageCode.value),
       navigatorKey: AppGlobal.navigatorKey,
-      home: EatsJournalQuickEntryEditScreen(
-        eatsJournalQuickEntryEditScreenViewModel: EatsJournalQuickEntryEditScreenViewModel(
+      home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
+        create: (context) => EatsJournalQuickEntryEditScreenViewModel(
           quickEntry: quickEntry,
           journalRepository: _repositories.journalRepository,
           settingsRepository: _repositories.settingsRepository,
         ),
+        child: EatsJournalQuickEntryEditScreen(),
       ),
     );
 
@@ -156,12 +163,13 @@ void main() async {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale(_repositories.settingsRepository.languageCode.value),
       navigatorKey: AppGlobal.navigatorKey,
-      home: EatsJournalQuickEntryEditScreen(
-        eatsJournalQuickEntryEditScreenViewModel: EatsJournalQuickEntryEditScreenViewModel(
+      home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
+        create: (context) => EatsJournalQuickEntryEditScreenViewModel(
           quickEntry: entries[0],
           journalRepository: _repositories.journalRepository,
           settingsRepository: _repositories.settingsRepository,
         ),
+        child: EatsJournalQuickEntryEditScreen(),
       ),
     );
 

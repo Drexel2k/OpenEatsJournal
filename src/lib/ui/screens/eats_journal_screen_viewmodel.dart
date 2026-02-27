@@ -38,8 +38,6 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   Future<FoodRepositoryGetDayMealSumsResult> get dayNutritionDataPerMeal => _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> get currentWeight => _currentWeight;
   Future<Map<int, bool>> get eatsJournalEntriesAvailableForLast8Days => _eatsJournalEntriesAvailableForLast8Days;
-  SettingsRepository get settingsRepository => _settingsRepository;
-  JournalRepository get journalRepository => _journalRepository;
 
   ExternalTriggerChangedNotifier get currentWeightChanged => _currentWeightChanged;
   ExternalTriggerChangedNotifier get settingsChanged => _settingsChanged;

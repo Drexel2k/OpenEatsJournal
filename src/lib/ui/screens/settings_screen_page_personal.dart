@@ -5,6 +5,7 @@ import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
@@ -12,6 +13,7 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
+import "package:provider/provider.dart";
 
 class SettingsScreenPagePersonal extends StatefulWidget {
   const SettingsScreenPagePersonal({super.key, required SettingsScreenViewModel settingsScreenViewModel}) : _settingsScreenViewModel = settingsScreenViewModel;
@@ -32,12 +34,12 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
   @override
   void initState() {
+    super.initState();
+
     _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
 
     _heightController.text = ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
     _weightController.text = ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.weight.value!);
-
-    super.initState();
   }
 
   @override
@@ -135,8 +137,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
                               return Dialog(
                                 insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                                child: DailyCaloriesEditorScreen(
-                                  dailyCaloriesEditorScreenViewModel: DailyCaloriesEditorScreenViewModel(
+                                child: ChangeNotifierProvider<DailyCaloriesEditorScreenViewModel>(
+                                  create: (context) => DailyCaloriesEditorScreenViewModel(
                                     kJoulePerDay: KJoulePerDay(
                                       kJouleMonday: widget._settingsScreenViewModel.kJouleMonday,
                                       kJouleTuesday: widget._settingsScreenViewModel.kJouleTuesday,
@@ -146,10 +148,12 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                       kJouleSaturday: widget._settingsScreenViewModel.kJouleSaturday,
                                       kJouleSunday: widget._settingsScreenViewModel.kJouleSunday,
                                     ),
-                                    settingsRepository: widget._settingsScreenViewModel.settingsRepository,
+                                    settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
                                   ),
-                                  dailyKJoule: widget._settingsScreenViewModel.dailyKJoule.value,
-                                  originalDailyTargetKJoule: widget._settingsScreenViewModel.dailyTargetKJoule.value,
+                                  child: DailyCaloriesEditorScreen(
+                                    dailyKJoule: widget._settingsScreenViewModel.dailyKJoule.value,
+                                    originalDailyTargetKJoule: widget._settingsScreenViewModel.dailyTargetKJoule.value,
+                                  ),
                                 ),
                               );
                             },

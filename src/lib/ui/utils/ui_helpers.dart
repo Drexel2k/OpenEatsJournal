@@ -9,8 +9,6 @@ import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
@@ -61,35 +59,6 @@ class UiHelpers {
     }
 
     return label;
-  }
-
-  static Future<bool> showAddWeightDialog({
-    required BuildContext context,
-    required DateTime initialDate,
-    required double initialWeight,
-    required Future<void> Function(double weight) saveCallback,
-  }) async {
-    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
-    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
-
-    WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(initialWeight: initialWeight);
-
-    if ((await showDialog<bool>(
-      useSafeArea: true,
-      barrierDismissible: false,
-      context: AppGlobal.navigatorKey.currentContext!,
-      builder: (BuildContext contextBuilder) {
-        return Dialog(
-          insetPadding: EdgeInsets.fromLTRB(dialogHorizontalPadding, dialogVerticalPadding, dialogHorizontalPadding, dialogVerticalPadding),
-          child: WeightJournalEntryAddScreen(weightJournalEntryAddScreenViewModel: weightJournalEntryAddScreenViewModel, date: initialDate),
-        );
-      },
-    ))!) {
-      await saveCallback(weightJournalEntryAddScreenViewModel.lastValidWeight);
-      return true;
-    }
-
-    return false;
   }
 
   static Future<EntityEdited?> pushQuickEntryRoute({required BuildContext context, required DateTime initialEntryDate, required Meal initialMeal}) async {

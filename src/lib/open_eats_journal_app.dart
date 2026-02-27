@@ -29,6 +29,7 @@ import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:provider/provider.dart";
 
 class OpenEatsJournalApp extends StatefulWidget {
   const OpenEatsJournalApp({super.key, required OpenEatsJournalAppViewModel openEatsJournalAppViewModel, required Repositories repositories})
@@ -47,9 +48,10 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
 
   @override
   void initState() {
+    super.initState();
+
     _openEatsJournalAppViewModel = widget._openEatsJournalAppViewModel;
     _repositories = widget._repositories;
-    super.initState();
   }
 
   @override
@@ -162,54 +164,75 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                       themeMode: themeMode,
                       initialRoute: initialRoute,
                       routes: {
-                        OpenEatsJournalStrings.navigatorRouteEatsJournal: (contextBuilder) => EatsJournalScreen(
-                          eatsJournalScreenViewModel: EatsJournalScreenViewModel(
-                            journalRepository: _repositories.journalRepository,
-                            settingsRepository: _repositories.settingsRepository,
-                          ),
-                        ),
-                        OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) =>
-                            StatisticsScreen(statisticsScreenViewModel: StatisticsScreenViewModel(journalRepository: _repositories.journalRepository)),
-                        OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) => FoodSearchScreen(
-                          foodSearchScreenViewModel: FoodSearchScreenViewModel(
-                            foodRepository: _repositories.foodRepository,
-                            journalRepository: _repositories.journalRepository,
-                            settingsRepository: _repositories.settingsRepository,
-                          ),
-                        ),
-                        OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) => OnboardingScreen(
-                          onboardingScreenViewModel: OnboardingScreenViewModel(
-                            settingsRepository: _repositories.settingsRepository,
-                            journalRepository: _repositories.journalRepository,
-                            darkMode: themeMode == ThemeMode.dark,
-                            languageCode: languageCode,
-                          ),
-                          onboardingFinishedCallback: _onboardingFinished,
-                        ),
+                        OpenEatsJournalStrings.navigatorRouteEatsJournal: (contextBuilder) {
+                          return ChangeNotifierProvider<EatsJournalScreenViewModel>(
+                            create: (context) => EatsJournalScreenViewModel(
+                              journalRepository: _repositories.journalRepository,
+                              settingsRepository: _repositories.settingsRepository,
+                            ),
+                            child: EatsJournalScreen(),
+                          );
+                        },
+                        OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) {
+                          return ChangeNotifierProvider<StatisticsScreenViewModel>(
+                            create: (context) => StatisticsScreenViewModel(journalRepository: _repositories.journalRepository),
+                            child: StatisticsScreen(),
+                          );
+                        },
+                        OpenEatsJournalStrings.navigatorRouteFood: (contextBuilder) {
+                          return ChangeNotifierProvider<FoodSearchScreenViewModel>(
+                            create: (context) => FoodSearchScreenViewModel(
+                              foodRepository: _repositories.foodRepository,
+                              journalRepository: _repositories.journalRepository,
+                              settingsRepository: _repositories.settingsRepository,
+                            ),
+                            child: FoodSearchScreen(),
+                          );
+                        },
+                        OpenEatsJournalStrings.navigatorRouteOnboarding: (contextBuilder) {
+                          return ChangeNotifierProvider<OnboardingScreenViewModel>(
+                            create: (context) => OnboardingScreenViewModel(
+                              settingsRepository: _repositories.settingsRepository,
+                              journalRepository: _repositories.journalRepository,
+                              darkMode: themeMode == ThemeMode.dark,
+                              languageCode: languageCode,
+                            ),
+                            child: OnboardingScreen(onboardingFinishedCallback: _onboardingFinished),
+                          );
+                        },
                         OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(
                           iconBackGroundColor: _openEatsJournalAppViewModel.darkMode ? Color.fromARGB(255, 83, 83, 83) : Color.fromARGB(255, 255, 255, 255),
                         ),
-                        OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) => EatsJournalFoodEntryEditScreen(
-                          eatsJournalFoodEntryEditScreenViewModel: EatsJournalFoodEntryEditScreenViewModel(
-                            foodEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
-                            journalRepository: _repositories.journalRepository,
-                            foodRepository: _repositories.foodRepository,
-                            settingsRepository: _repositories.settingsRepository,
-                          ),
-                        ),
-                        OpenEatsJournalStrings.navigatorRouteFoodEdit: (contextBuilder) => FoodEditScreen(
-                          foodEditScreenViewModel: FoodEditScreenViewModel(
-                            food: (ModalRoute.of(contextBuilder)!.settings.arguments as Food),
-                            foodRepository: _repositories.foodRepository,
-                          ),
-                        ),
-                        OpenEatsJournalStrings.navigatorRouteQuickEntryEdit: (contextBuilder) => EatsJournalQuickEntryEditScreen(
-                          eatsJournalQuickEntryEditScreenViewModel: EatsJournalQuickEntryEditScreenViewModel(
-                            quickEntry: (ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry),
-                            journalRepository: _repositories.journalRepository,
-                            settingsRepository: _repositories.settingsRepository,
-                          ),
-                        ),
+                        OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) {
+                          EatsJournalEntry eatsJournalEntry = ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry;
+                          return ChangeNotifierProvider<EatsJournalFoodEntryEditScreenViewModel>(
+                            create: (context) => EatsJournalFoodEntryEditScreenViewModel(
+                              foodEntry: eatsJournalEntry,
+                              journalRepository: _repositories.journalRepository,
+                              foodRepository: _repositories.foodRepository,
+                              settingsRepository: _repositories.settingsRepository,
+                            ),
+                            child: EatsJournalFoodEntryEditScreen(),
+                          );
+                        },
+                        OpenEatsJournalStrings.navigatorRouteFoodEdit: (contextBuilder) {
+                          Food food = ModalRoute.of(contextBuilder)!.settings.arguments as Food;
+                          return ChangeNotifierProvider<FoodEditScreenViewModel>(
+                            create: (context) => FoodEditScreenViewModel(food: food, foodRepository: _repositories.foodRepository),
+                            child: FoodEditScreen(),
+                          );
+                        },
+                        OpenEatsJournalStrings.navigatorRouteQuickEntryEdit: (contextBuilder) {
+                          EatsJournalEntry eatsJournalEntry = ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry;
+                          return ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
+                            create: (context) => EatsJournalQuickEntryEditScreenViewModel(
+                              quickEntry: eatsJournalEntry,
+                              journalRepository: _repositories.journalRepository,
+                              settingsRepository: _repositories.settingsRepository,
+                            ),
+                            child: EatsJournalQuickEntryEditScreen(),
+                          );
+                        },
                       },
                       navigatorKey: AppGlobal.navigatorKey,
                     );

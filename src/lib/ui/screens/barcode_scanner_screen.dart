@@ -21,8 +21,9 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
 
   @override
   void initState() {
-    _mobileScannerController.start();
     super.initState();
+    
+    _mobileScannerController.start();
   }
 
   @override
@@ -114,6 +115,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   void dispose() {
     _mobileScannerController.dispose();
+    
     super.dispose();
   }
 }

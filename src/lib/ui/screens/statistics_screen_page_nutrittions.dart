@@ -178,27 +178,39 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
     required AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot,
   }) {
     if (statistic == StatisticType.fat) {
-      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat!);
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat != null
+          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat!)
+          : 0;
     }
 
     if (statistic == StatisticType.stauratedFat) {
-      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat!);
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat != null
+          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat!)
+          : 0;
     }
 
     if (statistic == StatisticType.carbohydrates) {
-      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates!);
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates != null
+          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates!)
+          : 0;
     }
 
     if (statistic == StatisticType.sugar) {
-      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar!);
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar != null
+          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar!)
+          : 0;
     }
 
     if (statistic == StatisticType.protein) {
-      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein!);
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein != null
+          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein!)
+          : 0;
     }
 
     if (statistic == StatisticType.salt) {
-      return ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt!);
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt != null
+          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt!)
+          : 0;
     }
 
     throw StateError("Unknown statistic type.");
