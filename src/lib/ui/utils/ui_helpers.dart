@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:flutter/material.dart";
-import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
@@ -73,42 +72,5 @@ class UiHelpers {
           ),
         )
         as EntityEdited?;
-  }
-
-  static void showOverlay({required BuildContext context, required String displayText, required AnimationController animationController}) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    OverlayEntry entry = OverlayEntry(
-      builder: (context) => FadeTransition(
-        opacity: animationController,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Spacer(),
-              Container(
-                alignment: AlignmentGeometry.center,
-                color: colorScheme.surfaceContainerHighest,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.all(10),
-                  child: Text(displayText, style: textTheme.bodyMedium),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    AppGlobal.navigatorKey.currentState!.overlay!.insert(entry);
-    animationController.forward();
-    Timer(Duration(milliseconds: 3150), () {
-      animationController.reverse();
-      Timer(Duration(milliseconds: 150), () {
-        animationController.reverse();
-        entry.remove();
-      });
-    });
   }
 }

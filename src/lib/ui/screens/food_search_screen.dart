@@ -17,6 +17,7 @@ import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewm
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -36,6 +37,12 @@ class FoodSearchScreen extends StatefulWidget {
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+
+  OverlayDisplay? _overlayDisplayFoodEntry;
+  OverlayDisplay? _overlayDisplayFood1;
+  OverlayDisplay? _overlayDisplayWeightEntry;
+  OverlayDisplay? _overlayDisplayFood2;
+  OverlayDisplay? _overlayDisplayQuickEntry;
 
   final TextEditingController _searchTextController = TextEditingController();
   late SearchMode _searchMode;
@@ -340,7 +347,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                     as EntityEdited?;
 
                             if (eatsJournalEntryEdited != null) {
-                              UiHelpers.showOverlay(
+                              _overlayDisplayFoodEntry = OverlayDisplay(
                                 context: AppGlobal.navigatorKey.currentContext!,
                                 displayText: eatsJournalEntryEdited.originalId == null
                                     ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
@@ -361,7 +368,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                             );
                           },
                           onFoodEdited: ({required EntityEdited entityEdited}) {
-                            UiHelpers.showOverlay(
+                            _overlayDisplayFood1 = OverlayDisplay(
                               context: AppGlobal.navigatorKey.currentContext!,
                               displayText: entityEdited.originalId == null
                                   ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
@@ -459,7 +466,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                 initialDate: foodSearchScreenViewModel.currentJournalDate.value,
                                 initialWeight: await foodSearchScreenViewModel.getLastWeightJournalEntry(),
                               )) {
-                                UiHelpers.showOverlay(
+                                _overlayDisplayWeightEntry = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
                                   displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
                                   animationController: _animationController,
@@ -492,7 +499,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                       as EntityEdited?;
 
                               if (foodEdited != null) {
-                                UiHelpers.showOverlay(
+                                _overlayDisplayFood2 = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
                                   displayText: foodEdited.originalId == null
                                       ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
@@ -518,7 +525,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                               );
 
                               if (eatsJournalEntryEdited != null) {
-                                UiHelpers.showOverlay(
+                                _overlayDisplayQuickEntry = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
                                   displayText: eatsJournalEntryEdited.originalId == null
                                       ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -610,6 +617,28 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
 
   @override
   void dispose() {
+    if (_overlayDisplayFoodEntry != null) {
+      _overlayDisplayFoodEntry!.stop();
+    }
+
+    if (_overlayDisplayFood1 != null) {
+      _overlayDisplayFood1!.stop();
+    }
+
+    if (_overlayDisplayWeightEntry != null) {
+      _overlayDisplayWeightEntry!.stop();
+    }
+
+    if (_overlayDisplayFood2 != null) {
+      _overlayDisplayFood2!.stop();
+    }
+
+    if (_overlayDisplayQuickEntry != null) {
+      _overlayDisplayQuickEntry!.stop();
+    }
+
+    _animationController.dispose();
+
     _searchTextController.dispose();
 
     super.dispose();

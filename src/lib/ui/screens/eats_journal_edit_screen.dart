@@ -9,7 +9,7 @@ import "package:openeatsjournal/ui/screens/copy_target_screen.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
-import "package:openeatsjournal/ui/utils/ui_helpers.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:provider/provider.dart";
@@ -23,6 +23,9 @@ class EatsJournalEditScreen extends StatefulWidget {
 
 class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+  OverlayDisplay? _overlayDisplayCopy;
+  OverlayDisplay? _overlayDisplayFoodEntryEdit;
+  OverlayDisplay? _overlayDisplayQuickEntryEdit;
 
   @override
   void initState() {
@@ -104,7 +107,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                         toMeal: copyTargetScreenViewModel.currentMeal.value,
                                       );
 
-                                      UiHelpers.showOverlay(
+                                      _overlayDisplayCopy = OverlayDisplay(
                                         context: AppGlobal.navigatorKey.currentContext!,
                                         displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
                                         animationController: _animationController,
@@ -131,7 +134,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                                 as EntityEdited?;
 
                                         if (eatsJournalEntryEdited != null) {
-                                          UiHelpers.showOverlay(
+                                          _overlayDisplayFoodEntryEdit = OverlayDisplay(
                                             context: AppGlobal.navigatorKey.currentContext!,
                                             displayText: eatsJournalEntryEdited.originalId == null
                                                 ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
@@ -145,7 +148,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                                 as EntityEdited?;
 
                                         if (eatsJournalEntryEdited != null) {
-                                          UiHelpers.showOverlay(
+                                          _overlayDisplayQuickEntryEdit = OverlayDisplay(
                                             context: AppGlobal.navigatorKey.currentContext!,
                                             displayText: eatsJournalEntryEdited.originalId == null
                                                 ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -207,6 +210,18 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
 
   @override
   void dispose() {
+    if (_overlayDisplayCopy != null) {
+      _overlayDisplayCopy!.stop();
+    }
+
+    if (_overlayDisplayFoodEntryEdit != null) {
+      _overlayDisplayFoodEntryEdit!.stop();
+    }
+    
+    if (_overlayDisplayQuickEntryEdit != null) {
+      _overlayDisplayQuickEntryEdit!.stop();
+    }
+
     _animationController.dispose();
 
     super.dispose();

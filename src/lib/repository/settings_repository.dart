@@ -114,7 +114,7 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get appName => "OpenEatsJournal";
-  String get appVersion => "1.0";
+  String get appVersion => "1.1";
   bool get useStagingServices => kDebugMode ? true : false;
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;

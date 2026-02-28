@@ -24,6 +24,7 @@ import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewm
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
@@ -41,6 +42,15 @@ class EatsJournalScreen extends StatefulWidget {
 
 class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+
+  OverlayDisplay? _overlayDisplayQuickEntryBreakfast;
+  OverlayDisplay? _overlayDisplayQuickEntryLunch;
+  OverlayDisplay? _overlayDisplayQuickEntryDinner;
+  OverlayDisplay? _overlayDisplayQuickEntrySnacks;
+  OverlayDisplay? _overlayDisplayWeightEntry1;
+  OverlayDisplay? _overlayDisplayWeightEntry2;
+  OverlayDisplay? _overlayDisplayFood;
+  OverlayDisplay? _overlayDisplayQuickEntry;
 
   @override
   void initState() {
@@ -543,7 +553,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    UiHelpers.showOverlay(
+                                                    _overlayDisplayQuickEntryBreakfast = OverlayDisplay(
                                                       context: AppGlobal.navigatorKey.currentContext!,
                                                       displayText: eatsJournalEntryEdited.originalId == null
                                                           ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -638,7 +648,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    UiHelpers.showOverlay(
+                                                    _overlayDisplayQuickEntryLunch = OverlayDisplay(
                                                       context: AppGlobal.navigatorKey.currentContext!,
                                                       displayText: eatsJournalEntryEdited.originalId == null
                                                           ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -733,7 +743,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    UiHelpers.showOverlay(
+                                                    _overlayDisplayQuickEntryDinner = OverlayDisplay(
                                                       context: AppGlobal.navigatorKey.currentContext!,
                                                       displayText: eatsJournalEntryEdited.originalId == null
                                                           ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -828,7 +838,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    UiHelpers.showOverlay(
+                                                    _overlayDisplayQuickEntrySnacks = OverlayDisplay(
                                                       context: AppGlobal.navigatorKey.currentContext!,
                                                       displayText: eatsJournalEntryEdited.originalId == null
                                                           ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -912,7 +922,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                     initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
                                                   )) {
                                                     eatsJournalScreenViewModel.refreshCurrentWeight();
-                                                    UiHelpers.showOverlay(
+                                                    _overlayDisplayWeightEntry1 = OverlayDisplay(
                                                       context: AppGlobal.navigatorKey.currentContext!,
                                                       displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
                                                       animationController: _animationController,
@@ -1076,7 +1086,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                 initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
                               )) {
                                 eatsJournalScreenViewModel.refreshCurrentWeight();
-                                UiHelpers.showOverlay(
+                                _overlayDisplayWeightEntry2 = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
                                   displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
                                   animationController: _animationController,
@@ -1109,7 +1119,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                       as EntityEdited?;
 
                               if (foodEdited != null) {
-                                UiHelpers.showOverlay(
+                                _overlayDisplayFood = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
                                   displayText: foodEdited.originalId == null
                                       ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
@@ -1137,7 +1147,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                               eatsJournalScreenViewModel.refreshNutritionData();
 
                               if (eatsJournalEntryEdited != null) {
-                                UiHelpers.showOverlay(
+                                _overlayDisplayQuickEntry = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
                                   displayText: eatsJournalEntryEdited.originalId == null
                                       ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -1364,6 +1374,38 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
 
   @override
   void dispose() {
+    if (_overlayDisplayQuickEntryBreakfast != null) {
+      _overlayDisplayQuickEntryBreakfast!.stop();
+    }
+
+    if (_overlayDisplayQuickEntryLunch != null) {
+      _overlayDisplayQuickEntryLunch!.stop();
+    }
+
+    if (_overlayDisplayQuickEntryDinner != null) {
+      _overlayDisplayQuickEntryDinner!.stop();
+    }
+
+    if (_overlayDisplayQuickEntrySnacks != null) {
+      _overlayDisplayQuickEntrySnacks!.stop();
+    }
+
+    if (_overlayDisplayWeightEntry1 != null) {
+      _overlayDisplayWeightEntry1!.stop();
+    }
+
+    if (_overlayDisplayWeightEntry2 != null) {
+      _overlayDisplayWeightEntry2!.stop();
+    }
+
+    if (_overlayDisplayFood != null) {
+      _overlayDisplayFood!.stop();
+    }
+
+    if (_overlayDisplayQuickEntry != null) {
+      _overlayDisplayQuickEntry!.stop();
+    }
+
     _animationController.dispose();
 
     super.dispose();

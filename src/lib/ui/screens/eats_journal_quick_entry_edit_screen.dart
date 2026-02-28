@@ -11,7 +11,7 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
-import "package:openeatsjournal/ui/utils/ui_helpers.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -46,6 +46,8 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
   final FocusNode _saturatedFatFocusNode = FocusNode();
   final FocusNode _proteinFocusNode = FocusNode();
   final FocusNode _saltFocusNode = FocusNode();
+
+  OverlayDisplay? _overlayDisplayEatsJournalEntryEdit;
 
   @override
   void initState() {
@@ -113,7 +115,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                               ? eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value
                               : eatsJournalQuickEntryEditScreenViewModel.quickEntry.entryDate;
 
-                          await _selectDate(eatsJournalQuickEntryEditScreenViewModel: eatsJournalQuickEntryEditScreenViewModel, initialDate: initialDate, context: context);
+                          await _selectDate(
+                            eatsJournalQuickEntryEditScreenViewModel: eatsJournalQuickEntryEditScreenViewModel,
+                            initialDate: initialDate,
+                            context: context,
+                          );
                         },
                         style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                         child: Text(
@@ -231,7 +237,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                                         as EntityEdited?;
 
                                 if (eatsJournalEntryEdited != null) {
-                                  UiHelpers.showOverlay(
+                                  _overlayDisplayEatsJournalEntryEdit = OverlayDisplay(
                                     context: AppGlobal.navigatorKey.currentContext!,
                                     displayText: eatsJournalEntryEdited.originalId == null
                                         ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
@@ -751,6 +757,12 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
   @override
   void dispose() {
+    if (_overlayDisplayEatsJournalEntryEdit != null) {
+      _overlayDisplayEatsJournalEntryEdit!.stop();
+    }
+
+    _animationController.dispose();
+
     _nameController.dispose();
     _amountController.dispose();
     _energyController.dispose();
