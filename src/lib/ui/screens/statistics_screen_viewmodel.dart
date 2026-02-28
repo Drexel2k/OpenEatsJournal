@@ -1,18 +1,21 @@
 import "package:flutter/foundation.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/statistic_type.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums_result.dart";
 import "package:openeatsjournal/repository/journal_repository_get_weight_max_result.dart";
 
 class StatisticsScreenViewModel extends ChangeNotifier {
-  StatisticsScreenViewModel({required JournalRepository journalRepository})
-    : _journalRepository = journalRepository,
+  StatisticsScreenViewModel({required SettingsRepository settingsRepository, required JournalRepository journalRepository})
+    : _settingsRepository = settingsRepository,
+      _journalRepository = journalRepository,
       _currentStatistic = ValueNotifier(StatisticType.energy) {
     _currentStatistic.addListener(_currentStatisticChanged);
     _currentStatisticChanged();
   }
 
   final JournalRepository _journalRepository;
+  final SettingsRepository _settingsRepository;
   Future<JournalRepositoryGetNutritionSumsResult>? _last31daysNutritionData;
   Future<JournalRepositoryGetNutritionSumsResult>? _last15weeksNutritionData;
   Future<JournalRepositoryGetNutritionSumsResult>? _last13monthsNutritionData;
@@ -30,18 +33,19 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   Future<JournalRepositoryGetWeightMaxResult>? get last13monthsWeightData => _last13monthsWeightData;
 
   ValueNotifier<StatisticType> get currentStatistic => _currentStatistic;
+  DateTime get today => _settingsRepository.today;
 
   void _currentStatisticChanged() {
     if (_currentStatistic.value == StatisticType.energy && _last31daysNutritionData == null) {
-      _last31daysNutritionData = _journalRepository.getNutritionDaySumsForLast32Days();
-      _last15weeksNutritionData = _journalRepository.getNutritionWeekSumsForLast15Weeks();
-      _last13monthsNutritionData = _journalRepository.getNutritionMonthSumsForLast13Months();
+      _last31daysNutritionData = _journalRepository.getNutritionDaySumsForLast32Days(today: _settingsRepository.today);
+      _last15weeksNutritionData = _journalRepository.getNutritionWeekSumsForLast15Weeks(today: _settingsRepository.today);
+      _last13monthsNutritionData = _journalRepository.getNutritionMonthSumsForLast13Months(today: _settingsRepository.today);
     }
 
     if (_currentStatistic.value == StatisticType.weight && _last31daysWeightData == null) {
-      _last31daysWeightData = _journalRepository.getWeightPerDayForLast32Days();
-      _last15weeksWeightData = _journalRepository.getMaxWeightPerWeekForLast15Weeks();
-      _last13monthsWeightData = _journalRepository.getMaxWeightPerMonthForLast13Months();
+      _last31daysWeightData = _journalRepository.getWeightPerDayForLast32Days(today: _settingsRepository.today);
+      _last15weeksWeightData = _journalRepository.getMaxWeightPerWeekForLast15Weeks(today: _settingsRepository.today);
+      _last13monthsWeightData = _journalRepository.getMaxWeightPerMonthForLast13Months(today: _settingsRepository.today);
     }
   }
 }

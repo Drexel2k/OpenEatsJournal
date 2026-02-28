@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-02-28 00-00-00,2026-01-15 00-00-00
+2026-02-28 01-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -238,18 +238,20 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","107","2026-02-26 00-00-00","Lemon","Zitrone",,,"100",,"121","0.3","0","9.3","2.5","1.1","0",
 "foodunit","1","Middle","Mittel","80","g","true"
 "foodunit","2","Big","Groß","125","g","false"
-"food","108","2026-02-27 00-00-00","Maki Sushi avocado","Maki Sushi Avocado",,,"100",,"706","4.1","0.8","29.1","3.6","3.1","0.8",
+"food","108","2026-02-27 00-00-00","Maki sushi avocado","Maki Sushi Avocado",,,"100",,"706","4.1","0.8","29.1","3.6","3.1","0.8",
 "foodunit","1","Piece","Stück","20","g","true"
-"food","109","2026-02-27 00-00-00","Maki Sushi Kappa / cucumber","Maki Sushi Kappa / Gurke",,,"100",,"564","0.8","0","29.1","3.6","2.6","0.8",
+"food","109","2026-02-27 00-00-00","Maki sushi Kappa / cucumber","Maki Sushi Kappa / Gurke",,,"100",,"564","0.8","0","29.1","3.6","2.6","0.8",
 "foodunit","1","Piece","Stück","20","g","true"
-"food","110","2026-02-27 00-00-00","Maki Sushi Sake / salmon","Maki Sushi Sake / Lachs",,,"100",,"828","3.2","0.7","29.1","3.4","8.3","0.8",
+"food","110","2026-02-27 00-00-00","Maki sushi sake / salmon","Maki Sushi Sake / Lachs",,,"100",,"828","3.2","0.7","29.1","3.4","8.3","0.8",
 "foodunit","1","Piece","Stück","20","g","true"
-"food","111","2026-02-27 00-00-00","Maki Sushi Tekka / tuna","Maki Sushi Tekka / Thunfisch",,,"100",,"697","1.3","0","28.9","3.4","8.8","0.8",
+"food","111","2026-02-27 00-00-00","Maki sushi tekka / tuna","Maki Sushi Tekka / Thunfisch",,,"100",,"697","1.3","0","28.9","3.4","8.8","0.8",
 "foodunit","1","Piece","Stück","20","g","true"
-"food","112","2026-02-27 00-00-00","California Inside Out Sushi","California Inside Out Sushi",,,"100",,"685","4.7","0.7","26.5","8.5","2.8","1.2",
+"food","112","2026-02-27 00-00-00","California inside out sushi","California Inside Out Sushi",,,"100",,"685","4.7","0.7","26.5","8.5","2.8","1.2",
 "foodunit","1","Piece","Stück","35","g","true"
-"food","113","2026-02-27 00-00-00","Nigiri Sushi Sake / salmon","Nigiri Sushi Sake / Lachs",,,"100",,"870","4.8","1.1","23.5","2.7","10.6","0.6",
+"food","113","2026-02-27 00-00-00","Nigiri sushi sake / salmon","Nigiri Sushi Sake / Lachs",,,"100",,"870","4.8","1.1","23.5","2.7","10.6","0.6",
 "foodunit","1","Piece","Stück","35","g","true"
-"food","114","2026-02-27 00-00-00","Nigiri Sushi Tekka / tuna","Nigiri Sushi Tekka / Thunfisch",,,"100",,"665","1.8","0","23.2","2.7","11.5","0.7",
+"food","114","2026-02-27 00-00-00","Nigiri sushi tekka / tuna","Nigiri Sushi Tekka / Thunfisch",,,"100",,"665","1.8","0","23.2","2.7","11.5","0.7",
 "foodunit","1","Piece","Stück","35","g","true"
 "food","115","2026-02-28 00-00-00","Guacamole","Guacamole",,,"100",,"669","15","2.2","9.2","1","2","0.5",
+"food","116","2026-02-28 01-00-00","Avocado","Avocado",,,"100",,"670","14.7","2.1","8.5","0.7","2","0",
+"foodunit","1","Fruit","Frucht","250","g","true"

@@ -276,7 +276,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                   } else if (snapshot.hasError) {
                                     throw StateError("Something went wrong: ${snapshot.error}");
                                   } else if (snapshot.hasData) {
-                                    DateTime currentDate = DateUtils.dateOnly(DateTime.now()).subtract(Duration(days: 8));
+                                    DateTime currentDate = DateUtils.dateOnly(eatsJournalScreenViewModel.today).subtract(Duration(days: 8));
                                     return Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [-7, -6, -5, -4, -3, -2, -1, 0].map((int dayIndex) {

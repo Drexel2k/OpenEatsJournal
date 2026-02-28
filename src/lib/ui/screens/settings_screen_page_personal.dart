@@ -216,7 +216,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                   child: SettingsTextField(
                     controller: _birthDayController,
                     onTap: () async {
-                      await _selectDate(initialDate: widget._settingsScreenViewModel.birthday.value, context: context, languageCode: languageCode);
+                      await _selectDate(initialDate: widget._settingsScreenViewModel.birthday.value, today: widget._settingsScreenViewModel.today, context: context, languageCode: languageCode);
                     },
                     readOnly: true,
                   ),
@@ -614,8 +614,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     );
   }
 
-  Future<void> _selectDate({required DateTime initialDate, required BuildContext context, required String languageCode}) async {
-    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now());
+  Future<void> _selectDate({required DateTime initialDate, required DateTime today, required BuildContext context, required String languageCode}) async {
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateUtils.dateOnly(today));
 
     if (date != null) {
       _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(date);

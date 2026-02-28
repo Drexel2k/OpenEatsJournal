@@ -1,5 +1,4 @@
 import "dart:io";
-
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:path/path.dart";
@@ -1006,9 +1005,14 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
-  Future<List<Map<String, Object?>>?> getFoodsBySearchtextByUsage({required String searchText, required List<int> foodSourceIds, required int days}) async {
+  Future<List<Map<String, Object?>>?> getFoodsBySearchtextByUsage({
+    required DateTime today,
+    required String searchText,
+    required List<int> foodSourceIds,
+    required int days,
+  }) async {
     List<Object?> arguments = [];
-    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: days)));
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(today.subtract(Duration(days: days)));
     arguments.add(formattedDate);
 
     List<String> wheres = [];
@@ -1037,9 +1041,14 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
-  Future<List<Map<String, Object?>>?> getFoodsByBarcodeByUsage({required int barcode, required List<int> foodSourceIds, required int days}) async {
+  Future<List<Map<String, Object?>>?> getFoodsByBarcodeByUsage({
+    required DateTime today,
+    required int barcode,
+    required List<int> foodSourceIds,
+    required int days,
+  }) async {
     List<Object?> arguments = [];
-    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.now().subtract(Duration(days: days)));
+    final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(today.subtract(Duration(days: days)));
     arguments.add(formattedDate);
 
     List<String> whereSqls = [];

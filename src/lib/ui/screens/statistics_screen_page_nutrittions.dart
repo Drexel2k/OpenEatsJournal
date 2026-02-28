@@ -123,7 +123,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
               throw StateError("Something went wrong: ${snapshot.error}");
             } else if (snapshot.hasData) {
               List<Tuple> monthData = [];
-              DateTime currentDate = DateTime.now();
+              DateTime currentDate = _statisticsScreenViewModel.today;
               int currentMonth = currentDate.month;
               int currentYear = currentDate.year - 1;
               DateTime currentMonthStartDate;

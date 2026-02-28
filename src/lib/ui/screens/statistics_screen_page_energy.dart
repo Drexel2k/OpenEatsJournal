@@ -120,7 +120,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
             } else if (snapshot.hasData) {
               List<Tuple> monthData = [];
 
-              DateTime currentDate = DateTime.now();
+              DateTime currentDate = DateUtils.dateOnly(_statisticsScreenViewModel.today);
               int currentMonth = currentDate.month;
               int currentYear = currentDate.year - 1;
               DateTime currentMonthStartDate;

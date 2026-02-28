@@ -18,19 +18,20 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.
 import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/statistics_screen.dart";
+import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:path/path.dart";
 import "package:provider/provider.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "../callbacks.mocks.dart";
 
-late Repositories _repositories;
-
 void main() async {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
-    final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
+    OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
     OpenEatsJournalDatabaseService.databaseFileName = "oej_onboarded_with_data.db";
     File dbSourceFile = File(join(Directory.current.path, r"test\data\oej_onboarded_with_data.db"));
 
@@ -39,43 +40,6 @@ void main() async {
     await targetDirectory.create(recursive: true);
 
     dbSourceFile.copySync(join(await oejDatabase.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
-
-    final OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
-    final OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService.instance;
-
-    _repositories = Repositories(
-      settingsRepository: SettingsRepository.instance,
-      foodRepository: FoodRepository.instance,
-      journalRepository: JournalRepository.instance,
-    );
-
-    _repositories.settingsRepository.init(oejDatabase: oejDatabase);
-
-    openFoodFactsService.init(
-      httpGet: MockCallbacks().get,
-      appName: _repositories.settingsRepository.appName,
-      appVersion: _repositories.settingsRepository.appVersion,
-      appContactMail: _repositories.settingsRepository.appContactMail!,
-      useStaging: _repositories.settingsRepository.useStagingServices,
-    );
-
-    _repositories.journalRepository.init(oejDatabase: oejDatabase);
-    _repositories.foodRepository.init(
-      openFoodFactsService: openFoodFactsService,
-      oejDatabaseService: oejDatabase,
-      oejAssetsService: openEatsJournalAssetsService,
-    );
-
-    //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), _repositories.settingsRepository.initSettings()]);
-
-    ConvertValidate.init(
-      languageCode: _repositories.settingsRepository.languageCode.value,
-      energyUnit: _repositories.settingsRepository.energyUnit,
-      heightUnit: _repositories.settingsRepository.heightUnit,
-      weightUnit: _repositories.settingsRepository.weightUnit,
-      volumeUnit: _repositories.settingsRepository.volumeUnit,
-    );
   });
 
   tearDown(() async {
@@ -87,7 +51,97 @@ void main() async {
     }
   });
 
+  Future<Repositories> generalSetup() async {
+    OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
+    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
+    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService.instance;
+
+    Repositories repositories = Repositories(
+      settingsRepository: SettingsRepository.instance,
+      foodRepository: FoodRepository.instance,
+      journalRepository: JournalRepository.instance,
+    );
+
+    repositories.settingsRepository.init(oejDatabase: oejDatabase);
+
+    openFoodFactsService.init(
+      httpGet: MockCallbacks().get,
+      appName: repositories.settingsRepository.appName,
+      appVersion: repositories.settingsRepository.appVersion,
+      appContactMail: repositories.settingsRepository.appContactMail!,
+      useStaging: repositories.settingsRepository.useStagingServices,
+    );
+
+    repositories.journalRepository.init(oejDatabase: oejDatabase);
+    repositories.foodRepository.init(
+      settingsRepository: repositories.settingsRepository,
+      openFoodFactsService: openFoodFactsService,
+      oejDatabaseService: oejDatabase,
+      oejAssetsService: openEatsJournalAssetsService,
+    );
+
+    //required for database initialization
+    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), repositories.settingsRepository.initSettings()]);
+
+    ConvertValidate.init(
+      languageCode: repositories.settingsRepository.languageCode.value,
+      energyUnit: repositories.settingsRepository.energyUnit,
+      heightUnit: repositories.settingsRepository.heightUnit,
+      weightUnit: repositories.settingsRepository.weightUnit,
+      volumeUnit: repositories.settingsRepository.volumeUnit,
+    );
+
+    return repositories;
+  }
+
+  Future<Repositories> setupWithSpecificTodayDate({required DateTime today}) async {
+    OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
+    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
+    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService.instance;
+
+    Repositories repositories = Repositories(
+      settingsRepository: SettingsRepository.instance,
+      foodRepository: FoodRepository.instance,
+      journalRepository: JournalRepository.instance,
+    );
+
+    repositories.settingsRepository.init(oejDatabase: oejDatabase, today: today);
+
+    openFoodFactsService.init(
+      httpGet: MockCallbacks().get,
+      appName: repositories.settingsRepository.appName,
+      appVersion: repositories.settingsRepository.appVersion,
+      appContactMail: repositories.settingsRepository.appContactMail!,
+      useStaging: repositories.settingsRepository.useStagingServices,
+    );
+
+    repositories.journalRepository.init(oejDatabase: oejDatabase);
+    repositories.foodRepository.init(
+      settingsRepository: repositories.settingsRepository,
+      openFoodFactsService: openFoodFactsService,
+      oejDatabaseService: oejDatabase,
+      oejAssetsService: openEatsJournalAssetsService,
+    );
+
+    //required for database initialization
+    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), repositories.settingsRepository.initSettings()]);
+
+    ConvertValidate.init(
+      languageCode: repositories.settingsRepository.languageCode.value,
+      energyUnit: repositories.settingsRepository.energyUnit,
+      heightUnit: repositories.settingsRepository.heightUnit,
+      weightUnit: repositories.settingsRepository.weightUnit,
+      volumeUnit: repositories.settingsRepository.volumeUnit,
+    );
+
+    return repositories;
+  }
+
   testWidgets("Adding and loading quick entry", (tester) async {
+    //without runAsync openDatabase will hang.
+    Repositories repositories = (await tester.runAsync<Repositories>(() async {
+      return await generalSetup();
+    }))!;
     //Adding entry
     DateTime entryDateValue = DateTime(2026, 02, 12);
     String nameValue = "Quick Entry 1";
@@ -120,13 +174,13 @@ void main() async {
     Widget widget = MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale(_repositories.settingsRepository.languageCode.value),
+      locale: Locale(repositories.settingsRepository.languageCode.value),
       navigatorKey: AppGlobal.navigatorKey,
       home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
         create: (context) => EatsJournalQuickEntryEditScreenViewModel(
           quickEntry: quickEntry,
-          journalRepository: _repositories.journalRepository,
-          settingsRepository: _repositories.settingsRepository,
+          journalRepository: repositories.journalRepository,
+          settingsRepository: repositories.settingsRepository,
         ),
         child: EatsJournalQuickEntryEditScreen(),
       ),
@@ -141,7 +195,7 @@ void main() async {
     expect(quickEntry.id, isNotNull);
 
     //Loading entry
-    List<EatsJournalEntry>? entries = await _repositories.journalRepository.getEatsJournalEntries(date: entryDateValue, meal: mealValue);
+    List<EatsJournalEntry>? entries = await repositories.journalRepository.getEatsJournalEntries(date: entryDateValue, meal: mealValue);
 
     expect(entries, isNotNull);
     expect(entries!.length, 1);
@@ -161,17 +215,19 @@ void main() async {
     widget = MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale(_repositories.settingsRepository.languageCode.value),
+      locale: Locale(repositories.settingsRepository.languageCode.value),
       navigatorKey: AppGlobal.navigatorKey,
       home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
         create: (context) => EatsJournalQuickEntryEditScreenViewModel(
           quickEntry: entries[0],
-          journalRepository: _repositories.journalRepository,
-          settingsRepository: _repositories.settingsRepository,
+          journalRepository: repositories.journalRepository,
+          settingsRepository: repositories.settingsRepository,
         ),
         child: EatsJournalQuickEntryEditScreen(),
       ),
     );
+
+    await tester.pumpWidget(widget);
 
     FinderResult<Element> textFields = find.byType(OpenEatsJournalTextField).evaluate();
     OpenEatsJournalTextField openEatsJournalTextField;
@@ -224,5 +280,50 @@ void main() async {
 
     //let timer end, otherwise the test will fail/throw an internal exception.
     await tester.pumpAndSettle(const Duration(seconds: 3));
+  });
+
+  testWidgets("Check statistic data with nutritions null values", (tester) async {
+    DateTime today = DateTime(2026, 3, 18);
+    //without runAsync openDatabase will hang.
+    Repositories repositories = (await tester.runAsync<Repositories>(() async {
+      return await setupWithSpecificTodayDate(today: today);
+    }))!;
+
+    EatsJournalEntry eatsJournalEntry = EatsJournalEntry.quick(entryDate: today, name: "Test Entry", kJoule: 400, meal: Meal.breakfast);
+    await repositories.journalRepository.saveOnceDayNutritionTarget(
+      entryDate: eatsJournalEntry.entryDate,
+      dayTargetKJoule: repositories.settingsRepository.getTargetKJouleForDay(day: eatsJournalEntry.entryDate),
+    );
+    await repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+
+    Widget widget = MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: Locale(repositories.settingsRepository.languageCode.value),
+      navigatorKey: AppGlobal.navigatorKey,
+      home: ChangeNotifierProvider<StatisticsScreenViewModel>(
+        create: (context) => StatisticsScreenViewModel(settingsRepository: repositories.settingsRepository, journalRepository: repositories.journalRepository),
+        child: StatisticsScreen(),
+      ),
+    );
+
+    await tester.pumpWidget(widget);
+
+    Finder dropdownFinder = find.byType(OpenEatsJournalDropdownMenu<int>);
+    Finder dropdownSelectedValueFinder = find.text('Energy');
+    expect(dropdownSelectedValueFinder, findsOneWidget);
+
+    //just test if the result is displayed without execetpions because of the null values.
+    List<String> nutritons = ["Fat", "Saturated fat", "Carbohydrates", "Sugar", "Protein", "Salt"];
+    Finder dropdownItem;
+    for (String untrition in nutritons) {
+      await tester.tap(dropdownFinder);
+      await tester.pumpAndSettle();
+      dropdownItem = find.text(untrition).first;
+      await tester.tap(dropdownItem);
+      await tester.pumpAndSettle();
+      dropdownSelectedValueFinder = find.text(untrition);
+      expect(dropdownSelectedValueFinder, findsOneWidget);
+    }
   });
 }

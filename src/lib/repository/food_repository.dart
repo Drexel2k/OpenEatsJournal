@@ -1,5 +1,6 @@
 import "dart:convert";
 import "package:collection/collection.dart";
+import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -10,6 +11,7 @@ import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/ordered_default_food_unit.dart";
 import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/convert.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
@@ -22,6 +24,7 @@ class FoodRepository {
   FoodRepository._singleton();
   static final FoodRepository instance = FoodRepository._singleton();
 
+  late SettingsRepository _settingsRepository;
   late OpenFoodFactsService _openFoodFactsService;
   late OpenEatsJournalDatabaseService _oejDatabaseService;
   late OpenEatsJournalAssetsService _oejAssetsService;
@@ -32,10 +35,12 @@ class FoodRepository {
 
   //must be called once before the singleton is used
   void init({
+    required SettingsRepository settingsRepository,
     required OpenFoodFactsService openFoodFactsService,
     required OpenEatsJournalDatabaseService oejDatabaseService,
     required OpenEatsJournalAssetsService oejAssetsService,
   }) {
+    _settingsRepository = settingsRepository;
     _openFoodFactsService = openFoodFactsService;
     _oejDatabaseService = oejDatabaseService;
     _oejAssetsService = oejAssetsService;
@@ -56,7 +61,12 @@ class FoodRepository {
     List<Food> allResults = [];
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources)
-        : await _oejDatabaseService.getFoodsByBarcodeByUsage(barcode: barcode, foodSourceIds: localFoodSources, days: _dayForFoodUsage);
+        : await _oejDatabaseService.getFoodsByBarcodeByUsage(
+            today: DateUtils.dateOnly(_settingsRepository.today),
+            barcode: barcode,
+            foodSourceIds: localFoodSources,
+            days: _dayForFoodUsage,
+          );
 
     List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
 
@@ -147,7 +157,12 @@ class FoodRepository {
 
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources)
-        : await _oejDatabaseService.getFoodsBySearchtextByUsage(searchText: searchText, foodSourceIds: localFoodSources, days: _dayForFoodUsage);
+        : await _oejDatabaseService.getFoodsBySearchtextByUsage(
+            today: DateUtils.dateOnly(_settingsRepository.today),
+            searchText: searchText,
+            foodSourceIds: localFoodSources,
+            days: _dayForFoodUsage,
+          );
 
     List<Food> allResults = [];
     List<Food> foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];

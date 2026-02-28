@@ -184,11 +184,8 @@ class JournalRepository {
   }
 
   //current day and last month, paramter for testing
-  Future<JournalRepositoryGetNutritionSumsResult> getNutritionDaySumsForLast32Days({DateTime? today}) async {
-    if (today == null) {
-      today = DateTime.now();
-      today = DateTime(today.year, today.month, today.day);
-    }
+  Future<JournalRepositoryGetNutritionSumsResult> getNutritionDaySumsForLast32Days({required DateTime today}) async {
+    today = DateUtils.dateOnly(today);
 
     DateTime before31days = today.subtract(Duration(days: 31));
 
@@ -260,11 +257,8 @@ class JournalRepository {
   }
 
   //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
-  Future<JournalRepositoryGetNutritionSumsResult> getNutritionWeekSumsForLast15Weeks({DateTime? today}) async {
-    if (today == null) {
-      today = DateTime.now();
-      today = DateTime(today.year, today.month, today.day);
-    }
+  Future<JournalRepositoryGetNutritionSumsResult> getNutritionWeekSumsForLast15Weeks({required DateTime today}) async {
+    today = DateUtils.dateOnly(today);
 
     DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
@@ -339,11 +333,8 @@ class JournalRepository {
   }
 
   //current month and last 12 months
-  Future<JournalRepositoryGetNutritionSumsResult> getNutritionMonthSumsForLast13Months({DateTime? today}) async {
-    if (today == null) {
-      today = DateTime.now();
-      today = DateTime(today.year, today.month, today.day);
-    }
+  Future<JournalRepositoryGetNutritionSumsResult> getNutritionMonthSumsForLast13Months({required DateTime today}) async {
+    today = DateUtils.dateOnly(today);
 
     DateTime thisMonthStartDate = DateTime(today.year, today.month, 1);
 
@@ -467,9 +458,8 @@ class JournalRepository {
   }
 
   //current day and last month
-  Future<JournalRepositoryGetWeightMaxResult>? getWeightPerDayForLast32Days() async {
-    DateTime today = DateTime.now();
-    today = DateTime(today.year, today.month, today.day);
+  Future<JournalRepositoryGetWeightMaxResult>? getWeightPerDayForLast32Days({required DateTime today}) async {
+    today =DateUtils.dateOnly(today);
 
     DateTime before31days = today.subtract(Duration(days: 31));
 
@@ -536,10 +526,9 @@ class JournalRepository {
   }
 
   //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
-  Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerWeekForLast15Weeks() async {
+  Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerWeekForLast15Weeks({required DateTime today}) async {
     //set start of week (monday) on before14weeks
-    DateTime today = DateTime.now();
-    today = DateTime(today.year, today.month, today.day);
+    today = DateUtils.dateOnly(today);
 
     DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
@@ -604,9 +593,8 @@ class JournalRepository {
   }
 
   //current month and last 12 months
-  Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerMonthForLast13Months() async {
-    DateTime today = DateTime.now();
-    today = DateTime(today.year, today.month, today.day);
+  Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerMonthForLast13Months({required DateTime today}) async {
+    today = DateUtils.dateOnly(today);
 
     DateTime thisMonthStartDate = DateTime(today.year, today.month, 1);
 
@@ -677,10 +665,10 @@ class JournalRepository {
     }
   }
 
-  Future<Map<int, bool>> getEatsJournalEntriesAvailableForLast8Days() async {
+  Future<Map<int, bool>> getEatsJournalEntriesAvailableForLast8Days({required DateTime today}) async {
     Map<int, bool> result = {};
 
-    DateTime today = DateUtils.dateOnly(DateTime.now());
+    today = DateUtils.dateOnly(today);
     DateTime currentDay = today.subtract(Duration(days: 7));
 
     List<Map<String, Object?>>? dbResult = await _oejDatabase.getEatsJournalEntriesAvailable(from: currentDay, until: today);

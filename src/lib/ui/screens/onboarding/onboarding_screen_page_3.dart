@@ -112,7 +112,10 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                           child: SettingsTextField(
                             controller: _birthDayController,
                             onTap: () async {
-                              await _selectDate(initialDate: widget._onboardingScreenViewModel.birthday.value ?? DateTime.now(), context: context);
+                              await _selectDate(
+                                initialDate: widget._onboardingScreenViewModel.birthday.value ?? widget._onboardingScreenViewModel.today,
+                                context: context,
+                              );
                             },
                             readOnly: true,
                           ),
@@ -537,7 +540,12 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
   }
 
   Future<void> _selectDate({required DateTime initialDate, required BuildContext context}) async {
-    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now());
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: widget._onboardingScreenViewModel.today,
+    );
 
     if (date != null) {
       _birthDayController.text = ConvertValidate.dateFormatterDisplayMediumDateOnly.format(date);

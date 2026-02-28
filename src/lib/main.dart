@@ -53,7 +53,12 @@ void main() {
   );
 
   repositories.journalRepository.init(oejDatabase: oejDatabase);
-  repositories.foodRepository.init(openFoodFactsService: openFoodFactsService, oejDatabaseService: oejDatabase, oejAssetsService: openEatsJournalAssetsService);
+  repositories.foodRepository.init(
+    settingsRepository: repositories.settingsRepository,
+    openFoodFactsService: openFoodFactsService,
+    oejDatabaseService: oejDatabase,
+    oejAssetsService: openEatsJournalAssetsService,
+  );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

@@ -12,7 +12,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
       _settingsRepository = settingsRepository,
       _dayNutritionDataPerMeal = journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value),
       _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value),
-      _eatsJournalEntriesAvailableForLast8Days = journalRepository.getEatsJournalEntriesAvailableForLast8Days() {
+      _eatsJournalEntriesAvailableForLast8Days = journalRepository.getEatsJournalEntriesAvailableForLast8Days(today: settingsRepository.today) {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
   }
@@ -43,6 +43,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   ExternalTriggerChangedNotifier get settingsChanged => _settingsChanged;
 
   bool get darkMode => _settingsRepository.darkMode.value;
+  DateTime get today => _settingsRepository.today;
 
   void updateCurrentJournalDateInSettingsRepository() {
     _settingsRepository.currentJournalDate.value = _currentJournalDate.value;
@@ -53,7 +54,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   }
 
   void refreshNutritionData() {
-    _eatsJournalEntriesAvailableForLast8Days = _journalRepository.getEatsJournalEntriesAvailableForLast8Days();
+    _eatsJournalEntriesAvailableForLast8Days = _journalRepository.getEatsJournalEntriesAvailableForLast8Days(today: _settingsRepository.today);
     _dayNutritionDataPerMeal = _journalRepository.getDayMealSums(date: _settingsRepository.currentJournalDate.value);
     _eatsJournalDataChanged.notify();
   }

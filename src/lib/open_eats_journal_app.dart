@@ -175,7 +175,10 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                         },
                         OpenEatsJournalStrings.navigatorRouteStatistics: (contextBuilder) {
                           return ChangeNotifierProvider<StatisticsScreenViewModel>(
-                            create: (context) => StatisticsScreenViewModel(journalRepository: _repositories.journalRepository),
+                            create: (context) => StatisticsScreenViewModel(
+                              settingsRepository: _repositories.settingsRepository,
+                              journalRepository: _repositories.journalRepository,
+                            ),
                             child: StatisticsScreen(),
                           );
                         },

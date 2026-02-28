@@ -1,4 +1,4 @@
-import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
@@ -81,10 +81,11 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
   String get contactData => _settingsRepository.contactData!;
   String get languageCode => _languageCode;
+  DateTime get today => _settingsRepository.today;
 
   Future<void> saveOnboardingData() async {
     int age = 0;
-    final DateTime today = DateTime.now();
+    final DateTime today = _settingsRepository.today;
     age = today.year - _birthday.value!.year;
     final month = today.month - _birthday.value!.month;
 
@@ -137,7 +138,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
     );
 
     await _journalRepository.setWeightJournalEntry(
-      date: DateTime.now(),
+      date: _settingsRepository.today,
       weight: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
     );
   }
@@ -157,7 +158,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
     if (dailyNeedKJouleCalculationPossible) {
       int age = 0;
-      final DateTime today = DateTime.now();
+      final DateTime today = DateUtils.dateOnly(_settingsRepository.today);
       age = today.year - _birthday.value!.year;
       final month = today.month - _birthday.value!.month;
 

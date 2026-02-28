@@ -1,4 +1,4 @@
-import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -105,6 +105,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   bool get useStagingServices => _settingsRepository.useStagingServices;
   String get contactData => _settingsRepository.contactData!;
   String get appVersion => _settingsRepository.appVersion;
+  DateTime get today => _settingsRepository.today;
 
   void _setDailyTargetKJoule() {
     _dailyTargetKJoule.value = ConvertValidate.getDisplayEnergy(
@@ -120,9 +121,9 @@ class SettingsScreenViewModel extends ChangeNotifier {
     );
   }
 
-  double _getDailyKJoule() {
+  double _getDailyKJoule({required DateTime today}) {
     int age = 0;
-    final DateTime today = DateTime.now();
+    today = DateUtils.dateOnly(today);
     age = today.year - _settingsRepository.birthday.year;
     final month = today.month - _settingsRepository.birthday.month;
 
@@ -148,7 +149,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   }
 
   void _setDailyKJoule() {
-    _dailyKJoule.value = ConvertValidate.getDisplayEnergy(energyKJ: _getDailyKJoule());
+    _dailyKJoule.value = ConvertValidate.getDisplayEnergy(energyKJ: _getDailyKJoule(today: _settingsRepository.today));
   }
 
   void _darkModeChanged() {
@@ -273,7 +274,10 @@ class SettingsScreenViewModel extends ChangeNotifier {
       weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget3);
     }
 
-    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _getDailyKJoule(), weightLossPerWeekKg: weightLossKg);
+    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(
+      kJoulePerDay: _getDailyKJoule(today: _settingsRepository.today),
+      weightLossPerWeekKg: weightLossKg,
+    );
     if (dailyTargetKJoule < 1) {
       dailyTargetKJoule = 1;
     }

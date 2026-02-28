@@ -38,6 +38,8 @@ class SettingsRepository extends ChangeNotifier {
   late WeightUnit _weightUnit;
   late VolumeUnit _volumeUnit;
   late EnergyUnit _energyUnit;
+  //can be fixed date for testing
+  DateTime? _today;
 
   set gender(Gender value) {
     _gender = value;
@@ -106,7 +108,7 @@ class SettingsRepository extends ChangeNotifier {
 
   //non persistand app wide settings
   final ValueNotifier<bool> _onboarded = ValueNotifier(false);
-  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateUtils.dateOnly(DateTime.now()));
+  late ValueNotifier<DateTime> _currentJournalDate;
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
 
   ValueNotifier<bool> get onboarded => _onboarded;
@@ -116,16 +118,20 @@ class SettingsRepository extends ChangeNotifier {
   String get appName => "OpenEatsJournal";
   String get appVersion => "1.1";
   bool get useStagingServices => kDebugMode ? true : false;
+  DateTime get today => _today == null ? DateTime.now() : _today!;
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
   String? get contactData => null;
 
   //must be called once before the singleton is used
-  void init({required OpenEatsJournalDatabaseService oejDatabase}) {
+  void init({required OpenEatsJournalDatabaseService oejDatabase, DateTime? today}) {
     _oejDatabase = oejDatabase;
+    _today = today;
   }
 
   Future<void> initSettings() async {
+    _currentJournalDate = ValueNotifier(DateUtils.dateOnly(today));
+
     Map<String, Object?> settingData = await _oejDatabase.getAllSettings();
 
     int? gender = settingData[OpenEatsJournalStrings.settingGender] as int?;

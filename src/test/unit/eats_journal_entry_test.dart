@@ -27,6 +27,7 @@ void main() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
     final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
+    //oej_onboarded_with_data.db contains eats journal entries from 2026-01-16 until 2026-02-11
     OpenEatsJournalDatabaseService.databaseFileName = "oej_onboarded_with_data.db";
     File dbSourceFile = File(join(Directory.current.path, r"test\data\oej_onboarded_with_data.db"));
     dbSourceFile.copySync(join(await oejDatabase.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
@@ -59,6 +60,7 @@ void main() async {
 
     _repositories.journalRepository.init(oejDatabase: oejDatabase);
     _repositories.foodRepository.init(
+      settingsRepository: _repositories.settingsRepository,
       openFoodFactsService: openFoodFactsService,
       oejDatabaseService: oejDatabase,
       oejAssetsService: openEatsJournalAssetsService,
