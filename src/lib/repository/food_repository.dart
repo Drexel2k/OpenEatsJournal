@@ -21,30 +21,24 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 
 class FoodRepository {
-  FoodRepository._singleton();
-  static final FoodRepository instance = FoodRepository._singleton();
-
-  late SettingsRepository _settingsRepository;
-  late OpenFoodFactsService _openFoodFactsService;
-  late OpenEatsJournalDatabaseService _oejDatabaseService;
-  late OpenEatsJournalAssetsService _oejAssetsService;
-
-  final int _pageSize = 100;
-  final int _dayForFoodUsage = 43;
-  final DateFormat _csvDateFormat = DateFormat("yyyy-MM-dd HH-mm-ss");
-
-  //must be called once before the singleton is used
-  void init({
+  FoodRepository({
     required SettingsRepository settingsRepository,
     required OpenFoodFactsService openFoodFactsService,
     required OpenEatsJournalDatabaseService oejDatabaseService,
     required OpenEatsJournalAssetsService oejAssetsService,
-  }) {
-    _settingsRepository = settingsRepository;
-    _openFoodFactsService = openFoodFactsService;
-    _oejDatabaseService = oejDatabaseService;
-    _oejAssetsService = oejAssetsService;
-  }
+  }) : _settingsRepository = settingsRepository,
+       _openFoodFactsService = openFoodFactsService,
+       _oejDatabaseService = oejDatabaseService,
+       _oejAssetsService = oejAssetsService;
+
+  final SettingsRepository _settingsRepository;
+  final OpenFoodFactsService _openFoodFactsService;
+  final OpenEatsJournalDatabaseService _oejDatabaseService;
+  final OpenEatsJournalAssetsService _oejAssetsService;
+
+  final int _pageSize = 100;
+  final int _dayForFoodUsage = 43;
+  final DateFormat _csvDateFormat = DateFormat("yyyy-MM-dd HH-mm-ss");
 
   //result list must always contain exactly 4 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
   // index 4 = all results

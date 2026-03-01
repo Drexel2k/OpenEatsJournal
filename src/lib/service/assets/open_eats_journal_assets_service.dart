@@ -2,9 +2,6 @@ import "package:csv/csv.dart";
 import "package:flutter/services.dart";
 
 class OpenEatsJournalAssetsService {
-  OpenEatsJournalAssetsService._singleton();
-  static final OpenEatsJournalAssetsService instance = OpenEatsJournalAssetsService._singleton();
-
   Future<List<String>> getStandardFoodFiles() async {
     final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
     return assetManifest.listAssets().where((string) => string.startsWith("assets/standard_food_data")).toList();

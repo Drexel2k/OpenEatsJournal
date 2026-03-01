@@ -6,14 +6,13 @@ import "package:path_provider/path_provider.dart";
 import "package:sqflite/sqflite.dart";
 
 class OpenEatsJournalDatabaseService {
-  OpenEatsJournalDatabaseService._singleton();
-  static final OpenEatsJournalDatabaseService instance = OpenEatsJournalDatabaseService._singleton();
+  OpenEatsJournalDatabaseService({String databaseFileName = "oej.db"}) : _databaseFileName = databaseFileName;
 
-  static Database? _database;
+  Database? _database;
   //for testing, when tests run in parallel when running them.
-  static String databaseFileName = "oej.db";
-  static late String _databaseFile;
-  static late String _databaseDirectory;
+  final String _databaseFileName;
+  late String _databaseFile;
+  late String _databaseDirectory;
 
   static final List<String> _currentTableCreations = [
     """CREATE TABLE ${OpenEatsJournalStrings.dbTableSetting} (
@@ -322,7 +321,7 @@ class OpenEatsJournalDatabaseService {
 
   bool _fileTransfering = false;
 
-  Future<Database> get db async {
+  Future<Database> get database async {
     if (_fileTransfering) {
       throw StateError("Can't access database during exports or imports.");
     }
@@ -335,9 +334,11 @@ class OpenEatsJournalDatabaseService {
     return _database!;
   }
 
+  String? get databaseFileName => _databaseFileName;
+
   Future<Database> _initDb() async {
     _databaseDirectory = await getDatabasesPath();
-    _databaseFile = join(_databaseDirectory, databaseFileName);
+    _databaseFile = join(_databaseDirectory, _databaseFileName);
     DatabaseFactory dbFactory = databaseFactory;
     return await dbFactory.openDatabase(
       _databaseFile,
@@ -388,7 +389,7 @@ class OpenEatsJournalDatabaseService {
       Directory exportDirectory = Directory(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.export));
       await exportDirectory.create(recursive: true);
 
-      File targetFile = File(join(exportDirectory.path, databaseFileName));
+      File targetFile = File(join(exportDirectory.path, _databaseFileName));
       if (targetFile.existsSync()) {
         targetFile.deleteSync();
       }
@@ -411,7 +412,7 @@ class OpenEatsJournalDatabaseService {
 
   Future<bool> importDatabase() async {
     bool result = false;
-    File sourceFile = File(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.import, databaseFileName));
+    File sourceFile = File(join((await getExternalStorageDirectory())!.path, OpenEatsJournalStrings.import, _databaseFileName));
     if (sourceFile.existsSync()) {
       _fileTransfering = true;
       await _database!.close();
@@ -432,7 +433,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<bool> _settingExists({required String setting}) async {
-    Database db = await instance.db;
+    Database db = await database;
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableSetting,
       columns: [OpenEatsJournalStrings.dbColumnSetting],
@@ -452,12 +453,12 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> _insertSetting({required Map<String, String> setting}) async {
-    Database db = await instance.db;
+    Database db = await database;
     await db.insert(OpenEatsJournalStrings.dbTableSetting, setting);
   }
 
   Future<void> _updateSetting({required Map<String, String> setting}) async {
-    Database db = await instance.db;
+    Database db = await database;
     await db.update(
       OpenEatsJournalStrings.dbTableSetting,
       {OpenEatsJournalStrings.dbColumnvalue: setting[OpenEatsJournalStrings.dbColumnvalue]},
@@ -540,7 +541,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<Object?> _getSetting({required String setting}) async {
-    Database db = await instance.db;
+    Database db = await database;
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableSetting,
       columns: [OpenEatsJournalStrings.dbColumnvalue],
@@ -663,7 +664,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<int> setEatsJournalEntry({required Map<String, Object?> eatsJournalEntryData, int? id}) async {
-    Database db = await instance.db;
+    Database db = await database;
     //quick entries don't have food id reference.
     // if (eatsJournalEntryData[OpenEatsJournalStrings.dbColumnFoodIdRef] == null) {
     //   throw StateError("Food for eats journal entry must have an id.");
@@ -696,7 +697,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getEatsJournalEntries({required DateTime date, int? mealValue}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
     String where = "WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ?";
@@ -747,7 +748,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<bool> deleteEatsJournalEntry({required int id}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableEatsJournal,
@@ -765,7 +766,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<bool> replaceFoodEntriesMeasurementUnit({required int foodId, required int fromMeasurementUnitId, required int toMeasurementUnitId}) async {
-    Database db = await instance.db;
+    Database db = await database;
     if (fromMeasurementUnitId == toMeasurementUnitId) {
       throw ArgumentError("From measurement unit and to measurement unit are the same.");
     }
@@ -797,7 +798,7 @@ class OpenEatsJournalDatabaseService {
 
   //creates new food entry or updates an existing one.
   Future<int> setFoodByExternalId({required Map<String, Object?> foodData, int? id}) async {
-    Database db = await instance.db;
+    Database db = await database;
     if (foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] == 1) {
       //FoodSource.user
       throw ArgumentError("Food update by external id is only needed for foods of external data sources.");
@@ -856,7 +857,7 @@ class OpenEatsJournalDatabaseService {
 
   //todo: maybe merge setFood and setFoodByExternalId as done in setFoodUnit
   Future<int> setFood({required Map<String, Object?> foodData, int? id}) async {
-    Database db = await instance.db;
+    Database db = await database;
     if (foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] == 2) {
       //FoodSource.standard
       throw ArgumentError("Food update of standard foods is not allowed.");
@@ -883,7 +884,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<int> _setFoodInternal({required Map<String, Object?> foodData, int? id}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     if (id == null) {
       id = await db.insert(OpenEatsJournalStrings.dbTableFood, foodData);
@@ -895,7 +896,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<int> setFoodUnit({required Map<String, Object?> foodUnitData, int? id}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     if (foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef] != null) {
       List<Map<String, Object?>>? dbResult;
@@ -985,7 +986,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> _getFoods({required String whereSql, required List<Object?> whereArgs}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     //first block of columns from dbTableFood, second from dbTableFoodUnit
     final List<Map<String, Object?>> dbResult = await db.rawQuery("""
@@ -1072,7 +1073,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>> _getFoodsByUsageInternal({required List<String> whereSqls, required List<Object?> arguments}) async {
-    Database db = await instance.db;
+    Database db = await database;
     return db.rawQuery("""
         SELECT
                 $_sqlFoodColumns
@@ -1101,7 +1102,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> insertOnceDayNutritionTarget({required DateTime day, required double dayTargetKJoule}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
 
@@ -1125,7 +1126,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> insertOnceDaDateInfo({required DateTime date}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
 
@@ -1152,7 +1153,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getDayNutritionSumsPerMeal({required DateTime day}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
 
@@ -1185,7 +1186,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getGroupedKJouleTargets({required DateTime from, required DateTime until, required String groupBy}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
     final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
@@ -1234,7 +1235,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getGroupedNutritionSums({required DateTime from, required DateTime until, required String groupBy}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
     final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
@@ -1274,7 +1275,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> setWeightJournalEntry({required DateTime day, required double weight}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
 
@@ -1305,7 +1306,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<bool> deleteWeightJournalEntry({required DateTime date}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
 
@@ -1329,7 +1330,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getMaxWeightJournalEntryFor({required DateTime date, required String maxOf}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     List<Map<String, Object?>> dbResult;
     if (maxOf == OpenEatsJournalStrings.dbColumnDate) {
@@ -1375,7 +1376,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getMaxWeightJournalEntryAfter({required DateTime date, required String maxOf}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     List<Map<String, Object?>> dbResult;
     if (maxOf == OpenEatsJournalStrings.dbColumnDate) {
@@ -1421,7 +1422,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<double> getLastWeightJournalEntry() async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableWeightJournal,
@@ -1434,7 +1435,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> get10WeightJournalEntries({required int startIndex}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableWeightJournal,
@@ -1452,7 +1453,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getWeightMax({required DateTime from, required DateTime until, required String maxOf}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final String fromFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
     final String untilFormatted = ConvertValidate.dateformatterDatabaseDateOnly.format(until);
@@ -1503,7 +1504,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getEatsJournalEntriesAvailable({required DateTime from, required DateTime until}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableEatsJournal,
@@ -1517,7 +1518,7 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> removeFoodIdFromEatsJournalEntries({required int foodId}) async {
-    Database db = await instance.db;
+    Database db = await database;
     await db.update(
       OpenEatsJournalStrings.dbTableEatsJournal,
       {OpenEatsJournalStrings.dbColumnFoodIdRef: null},
@@ -1527,12 +1528,12 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> deleteFood({required int foodId}) async {
-    Database db = await instance.db;
+    Database db = await database;
     await db.delete(OpenEatsJournalStrings.dbTableFood, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [foodId]);
   }
 
   Future<void> deleteFoodUnits({required int foodId, required List<int> exceptIds}) async {
-    Database db = await instance.db;
+    Database db = await database;
 
     List<String> wheres = [];
     List<Object> whereArgs = [];
@@ -1554,7 +1555,10 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<void> close() async {
-    await _database!.close();
+    if (_database != null) {
+      await _database!.close();
+    }
+
     _database = null;
   }
 }

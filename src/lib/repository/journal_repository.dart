@@ -16,15 +16,8 @@ import "package:openeatsjournal/repository/convert.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 
 class JournalRepository {
-  JournalRepository._singleton();
-  static final JournalRepository instance = JournalRepository._singleton();
-
-  late OpenEatsJournalDatabaseService _oejDatabase;
-
-  //must be called once before the singleton is used
-  void init({required OpenEatsJournalDatabaseService oejDatabase}) {
-    _oejDatabase = oejDatabase;
-  }
+  JournalRepository({required OpenEatsJournalDatabaseService oejDatabase}) : _oejDatabase = oejDatabase;
+  final OpenEatsJournalDatabaseService _oejDatabase;
 
   Future<void> saveOnceDayNutritionTarget({required DateTime entryDate, required double dayTargetKJoule}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: entryDate);
@@ -459,7 +452,7 @@ class JournalRepository {
 
   //current day and last month
   Future<JournalRepositoryGetWeightMaxResult>? getWeightPerDayForLast32Days({required DateTime today}) async {
-    today =DateUtils.dateOnly(today);
+    today = DateUtils.dateOnly(today);
 
     DateTime before31days = today.subtract(Duration(days: 31));
 

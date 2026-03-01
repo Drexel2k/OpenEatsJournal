@@ -27,57 +27,50 @@ import "package:provider/provider.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "../callbacks.mocks.dart";
 
+OpenEatsJournalDatabaseService? _database;
+
 void main() async {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfiNoIsolate;
-    OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
-    OpenEatsJournalDatabaseService.databaseFileName = "oej_onboarded_with_data.db";
+    //oej_onboarded_with_data.db contains eats journal entries from 2026-01-16 until 2026-02-11
+    _database = OpenEatsJournalDatabaseService(databaseFileName: "oej_onboarded_with_data.db");
+
     File dbSourceFile = File(join(Directory.current.path, r"test\data\oej_onboarded_with_data.db"));
-
-    String targetDirectoryPath = await oejDatabase.getDatabasePath();
-    Directory targetDirectory = Directory(targetDirectoryPath);
-    await targetDirectory.create(recursive: true);
-
-    dbSourceFile.copySync(join(await oejDatabase.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
+    dbSourceFile.copySync(join(await _database!.getDatabasePath(), _database!.databaseFileName));
   });
 
   tearDown(() async {
-    File dbTargetFile = File(join(await OpenEatsJournalDatabaseService.instance.getDatabasePath(), OpenEatsJournalDatabaseService.databaseFileName));
+    File databaseFileName = File(join(await _database!.getDatabasePath(), _database!.databaseFileName));
 
-    if (dbTargetFile.existsSync()) {
-      await OpenEatsJournalDatabaseService.instance.close();
-      dbTargetFile.deleteSync();
+    if (databaseFileName.existsSync()) {
+      await _database!.close();
+      databaseFileName.deleteSync();
     }
+
+    _database = null;
   });
 
   Future<Repositories> generalSetup() async {
-    OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
-    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
-    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService.instance;
+    SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
+    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+
+    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
+      httpGet: MockCallbacks().get,
+      appName: settingsRepository.appName,
+      appVersion: settingsRepository.appVersion,
+      appContactMail: settingsRepository.appContactMail!,
+    );
 
     Repositories repositories = Repositories(
-      settingsRepository: SettingsRepository.instance,
-      foodRepository: FoodRepository.instance,
-      journalRepository: JournalRepository.instance,
-    );
-
-    repositories.settingsRepository.init(oejDatabase: oejDatabase);
-
-    openFoodFactsService.init(
-      httpGet: MockCallbacks().get,
-      appName: repositories.settingsRepository.appName,
-      appVersion: repositories.settingsRepository.appVersion,
-      appContactMail: repositories.settingsRepository.appContactMail!,
-      useStaging: repositories.settingsRepository.useStagingServices,
-    );
-
-    repositories.journalRepository.init(oejDatabase: oejDatabase);
-    repositories.foodRepository.init(
-      settingsRepository: repositories.settingsRepository,
-      openFoodFactsService: openFoodFactsService,
-      oejDatabaseService: oejDatabase,
-      oejAssetsService: openEatsJournalAssetsService,
+      settingsRepository: settingsRepository,
+      foodRepository: FoodRepository(
+        settingsRepository: settingsRepository,
+        openFoodFactsService: openFoodFactsService,
+        oejDatabaseService: _database!,
+        oejAssetsService: openEatsJournalAssetsService,
+      ),
+      journalRepository: JournalRepository(oejDatabase: _database!),
     );
 
     //required for database initialization
@@ -95,32 +88,25 @@ void main() async {
   }
 
   Future<Repositories> setupWithSpecificTodayDate({required DateTime today}) async {
-    OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
-    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
-    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService.instance;
+    SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
+    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+
+    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
+      httpGet: MockCallbacks().get,
+      appName: settingsRepository.appName,
+      appVersion: settingsRepository.appVersion,
+      appContactMail: settingsRepository.appContactMail!,
+    );
 
     Repositories repositories = Repositories(
-      settingsRepository: SettingsRepository.instance,
-      foodRepository: FoodRepository.instance,
-      journalRepository: JournalRepository.instance,
-    );
-
-    repositories.settingsRepository.init(oejDatabase: oejDatabase, today: today);
-
-    openFoodFactsService.init(
-      httpGet: MockCallbacks().get,
-      appName: repositories.settingsRepository.appName,
-      appVersion: repositories.settingsRepository.appVersion,
-      appContactMail: repositories.settingsRepository.appContactMail!,
-      useStaging: repositories.settingsRepository.useStagingServices,
-    );
-
-    repositories.journalRepository.init(oejDatabase: oejDatabase);
-    repositories.foodRepository.init(
-      settingsRepository: repositories.settingsRepository,
-      openFoodFactsService: openFoodFactsService,
-      oejDatabaseService: oejDatabase,
-      oejAssetsService: openEatsJournalAssetsService,
+      settingsRepository: settingsRepository,
+      foodRepository: FoodRepository(
+        settingsRepository: settingsRepository,
+        openFoodFactsService: openFoodFactsService,
+        oejDatabaseService: _database!,
+        oejAssetsService: openEatsJournalAssetsService,
+      ),
+      journalRepository: JournalRepository(oejDatabase: _database!),
     );
 
     //required for database initialization

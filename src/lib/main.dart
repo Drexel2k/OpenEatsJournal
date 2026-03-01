@@ -32,32 +32,25 @@ void main() {
     return true;
   };
 
-  final OpenEatsJournalDatabaseService oejDatabase = OpenEatsJournalDatabaseService.instance;
-  final OpenFoodFactsService openFoodFactsService = OpenFoodFactsService.instance;
-  final OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService.instance;
+  OpenEatsJournalDatabaseService openEatsJournalDatabaseService = OpenEatsJournalDatabaseService();
+  SettingsRepository settingsRepository = SettingsRepository(oejDatabase: openEatsJournalDatabaseService);
+  OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+  OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
+    httpGet: http.get,
+    appName: settingsRepository.appName,
+    appVersion: settingsRepository.appVersion,
+    appContactMail: settingsRepository.appContactMail!,
+  );
 
   final Repositories repositories = Repositories(
-    settingsRepository: SettingsRepository.instance,
-    foodRepository: FoodRepository.instance,
-    journalRepository: JournalRepository.instance,
-  );
-
-  repositories.settingsRepository.init(oejDatabase: oejDatabase);
-
-  openFoodFactsService.init(
-    httpGet: http.get,
-    appName: repositories.settingsRepository.appName,
-    appVersion: repositories.settingsRepository.appVersion,
-    appContactMail: repositories.settingsRepository.appContactMail!,
-    useStaging: repositories.settingsRepository.useStagingServices,
-  );
-
-  repositories.journalRepository.init(oejDatabase: oejDatabase);
-  repositories.foodRepository.init(
-    settingsRepository: repositories.settingsRepository,
-    openFoodFactsService: openFoodFactsService,
-    oejDatabaseService: oejDatabase,
-    oejAssetsService: openEatsJournalAssetsService,
+    settingsRepository: settingsRepository,
+    foodRepository: FoodRepository(
+      settingsRepository: settingsRepository,
+      openFoodFactsService: openFoodFactsService,
+      oejDatabaseService: openEatsJournalDatabaseService,
+      oejAssetsService: openEatsJournalAssetsService,
+    ),
+    journalRepository: JournalRepository(oejDatabase: openEatsJournalDatabaseService),
   );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

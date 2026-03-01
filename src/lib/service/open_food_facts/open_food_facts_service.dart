@@ -4,54 +4,38 @@ import "package:http/http.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 
 class OpenFoodFactsService {
-  OpenFoodFactsService._singleton();
-  static final OpenFoodFactsService instance = OpenFoodFactsService._singleton();
-
-  late String _apiV1Endpoint;
-  late String _apiV2Endpoint;
-  // late String _searchALiciousEndPoint;
-
-  late String _appName;
-  late String _appVersion;
-  late String _appContactMail;
-  late bool _useStaging;
-  late Future<Response> Function(Uri uri, {Map<String, String>? headers}) _httpGet;
-
   //httpGet as argument so that it can be mocked for testing
-  void init({
+  OpenFoodFactsService({
     required Future<Response> Function(Uri url, {Map<String, String>? headers}) httpGet,
     required String appName,
     required String appVersion,
     required String appContactMail,
     bool useStaging = false,
-  }) {
-    _appName = appName;
-    _appVersion = appVersion;
-    _appContactMail = appContactMail;
-    _useStaging = useStaging;
-    _httpGet = httpGet;
+  }) : _appName = appName,
+       _appVersion = appVersion,
+       _appContactMail = appContactMail,
+       _useStaging = useStaging,
+       _httpGet = httpGet,
 
-    String domain = "org";
-    if (_useStaging) {
-      domain = "net";
-    }
+       //for text search
+       //https://openfoodfacts.github.io/openfoodfacts-server/api/ref-cheatsheet/
+       //https://wiki.openfoodfacts.org/API/Read/Search
+       _apiV1Endpoint = "https://world.openfoodfacts.${useStaging ? "net" : "org"}/cgi/search.pl?json=1&search_simple=1&",
 
-    //for text search
-    //https://openfoodfacts.github.io/openfoodfacts-server/api/ref-cheatsheet/
-    //https://wiki.openfoodfacts.org/API/Read/Search
-    _apiV1Endpoint = "https://world.openfoodfacts.$domain/cgi/search.pl?json=1&search_simple=1&";
+       //for barcoded search
+       //https://openfoodfacts.github.io/openfoodfacts-server/api/
+       //https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/
+       _apiV2Endpoint = "https://world.openfoodfacts.${useStaging ? "net" : "org"}/api/v2/product/";
 
-    //for barcoded search
-    //https://openfoodfacts.github.io/openfoodfacts-server/api/
-    //https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/
-    _apiV2Endpoint = "https://world.openfoodfacts.$domain/api/v2/product/";
+  final String _apiV1Endpoint;
+  final String _apiV2Endpoint;
+  // late String _searchALiciousEndPoint;
 
-    //for text search, but not complete yet
-    //https://openfoodfacts.github.io/search-a-licious/
-    //https://openfoodfacts.github.io/search-a-licious/users/ref-openapi/
-    //https://search.openfoodfacts.org/docs/
-    // _searchALiciousEndPoint = "https://search.openfoodfacts.$domain/search?";
-  }
+  final String _appName;
+  final String _appVersion;
+  final String _appContactMail;
+  final bool _useStaging;
+  final Future<Response> Function(Uri uri, {Map<String, String>? headers}) _httpGet;
 
   Future<String?> getFoodByBarcode({required int barcode}) async {
     Map<String, String> headers = {HttpHeaders.userAgentHeader: "$_appName/$_appVersion ($_appContactMail)"};

@@ -12,11 +12,9 @@ import "package:openeatsjournal/service/database/open_eats_journal_database_serv
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 
 class SettingsRepository extends ChangeNotifier {
-  SettingsRepository._singleton();
+  SettingsRepository({required OpenEatsJournalDatabaseService oejDatabase, DateTime? today}) : _oejDatabase = oejDatabase, _today = today;
 
-  static final SettingsRepository instance = SettingsRepository._singleton();
-
-  late OpenEatsJournalDatabaseService _oejDatabase;
+  final OpenEatsJournalDatabaseService _oejDatabase;
 
   //persistant settings
   final ValueNotifier<bool> _darkMode = ValueNotifier(false);
@@ -39,7 +37,7 @@ class SettingsRepository extends ChangeNotifier {
   late VolumeUnit _volumeUnit;
   late EnergyUnit _energyUnit;
   //can be fixed date for testing
-  DateTime? _today;
+  final DateTime? _today;
 
   set gender(Gender value) {
     _gender = value;
@@ -118,16 +116,10 @@ class SettingsRepository extends ChangeNotifier {
   String get appName => "OpenEatsJournal";
   String get appVersion => "1.1";
   bool get useStagingServices => kDebugMode ? true : false;
-  DateTime get today => _today == null ? DateTime.now() : _today!;
+  DateTime get today => _today ?? DateTime.now();
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
   String? get contactData => null;
-
-  //must be called once before the singleton is used
-  void init({required OpenEatsJournalDatabaseService oejDatabase, DateTime? today}) {
-    _oejDatabase = oejDatabase;
-    _today = today;
-  }
 
   Future<void> initSettings() async {
     _currentJournalDate = ValueNotifier(DateUtils.dateOnly(today));
