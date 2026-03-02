@@ -11,7 +11,7 @@ For setup first you need the following things:
 - Git
 - VS Code with Flutter Plugin installed.
 
-Use paths for SDKs without spaces and sepcial characers.
+Use paths for SDKs without spaces and special characers.
 
 #### Setup Android SDK and Emulator
 1. Download Android Studio from https://developer.android.com/studio and install. Keep "Android Virtual Device" checked. Start Android Studio after installation.

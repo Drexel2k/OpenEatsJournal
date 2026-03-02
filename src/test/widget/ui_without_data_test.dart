@@ -87,8 +87,6 @@ void main() async {
       return await setupWithSpecificTodayDate(today: today);
     }))!;
 
-    expect(repositories.settingsRepository.onboarded.value, false);
-
     Widget widget = Provider<Repositories>.value(
       value: repositories,
       child: ChangeNotifierProvider(
@@ -99,6 +97,8 @@ void main() async {
 
     await tester.pumpWidget(widget);
     await tester.pumpAndSettle();
+
+    expect(repositories.settingsRepository.onboarded.value, false);
 
     //page1
     expect(find.textContaining("Welcome"), findsOneWidget);
@@ -223,27 +223,58 @@ void main() async {
     expect(find.text("snacks"), findsOneWidget);
     expect(find.text("weight"), findsOneWidget);
 
+    //"restart" the app
+    Repositories repositoriesRestart = (await tester.runAsync<Repositories>(() async {
+      return await setupWithSpecificTodayDate(today: today);
+    }))!;
+
+    //UniqueKey ensures provider resets when restarting the widget/pumping it again
+    Widget widgetRestart = Provider<Repositories>.value(
+      key: UniqueKey(),
+      value: repositoriesRestart,
+      child: ChangeNotifierProvider.value(
+        value: OpenEatsJournalAppViewModel(settingsRepository: repositoriesRestart.settingsRepository, foodRepository: repositoriesRestart.foodRepository),
+        child: OpenEatsJournalApp(),
+      ),
+    );
+
+    await tester.pumpWidget(widgetRestart);
+    await tester.pumpAndSettle();
+
+    expect(repositoriesRestart.settingsRepository.onboarded.value, true);
+
+    //check eats journal home screen for correct values
+    //check eats journal screen display
+    expect(find.textContaining("2,071"), findsExactly(2)); //space in beginning
+    expect(find.textContaining("70.2"), findsOneWidget);
+    expect(find.textContaining("280.3"), findsOneWidget);
+    expect(find.textContaining("76.4"), findsOneWidget);
+
+    expect(find.text("breakfast"), findsExactly(2)); //one in the meal selection dropdown
+    expect(find.text("lunch"), findsOneWidget);
+    expect(find.text("dinner"), findsOneWidget);
+    expect(find.text("snacks"), findsOneWidget);
+    expect(find.text("weight"), findsOneWidget);
+
     //check if data was persisted with new settings repository...
-    SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
-    await settingsRepository.initSettings();
-    expect(settingsRepository.darkMode.value, false);
-    expect(settingsRepository.languageCode.value, OpenEatsJournalStrings.en);
-    expect(settingsRepository.gender, Gender.male);
-    expect(settingsRepository.birthday, DateTime(1980, 7, 1));
-    expect(settingsRepository.height, 185);
-    expect(settingsRepository.activityFactor, 1.4);
-    expect(settingsRepository.weightTarget, WeightTarget.lose05);
-    expect(settingsRepository.kJouleMonday, 8664.018);
-    expect(settingsRepository.kJouleTuesday, 8664.018);
-    expect(settingsRepository.kJouleWednesday, 8664.018);
-    expect(settingsRepository.kJouleThursday, 8664.018);
-    expect(settingsRepository.kJouleFriday, 8664.018);
-    expect(settingsRepository.kJouleSaturday, 8664.018);
-    expect(settingsRepository.kJouleSunday, 8664.018);
-    expect(settingsRepository.lastProcessedStandardFoodDataChangeDate, DateTime(2026, 02, 28, 1));
-    expect(settingsRepository.energyUnit, EnergyUnit.kcal);
-    expect(settingsRepository.heightUnit, HeightUnit.cm);
-    expect(settingsRepository.weightUnit, WeightUnit.g);
-    expect(settingsRepository.volumeUnit, VolumeUnit.ml);
+    expect(repositoriesRestart.settingsRepository.darkMode.value, false);
+    expect(repositoriesRestart.settingsRepository.languageCode.value, OpenEatsJournalStrings.en);
+    expect(repositoriesRestart.settingsRepository.gender, Gender.male);
+    expect(repositoriesRestart.settingsRepository.birthday, DateTime(1980, 7, 1));
+    expect(repositoriesRestart.settingsRepository.height, 185);
+    expect(repositoriesRestart.settingsRepository.activityFactor, 1.4);
+    expect(repositoriesRestart.settingsRepository.weightTarget, WeightTarget.lose05);
+    expect(repositoriesRestart.settingsRepository.kJouleMonday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.kJouleTuesday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.kJouleWednesday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.kJouleThursday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.kJouleFriday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.kJouleSaturday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.kJouleSunday, 8664.018);
+    expect(repositoriesRestart.settingsRepository.lastProcessedStandardFoodDataChangeDate, DateTime(2026, 02, 28, 1));
+    expect(repositoriesRestart.settingsRepository.energyUnit, EnergyUnit.kcal);
+    expect(repositoriesRestart.settingsRepository.heightUnit, HeightUnit.cm);
+    expect(repositoriesRestart.settingsRepository.weightUnit, WeightUnit.g);
+    expect(repositoriesRestart.settingsRepository.volumeUnit, VolumeUnit.ml);
   });
 }
