@@ -265,7 +265,7 @@ void main() async {
     expect(find.text("ml"), findsOneWidget);
 
     //let timer end, otherwise the test will fail/throw an internal exception.
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
   });
 
   testWidgets("Check statistic data with nutritions null values", (tester) async {

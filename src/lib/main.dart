@@ -58,14 +58,11 @@ void main() {
   //debugPaintSizeEnabled=true;
 
   runApp(
-    Provider<Repositories>(
-      create: (context) => repositories,
-      child: OpenEatsJournalApp(
-        openEatsJournalAppViewModel: OpenEatsJournalAppViewModel(
-          settingsRepository: repositories.settingsRepository,
-          foodRepository: repositories.foodRepository,
-        ),
-        repositories: repositories,
+    Provider<Repositories>.value(
+      value: repositories,
+      child: ChangeNotifierProvider(
+        create: (context) => OpenEatsJournalAppViewModel(settingsRepository: repositories.settingsRepository, foodRepository: repositories.foodRepository),
+        child: OpenEatsJournalApp(),
       ),
     ),
   );

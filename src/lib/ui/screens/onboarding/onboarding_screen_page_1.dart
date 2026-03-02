@@ -151,11 +151,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                           SizedBox(height: 9),
                           Container(
                             constraints: BoxConstraints(maxWidth: agreeTextMaxWidth),
-                            child: Text(
-                              AppLocalizations.of(context)!.license_agree,
-                              style: textTheme.titleMedium,
-                              textAlign: TextAlign.center,
-                            ),
+                            child: Text(AppLocalizations.of(context)!.license_agree, style: textTheme.titleMedium, textAlign: TextAlign.center),
                           ),
                         ],
                       ),

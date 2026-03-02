@@ -385,12 +385,9 @@ class SettingsRepository extends ChangeNotifier {
     return await _oejDatabase.importDatabase();
   }
 
-  Future<void> closeDatabase() async {
-    await _oejDatabase.close();
-  }
-
   @override
-  void dispose() {
+  void dispose() async {
+    await _oejDatabase.close();
     _darkMode.dispose();
     _languageCode.dispose();
 

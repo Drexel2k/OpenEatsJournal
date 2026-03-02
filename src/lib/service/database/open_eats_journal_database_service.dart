@@ -381,6 +381,11 @@ class OpenEatsJournalDatabaseService {
     await batch.commit();
   }
 
+  //for testing that we can create the file in tester.runAsync
+  Future<void> open() async {
+    await database;
+  }
+
   Future<bool> exportDatabase() async {
     _fileTransfering = true;
     try {

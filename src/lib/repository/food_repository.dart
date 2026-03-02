@@ -602,7 +602,7 @@ class FoodRepository {
           OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef: foodUnitWithOrder.object.amountMeasurementUnit.value,
           OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef: foodUnitWithOrder.object.originalFoodSourceFoodUnitId,
           OpenEatsJournalStrings.dbColumnOrderNumber: foodUnitWithOrder.order,
-          OpenEatsJournalStrings.dbColumnIsDefault: foodUnitWithOrder.object == food.defaultFoodUnit,
+          OpenEatsJournalStrings.dbColumnIsDefault: foodUnitWithOrder.object == food.defaultFoodUnit ? 1 : 0,
         },
         id: foodUnitWithOrder.object.id,
       );
