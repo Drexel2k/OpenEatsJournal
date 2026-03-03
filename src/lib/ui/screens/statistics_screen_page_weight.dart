@@ -9,6 +9,7 @@ import "package:openeatsjournal/repository/journal_repository_get_weight_max_res
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:openeatsjournal/ui/widgets/linechart.dart";
+import "package:provider/provider.dart";
 
 class StatisticsScreenPageWeight extends StatelessWidget {
   const StatisticsScreenPageWeight({super.key, required StatisticsScreenViewModel statisticsScreenViewModel})
@@ -18,6 +19,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
     return Column(
@@ -46,7 +48,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateBeforeEntry.compareTo(currentDate) < 0) {
                       dayData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateBeforeEntry,
-                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(
                           weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min]!,
                         ),
                       });
@@ -57,7 +59,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentDate)) {
                     dayData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentDate,
-                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentDate]!),
+                      OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentDate]!),
                     });
                   }
 
@@ -70,7 +72,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateAfterEntry.compareTo(currentDate) > 0) {
                       dayData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateAfterEntry,
-                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(
                           weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max]!,
                         ),
                       });
@@ -117,7 +119,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateBeforeEntry.compareTo(currentWeekStartDate) < 0) {
                       weekData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateBeforeEntry,
-                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(
                           weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min]!,
                         ),
                       });
@@ -128,7 +130,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentWeekStartDate)) {
                     weekData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentWeekStartDate]!),
+                      OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentWeekStartDate]!),
                     });
                   }
 
@@ -139,7 +141,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateAfterEntry.compareTo(currentWeekStartDate) > 0) {
                       weekData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateAfterEntry,
-                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(
                           weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max]!,
                         ),
                       });
@@ -188,7 +190,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateBeforeEntry.compareTo(currentMonthStartDate) < 0) {
                       monthData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateBeforeEntry,
-                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(
                           weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.min]!,
                         ),
                       });
@@ -199,7 +201,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                   if (snapshot.data!.groupMaxWeights!.containsKey(currentMonthStartDate)) {
                     monthData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                      OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentMonthStartDate]!),
+                      OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(weightKg: snapshot.data!.groupMaxWeights![currentMonthStartDate]!),
                     });
                   }
 
@@ -210,7 +212,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
                     if (dateAfterEntry.compareTo(currentMonthStartDate) > 0) {
                       monthData.add({
                         OpenEatsJournalStrings.chartDateInformation: dateAfterEntry,
-                        OpenEatsJournalStrings.chartWeight: ConvertValidate.getDisplayWeightKg(
+                        OpenEatsJournalStrings.chartWeight: convert.getDisplayWeightKg(
                           weightKg: snapshot.data!.groupMaxWeights![snapshot.data!.groupMaxWeights!.keys.max]!,
                         ),
                       });

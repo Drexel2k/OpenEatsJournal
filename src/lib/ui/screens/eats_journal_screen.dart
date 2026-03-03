@@ -10,8 +10,9 @@ import "package:openeatsjournal/domain/weight_journal_entry.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
+import "package:openeatsjournal/repository/journal_repository.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
-import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
@@ -61,6 +62,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final double fabMenuWidth = 150;
 
@@ -91,7 +93,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                         },
                         style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                         child: Text(
-                          ConvertValidate.dateFormatterDisplayLongDateOnly.format(eatsJournalScreenViewModel.currentJournalDate.value),
+                          convert.dateFormatterDisplayLongDateOnly.format(eatsJournalScreenViewModel.currentJournalDate.value),
                           textAlign: TextAlign.center,
                         ),
                       );
@@ -178,6 +180,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                       double snacksStartPoint = breakfastPercent + lunchPercent + dinnerPercent;
                       double snacksEndpoint = breakfastPercent + lunchPercent + dinnerPercent + snacksPercent;
 
+                      SettingsRepository settingsRepository = Provider.of<SettingsRepository>(context, listen: false);
+                      JournalRepository journalRepository = Provider.of<JournalRepository>(context, listen: false);
+
                       return Stack(
                         children: [
                           Center(
@@ -190,7 +195,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                     return Column(
                                       children: [
                                         Text(
-                                          ConvertValidate.getLocalizedEnergyUnit(context: context),
+                                          convert.getLocalizedEnergyUnit(context: context),
                                           style: textTheme.titleLarge,
                                           textAlign: TextAlign.center,
                                         ),
@@ -199,14 +204,14 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                           children: [
                                             Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
                                             Text(
-                                              " ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: (kJouleGaugeData.maxValue - kJouleGaugeData.currentValue).toDouble()))}",
+                                              " ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: (kJouleGaugeData.maxValue - kJouleGaugeData.currentValue).toDouble()))}",
                                               style: textTheme.titleMedium,
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
                                         ),
                                         Text(
-                                          "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.currentValue.toDouble()))}/${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: kJouleGaugeData.maxValue.toDouble()))}",
+                                          "${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: kJouleGaugeData.currentValue.toDouble()))}/${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: kJouleGaugeData.maxValue.toDouble()))}",
                                           style: textTheme.titleSmall,
                                           textAlign: TextAlign.center,
                                         ),
@@ -325,7 +330,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                             children: [
                                               Text(AppLocalizations.of(context)!.breakfast),
                                               Text(
-                                                "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: breakfastPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: breakfastKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                "${convert.getCleanDoubleString1DecimalDigit(doubleValue: breakfastPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: breakfastKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                               ),
                                             ],
                                           ),
@@ -354,7 +359,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                 children: [
                                                   Text(AppLocalizations.of(context)!.lunch),
                                                   Text(
-                                                    "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: lunchPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: lunchKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: lunchPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: lunchKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                                   ),
                                                 ],
                                               ),
@@ -385,7 +390,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                 children: [
                                                   Text(AppLocalizations.of(context)!.dinner),
                                                   Text(
-                                                    "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: dinnerPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: dinnerKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: dinnerPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: dinnerKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                                   ),
                                                 ],
                                               ),
@@ -416,7 +421,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                 children: [
                                                   Text(AppLocalizations.of(context)!.snacks),
                                                   Text(
-                                                    "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: snacksPercent)}% / ${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: snacksKJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                                                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: snacksPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: snacksKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
                                                   ),
                                                 ],
                                               ),
@@ -464,7 +469,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                               builder: (_, _) {
                                                                 return Text(
                                                                   snapshot.data != null
-                                                                      ? "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}"
+                                                                      ? "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)}"
                                                                       : AppLocalizations.of(context)!.na,
                                                                 );
                                                               },
@@ -514,8 +519,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                             ),
                                                             child: ChangeNotifierProvider(
                                                               create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: Provider.of<Repositories>(context, listen: false).journalRepository,
-                                                                settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
+                                                                journalRepository: journalRepository,
+                                                                settingsRepository: settingsRepository,
                                                                 meal: Meal.breakfast,
                                                               ),
                                                               child: EatsJournalEditScreen(),
@@ -609,8 +614,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                             ),
                                                             child: ChangeNotifierProvider(
                                                               create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: Provider.of<Repositories>(context, listen: false).journalRepository,
-                                                                settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
+                                                                journalRepository: journalRepository,
+                                                                settingsRepository: settingsRepository,
                                                                 meal: Meal.lunch,
                                                               ),
                                                               child: EatsJournalEditScreen(),
@@ -704,8 +709,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                             ),
                                                             child: ChangeNotifierProvider(
                                                               create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: Provider.of<Repositories>(context, listen: false).journalRepository,
-                                                                settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
+                                                                journalRepository: journalRepository,
+                                                                settingsRepository: settingsRepository,
                                                                 meal: Meal.dinner,
                                                               ),
                                                               child: EatsJournalEditScreen(),
@@ -799,8 +804,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                             ),
                                                             child: ChangeNotifierProvider(
                                                               create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: Provider.of<Repositories>(context, listen: false).journalRepository,
-                                                                settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
+                                                                journalRepository: journalRepository,
+                                                                settingsRepository: settingsRepository,
                                                                 meal: Meal.snacks,
                                                               ),
                                                               child: EatsJournalEditScreen(),
@@ -893,9 +898,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                               verticalPadding,
                                                             ),
                                                             child: ChangeNotifierProvider(
-                                                              create: (context) => WeightJournalEditScreenViewModel(
-                                                                journalRepository: Provider.of<Repositories>(context, listen: false).journalRepository,
-                                                              ),
+                                                              create: (context) => WeightJournalEditScreenViewModel(journalRepository: journalRepository),
                                                               child: WeightJournalEditScreen(),
                                                             ),
                                                           );
@@ -920,6 +923,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                     eatsJournalScreenViewModel: eatsJournalScreenViewModel,
                                                     initialDate: eatsJournalScreenViewModel.currentJournalDate.value,
                                                     initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
+                                                    convert: convert,
                                                   )) {
                                                     eatsJournalScreenViewModel.refreshCurrentWeight();
                                                     _overlayDisplayWeightEntry1 = OverlayDisplay(
@@ -968,8 +972,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                 insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
                                                 child: ChangeNotifierProvider(
                                                   create: (context) => EatsJournalEditScreenViewModel(
-                                                    journalRepository: Provider.of<Repositories>(context, listen: false).journalRepository,
-                                                    settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
+                                                    journalRepository: journalRepository,
+                                                    settingsRepository: settingsRepository,
                                                   ),
                                                   child: EatsJournalEditScreen(),
                                                 ),
@@ -1012,10 +1016,8 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   dialogVerticalPadding,
                                                 ),
                                                 child: ChangeNotifierProvider(
-                                                  create: (context) => SettingsScreenViewModel(
-                                                    settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
-                                                    weight: weight,
-                                                  ),
+                                                  create: (context) =>
+                                                      SettingsScreenViewModel(settingsRepository: settingsRepository, convert: convert, weight: weight),
                                                   child: SettingsScreen(),
                                                 ),
                                               );
@@ -1084,6 +1086,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                 eatsJournalScreenViewModel: eatsJournalScreenViewModel,
                                 initialDate: eatsJournalScreenViewModel.currentJournalDate.value,
                                 initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
+                                convert: convert,
                               )) {
                                 eatsJournalScreenViewModel.refreshCurrentWeight();
                                 _overlayDisplayWeightEntry2 = OverlayDisplay(
@@ -1342,11 +1345,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
     required EatsJournalScreenViewModel eatsJournalScreenViewModel,
     required DateTime initialDate,
     required double initialWeight,
+    required ConvertValidate convert,
   }) async {
     double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
     double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
 
-    WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(initialWeight: initialWeight);
+    WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
+      initialWeight: initialWeight,
+      convert: convert,
+    );
 
     if ((await showDialog<bool>(
       useSafeArea: true,

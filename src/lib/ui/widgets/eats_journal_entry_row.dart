@@ -5,6 +5,7 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
+import "package:provider/provider.dart";
 
 class EatsJournalEntryRow extends StatelessWidget {
   const EatsJournalEntryRow({
@@ -28,11 +29,12 @@ class EatsJournalEntryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     String amountInformation = AppLocalizations.of(context)!.na;
     if (_eatsJournalEntry.amount != null) {
       amountInformation = _eatsJournalEntry.amountMeasurementUnit == MeasurementUnit.gram
-          ? "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightG(weightG: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)}"
-          : "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayVolume(volumeMl: _eatsJournalEntry.amount!))}${ConvertValidate.getLocalizedVolumeUnitAbbreviated(context: context)}";
+          ? "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: _eatsJournalEntry.amount!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}"
+          : "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayVolume(volumeMl: _eatsJournalEntry.amount!))}${convert.getLocalizedVolumeUnitAbbreviated(context: context)}";
     }
 
     return Row(
@@ -53,7 +55,7 @@ class EatsJournalEntryRow extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "${ConvertValidate.numberFomatterInt.format(ConvertValidate.getDisplayEnergy(energyKJ: _eatsJournalEntry.kJoule))}${ConvertValidate.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                            "${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: _eatsJournalEntry.kJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
                           ),
                           Spacer(),
                           Text(amountInformation),

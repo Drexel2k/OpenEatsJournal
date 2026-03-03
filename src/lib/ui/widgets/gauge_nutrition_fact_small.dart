@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
+import "package:provider/provider.dart";
 
 class GaugeNutritionFactSmall extends StatelessWidget {
   const GaugeNutritionFactSmall({super.key, required String factName, required GaugeData gaugeData}) : _gaugeData = gaugeData, _factName = factName;
@@ -11,6 +12,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     double height = 80;
@@ -54,7 +56,7 @@ class GaugeNutritionFactSmall extends StatelessWidget {
               Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
               SizedBox(height: 13),
               Text(
-                "${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.currentValue as double)}/\n${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.maxValue as double)}",
+                "${convert.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.currentValue as double)}/\n${convert.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.maxValue as double)}",
                 style: textTheme.labelSmall,
                 textAlign: TextAlign.center,
               ),

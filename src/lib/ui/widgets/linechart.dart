@@ -4,6 +4,7 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
+import "package:provider/provider.dart";
 
 //Values and bars on the corner cases are cut off, due to limitation on setting marginMin and marginMax on a TimeScale when min and max values are set.
 //See issue https://github.com/entronad/graphic/issues/358
@@ -40,6 +41,7 @@ class Linechart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -153,7 +155,7 @@ class Linechart extends StatelessWidget {
                   encoder: (Map<dynamic, dynamic> map) {
                     if (map[OpenEatsJournalStrings.chartDateVar] != _displayUntil) {
                       return Label(
-                        ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: map[_chartVar]),
+                        convert.getCleanDoubleString1DecimalDigit(doubleValue: map[_chartVar]),
                         LabelStyle(
                           textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
                           offset: Offset(6, -15),

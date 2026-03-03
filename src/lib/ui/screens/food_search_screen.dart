@@ -57,9 +57,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final double fabMenuWidth = 150;
+    double fabMenuWidth = 150;
 
     double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
     double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
@@ -93,7 +94,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                         },
                         style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                         child: Text(
-                          ConvertValidate.dateFormatterDisplayLongDateOnly.format(foodSearchScreenViewModel.currentJournalDate.value),
+                          convert.dateFormatterDisplayLongDateOnly.format(foodSearchScreenViewModel.currentJournalDate.value),
                           textAlign: TextAlign.center,
                         ),
                       );
@@ -465,6 +466,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                 foodSearchScreenViewModel: foodSearchScreenViewModel,
                                 initialDate: foodSearchScreenViewModel.currentJournalDate.value,
                                 initialWeight: await foodSearchScreenViewModel.getLastWeightJournalEntry(),
+                                convert: convert,
                               )) {
                                 _overlayDisplayWeightEntry = OverlayDisplay(
                                   context: AppGlobal.navigatorKey.currentContext!,
@@ -585,11 +587,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
     required FoodSearchScreenViewModel foodSearchScreenViewModel,
     required DateTime initialDate,
     required double initialWeight,
+    required ConvertValidate convert,
   }) async {
     double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
     double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
 
-    WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(initialWeight: initialWeight);
+    WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = WeightJournalEntryAddScreenViewModel(
+      initialWeight: initialWeight,
+      convert: convert,
+    );
 
     if ((await showDialog<bool>(
       useSafeArea: true,

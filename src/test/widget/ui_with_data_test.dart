@@ -15,7 +15,6 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
-import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
@@ -51,8 +50,11 @@ void main() async {
     _database = null;
   });
 
-  Future<Repositories> generalSetup() async {
+  Future<List<Object>> generalSetup() async {
+    List<Object> result = List.empty(growable: true);
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
+    result.add(settingsRepository);
+
     OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
@@ -62,33 +64,38 @@ void main() async {
       appContactMail: settingsRepository.appContactMail!,
     );
 
-    Repositories repositories = Repositories(
-      settingsRepository: settingsRepository,
-      foodRepository: FoodRepository(
+    result.add(
+      FoodRepository(
         settingsRepository: settingsRepository,
         openFoodFactsService: openFoodFactsService,
         oejDatabaseService: _database!,
         oejAssetsService: openEatsJournalAssetsService,
       ),
-      journalRepository: JournalRepository(oejDatabase: _database!),
     );
+
+    result.add(JournalRepository(oejDatabase: _database!));
 
     //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), repositories.settingsRepository.initSettings()]);
+    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
 
-    ConvertValidate.init(
-      languageCode: repositories.settingsRepository.languageCode.value,
-      energyUnit: repositories.settingsRepository.energyUnit,
-      heightUnit: repositories.settingsRepository.heightUnit,
-      weightUnit: repositories.settingsRepository.weightUnit,
-      volumeUnit: repositories.settingsRepository.volumeUnit,
+    ConvertValidate convert = ConvertValidate(
+      languageCode: settingsRepository.languageCode.value,
+      energyUnit: settingsRepository.energyUnit,
+      heightUnit: settingsRepository.heightUnit,
+      weightUnit: settingsRepository.weightUnit,
+      volumeUnit: settingsRepository.volumeUnit,
     );
 
-    return repositories;
+    result.add(convert);
+
+    return result;
   }
 
-  Future<Repositories> setupWithSpecificTodayDate({required DateTime today}) async {
+  Future<List<Object>> setupWithSpecificTodayDate({required DateTime today}) async {
+    List<Object> result = List.empty(growable: true);
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
+    result.add(settingsRepository);
+
     OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
@@ -98,36 +105,42 @@ void main() async {
       appContactMail: settingsRepository.appContactMail!,
     );
 
-    Repositories repositories = Repositories(
-      settingsRepository: settingsRepository,
-      foodRepository: FoodRepository(
+    result.add(
+      FoodRepository(
         settingsRepository: settingsRepository,
         openFoodFactsService: openFoodFactsService,
         oejDatabaseService: _database!,
         oejAssetsService: openEatsJournalAssetsService,
       ),
-      journalRepository: JournalRepository(oejDatabase: _database!),
     );
+    result.add(JournalRepository(oejDatabase: _database!));
 
     //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), repositories.settingsRepository.initSettings()]);
+    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
 
-    ConvertValidate.init(
-      languageCode: repositories.settingsRepository.languageCode.value,
-      energyUnit: repositories.settingsRepository.energyUnit,
-      heightUnit: repositories.settingsRepository.heightUnit,
-      weightUnit: repositories.settingsRepository.weightUnit,
-      volumeUnit: repositories.settingsRepository.volumeUnit,
+    ConvertValidate convert = ConvertValidate(
+      languageCode: settingsRepository.languageCode.value,
+      energyUnit: settingsRepository.energyUnit,
+      heightUnit: settingsRepository.heightUnit,
+      weightUnit: settingsRepository.weightUnit,
+      volumeUnit: settingsRepository.volumeUnit,
     );
 
-    return repositories;
+    result.add(convert);
+
+    return result;
   }
 
   testWidgets("Adding and loading quick entry", (tester) async {
     //without runAsync openDatabase will hang.
-    Repositories repositories = (await tester.runAsync<Repositories>(() async {
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
       return await generalSetup();
     }))!;
+
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
+    ConvertValidate convert = repositories[3] as ConvertValidate;
+
     //Adding entry
     DateTime entryDateValue = DateTime(2026, 02, 12);
     String nameValue = "Quick Entry 1";
@@ -145,7 +158,7 @@ void main() async {
     EatsJournalEntry quickEntry = EatsJournalEntry.quick(
       entryDate: entryDateValue,
       name: nameValue,
-      kJoule: ConvertValidate.getEnergyKJ(displayEnergy: kCalValue),
+      kJoule: convert.getEnergyKJ(displayEnergy: kCalValue),
       meal: mealValue,
     );
     quickEntry.amount = amountValue;
@@ -157,18 +170,22 @@ void main() async {
     quickEntry.protein = proteinValue;
     quickEntry.salt = saltValue;
 
-    Widget widget = MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale(repositories.settingsRepository.languageCode.value),
-      navigatorKey: AppGlobal.navigatorKey,
-      home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
-        create: (context) => EatsJournalQuickEntryEditScreenViewModel(
-          quickEntry: quickEntry,
-          journalRepository: repositories.journalRepository,
-          settingsRepository: repositories.settingsRepository,
+    Widget widget = Provider.value(
+      value: convert,
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(settingsRepository.languageCode.value),
+        navigatorKey: AppGlobal.navigatorKey,
+        home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
+          create: (context) => EatsJournalQuickEntryEditScreenViewModel(
+            quickEntry: quickEntry,
+            journalRepository: journalRepository,
+            settingsRepository: settingsRepository,
+            convert: convert,
+          ),
+          child: EatsJournalQuickEntryEditScreen(),
         ),
-        child: EatsJournalQuickEntryEditScreen(),
       ),
     );
 
@@ -181,13 +198,13 @@ void main() async {
     expect(quickEntry.id, isNotNull);
 
     //Loading entry
-    List<EatsJournalEntry>? entries = await repositories.journalRepository.getEatsJournalEntries(date: entryDateValue, meal: mealValue);
+    List<EatsJournalEntry>? entries = await journalRepository.getEatsJournalEntries(date: entryDateValue, meal: mealValue);
 
     expect(entries, isNotNull);
     expect(entries!.length, 1);
     expect(entries[0].entryDate, entryDateValue);
     expect(entries[0].name, nameValue);
-    expect(entries[0].kJoule, ConvertValidate.getEnergyKJ(displayEnergy: kCalValue));
+    expect(entries[0].kJoule, convert.getEnergyKJ(displayEnergy: kCalValue));
     expect(entries[0].amount, amountValue);
     expect(entries[0].amountMeasurementUnit, amountMeasurementUnitValue);
     expect(entries[0].fat, fatValue);
@@ -198,18 +215,22 @@ void main() async {
     expect(entries[0].salt, saltValue);
 
     //Check if everything is displayed
-    widget = MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale(repositories.settingsRepository.languageCode.value),
-      navigatorKey: AppGlobal.navigatorKey,
-      home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
-        create: (context) => EatsJournalQuickEntryEditScreenViewModel(
-          quickEntry: entries[0],
-          journalRepository: repositories.journalRepository,
-          settingsRepository: repositories.settingsRepository,
+    widget = Provider.value(
+      value: convert,
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(settingsRepository.languageCode.value),
+        navigatorKey: AppGlobal.navigatorKey,
+        home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
+          create: (context) => EatsJournalQuickEntryEditScreenViewModel(
+            quickEntry: entries[0],
+            journalRepository: journalRepository,
+            settingsRepository: settingsRepository,
+            convert: convert,
+          ),
+          child: EatsJournalQuickEntryEditScreen(),
         ),
-        child: EatsJournalQuickEntryEditScreen(),
       ),
     );
 
@@ -230,38 +251,38 @@ void main() async {
       }
 
       if (textFieldIndex == 2) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: amountValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: amountValue));
       }
 
       if (textFieldIndex == 3) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: carbohydratesValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: carbohydratesValue));
       }
 
       if (textFieldIndex == 4) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: sugarValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: sugarValue));
       }
 
       if (textFieldIndex == 5) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: fatValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: fatValue));
       }
 
       if (textFieldIndex == 6) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: saturatedFatValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: saturatedFatValue));
       }
 
       if (textFieldIndex == 7) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: proteinValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: proteinValue));
       }
 
       if (textFieldIndex == 8) {
-        expect(openEatsJournalTextField.controller!.text, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: saltValue));
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: saltValue));
       }
 
       textFieldIndex++;
     }
 
     expect(find.text("dinner"), findsOneWidget);
-    expect(find.text(ConvertValidate.dateFormatterDisplayLongDateOnly.format(entryDateValue)), findsOneWidget);
+    expect(find.text(convert.dateFormatterDisplayLongDateOnly.format(entryDateValue)), findsOneWidget);
     expect(find.text("ml"), findsOneWidget);
 
     //let timer end, otherwise the test will fail/throw an internal exception.
@@ -271,25 +292,32 @@ void main() async {
   testWidgets("Check statistic data with nutritions null values", (tester) async {
     DateTime today = DateTime(2026, 3, 18);
     //without runAsync openDatabase will hang.
-    Repositories repositories = (await tester.runAsync<Repositories>(() async {
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
       return await setupWithSpecificTodayDate(today: today);
     }))!;
 
-    EatsJournalEntry eatsJournalEntry = EatsJournalEntry.quick(entryDate: today, name: "Test Entry", kJoule: 400, meal: Meal.breakfast);
-    await repositories.journalRepository.saveOnceDayNutritionTarget(
-      entryDate: eatsJournalEntry.entryDate,
-      dayTargetKJoule: repositories.settingsRepository.getTargetKJouleForDay(day: eatsJournalEntry.entryDate),
-    );
-    await repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
+    ConvertValidate convert = repositories[3] as ConvertValidate;
 
-    Widget widget = MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale(repositories.settingsRepository.languageCode.value),
-      navigatorKey: AppGlobal.navigatorKey,
-      home: ChangeNotifierProvider<StatisticsScreenViewModel>(
-        create: (context) => StatisticsScreenViewModel(settingsRepository: repositories.settingsRepository, journalRepository: repositories.journalRepository),
-        child: StatisticsScreen(),
+    EatsJournalEntry eatsJournalEntry = EatsJournalEntry.quick(entryDate: today, name: "Test Entry", kJoule: 400, meal: Meal.breakfast);
+    await journalRepository.saveOnceDayNutritionTarget(
+      entryDate: eatsJournalEntry.entryDate,
+      dayTargetKJoule: settingsRepository.getTargetKJouleForDay(day: eatsJournalEntry.entryDate),
+    );
+    await journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+
+    Widget widget = Provider.value(
+      value: convert,
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(settingsRepository.languageCode.value),
+        navigatorKey: AppGlobal.navigatorKey,
+        home: ChangeNotifierProvider<StatisticsScreenViewModel>(
+          create: (context) => StatisticsScreenViewModel(settingsRepository: settingsRepository, journalRepository: journalRepository),
+          child: StatisticsScreen(),
+        ),
       ),
     );
 

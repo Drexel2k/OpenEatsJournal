@@ -11,15 +11,16 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class SettingsScreenViewModel extends ChangeNotifier {
-  SettingsScreenViewModel({required SettingsRepository settingsRepository, required double weight})
+  SettingsScreenViewModel({required SettingsRepository settingsRepository, required ConvertValidate convert, required double weight})
     : _settingsRepository = settingsRepository,
+      _convert = convert,
       _darkMode = ValueNotifier(settingsRepository.darkMode.value),
       _languageCode = ValueNotifier(settingsRepository.languageCode.value),
       _gender = ValueNotifier(settingsRepository.gender),
       _birthday = ValueNotifier(settingsRepository.birthday),
-      _height = ValueNotifier(ConvertValidate.getDisplayHeight(heightCm: settingsRepository.height)),
+      _height = ValueNotifier(convert.getDisplayHeight(heightCm: settingsRepository.height)),
       _lastValidWeight = weight,
-      _weight = ValueNotifier(ConvertValidate.getDisplayWeightKg(weightKg: weight)),
+      _weight = ValueNotifier(convert.getDisplayWeightKg(weightKg: weight)),
       _activityFactor = ValueNotifier(settingsRepository.activityFactor),
       _weightTarget = ValueNotifier(settingsRepository.weightTarget),
       _energyUnit = ValueNotifier(settingsRepository.energyUnit),
@@ -44,6 +45,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   }
 
   final SettingsRepository _settingsRepository;
+  final ConvertValidate _convert;
 
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final ValueNotifier<bool> _darkMode;
@@ -80,7 +82,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   ValueNotifier<DateTime> get birthday => _birthday;
   ValueNotifier<double?> get height => _height;
   ValueNotifier<bool> get heightValid => _heightValid;
-  double get lastValidWeight => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
+  double get lastValidWeight => _convert.getDisplayWeightKg(weightKg: _lastValidWeight);
   ValueNotifier<double?> get weight => _weight;
   ValueNotifier<bool> get weightValid => _weightValid;
   ValueNotifier<double> get activityFactor => _activityFactor;
@@ -100,7 +102,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   double get kJouleFriday => _settingsRepository.kJouleFriday;
   double get kJouleSaturday => _settingsRepository.kJouleSaturday;
   double get kJouleSunday => _settingsRepository.kJouleSunday;
-  double get repositoryHeight => ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height);
+  double get repositoryHeight => _convert.getDisplayHeight(heightCm: _settingsRepository.height);
 
   bool get useStagingServices => _settingsRepository.useStagingServices;
   String get contactData => _settingsRepository.contactData!;
@@ -108,7 +110,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   DateTime get today => _settingsRepository.today;
 
   void _setDailyTargetKJoule() {
-    _dailyTargetKJoule.value = ConvertValidate.getDisplayEnergy(
+    _dailyTargetKJoule.value = _convert.getDisplayEnergy(
       energyKJ:
           (_settingsRepository.kJouleMonday +
               _settingsRepository.kJouleTuesday +
@@ -149,7 +151,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   }
 
   void _setDailyKJoule() {
-    _dailyKJoule.value = ConvertValidate.getDisplayEnergy(energyKJ: _getDailyKJoule(today: _settingsRepository.today));
+    _dailyKJoule.value = _convert.getDisplayEnergy(energyKJ: _getDailyKJoule(today: _settingsRepository.today));
   }
 
   void _darkModeChanged() {
@@ -158,6 +160,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   void _languageCodeChanged() {
     _settingsRepository.languageCode.value = _languageCode.value;
+    _convert.languageCode = _languageCode.value;
   }
 
   void _genderChanged() {
@@ -174,12 +177,12 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _height.value = height;
 
     if (!onlyUnitChange) {
-      if (ConvertValidate.heightValid(displayHeight: _height.value?.toDouble())) {
+      if (_convert.heightValid(displayHeight: _height.value?.toDouble())) {
         _heightValid.value = true;
 
         _heightDebouncer.run(
           callback: () async {
-            _settingsRepository.height = ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble());
+            _settingsRepository.height = _convert.getHeightCm(displayHeight: _height.value!.toDouble());
             _setDailyKJoule();
           },
         );
@@ -194,12 +197,12 @@ class SettingsScreenViewModel extends ChangeNotifier {
     _weight.value = weight;
 
     if (!onlyUnitChange) {
-      if (ConvertValidate.weightValid(displayWeight: _weight.value)) {
+      if (_convert.weightValid(displayWeight: _weight.value)) {
         _weightValid.value = true;
 
         _weightDebouncer.run(
           callback: () async {
-            _lastValidWeight = ConvertValidate.getWeightKg(displayWeight: _weight.value!);
+            _lastValidWeight = _convert.getWeightKg(displayWeight: _weight.value!);
             _setDailyKJoule();
           },
         );
@@ -221,7 +224,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   void _energyUnitChanged() {
     _settingsRepository.energyUnit = _energyUnit.value;
-    _updateConvertValidate();
+    _convert.energyUnit = _energyUnit.value;
 
     _setDailyKJoule();
     _setDailyTargetKJoule();
@@ -229,16 +232,16 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   void _heightUnitChanged() {
     _settingsRepository.heightUnit = _heightUnit.value;
-    _updateConvertValidate();
+    _convert.heightUnit = _heightUnit.value;
 
-    setHeight(height: ConvertValidate.getDisplayHeight(heightCm: _settingsRepository.height), onlyUnitChange: true);
+    setHeight(height: _convert.getDisplayHeight(heightCm: _settingsRepository.height), onlyUnitChange: true);
   }
 
   void _weightUnitChanged() {
     _settingsRepository.weightUnit = _weightUnit.value;
-    _updateConvertValidate();
+    _convert.weightUnit = _weightUnit.value;
 
-    setWeight(weight: ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight), onlyUnitChange: true);
+    setWeight(weight: _convert.getDisplayWeightKg(weightKg: _lastValidWeight), onlyUnitChange: true);
 
     _displayWeightTarget1 = _getDisplayWeightTarget1(weightUnit: _settingsRepository.weightUnit);
     _displayWeightTarget2 = _getDisplayWeightTarget2(weightUnit: _settingsRepository.weightUnit);
@@ -247,31 +250,21 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   void _volumeUnitChanged() {
     _settingsRepository.volumeUnit = _volumeUnit.value;
-    _updateConvertValidate();
-  }
-
-  void _updateConvertValidate() {
-    ConvertValidate.init(
-      languageCode: _settingsRepository.languageCode.value,
-      energyUnit: _settingsRepository.energyUnit,
-      heightUnit: _settingsRepository.heightUnit,
-      weightUnit: _settingsRepository.weightUnit,
-      volumeUnit: _settingsRepository.volumeUnit,
-    );
+    _convert.volumeUnit = _volumeUnit.value;
   }
 
   Future<void> recalculateDailykJouleTargetsAndSave() async {
     double weightLossKg = 0;
     if (_settingsRepository.weightTarget == WeightTarget.lose025) {
-      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget1);
+      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget1);
     }
 
     if (_settingsRepository.weightTarget == WeightTarget.lose05) {
-      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget2);
+      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget2);
     }
 
     if (_settingsRepository.weightTarget == WeightTarget.lose075) {
-      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget3);
+      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget3);
     }
 
     double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(
@@ -284,7 +277,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
     await _settingsRepository.saveDailyKJouleTargetsSame(dailyTargetKJoule: dailyTargetKJoule);
 
-    _dailyTargetKJoule.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyTargetKJoule);
+    _dailyTargetKJoule.value = _convert.getDisplayEnergy(energyKJ: dailyTargetKJoule);
   }
 
   Future<bool> exportDatabase() async {

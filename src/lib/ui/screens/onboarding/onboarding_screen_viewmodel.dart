@@ -13,12 +13,14 @@ import "package:openeatsjournal/repository/journal_repository.dart";
 
 class OnboardingScreenViewModel extends ChangeNotifier {
   OnboardingScreenViewModel({
-    required SettingsRepository settingsRepository,
     required JournalRepository journalRepository,
+    required SettingsRepository settingsRepository,
+    required ConvertValidate convert,
     required bool darkMode,
     required String languageCode,
-  }) : _settingsRepository = settingsRepository,
-       _journalRepository = journalRepository,
+  }) : _journalRepository = journalRepository,
+       _settingsRepository = settingsRepository,
+       _convert = convert,
        _gender = ValueNotifier(null),
        _birthday = ValueNotifier(null),
        _height = ValueNotifier(null),
@@ -45,6 +47,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   final ValueNotifier<int> _currentPageIndex = ValueNotifier(0);
   final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
+  final ConvertValidate _convert;
 
   final ValueNotifier<Gender?> _gender;
   final ValueNotifier<DateTime?> _birthday;
@@ -97,8 +100,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
     double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-        weightKg: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
-        heightCm: ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble()),
+        weightKg: _convert.getWeightKg(displayWeight: _weight.value!),
+        heightCm: _convert.getHeightCm(displayHeight: _height.value!.toDouble()),
         ageYear: age,
         gender: _gender.value!,
       ),
@@ -119,7 +122,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         darkMode: _darkMode,
         gender: _gender.value!,
         birthday: _birthday.value!,
-        height: ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble()),
+        height: _convert.getHeightCm(displayHeight: _height.value!.toDouble()),
         activityFactor: _activityFactor.value!,
         weightTarget: _weightTarget.value!,
         kJouleMonday: dailyTargetKJoule,
@@ -139,7 +142,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
     await _journalRepository.setWeightJournalEntry(
       date: _settingsRepository.today,
-      weight: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
+      weight: _convert.getWeightKg(displayWeight: _weight.value!),
     );
   }
 
@@ -170,8 +173,8 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
       double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
         kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
-          weightKg: ConvertValidate.getWeightKg(displayWeight: _weight.value!),
-          heightCm: ConvertValidate.getHeightCm(displayHeight: _height.value!.toDouble()),
+          weightKg: _convert.getWeightKg(displayWeight: _weight.value!),
+          heightCm: _convert.getHeightCm(displayHeight: _height.value!.toDouble()),
           ageYear: age,
           gender: _gender.value!,
         ),
@@ -182,7 +185,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         dailyNeedKJouleDouble = 1;
       }
 
-      _dailyNeedEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyNeedKJouleDouble);
+      _dailyNeedEnergy.value = _convert.getDisplayEnergy(energyKJ: dailyNeedKJouleDouble);
 
       if (dailyTargetKJouleCalculationPossible) {
         double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(
@@ -193,7 +196,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
           dailyTargetKJouleDouble = 1;
         }
 
-        _dailyTargetEnergy.value = ConvertValidate.getDisplayEnergy(energyKJ: dailyTargetKJouleDouble);
+        _dailyTargetEnergy.value = _convert.getDisplayEnergy(energyKJ: dailyTargetKJouleDouble);
       }
     }
   }
@@ -201,15 +204,15 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   double _getWeightLossKg() {
     double weightLossKg = 0;
     if (_weightTarget.value == WeightTarget.lose025) {
-      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget1);
+      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget1);
     }
 
     if (_weightTarget.value == WeightTarget.lose05) {
-      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget2);
+      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget2);
     }
 
     if (_weightTarget.value == WeightTarget.lose075) {
-      weightLossKg = ConvertValidate.getWeightKg(displayWeight: displayWeightTarget3);
+      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget3);
     }
 
     return weightLossKg;

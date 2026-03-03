@@ -36,6 +36,8 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
 
   @override
   Widget build(BuildContext context) {
+    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -60,7 +62,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                       Row(
                         children: [
                           Text(
-                            ConvertValidate.dateFormatterDisplayLongDateOnly.format(eatsJournalEditScreenViewModel.currentJournalDate),
+                            convert.dateFormatterDisplayLongDateOnly.format(eatsJournalEditScreenViewModel.currentJournalDate),
                             style: textTheme.titleMedium,
                           ),
                           Spacer(),
@@ -217,7 +219,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
     if (_overlayDisplayFoodEntryEdit != null) {
       _overlayDisplayFoodEntryEdit!.stop();
     }
-    
+
     if (_overlayDisplayQuickEntryEdit != null) {
       _overlayDisplayQuickEntryEdit!.stop();
     }

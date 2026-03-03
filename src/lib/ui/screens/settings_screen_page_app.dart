@@ -2,6 +2,7 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/energy_unit.dart";
 import "package:openeatsjournal/domain/utils/height_unit.dart";
 import "package:openeatsjournal/domain/utils/volume_unit.dart";
@@ -11,6 +12,7 @@ import "package:openeatsjournal/ui/screens/about_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
+import "package:provider/provider.dart";
 import "package:url_launcher/url_launcher.dart";
 
 class SettingsScreenPageApp extends StatelessWidget {
@@ -192,6 +194,7 @@ class SettingsScreenPageApp extends StatelessWidget {
                             selected: _settingsViewModel.languageCode.value == OpenEatsJournalStrings.en,
                             onSelected: (bool selected) {
                               _settingsViewModel.languageCode.value = OpenEatsJournalStrings.en;
+                              Provider.of<ConvertValidate>(context, listen: false).languageCode = OpenEatsJournalStrings.en;
                             },
                           );
                         },
@@ -205,6 +208,7 @@ class SettingsScreenPageApp extends StatelessWidget {
                             selected: _settingsViewModel.languageCode.value == OpenEatsJournalStrings.de,
                             onSelected: (bool selected) {
                               _settingsViewModel.languageCode.value = OpenEatsJournalStrings.de;
+                              Provider.of<ConvertValidate>(context, listen: false).languageCode = OpenEatsJournalStrings.de;
                             },
                           );
                         },

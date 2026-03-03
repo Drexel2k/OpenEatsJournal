@@ -4,6 +4,7 @@ import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/onboarding/onboarding_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/transparent_choice_chip.dart";
+import "package:provider/provider.dart";
 
 class OnboardingScreenPage4 extends StatelessWidget {
   OnboardingScreenPage4({super.key, required onDone, required OnboardingScreenViewModel onboardingScreenViewModel})
@@ -17,6 +18,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
@@ -54,7 +56,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
                                   label:
-                                      "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget1)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                                      "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                                   selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose025,
                                   onSelected: (bool selected) {
                                     _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose025;
@@ -68,7 +70,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
                                   label:
-                                      "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget2)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                                      "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                                   selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose05,
                                   onSelected: (bool selected) {
                                     _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose05;
@@ -82,7 +84,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                               builder: (contextBuilder, _, _) {
                                 return TransparentChoiceChip(
                                   label:
-                                      "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget3)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                                      "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                                   selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose075,
                                   onSelected: (bool selected) {
                                     _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose075;
@@ -102,7 +104,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                       return Center(
                         child: Text(
                           _onboardingScreenViewModel.dailyNeedEnergy.value != null
-                              ? ConvertValidate.numberFomatterInt.format(_onboardingScreenViewModel.dailyNeedEnergy.value)
+                              ? convert.numberFomatterInt.format(_onboardingScreenViewModel.dailyNeedEnergy.value)
                               : AppLocalizations.of(contextBuilder)!.na,
 
                           style: textTheme.titleLarge,
@@ -120,7 +122,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
                       return Center(
                         child: Text(
                           _onboardingScreenViewModel.dailyTargetEnergy.value != null
-                              ? ConvertValidate.numberFomatterInt.format(_onboardingScreenViewModel.dailyTargetEnergy.value)
+                              ? convert.numberFomatterInt.format(_onboardingScreenViewModel.dailyTargetEnergy.value)
                               : AppLocalizations.of(contextBuilder)!.na,
                           style: textTheme.titleLarge,
                           textAlign: TextAlign.center,

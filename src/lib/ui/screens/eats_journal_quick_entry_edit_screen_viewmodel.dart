@@ -13,27 +13,29 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
     required EatsJournalEntry quickEntry,
     required JournalRepository journalRepository,
     required SettingsRepository settingsRepository,
+    required ConvertValidate convert,
   }) : _journalRepository = journalRepository,
        _settingsRepository = settingsRepository,
+       _convert = convert,
        _quickEntry = quickEntry,
        _name = ValueNotifier(quickEntry.name),
        _nameValid = ValueNotifier(quickEntry.name.trim() != OpenEatsJournalStrings.emptyString),
        _amount = ValueNotifier(
          quickEntry.amount != null
              ? (quickEntry.amountMeasurementUnit! == MeasurementUnit.gram
-                   ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.amount!)
-                   : ConvertValidate.getDisplayVolume(volumeMl: quickEntry.amount!))
+                   ? convert.getDisplayWeightG(weightG: quickEntry.amount!)
+                   : convert.getDisplayVolume(volumeMl: quickEntry.amount!))
              : null,
        ),
        _amountMeasurementUnit = ValueNotifier(quickEntry.amountMeasurementUnit != null ? quickEntry.amountMeasurementUnit! : MeasurementUnit.gram),
-       _energy = ValueNotifier(ConvertValidate.getDisplayEnergy(energyKJ: quickEntry.kJoule)),
+       _energy = ValueNotifier(convert.getDisplayEnergy(energyKJ: quickEntry.kJoule)),
        _energyValid = ValueNotifier(quickEntry.kJoule > 0),
-       _carbohydrates = ValueNotifier(quickEntry.carbohydrates != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.carbohydrates!) : null),
-       _sugar = ValueNotifier(quickEntry.sugar != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.sugar!) : null),
-       _fat = ValueNotifier(quickEntry.fat != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.fat!) : null),
-       _saturatedFat = ValueNotifier(quickEntry.saturatedFat != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.saturatedFat!) : null),
-       _protein = ValueNotifier(quickEntry.protein != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.protein!) : null),
-       _salt = ValueNotifier(quickEntry.salt != null ? ConvertValidate.getDisplayWeightG(weightG: quickEntry.salt!) : null),
+       _carbohydrates = ValueNotifier(quickEntry.carbohydrates != null ? convert.getDisplayWeightG(weightG: quickEntry.carbohydrates!) : null),
+       _sugar = ValueNotifier(quickEntry.sugar != null ? convert.getDisplayWeightG(weightG: quickEntry.sugar!) : null),
+       _fat = ValueNotifier(quickEntry.fat != null ? convert.getDisplayWeightG(weightG: quickEntry.fat!) : null),
+       _saturatedFat = ValueNotifier(quickEntry.saturatedFat != null ? convert.getDisplayWeightG(weightG: quickEntry.saturatedFat!) : null),
+       _protein = ValueNotifier(quickEntry.protein != null ? convert.getDisplayWeightG(weightG: quickEntry.protein!) : null),
+       _salt = ValueNotifier(quickEntry.salt != null ? convert.getDisplayWeightG(weightG: quickEntry.salt!) : null),
        _currentEntryDate = ValueNotifier(quickEntry.entryDate),
        _currentMeal = ValueNotifier(quickEntry.meal) {
     if (_quickEntry.food != null) {
@@ -49,6 +51,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
 
   final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
+  final ConvertValidate _convert;
 
   final ValueNotifier<DateTime> _currentEntryDate;
   final ValueNotifier<Meal> _currentMeal;
@@ -139,15 +142,15 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
       _quickEntry.entryDate = _currentEntryDate.value;
       _quickEntry.meal = _currentMeal.value;
       _quickEntry.name = _name.value;
-      _quickEntry.kJoule = ConvertValidate.getEnergyKJ(displayEnergy: _energy.value!);
-      _quickEntry.amount = _amount.value != null ? ConvertValidate.getWeightG(displayWeight: _amount.value!) : null;
+      _quickEntry.kJoule = _convert.getEnergyKJ(displayEnergy: _energy.value!);
+      _quickEntry.amount = _amount.value != null ? _convert.getWeightG(displayWeight: _amount.value!) : null;
       _quickEntry.amountMeasurementUnit = _amount.value != null ? _amountMeasurementUnit.value : null;
-      _quickEntry.carbohydrates = _carbohydrates.value != null ? ConvertValidate.getWeightG(displayWeight: _carbohydrates.value!) : null;
-      _quickEntry.sugar = _sugar.value != null ? ConvertValidate.getWeightG(displayWeight: _sugar.value!) : null;
-      _quickEntry.fat = _fat.value != null ? ConvertValidate.getWeightG(displayWeight: _fat.value!) : null;
-      _quickEntry.saturatedFat = _saturatedFat.value != null ? ConvertValidate.getWeightG(displayWeight: _saturatedFat.value!) : null;
-      _quickEntry.protein = _protein.value != null ? ConvertValidate.getWeightG(displayWeight: _protein.value!) : null;
-      _quickEntry.salt = _salt.value != null ? ConvertValidate.getWeightG(displayWeight: _salt.value!) : null;
+      _quickEntry.carbohydrates = _carbohydrates.value != null ? _convert.getWeightG(displayWeight: _carbohydrates.value!) : null;
+      _quickEntry.sugar = _sugar.value != null ? _convert.getWeightG(displayWeight: _sugar.value!) : null;
+      _quickEntry.fat = _fat.value != null ? _convert.getWeightG(displayWeight: _fat.value!) : null;
+      _quickEntry.saturatedFat = _saturatedFat.value != null ? _convert.getWeightG(displayWeight: _saturatedFat.value!) : null;
+      _quickEntry.protein = _protein.value != null ? _convert.getWeightG(displayWeight: _protein.value!) : null;
+      _quickEntry.salt = _salt.value != null ? _convert.getWeightG(displayWeight: _salt.value!) : null;
 
       await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _quickEntry);
     }

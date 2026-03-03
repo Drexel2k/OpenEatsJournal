@@ -3,13 +3,20 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class WeightRowViewModel extends ChangeNotifier {
-  WeightRowViewModel({required double weight, required DateTime date, required Function({required DateTime date, required double weight}) onWeightChange})
-    : _weight = ValueNotifier(ConvertValidate.getDisplayWeightKg(weightKg: weight)),
-      _date = date,
-      _onWeightChange = onWeightChange,
-      _lastValidWeight = weight {
+  WeightRowViewModel({
+    required double weight,
+    required DateTime date,
+    required Function({required DateTime date, required double weight}) onWeightChange,
+    required ConvertValidate convert,
+  }) : _weight = ValueNotifier(convert.getDisplayWeightKg(weightKg: weight)),
+       _date = date,
+       _onWeightChange = onWeightChange,
+       _lastValidWeight = weight,
+       _convert = convert {
     _weight.addListener(_weightChangedInternal);
   }
+
+  final ConvertValidate _convert;
 
   final ValueNotifier<double?> _weight;
   final DateTime _date;
@@ -22,16 +29,16 @@ class WeightRowViewModel extends ChangeNotifier {
 
   ValueNotifier<double?> get weight => _weight;
   DateTime get date => _date;
-  double get lastValidWeight => ConvertValidate.getDisplayWeightKg(weightKg: _lastValidWeight);
+  double get lastValidWeight => _convert.getDisplayWeightKg(weightKg: _lastValidWeight);
   ValueNotifier<bool> get weightValid => _weightValid;
 
   void _weightChangedInternal() {
-    if (ConvertValidate.weightValid(displayWeight: _weight.value)) {
+    if (_convert.weightValid(displayWeight: _weight.value)) {
       _weightValid.value = true;
 
       _weightDebouncer.run(
         callback: () async {
-          _lastValidWeight = ConvertValidate.getWeightKg(displayWeight: _weight.value!);
+          _lastValidWeight = _convert.getWeightKg(displayWeight: _weight.value!);
           _onWeightChange(date: _date, weight: _lastValidWeight);
         },
       );

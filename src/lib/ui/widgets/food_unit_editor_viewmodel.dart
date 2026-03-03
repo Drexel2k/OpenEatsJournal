@@ -14,6 +14,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
     required ValueNotifier<bool> foodUnitsEditMode,
     required ValueNotifier<double?> foodNutritionPerGram,
     required ValueNotifier<double?> foodNutritionPerMilliliter,
+    required ConvertValidate convert,
   }) : _foodUnitEditorData = foodUnitEditorData,
        _defaultFoodUnit = ValueNotifier(foodUnitEditorData.isDefault),
        _changeMeasurementUnit = changeMeasurementUnit,
@@ -27,15 +28,16 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
        _amount = ValueNotifier(
          foodUnitEditorData.amount != null
              ? (foodUnitEditorData.amountMeasurementUnit == MeasurementUnit.gram
-                   ? ConvertValidate.getDisplayWeightG(weightG: foodUnitEditorData.amount!)
-                   : ConvertValidate.getDisplayVolume(volumeMl: foodUnitEditorData.amount!))
+                   ? convert.getDisplayWeightG(weightG: foodUnitEditorData.amount!)
+                   : convert.getDisplayVolume(volumeMl: foodUnitEditorData.amount!))
              : null,
        ),
        _amountValid = ValueNotifier(foodUnitEditorData.amount != null),
        _currentMeasurementUnit = ValueNotifier(foodUnitEditorData.amountMeasurementUnit),
        _measurementUnitSwitchButtonEnabled = ValueNotifier(
          _getMeasurementUnitSwitchButtonEnabled(foodNutritionPerGram.value, foodNutritionPerMilliliter.value, foodUnitEditorData.amountMeasurementUnit),
-       ) {
+       ),
+       _convert = convert {
     _name.addListener(_nameChanged);
     _amount.addListener(_amountChanged);
     _defaultFoodUnit.addListener(_defaultFoodUnitChanged);
@@ -44,6 +46,8 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
     _currentMeasurementUnit.addListener(_currentMeasurementUnitChanged);
     _foodUnitsEditMode.addListener(_foodUnitsEditModeChanged);
   }
+
+  final ConvertValidate _convert;
 
   final FoodUnitEditorData _foodUnitEditorData;
 
@@ -90,8 +94,8 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   void _amountChanged() {
     _foodUnitEditorData.amount = _amount.value != null
         ? (_currentMeasurementUnit.value == MeasurementUnit.gram
-              ? ConvertValidate.getWeightG(displayWeight: _amount.value!)
-              : ConvertValidate.getVolumeMl(displayVolume: _amount.value!))
+              ? _convert.getWeightG(displayWeight: _amount.value!)
+              : _convert.getVolumeMl(displayVolume: _amount.value!))
         : null;
     if (_amount.value != null) {
       _amountValid.value = true;

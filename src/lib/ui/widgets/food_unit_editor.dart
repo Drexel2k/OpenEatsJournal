@@ -26,16 +26,18 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
   void initState() {
     super.initState();
 
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     FoodUnitEditorViewModel foodUnitEditorViewModel = Provider.of<FoodUnitEditorViewModel>(context, listen: false);
 
     _nameController.text = foodUnitEditorViewModel.name.value;
     _amountController.text = foodUnitEditorViewModel.amount.value != null
-        ? ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: foodUnitEditorViewModel.amount.value!)
+        ? convert.getCleanDoubleString3DecimalDigits(doubleValue: foodUnitEditorViewModel.amount.value!)
         : OpenEatsJournalStrings.emptyString;
   }
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Consumer<FoodUnitEditorViewModel>(
@@ -90,9 +92,9 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                             return newValue;
                           }
 
-                          num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
+                          num? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(text);
                           if (doubleValue != null) {
-                            if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
+                            if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                               return oldValue;
                             }
 
@@ -112,10 +114,10 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                         }
                       },
                       onChanged: (value) {
-                        double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                        double? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                         foodUnitEditorViewModel.amount.value = doubleValue;
                         if (doubleValue != null) {
-                          _amountController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
+                          _amountController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                         }
                       },
                     );
@@ -140,8 +142,8 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                           : null,
                       child: Text(
                         foodUnitEditorViewModel.currentMeasurementUnit.value == MeasurementUnit.gram
-                            ? ConvertValidate.getLocalizedWeightUnitGAbbreviated(context: context)
-                            : ConvertValidate.getLocalizedVolumeUnit2char(context: context),
+                            ? convert.getLocalizedWeightUnitGAbbreviated(context: context)
+                            : convert.getLocalizedVolumeUnit2char(context: context),
                       ),
                     );
                   },

@@ -13,7 +13,6 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.
 
 //for debugPaintSizeEnabled=true;
 //import "package:flutter/rendering.dart";
-import "package:openeatsjournal/ui/repositories.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:provider/provider.dart";
 
@@ -42,28 +41,30 @@ void main() {
     appContactMail: settingsRepository.appContactMail!,
   );
 
-  final Repositories repositories = Repositories(
+  FoodRepository foodRepository = FoodRepository(
     settingsRepository: settingsRepository,
-    foodRepository: FoodRepository(
-      settingsRepository: settingsRepository,
-      openFoodFactsService: openFoodFactsService,
-      oejDatabaseService: openEatsJournalDatabaseService,
-      oejAssetsService: openEatsJournalAssetsService,
-    ),
-    journalRepository: JournalRepository(oejDatabase: openEatsJournalDatabaseService),
+    openFoodFactsService: openFoodFactsService,
+    oejDatabaseService: openEatsJournalDatabaseService,
+    oejAssetsService: openEatsJournalAssetsService,
   );
+
+  JournalRepository journalRepository = JournalRepository(oejDatabase: openEatsJournalDatabaseService);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   //debugPaintSizeEnabled=true;
 
   runApp(
-    Provider<Repositories>.value(
-      value: repositories,
-      child: ChangeNotifierProvider(
-        create: (context) => OpenEatsJournalAppViewModel(settingsRepository: repositories.settingsRepository, foodRepository: repositories.foodRepository),
-        child: OpenEatsJournalApp(),
-      ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsRepository>.value(value: settingsRepository),
+        Provider<FoodRepository>.value(value: foodRepository),
+        Provider<JournalRepository>.value(value: journalRepository),
+        ChangeNotifierProvider(
+          create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
+        ),
+      ],
+      child: OpenEatsJournalApp(),
     ),
   );
 }

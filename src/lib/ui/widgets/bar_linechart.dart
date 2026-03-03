@@ -4,6 +4,7 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
+import "package:provider/provider.dart";
 
 //Values and bars on the corner cases are cut off, due to limitation on setting marginMin and marginMax on a TimeScale when min and max values are set.
 //We could work with a linear scale here, but the placement of xAxis values is different than on the line charts, that looks also strange, especially
@@ -28,6 +29,7 @@ class BarLinechart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -154,7 +156,7 @@ class BarLinechart extends StatelessWidget {
           children: [
             Text(header, style: textTheme.titleMedium),
             Spacer(),
-            Text(AppLocalizations.of(context)!.average_per_day_number(ConvertValidate.numberFomatterInt.format(average)), style: textTheme.titleSmall),
+            Text(AppLocalizations.of(context)!.average_per_day_number(convert.numberFomatterInt.format(average)), style: textTheme.titleSmall),
           ],
         ),
         SizedBox(height: 5),
@@ -182,7 +184,7 @@ class BarLinechart extends StatelessWidget {
                   min: 0,
                   max: yAxisScaleMaxValue,
                   //value is num/double, this removes the decimal separator on y axis label.
-                  formatter: (value) => ConvertValidate.numberFomatterInt.format(value.toInt()),
+                  formatter: (value) => convert.numberFomatterInt.format(value.toInt()),
                   //ticks: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
                 ),
               ),
@@ -198,7 +200,7 @@ class BarLinechart extends StatelessWidget {
                 label: LabelEncode(
                   encoder: (Map<dynamic, dynamic> map) => Label(
                     map[OpenEatsJournalStrings.chartKCalIntakeVar] > 0
-                        ? ConvertValidate.numberFomatterInt.format(map[OpenEatsJournalStrings.chartKCalIntakeVar])
+                        ? convert.numberFomatterInt.format(map[OpenEatsJournalStrings.chartKCalIntakeVar])
                         : OpenEatsJournalStrings.emptyString,
                     LabelStyle(
                       textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),

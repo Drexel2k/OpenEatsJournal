@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:intl/date_symbol_data_local.dart";
-import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/energy_unit.dart";
 import "package:openeatsjournal/domain/utils/height_unit.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
@@ -49,14 +48,6 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
 
   void _settingsLanguageCodeChanged() {
     _dataInitialized = _foodRepository.initializeStandardFoodData(languageCode: _settingsRepository.languageCode.value);
-    ConvertValidate.init(
-      languageCode: _settingsRepository.languageCode.value,
-      energyUnit: _settingsRepository.energyUnit,
-      heightUnit: _settingsRepository.heightUnit,
-      weightUnit: _settingsRepository.weightUnit,
-      volumeUnit: _settingsRepository.volumeUnit,
-    );
-
     _appWideSettingChanged.notify();
   }
 

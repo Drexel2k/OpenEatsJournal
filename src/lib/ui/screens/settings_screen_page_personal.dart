@@ -5,7 +5,7 @@ import "package:openeatsjournal/domain/kjoule_per_day.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/repositories.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
@@ -35,15 +35,17 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
   @override
   void initState() {
     super.initState();
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
 
-    _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
+    _birthDayController.text = convert.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
 
-    _heightController.text = ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
-    _weightController.text = ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.weight.value!);
+    _heightController.text = convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
+    _weightController.text = convert.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.weight.value!);
   }
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final String languageCode = Localizations.localeOf(context).toString();
     final TextTheme textTheme = Theme.of(context).textTheme;
 
@@ -66,7 +68,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                           Expanded(
                             flex: 8,
                             child: Text(
-                              "${AppLocalizations.of(context)!.daily_target} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                              "${AppLocalizations.of(context)!.daily_target} ${convert.getLocalizedEnergyUnit(context: context)}",
                               style: textTheme.titleSmall,
                             ),
                           ),
@@ -76,7 +78,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                               valueListenable: widget._settingsScreenViewModel.dailyTargetKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.dailyTargetKJoule.value),
+                                  convert.numberFomatterInt.format(widget._settingsScreenViewModel.dailyTargetKJoule.value),
                                   style: textTheme.titleSmall,
                                 );
                               },
@@ -90,7 +92,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                           Expanded(
                             flex: 8,
                             child: Text(
-                              "${AppLocalizations.of(context)!.daily_need} ${ConvertValidate.getLocalizedEnergyUnit(context: context)}",
+                              "${AppLocalizations.of(context)!.daily_need} ${convert.getLocalizedEnergyUnit(context: context)}",
                               style: textTheme.bodySmall,
                             ),
                           ),
@@ -99,10 +101,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             child: ValueListenableBuilder(
                               valueListenable: widget._settingsScreenViewModel.dailyKJoule,
                               builder: (_, _, _) {
-                                return Text(
-                                  ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.dailyKJoule.value),
-                                  style: textTheme.bodySmall,
-                                );
+                                return Text(convert.numberFomatterInt.format(widget._settingsScreenViewModel.dailyKJoule.value), style: textTheme.bodySmall);
                               },
                             ),
                           ),
@@ -148,7 +147,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                       kJouleSaturday: widget._settingsScreenViewModel.kJouleSaturday,
                                       kJouleSunday: widget._settingsScreenViewModel.kJouleSunday,
                                     ),
-                                    settingsRepository: Provider.of<Repositories>(context, listen: false).settingsRepository,
+                                    settingsRepository: Provider.of<SettingsRepository>(context, listen: false),
+                                    convert: convert,
                                   ),
                                   child: DailyCaloriesEditorScreen(
                                     dailyKJoule: widget._settingsScreenViewModel.dailyKJoule.value,
@@ -216,7 +216,13 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                   child: SettingsTextField(
                     controller: _birthDayController,
                     onTap: () async {
-                      await _selectDate(initialDate: widget._settingsScreenViewModel.birthday.value, today: widget._settingsScreenViewModel.today, context: context, languageCode: languageCode);
+                      await _selectDate(
+                        initialDate: widget._settingsScreenViewModel.birthday.value,
+                        today: widget._settingsScreenViewModel.today,
+                        context: context,
+                        languageCode: languageCode,
+                        convert: convert,
+                      );
                     },
                     readOnly: true,
                   ),
@@ -229,7 +235,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
               children: [
                 Expanded(
                   child: Text(
-                    "${AppLocalizations.of(context)!.your_height} (${ConvertValidate.getLocalizedHeightUnitAbbreviated(context: context)}):",
+                    "${AppLocalizations.of(context)!.your_height} (${convert.getLocalizedHeightUnitAbbreviated(context: context)}):",
                     style: textTheme.titleSmall,
                   ),
                 ),
@@ -242,7 +248,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (_, _, _) {
                           //when widget._settingsScreenViewModel.height was changed programatically we need to update the controller
                           _heightController.text = widget._settingsScreenViewModel.height.value != null
-                              ? ConvertValidate.numberFomatterInt.format(widget._settingsScreenViewModel.height.value)
+                              ? convert.numberFomatterInt.format(widget._settingsScreenViewModel.height.value)
                               : OpenEatsJournalStrings.emptyString;
 
                           return SettingsTextField(
@@ -255,9 +261,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                   return newValue;
                                 }
 
-                                num? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(text);
+                                num? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(text);
                                 if (doubleValue != null) {
-                                  if (ConvertValidate.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
+                                  if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                                     return oldValue;
                                   }
 
@@ -276,14 +282,11 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                               }
                             },
                             onChanged: (value) {
-                              double? doubleValue = ConvertValidate.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                              double? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
                               widget._settingsScreenViewModel.setHeight(height: doubleValue);
 
                               if (doubleValue != null) {
-                                _heightController.text = ConvertValidate.getCleanDoubleEditString3DecimalDigits(
-                                  doubleValue: doubleValue,
-                                  doubleValueString: value,
-                                );
+                                _heightController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                               }
                             },
                           );
@@ -294,7 +297,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (_, _, _) {
                           if (!widget._settingsScreenViewModel.heightValid.value) {
                             return Text(
-                              "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.height, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.repositoryHeight))} ${AppLocalizations.of(context)!.valid_height} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
+                              "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.height, convert.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.repositoryHeight))} ${AppLocalizations.of(context)!.valid_height} (1-${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayHeight(heightCm: ConvertValidate.maxHeightCm.toDouble()))}).",
                               style: textTheme.labelSmall!.copyWith(color: Colors.red),
                             );
                           } else {
@@ -315,7 +318,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                   child: Row(
                     children: [
                       Text(
-                        "${AppLocalizations.of(context)!.your_weight} (${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
+                        "${AppLocalizations.of(context)!.your_weight} (${convert.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
                         style: textTheme.titleSmall,
                       ),
                       Tooltip(
@@ -333,7 +336,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                     builder: (_, _, _) {
                       //when widget._settingsScreenViewModel.weight was changed programatically we need to update the controller
                       if (widget._settingsScreenViewModel.weight.value != null) {
-                        _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(
+                        _weightController.text = convert.getCleanDoubleEditString1DecimalDigit(
                           doubleValue: widget._settingsScreenViewModel.weight.value!,
                           doubleValueString: OpenEatsJournalStrings.emptyString,
                         );
@@ -354,9 +357,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                   return newValue;
                                 }
 
-                                num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(text);
+                                num? doubleValue = convert.numberFomatterDouble1DecimalDigit.tryParse(text);
                                 if (doubleValue != null) {
-                                  if (ConvertValidate.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
+                                  if (convert.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
                                     return oldValue;
                                   }
 
@@ -373,14 +376,11 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                               }
                             },
                             onChanged: (value) {
-                              num? doubleValue = ConvertValidate.numberFomatterDouble1DecimalDigit.tryParse(value);
+                              num? doubleValue = convert.numberFomatterDouble1DecimalDigit.tryParse(value);
                               widget._settingsScreenViewModel.setWeight(weight: doubleValue as double?);
 
                               if (doubleValue != null) {
-                                _weightController.text = ConvertValidate.getCleanDoubleEditString1DecimalDigit(
-                                  doubleValue: doubleValue,
-                                  doubleValueString: value,
-                                );
+                                _weightController.text = convert.getCleanDoubleEditString1DecimalDigit(doubleValue: doubleValue, doubleValueString: value);
                               }
                             },
                           ),
@@ -389,7 +389,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             builder: (_, _, _) {
                               if (!widget._settingsScreenViewModel.weightValid.value) {
                                 return Text(
-                                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${ConvertValidate.getCleanDoubleString1DecimalDigit(doubleValue: ConvertValidate.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, convert.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
                                   style: textTheme.labelMedium!.copyWith(color: Colors.red),
                                 );
                               } else {
@@ -535,7 +535,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label:
-                                "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget1)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose025,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose025;
@@ -549,7 +549,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label:
-                                "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget2)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose05,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose05;
@@ -563,7 +563,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         builder: (contextBuilder, _, _) {
                           return TransparentChoiceChip(
                             label:
-                                "-${ConvertValidate.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget3)}${ConvertValidate.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
                             selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose075,
                             onSelected: (bool selected) {
                               widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose075;
@@ -614,11 +614,17 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     );
   }
 
-  Future<void> _selectDate({required DateTime initialDate, required DateTime today, required BuildContext context, required String languageCode}) async {
+  Future<void> _selectDate({
+    required DateTime initialDate,
+    required DateTime today,
+    required BuildContext context,
+    required String languageCode,
+    required ConvertValidate convert,
+  }) async {
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateUtils.dateOnly(today));
 
     if (date != null) {
-      _birthDayController.text = ConvertValidate.dateFormatterDisplayLongDateOnly.format(date);
+      _birthDayController.text = convert.dateFormatterDisplayLongDateOnly.format(date);
       widget._settingsScreenViewModel.birthday.value = date;
     }
   }

@@ -15,7 +15,6 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
-import "package:openeatsjournal/ui/repositories.dart";
 import "package:path/path.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "../callbacks.mocks.dart";
@@ -45,8 +44,11 @@ void main() async {
     _database = null;
   });
 
-  Future<Repositories> generalSetup() async {
+  Future<List<Object>> generalSetup() async {
+    List<Object> result = List.empty(growable: true);
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
+    result.add(settingsRepository);
+
     OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
 
     var responses = [
@@ -63,42 +65,36 @@ void main() async {
       appContactMail: settingsRepository.appContactMail!,
     );
 
-    Repositories repositories = Repositories(
-      settingsRepository: settingsRepository,
-      foodRepository: FoodRepository(
+    result.add(
+      FoodRepository(
         settingsRepository: settingsRepository,
         openFoodFactsService: openFoodFactsService,
         oejDatabaseService: _database!,
         oejAssetsService: openEatsJournalAssetsService,
       ),
-      journalRepository: JournalRepository(oejDatabase: _database!),
     );
+
+    result.add(JournalRepository(oejDatabase: _database!));
 
     //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), repositories.settingsRepository.initSettings()]);
-
-    ConvertValidate.init(
-      languageCode: repositories.settingsRepository.languageCode.value,
-      energyUnit: repositories.settingsRepository.energyUnit,
-      heightUnit: repositories.settingsRepository.heightUnit,
-      weightUnit: repositories.settingsRepository.weightUnit,
-      volumeUnit: repositories.settingsRepository.volumeUnit,
-    );
-
-    return repositories;
+    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
+    return result;
   }
 
   test("Check statistic data", () async {
-    Repositories repositories = await generalSetup();
+    List<Object> repositories = await generalSetup();
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime today = DateTime(2026, 2, 11);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await repositories.journalRepository.getNutritionDaySumsForLast32Days(
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await journalRepository.getNutritionDaySumsForLast32Days(
       today: today,
     );
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await repositories.journalRepository
-        .getNutritionWeekSumsForLast15Weeks(today: today);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await repositories.journalRepository
-        .getNutritionMonthSumsForLast13Months(today: today);
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await journalRepository.getNutritionWeekSumsForLast15Weeks(
+      today: today,
+    );
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await journalRepository.getNutritionMonthSumsForLast13Months(
+      today: today,
+    );
 
     DateTime y2026m1d16 = DateTime(2026, 1, 16);
     DateTime y2026m2d11 = DateTime(2026, 2, 11);
@@ -214,15 +210,18 @@ void main() async {
   });
 
   test("Receive open food facts data and add food entry", () async {
-    Repositories repositories = await generalSetup();
+    List<Object> repositories = await generalSetup();
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime today = DateTime(2026, 2, 11);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await repositories.journalRepository.getNutritionDaySumsForLast32Days(
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await journalRepository.getNutritionDaySumsForLast32Days(
       today: today,
     );
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await repositories.journalRepository
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await journalRepository
         .getNutritionWeekSumsForLast15Weeks(today: today);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await repositories.journalRepository
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await journalRepository
         .getNutritionMonthSumsForLast13Months(today: today);
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
@@ -254,9 +253,9 @@ void main() async {
     double? orignalProteinMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.protein;
     double? orignalSaltMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.salt;
 
-    FoodRepositoryResult foodRepositoryResult = await repositories.foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(
+    FoodRepositoryResult foodRepositoryResult = await foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(
       searchText: "",
-      languageCode: repositories.settingsRepository.languageCode.value,
+      languageCode: settingsRepository.languageCode.value,
       page: 3,
     );
 
@@ -271,11 +270,11 @@ void main() async {
     double? addedProtein = eatsJournalEntry.protein;
     double? addedSalt = eatsJournalEntry.salt;
 
-    await repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+    await journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
 
-    journalRepositoryGetNutritionSumsResultDays = await repositories.journalRepository.getNutritionDaySumsForLast32Days(today: today);
-    journalRepositoryGetNutritionSumsResultWeeks = await repositories.journalRepository.getNutritionWeekSumsForLast15Weeks(today: today);
-    journalRepositoryGetNutritionSumsResultMonths = await repositories.journalRepository.getNutritionMonthSumsForLast13Months(today: today);
+    journalRepositoryGetNutritionSumsResultDays = await journalRepository.getNutritionDaySumsForLast32Days(today: today);
+    journalRepositoryGetNutritionSumsResultWeeks = await journalRepository.getNutritionWeekSumsForLast15Weeks(today: today);
+    journalRepositoryGetNutritionSumsResultMonths = await journalRepository.getNutritionMonthSumsForLast13Months(today: today);
 
     expect(journalRepositoryGetNutritionSumsResultDays.from, today.subtract(Duration(days: 31)));
     expect(journalRepositoryGetNutritionSumsResultDays.until, today);
@@ -355,12 +354,13 @@ void main() async {
   });
 
   test("Change date and meal of eats journal entry", () async {
-    Repositories repositories = await generalSetup();
+    List<Object> repositories = await generalSetup();
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
     DateTime y2026m2d8 = DateTime(2026, 2, 8);
 
-    List<EatsJournalEntry>? eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     EatsJournalEntry eatsJournalEntry = eatsJournalEntries![0];
     expect(eatsJournalEntry.meal, Meal.breakfast);
 
@@ -368,11 +368,11 @@ void main() async {
     eatsJournalEntry.entryDate = y2026m2d8;
     eatsJournalEntry.meal = Meal.lunch;
 
-    await repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    await journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntry);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     expect(eatsJournalEntries, isNot(contains(predicate<EatsJournalEntry>((entry) => entry.id == eatsjJurnalEntryId))));
 
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d8);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d8);
     expect(eatsJournalEntries, contains(predicate<EatsJournalEntry>((entry) => entry.id == eatsjJurnalEntryId)));
 
     eatsJournalEntry = eatsJournalEntries!.firstWhere((entry) => entry.id == eatsjJurnalEntryId);
@@ -380,17 +380,18 @@ void main() async {
   });
 
   test("Copy eats journal entries from meal", () async {
-    Repositories repositories = await generalSetup();
+    List<Object> repositories = await generalSetup();
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
     DateTime y2026m2d16 = DateTime(2026, 2, 16);
 
-    List<EatsJournalEntry>? eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
+    List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
     int entryCount = eatsJournalEntries!.length;
     double kJouleSumOriginal = eatsJournalEntries.fold(0.0, (sum, entry) => sum + entry.kJoule);
 
-    await repositories.journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: Meal.snacks.value);
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16, meal: Meal.snacks);
+    await journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: Meal.snacks.value);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d16, meal: Meal.snacks);
 
     //check if expected amount was copied
     expect(entryCount, eatsJournalEntries!.length);
@@ -400,31 +401,32 @@ void main() async {
     double kJouleOld = eatsJournalEntries[0].kJoule;
     eatsJournalEntries[0].amount = 100;
     double kJouleNew = eatsJournalEntries[0].kJoule;
-    await repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntries[0]);
+    await journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntries[0]);
 
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16, meal: Meal.snacks);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d16, meal: Meal.snacks);
     expect(kJouleSumOriginal + (kJouleNew - kJouleOld), eatsJournalEntries!.fold(0.0, (sum, entry) => sum + entry.kJoule));
 
-    await repositories.journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntries[0]);
+    await journalRepository.setEatsJournalEntry(eatsJournalEntry: eatsJournalEntries[0]);
 
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
     expect(kJouleSumOriginal, eatsJournalEntries!.fold(0.0, (sum, entry) => sum + entry.kJoule));
   });
 
   test("Copy eats journal entries from whole day as is", () async {
-    Repositories repositories = await generalSetup();
+    List<Object> repositories = await generalSetup();
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
     DateTime y2026m2d16 = DateTime(2026, 2, 16);
 
-    List<EatsJournalEntry>? eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     int entryCountBreakfast = eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length;
     int entryCountLunch = eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length;
     int entryCountDinner = eatsJournalEntries.where((entry) => entry.meal == Meal.dinner).length;
     int entryCountSnacks = eatsJournalEntries.where((entry) => entry.meal == Meal.snacks).length;
 
-    await repositories.journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: -1);
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16);
+    await journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: -1);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d16);
 
     expect(entryCountBreakfast, eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length);
     expect(entryCountLunch, eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length);
@@ -433,19 +435,20 @@ void main() async {
   });
 
   test("Copy eats journal entries from whole day to meal", () async {
-    Repositories repositories = await generalSetup();
+    List<Object> repositories = await generalSetup();
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
     DateTime y2026m2d16 = DateTime(2026, 2, 16);
 
-    List<EatsJournalEntry>? eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d9);
+    List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     int entryCountBreakfast = eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length;
     int entryCountLunch = eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length;
     int entryCountDinner = eatsJournalEntries.where((entry) => entry.meal == Meal.dinner).length;
     int entryCountSnacks = eatsJournalEntries.where((entry) => entry.meal == Meal.snacks).length;
 
-    await repositories.journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: Meal.lunch.value);
-    eatsJournalEntries = await repositories.journalRepository.getEatsJournalEntries(date: y2026m2d16);
+    await journalRepository.copyEatsJournalEntries(eatsJournalEntries: eatsJournalEntries, toDate: y2026m2d16, toMeal: Meal.lunch.value);
+    eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d16);
 
     expect(0, eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length);
     expect(entryCountBreakfast + entryCountLunch + entryCountDinner + entryCountSnacks, eatsJournalEntries.where((entry) => entry.meal == Meal.lunch).length);

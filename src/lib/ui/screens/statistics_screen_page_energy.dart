@@ -8,6 +8,7 @@ import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:openeatsjournal/ui/widgets/bar_linechart.dart";
+import "package:provider/provider.dart";
 
 class StatisticsScreenPageEnergy extends StatelessWidget {
   const StatisticsScreenPageEnergy({super.key, required StatisticsScreenViewModel statisticsScreenViewModel})
@@ -17,6 +18,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
     return Column(
@@ -39,12 +41,10 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentDate)) {
                   dayData.add({
                     OpenEatsJournalStrings.chartDateInformation: currentDate,
-                    OpenEatsJournalStrings.chartKCalIntake: ConvertValidate.getDisplayEnergy(
+                    OpenEatsJournalStrings.chartKCalIntake: convert.getDisplayEnergy(
                       energyKJ: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.kJoule,
                     ),
-                    OpenEatsJournalStrings.chartKCalTarget: ConvertValidate.getDisplayEnergy(
-                      energyKJ: snapshot.data!.groupNutritionTargets![currentDate]!.kJoule,
-                    ),
+                    OpenEatsJournalStrings.chartKCalTarget: convert.getDisplayEnergy(energyKJ: snapshot.data!.groupNutritionTargets![currentDate]!.kJoule),
                     OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentDate]!.entryCount,
                   });
                 } else {
@@ -84,10 +84,10 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
                   weekData.add({
                     OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                    OpenEatsJournalStrings.chartKCalIntake: ConvertValidate.getDisplayEnergy(
+                    OpenEatsJournalStrings.chartKCalIntake: convert.getDisplayEnergy(
                       energyKJ: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.nutritions.kJoule,
                     ),
-                    OpenEatsJournalStrings.chartKCalTarget: ConvertValidate.getDisplayEnergy(
+                    OpenEatsJournalStrings.chartKCalTarget: convert.getDisplayEnergy(
                       energyKJ: snapshot.data!.groupNutritionTargets![currentWeekStartDate]!.kJoule,
                     ),
                     OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.entryCount,
@@ -132,10 +132,10 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
                   monthData.add({
                     OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                    OpenEatsJournalStrings.chartKCalIntake: ConvertValidate.getDisplayEnergy(
+                    OpenEatsJournalStrings.chartKCalIntake: convert.getDisplayEnergy(
                       energyKJ: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.nutritions.kJoule,
                     ),
-                    OpenEatsJournalStrings.chartKCalTarget: ConvertValidate.getDisplayEnergy(
+                    OpenEatsJournalStrings.chartKCalTarget: convert.getDisplayEnergy(
                       energyKJ: snapshot.data!.groupNutritionTargets![currentMonthStartDate]!.kJoule,
                     ),
                     OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.entryCount,

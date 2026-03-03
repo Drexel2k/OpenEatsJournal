@@ -49,7 +49,10 @@ class _CopyTargetScreenScreenState extends State<CopyTargetScreen> {
                         },
                         style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                         child: Text(
-                          ConvertValidate.dateFormatterDisplayLongDateOnly.format(copyTargetScreenViewModel.currentDate.value),
+                          Provider.of<ConvertValidate>(
+                            context,
+                            listen: false,
+                          ).dateFormatterDisplayLongDateOnly.format(copyTargetScreenViewModel.currentDate.value),
                           textAlign: TextAlign.center,
                         ),
                       );

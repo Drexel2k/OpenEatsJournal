@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/weight_row.dart";
@@ -23,6 +24,7 @@ class _WeightJournalEditScreenState extends State<WeightJournalEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Consumer<WeightJournalEditScreenViewModel>(
@@ -55,6 +57,7 @@ class _WeightJournalEditScreenState extends State<WeightJournalEditScreen> {
                           onWeightChange: ({required DateTime date, required double weight}) async {
                             await weightJournalEditScreenViewModel.setWeightJournalEntry(date: date, weight: weight);
                           },
+                          convert: convert,
                         ),
                         child: WeightRow(
                           //Without this key it sometimes happens that the old state is reused after call of

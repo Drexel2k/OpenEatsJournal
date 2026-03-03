@@ -9,6 +9,7 @@ import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:openeatsjournal/ui/widgets/linechart.dart";
+import "package:provider/provider.dart";
 
 class StatisticsScreenPageNutritions extends StatelessWidget {
   const StatisticsScreenPageNutritions({super.key, required StatisticType statistic, required StatisticsScreenViewModel statisticsScreenViewModel})
@@ -20,6 +21,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     String statisticVar = _getStatisticVar(statistic: _statistic);
     double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
@@ -45,7 +47,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                     //don't put in empty days, as the line in the chart will drop to 0 then
                     dayData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentDate,
-                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentDate),
+                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentDate, convert: convert),
                     });
                   }
 
@@ -90,7 +92,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                   if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
                     weekData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentWeekStartDate),
+                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentWeekStartDate, convert: convert),
                     });
                   }
 
@@ -137,7 +139,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
                   if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
                     monthData.add({
                       OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentMonthStartDate),
+                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentMonthStartDate, convert: convert),
                     });
                   }
 
@@ -176,40 +178,41 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
     required StatisticType statistic,
     required DateTime currentDate,
     required AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot,
+    required ConvertValidate convert,
   }) {
     if (statistic == StatisticType.fat) {
       return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat != null
-          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat!)
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat!)
           : 0;
     }
 
     if (statistic == StatisticType.stauratedFat) {
       return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat != null
-          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat!)
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat!)
           : 0;
     }
 
     if (statistic == StatisticType.carbohydrates) {
       return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates != null
-          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates!)
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates!)
           : 0;
     }
 
     if (statistic == StatisticType.sugar) {
       return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar != null
-          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar!)
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar!)
           : 0;
     }
 
     if (statistic == StatisticType.protein) {
       return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein != null
-          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein!)
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein!)
           : 0;
     }
 
     if (statistic == StatisticType.salt) {
       return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt != null
-          ? ConvertValidate.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt!)
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt!)
           : 0;
     }
 
