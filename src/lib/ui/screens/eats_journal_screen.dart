@@ -25,7 +25,9 @@ import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewm
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
@@ -41,29 +43,19 @@ class EatsJournalScreen extends StatefulWidget {
   State<EatsJournalScreen> createState() => _EatsJournalScreenState();
 }
 
-class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  OverlayDisplay? _overlayDisplayQuickEntryBreakfast;
-  OverlayDisplay? _overlayDisplayQuickEntryLunch;
-  OverlayDisplay? _overlayDisplayQuickEntryDinner;
-  OverlayDisplay? _overlayDisplayQuickEntrySnacks;
-  OverlayDisplay? _overlayDisplayWeightEntry1;
-  OverlayDisplay? _overlayDisplayWeightEntry2;
-  OverlayDisplay? _overlayDisplayFood;
-  OverlayDisplay? _overlayDisplayQuickEntry;
-
+class _EatsJournalScreenState extends State<EatsJournalScreen> {
   @override
   void initState() {
     super.initState();
-
-    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
     final double fabMenuWidth = 150;
 
     double dimension = 200;
@@ -132,7 +124,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                     } else if (snapshot.hasError) {
                       throw StateError("Something went wrong: ${snapshot.error}");
                     } else if (snapshot.hasData) {
-                      final ColorScheme colorScheme = Theme.of(context).colorScheme;
                       final Color dayButtonsTextColor = eatsJournalScreenViewModel.darkMode ? colorScheme.inversePrimary : colorScheme.primary;
 
                       GaugeData kJouleGaugeData = _getKJouleGaugeData(
@@ -558,12 +549,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    _overlayDisplayQuickEntryBreakfast = OverlayDisplay(
-                                                      context: AppGlobal.navigatorKey.currentContext!,
-                                                      displayText: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                      animationController: _animationController,
+                                                    overlayDisplay.enqueue(
+                                                      overlayInfo: OverlayInfo(
+                                                        displayText: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        backgroundColor: colorScheme.surfaceContainerHighest,
+                                                        shadowColorBase: shadowColor,
+                                                        textStyle: textTheme.bodyMedium!,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -653,12 +647,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    _overlayDisplayQuickEntryLunch = OverlayDisplay(
-                                                      context: AppGlobal.navigatorKey.currentContext!,
-                                                      displayText: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                      animationController: _animationController,
+                                                    overlayDisplay.enqueue(
+                                                      overlayInfo: OverlayInfo(
+                                                        displayText: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        backgroundColor: colorScheme.surfaceContainerHighest,
+                                                        shadowColorBase: shadowColor,
+                                                        textStyle: textTheme.bodyMedium!,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -748,12 +745,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    _overlayDisplayQuickEntryDinner = OverlayDisplay(
-                                                      context: AppGlobal.navigatorKey.currentContext!,
-                                                      displayText: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                      animationController: _animationController,
+                                                    overlayDisplay.enqueue(
+                                                      overlayInfo: OverlayInfo(
+                                                        displayText: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        backgroundColor: colorScheme.surfaceContainerHighest,
+                                                        shadowColorBase: shadowColor,
+                                                        textStyle: textTheme.bodyMedium!,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -843,12 +843,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
                                                   if (eatsJournalEntryEdited != null) {
-                                                    _overlayDisplayQuickEntrySnacks = OverlayDisplay(
-                                                      context: AppGlobal.navigatorKey.currentContext!,
-                                                      displayText: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                      animationController: _animationController,
+                                                    overlayDisplay.enqueue(
+                                                      overlayInfo: OverlayInfo(
+                                                        displayText: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        backgroundColor: colorScheme.surfaceContainerHighest,
+                                                        shadowColorBase: shadowColor,
+                                                        textStyle: textTheme.bodyMedium!,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -926,10 +929,13 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                                     convert: convert,
                                                   )) {
                                                     eatsJournalScreenViewModel.refreshCurrentWeight();
-                                                    _overlayDisplayWeightEntry1 = OverlayDisplay(
-                                                      context: AppGlobal.navigatorKey.currentContext!,
-                                                      displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                                      animationController: _animationController,
+                                                    overlayDisplay.enqueue(
+                                                      overlayInfo: OverlayInfo(
+                                                        displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                                        backgroundColor: colorScheme.surfaceContainerHighest,
+                                                        shadowColorBase: shadowColor,
+                                                        textStyle: textTheme.bodyMedium!,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -1089,10 +1095,13 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                 convert: convert,
                               )) {
                                 eatsJournalScreenViewModel.refreshCurrentWeight();
-                                _overlayDisplayWeightEntry2 = OverlayDisplay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                  animationController: _animationController,
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
+                                    shadowColorBase: shadowColor,
+                                    textStyle: textTheme.bodyMedium!,
+                                  ),
                                 );
                               }
                             },
@@ -1122,12 +1131,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                                       as EntityEdited?;
 
                               if (foodEdited != null) {
-                                _overlayDisplayFood = OverlayDisplay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: foodEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                                  animationController: _animationController,
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    displayText: foodEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
+                                    shadowColorBase: shadowColor,
+                                    textStyle: textTheme.bodyMedium!,
+                                  ),
                                 );
                               }
                             },
@@ -1150,12 +1162,15 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
                               eatsJournalScreenViewModel.refreshNutritionData();
 
                               if (eatsJournalEntryEdited != null) {
-                                _overlayDisplayQuickEntry = OverlayDisplay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                  animationController: _animationController,
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    displayText: eatsJournalEntryEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
+                                    shadowColorBase: shadowColor,
+                                    textStyle: textTheme.bodyMedium!,
+                                  ),
                                 );
                               }
                             },
@@ -1381,40 +1396,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> with SingleTicker
 
   @override
   void dispose() {
-    if (_overlayDisplayQuickEntryBreakfast != null) {
-      _overlayDisplayQuickEntryBreakfast!.stop();
-    }
-
-    if (_overlayDisplayQuickEntryLunch != null) {
-      _overlayDisplayQuickEntryLunch!.stop();
-    }
-
-    if (_overlayDisplayQuickEntryDinner != null) {
-      _overlayDisplayQuickEntryDinner!.stop();
-    }
-
-    if (_overlayDisplayQuickEntrySnacks != null) {
-      _overlayDisplayQuickEntrySnacks!.stop();
-    }
-
-    if (_overlayDisplayWeightEntry1 != null) {
-      _overlayDisplayWeightEntry1!.stop();
-    }
-
-    if (_overlayDisplayWeightEntry2 != null) {
-      _overlayDisplayWeightEntry2!.stop();
-    }
-
-    if (_overlayDisplayFood != null) {
-      _overlayDisplayFood!.stop();
-    }
-
-    if (_overlayDisplayQuickEntry != null) {
-      _overlayDisplayQuickEntry!.stop();
-    }
-
-    _animationController.dispose();
-
     super.dispose();
   }
 }

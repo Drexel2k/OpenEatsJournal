@@ -19,12 +19,14 @@ import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:path/path.dart";
 import "package:provider/provider.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
-import "../callbacks.mocks.dart";
+import "../mocks.mocks.dart";
 
 OpenEatsJournalDatabaseService? _database;
 
@@ -170,13 +172,31 @@ void main() async {
     quickEntry.protein = proteinValue;
     quickEntry.salt = saltValue;
 
-    Widget widget = Provider.value(
-      value: convert,
+    OverlayDisplay overlayDisplay = MockOverlayDisplay();
+
+    Widget widget = MultiProvider(
+      providers: [
+        Provider.value(value: convert),
+        Provider.value(value: overlayDisplay),
+      ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale(settingsRepository.languageCode.value),
         navigatorKey: AppGlobal.navigatorKey,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
+          extensions: const <ThemeExtension<dynamic>>[
+            OpenEatsJournalColors(
+              userFoodColor: Color.fromARGB(255, 26, 65, 255),
+              standardFoodColor: Color.fromARGB(255, 5, 112, 89),
+              openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
+              quickEntryColor: Color.fromARGB(255, 255, 0, 233),
+              cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
+              shadowColor: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ],
+        ),
         home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
           create: (context) => EatsJournalQuickEntryEditScreenViewModel(
             quickEntry: quickEntry,
@@ -215,13 +235,29 @@ void main() async {
     expect(entries[0].salt, saltValue);
 
     //Check if everything is displayed
-    widget = Provider.value(
-      value: convert,
+    widget = MultiProvider(
+      providers: [
+        Provider.value(value: convert),
+        Provider.value(value: overlayDisplay),
+      ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale(settingsRepository.languageCode.value),
         navigatorKey: AppGlobal.navigatorKey,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
+          extensions: const <ThemeExtension<dynamic>>[
+            OpenEatsJournalColors(
+              userFoodColor: Color.fromARGB(255, 26, 65, 255),
+              standardFoodColor: Color.fromARGB(255, 5, 112, 89),
+              openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
+              quickEntryColor: Color.fromARGB(255, 255, 0, 233),
+              cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
+              shadowColor: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ],
+        ),
         home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
           create: (context) => EatsJournalQuickEntryEditScreenViewModel(
             quickEntry: entries[0],

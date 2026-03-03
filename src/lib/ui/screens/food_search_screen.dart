@@ -17,7 +17,9 @@ import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewm
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -35,31 +37,24 @@ class FoodSearchScreen extends StatefulWidget {
   State<FoodSearchScreen> createState() => _FoodSearchScreenState();
 }
 
-class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  OverlayDisplay? _overlayDisplayFoodEntry;
-  OverlayDisplay? _overlayDisplayFood1;
-  OverlayDisplay? _overlayDisplayWeightEntry;
-  OverlayDisplay? _overlayDisplayFood2;
-  OverlayDisplay? _overlayDisplayQuickEntry;
-
+class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final TextEditingController _searchTextController = TextEditingController();
   late SearchMode _searchMode;
 
   @override
   void initState() {
     super.initState();
-
-    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
     _searchMode = SearchMode.online;
   }
 
   @override
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
+
     double fabMenuWidth = 150;
 
     double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
@@ -348,12 +343,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                     as EntityEdited?;
 
                             if (eatsJournalEntryEdited != null) {
-                              _overlayDisplayFoodEntry = OverlayDisplay(
-                                context: AppGlobal.navigatorKey.currentContext!,
-                                displayText: eatsJournalEntryEdited.originalId == null
-                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                                animationController: _animationController,
+                              overlayDisplay.enqueue(
+                                overlayInfo: OverlayInfo(
+                                  displayText: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                  backgroundColor: colorScheme.surfaceContainerHighest,
+                                  shadowColorBase: shadowColor,
+                                  textStyle: textTheme.bodyMedium!,
+                                ),
                               );
                             }
                           },
@@ -367,14 +365,26 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                 meal: foodSearchScreenViewModel.currentMeal.value,
                               ),
                             );
+
+                            overlayDisplay.enqueue(
+                              overlayInfo: OverlayInfo(
+                                displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added,
+                                backgroundColor: colorScheme.surfaceContainerHighest,
+                                shadowColorBase: shadowColor,
+                                textStyle: textTheme.bodyMedium!,
+                              ),
+                            );
                           },
                           onFoodEdited: ({required EntityEdited entityEdited}) {
-                            _overlayDisplayFood1 = OverlayDisplay(
-                              context: AppGlobal.navigatorKey.currentContext!,
-                              displayText: entityEdited.originalId == null
-                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                              animationController: _animationController,
+                            overlayDisplay.enqueue(
+                              overlayInfo: OverlayInfo(
+                                displayText: entityEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                backgroundColor: colorScheme.surfaceContainerHighest,
+                                shadowColorBase: shadowColor,
+                                textStyle: textTheme.bodyMedium!,
+                              ),
                             );
                           },
                         );
@@ -468,10 +478,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                 initialWeight: await foodSearchScreenViewModel.getLastWeightJournalEntry(),
                                 convert: convert,
                               )) {
-                                _overlayDisplayWeightEntry = OverlayDisplay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                  animationController: _animationController,
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
+                                    shadowColorBase: shadowColor,
+                                    textStyle: textTheme.bodyMedium!,
+                                  ),
                                 );
                               }
                             },
@@ -501,12 +514,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                                       as EntityEdited?;
 
                               if (foodEdited != null) {
-                                _overlayDisplayFood2 = OverlayDisplay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: foodEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                                  animationController: _animationController,
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    displayText: foodEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
+                                    shadowColorBase: shadowColor,
+                                    textStyle: textTheme.bodyMedium!,
+                                  ),
                                 );
                               }
                             },
@@ -527,12 +543,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
                               );
 
                               if (eatsJournalEntryEdited != null) {
-                                _overlayDisplayQuickEntry = OverlayDisplay(
-                                  context: AppGlobal.navigatorKey.currentContext!,
-                                  displayText: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                  animationController: _animationController,
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    displayText: eatsJournalEntryEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                    backgroundColor: colorScheme.surfaceContainerHighest,
+                                    shadowColorBase: shadowColor,
+                                    textStyle: textTheme.bodyMedium!,
+                                  ),
                                 );
                               }
                             },
@@ -623,28 +642,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> with SingleTickerPr
 
   @override
   void dispose() {
-    if (_overlayDisplayFoodEntry != null) {
-      _overlayDisplayFoodEntry!.stop();
-    }
-
-    if (_overlayDisplayFood1 != null) {
-      _overlayDisplayFood1!.stop();
-    }
-
-    if (_overlayDisplayWeightEntry != null) {
-      _overlayDisplayWeightEntry!.stop();
-    }
-
-    if (_overlayDisplayFood2 != null) {
-      _overlayDisplayFood2!.stop();
-    }
-
-    if (_overlayDisplayQuickEntry != null) {
-      _overlayDisplayQuickEntry!.stop();
-    }
-
-    _animationController.dispose();
-
     _searchTextController.dispose();
 
     super.dispose();

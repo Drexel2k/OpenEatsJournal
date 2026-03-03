@@ -55,8 +55,8 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   void initState() {
     super.initState();
 
-    FoodEditScreenViewModel foodEditScreenViewModel = Provider.of<FoodEditScreenViewModel>(context, listen: false);
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final FoodEditScreenViewModel foodEditScreenViewModel = Provider.of<FoodEditScreenViewModel>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
 
     _nameController.text = foodEditScreenViewModel.name.value;
     _brandsController.text = foodEditScreenViewModel.brands.value;
@@ -90,7 +90,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     double inputFieldsWidth = 90;

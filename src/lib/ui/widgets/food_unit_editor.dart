@@ -27,7 +27,7 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
     super.initState();
 
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-    FoodUnitEditorViewModel foodUnitEditorViewModel = Provider.of<FoodUnitEditorViewModel>(context, listen: false);
+    final FoodUnitEditorViewModel foodUnitEditorViewModel = Provider.of<FoodUnitEditorViewModel>(context, listen: false);
 
     _nameController.text = foodUnitEditorViewModel.name.value;
     _amountController.text = foodUnitEditorViewModel.amount.value != null

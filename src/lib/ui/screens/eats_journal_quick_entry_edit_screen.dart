@@ -11,7 +11,9 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -24,9 +26,7 @@ class EatsJournalQuickEntryEditScreen extends StatefulWidget {
   State<EatsJournalQuickEntryEditScreen> createState() => _EatsJournalQuickEntryEditScreenState();
 }
 
-class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryEditScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
+class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryEditScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _energyController = TextEditingController();
@@ -47,19 +47,15 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
   final FocusNode _proteinFocusNode = FocusNode();
   final FocusNode _saltFocusNode = FocusNode();
 
-  OverlayDisplay? _overlayDisplayEatsJournalEntryEdit;
-
   @override
   void initState() {
     super.initState();
 
-    EatsJournalQuickEntryEditScreenViewModel eatsJournalQuickEntryEditScreenViewModel = Provider.of<EatsJournalQuickEntryEditScreenViewModel>(
+    final EatsJournalQuickEntryEditScreenViewModel eatsJournalQuickEntryEditScreenViewModel = Provider.of<EatsJournalQuickEntryEditScreenViewModel>(
       context,
       listen: false,
     );
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-
-    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
 
     _nameController.text = eatsJournalQuickEntryEditScreenViewModel.name.value;
     _amountController.text = eatsJournalQuickEntryEditScreenViewModel.amount.value != null
@@ -90,8 +86,11 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
   @override
   Widget build(BuildContext context) {
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
 
     double inputFieldsWidth = 90;
 
@@ -239,12 +238,15 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                                         as EntityEdited?;
 
                                 if (eatsJournalEntryEdited != null) {
-                                  _overlayDisplayEatsJournalEntryEdit = OverlayDisplay(
-                                    context: AppGlobal.navigatorKey.currentContext!,
-                                    displayText: eatsJournalEntryEdited.originalId == null
-                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                    animationController: _animationController,
+                                  overlayDisplay.enqueue(
+                                    overlayInfo: OverlayInfo(
+                                      displayText: eatsJournalEntryEdited.originalId == null
+                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                      backgroundColor: colorScheme.surfaceContainerHighest,
+                                      shadowColorBase: shadowColor,
+                                      textStyle: textTheme.bodyMedium!,
+                                    ),
                                   );
                                 }
                               },
@@ -750,12 +752,6 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
   @override
   void dispose() {
-    if (_overlayDisplayEatsJournalEntryEdit != null) {
-      _overlayDisplayEatsJournalEntryEdit!.stop();
-    }
-
-    _animationController.dispose();
-
     _nameController.dispose();
     _amountController.dispose();
     _energyController.dispose();

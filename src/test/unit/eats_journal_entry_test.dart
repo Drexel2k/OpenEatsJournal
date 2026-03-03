@@ -17,7 +17,8 @@ import "package:openeatsjournal/service/database/open_eats_journal_database_serv
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:path/path.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
-import "../callbacks.mocks.dart";
+
+import "../mocks.mocks.dart";
 
 OpenEatsJournalDatabaseService? _database;
 

@@ -32,8 +32,8 @@ class _WeightRowState extends State<WeightRow> {
   void initState() {
     super.initState();
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+   final  WeightRowViewModel weightRowViewModel = Provider.of<WeightRowViewModel>(context, listen: false);
 
-    WeightRowViewModel weightRowViewModel = Provider.of<WeightRowViewModel>(context, listen: false);
     _weightController.text = convert.getCleanDoubleString1DecimalDigit(doubleValue: weightRowViewModel.lastValidWeight);
   }
 

@@ -23,8 +23,8 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
   void initState() {
     super.initState();
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = Provider.of<WeightJournalEntryAddScreenViewModel>(context, listen: false);
 
-    WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = Provider.of<WeightJournalEntryAddScreenViewModel>(context, listen: false);
     _weightController.text = convert.getCleanDoubleString1DecimalDigit(doubleValue: weightJournalEntryAddScreenViewModel.lastValidWeightDisplay);
   }
 

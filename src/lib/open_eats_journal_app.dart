@@ -31,6 +31,7 @@ import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/no_page_transitions_builder.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:provider/provider.dart";
 
 class OpenEatsJournalApp extends StatefulWidget {
@@ -40,10 +41,14 @@ class OpenEatsJournalApp extends StatefulWidget {
   State<OpenEatsJournalApp> createState() => _OpenEatsJournalAppState();
 }
 
-class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
+class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTickerProviderStateMixin {
+  late AnimationController _overlayAnimationController;
+
   @override
   void initState() {
     super.initState();
+
+    _overlayAnimationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
   }
 
   @override
@@ -93,7 +98,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                   initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
                 }
 
-                ConvertValidate convert = ConvertValidate(
+                final ConvertValidate convert = ConvertValidate(
                   languageCode: languageCode,
                   energyUnit: energyUnit,
                   heightUnit: heightUnit,
@@ -104,23 +109,41 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                 openEatsJournalAppViewModel.initStandardFoodData(languageCode: languageCode);
 
                 //we need a second future to ensure sequence of loading settings and loading standard food data that changes settings.
-                return Provider.value(
-                  value: convert,
-                  child: FutureBuilder<void>(
-                    future: openEatsJournalAppViewModel.dataInitialized,
-                    builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
-                      } else if (snapshot.hasError) {
-                        throw StateError("Something went wrong: ${snapshot.error}");
-                      } else if (snapshot.hasData) {
-                        openEatsJournalAppViewModel.saveLastProcessedStandardFoodDataDate(snapshot.data as DateTime);
+                return FutureBuilder<void>(
+                  future: openEatsJournalAppViewModel.dataInitialized,
+                  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
+                    } else if (snapshot.hasError) {
+                      throw StateError("Something went wrong: ${snapshot.error}");
+                    } else if (snapshot.hasData) {
+                      openEatsJournalAppViewModel.saveLastProcessedStandardFoodDataDate(snapshot.data as DateTime);
 
-                        SettingsRepository settingsRepository = Provider.of<SettingsRepository>(context, listen: false);
-                        FoodRepository foodRepository = Provider.of<FoodRepository>(context, listen: false);
-                        JournalRepository journalRepository = Provider.of<JournalRepository>(context, listen: false);
+                      SettingsRepository settingsRepository = Provider.of<SettingsRepository>(context, listen: false);
+                      FoodRepository foodRepository = Provider.of<FoodRepository>(context, listen: false);
+                      JournalRepository journalRepository = Provider.of<JournalRepository>(context, listen: false);
+                      
+                      OverlayDisplay overlayDisplay = OverlayDisplay(
+                        animationController: _overlayAnimationController,
+                      );
 
-                        return MaterialApp(
+                      return MultiProvider(
+                        providers: [
+                          Provider.value(value: convert),
+                          Provider.value(value: overlayDisplay),
+                        ],
+                        child: MaterialApp(
+                          builder: (context, child) {
+                            return Overlay(
+                              initialEntries: [
+                                OverlayEntry(
+                                  builder: (context) {
+                                    return child!;
+                                  },
+                                ),
+                              ],
+                            );
+                          },
                           localizationsDelegates: AppLocalizations.localizationsDelegates,
                           supportedLocales: AppLocalizations.supportedLocales,
                           locale: Locale(languageCode),
@@ -136,7 +159,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                                 openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
                                 quickEntryColor: Color.fromARGB(255, 255, 0, 233),
                                 cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
-                                confirmationBackgroundColor: Color.fromARGB(255, 207, 207, 207),
+                                shadowColor: Color.fromARGB(255, 0, 0, 0),
                               ),
                             ],
                           ),
@@ -156,7 +179,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                                 openFoodFactsFoodColor: Color.fromARGB(255, 202, 136, 73),
                                 quickEntryColor: Color.fromARGB(255, 198, 57, 186),
                                 cacheFoodColor: Color.fromARGB(255, 158, 158, 158),
-                                confirmationBackgroundColor: Color.fromARGB(255, 68, 68, 68),
+                                shadowColor: Color.fromARGB(255, 78, 78, 78),
                               ),
                             ],
                           ),
@@ -234,12 +257,12 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
                             },
                           },
                           navigatorKey: AppGlobal.navigatorKey,
-                        );
-                      } else {
-                        throw StateError("Something went wrong: standard foods not loaded.");
-                      }
-                    },
-                  ),
+                        ),
+                      );
+                    } else {
+                      throw StateError("Something went wrong: standard foods not loaded.");
+                    }
+                  },
                 );
               }
             },
@@ -255,6 +278,8 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> {
 
   @override
   void dispose() {
+    _overlayAnimationController.dispose();
+
     super.dispose();
   }
 }

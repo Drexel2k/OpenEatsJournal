@@ -42,8 +42,8 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
   void initState() {
     super.initState();
 
-    DailyCaloriesEditorScreenViewModel dailyCaloriesEditorScreenViewModel = Provider.of<DailyCaloriesEditorScreenViewModel>(context, listen: false);
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final DailyCaloriesEditorScreenViewModel dailyCaloriesEditorScreenViewModel = Provider.of<DailyCaloriesEditorScreenViewModel>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
 
     _dailyKJoule = widget._dailyKJoule;
     _originalDailyTargetKJoule = widget._originalDailyTargetKJoule;
@@ -59,7 +59,7 @@ class _DailyCaloriesEditorScreenState extends State<DailyCaloriesEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Consumer<DailyCaloriesEditorScreenViewModel>(

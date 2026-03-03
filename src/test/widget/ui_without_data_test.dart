@@ -20,7 +20,8 @@ import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:path/path.dart";
 import "package:provider/provider.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
-import "../callbacks.mocks.dart";
+
+import "../mocks.mocks.dart";
 
 OpenEatsJournalDatabaseService? _database;
 

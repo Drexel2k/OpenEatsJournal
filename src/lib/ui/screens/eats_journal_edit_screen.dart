@@ -9,7 +9,9 @@ import "package:openeatsjournal/ui/screens/copy_target_screen.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
+import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:provider/provider.dart";
@@ -21,22 +23,17 @@ class EatsJournalEditScreen extends StatefulWidget {
   State<EatsJournalEditScreen> createState() => _EatsJournalEditScreenState();
 }
 
-class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  OverlayDisplay? _overlayDisplayCopy;
-  OverlayDisplay? _overlayDisplayFoodEntryEdit;
-  OverlayDisplay? _overlayDisplayQuickEntryEdit;
-
+class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
   @override
   void initState() {
     super.initState();
-
-    _animationController = AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
+    final Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -109,10 +106,13 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                         toMeal: copyTargetScreenViewModel.currentMeal.value,
                                       );
 
-                                      _overlayDisplayCopy = OverlayDisplay(
-                                        context: AppGlobal.navigatorKey.currentContext!,
-                                        displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
-                                        animationController: _animationController,
+                                      overlayDisplay.enqueue(
+                                        overlayInfo: OverlayInfo(
+                                          displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
+                                          backgroundColor: colorScheme.surfaceContainerHighest,
+                                          shadowColorBase: shadowColor,
+                                          textStyle: textTheme.bodyMedium!,
+                                        ),
                                       );
                                     }
                                   },
@@ -136,12 +136,15 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                                 as EntityEdited?;
 
                                         if (eatsJournalEntryEdited != null) {
-                                          _overlayDisplayFoodEntryEdit = OverlayDisplay(
-                                            context: AppGlobal.navigatorKey.currentContext!,
-                                            displayText: eatsJournalEntryEdited.originalId == null
-                                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                                            animationController: _animationController,
+                                          overlayDisplay.enqueue(
+                                            overlayInfo: OverlayInfo(
+                                              displayText: eatsJournalEntryEdited.originalId == null
+                                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                              backgroundColor: colorScheme.surfaceContainerHighest,
+                                              shadowColorBase: shadowColor,
+                                              textStyle: textTheme.bodyMedium!,
+                                            ),
                                           );
                                         }
                                       } else {
@@ -150,12 +153,15 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
                                                 as EntityEdited?;
 
                                         if (eatsJournalEntryEdited != null) {
-                                          _overlayDisplayQuickEntryEdit = OverlayDisplay(
-                                            context: AppGlobal.navigatorKey.currentContext!,
-                                            displayText: eatsJournalEntryEdited.originalId == null
-                                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                            animationController: _animationController,
+                                          overlayDisplay.enqueue(
+                                            overlayInfo: OverlayInfo(
+                                              displayText: eatsJournalEntryEdited.originalId == null
+                                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                              backgroundColor: colorScheme.surfaceContainerHighest,
+                                              shadowColorBase: shadowColor,
+                                              textStyle: textTheme.bodyMedium!,
+                                            ),
                                           );
                                         }
                                       }
@@ -212,20 +218,6 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> with Sing
 
   @override
   void dispose() {
-    if (_overlayDisplayCopy != null) {
-      _overlayDisplayCopy!.stop();
-    }
-
-    if (_overlayDisplayFoodEntryEdit != null) {
-      _overlayDisplayFoodEntryEdit!.stop();
-    }
-
-    if (_overlayDisplayQuickEntryEdit != null) {
-      _overlayDisplayQuickEntryEdit!.stop();
-    }
-
-    _animationController.dispose();
-
     super.dispose();
   }
 }

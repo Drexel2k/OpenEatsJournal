@@ -7,7 +7,6 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:provider/provider.dart";
 
@@ -34,15 +33,10 @@ class FoodCard extends StatefulWidget {
 }
 
 class _FoodCardState extends State<FoodCard> {
-  bool _checkVisible = false;
-  static const int _checkAnimationDuration = 150;
-  static const int _checkDisplayDuration = 500;
-
   @override
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final OpenEatsJournalColors openEatsJournalColors = Theme.of(context).extension<OpenEatsJournalColors>()!;
     final borderRadius = BorderRadius.circular(8);
 
     MeasurementUnit measurementUnit = _getMeasurementUnit();
@@ -180,56 +174,30 @@ class _FoodCardState extends State<FoodCard> {
                     ),
                   ),
                   Spacer(),
-                  Stack(
-                    children: [
-                      SizedBox(
-                        width: 145,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            widget._onAddJournalEntryPressed(
-                              food: widget._food,
-                              amount: widget._food.defaultFoodUnit != null ? widget._food.defaultFoodUnit!.amount : 100,
-                              amountMeasurementUnit: _getMeasurementUnit(),
-                            );
-                            setState(() {
-                              _checkVisible = true;
-                            });
-                            Timer(Duration(milliseconds: _checkAnimationDuration + _checkDisplayDuration), _fadeOutCheck);
-                          },
-                          child: Column(
-                            children: [
-                              Text(
-                                "+${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: _getKJoulesToAdd()))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                                style: textTheme.titleSmall,
-                              ),
-                              Text(
-                                style: textTheme.labelSmall,
-                                _getKJoulesToAddText(measurementUnit: measurementUnit, context: context, convert: convert),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                  SizedBox(
+                    width: 145,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        widget._onAddJournalEntryPressed(
+                          food: widget._food,
+                          amount: widget._food.defaultFoodUnit != null ? widget._food.defaultFoodUnit!.amount : 100,
+                          amountMeasurementUnit: _getMeasurementUnit(),
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          Text(
+                            "+${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: _getKJoulesToAdd()))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
+                            style: textTheme.titleSmall,
                           ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: IgnorePointer(
-                            child: AnimatedOpacity(
-                              // If the widget is visible, animate to 0.0 (invisible).
-                              // If the widget is hidden, animate to 1.0 (fully visible).
-                              opacity: _checkVisible ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: _checkAnimationDuration),
-                              // The green box must be a child of the AnimatedOpacity widget.
-                              child: Container(
-                                decoration: BoxDecoration(color: openEatsJournalColors.confirmationBackgroundColor, borderRadius: BorderRadius.circular(15)),
-                                child: Icon(Icons.check, color: Colors.green, size: 40),
-                              ),
-                            ),
+                          Text(
+                            style: textTheme.labelSmall,
+                            _getKJoulesToAddText(measurementUnit: measurementUnit, context: context, convert: convert),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -238,12 +206,6 @@ class _FoodCardState extends State<FoodCard> {
         ),
       ),
     );
-  }
-
-  void _fadeOutCheck() {
-    setState(() {
-      _checkVisible = false;
-    });
   }
 
   String _getKJoulesToAddText({required MeasurementUnit measurementUnit, required BuildContext context, required ConvertValidate convert}) {
