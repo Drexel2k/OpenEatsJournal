@@ -4,6 +4,8 @@ import "package:flutter_test/flutter_test.dart";
 import "package:intl/date_symbol_data_local.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -17,10 +19,13 @@ import "package:openeatsjournal/service/database/open_eats_journal_database_serv
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/food_edit_screen.dart";
+import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:path/path.dart";
@@ -211,8 +216,7 @@ void main() async {
 
     await tester.pumpWidget(widget);
 
-    Finder createButton = find.byIcon(Icons.add_circle_outline);
-    await tester.tap(createButton);
+    await tester.tap(find.byIcon(Icons.add_circle_outline));
     await tester.pump();
 
     expect(quickEntry.id, isNotNull);
@@ -320,9 +324,6 @@ void main() async {
     expect(find.text("dinner"), findsOneWidget);
     expect(find.text(convert.dateFormatterDisplayLongDateOnly.format(entryDateValue)), findsOneWidget);
     expect(find.text("ml"), findsOneWidget);
-
-    //let timer end, otherwise the test will fail/throw an internal exception.
-    await tester.pumpAndSettle();
   });
 
   testWidgets("Check statistic data with nutritions null values", (tester) async {
@@ -363,7 +364,7 @@ void main() async {
     Finder dropdownSelectedValueFinder = find.text('Energy');
     expect(dropdownSelectedValueFinder, findsOneWidget);
 
-    //just test if the result is displayed without execetpions because of the null values.
+    //just test if the result is displayed without exceptions because of the null values.
     List<String> nutritons = ["Fat", "Saturated fat", "Carbohydrates", "Sugar", "Protein", "Salt"];
     Finder dropdownItem;
     for (String untrition in nutritons) {
@@ -374,6 +375,228 @@ void main() async {
       await tester.pumpAndSettle();
       dropdownSelectedValueFinder = find.text(untrition);
       expect(dropdownSelectedValueFinder, findsOneWidget);
+    }
+  });
+
+  testWidgets("Adding new food from existing food", (tester) async {
+    //without runAsync openDatabase will hang.
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
+      return await generalSetup();
+    }))!;
+
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
+    ConvertValidate convert = repositories[3] as ConvertValidate;
+
+    String nameValue = "Dinner rolls, wheat";
+    int brandsLength = 0;
+    FoodSource foodSourceValue = FoodSource.user;
+    FoodSource originalFoodSourceValue = FoodSource.standard;
+    String originalFoodSourceFoodIdValue = "5";
+    bool fromDbValue = true;
+    int kCalValue = 273;
+    int nutritionPerGramAmountValue = 100;
+    double fatValue = 6.3;
+    double saturatedFatValue = 1.5;
+    double carbohydratesValue = 46;
+    double sugarValue = 1.6;
+    double proteinValue = 8.6;
+    double saltValue = 0.9;
+    String quantityValue = OpenEatsJournalStrings.emptyString;
+    int foodUnitsLength = 2;
+    String defaultFoodUnitNameValue = "Roll";
+
+    Food food = (await foodRepository.getFoodsBySearchText(
+      searchText: "roll",
+      languageCode: OpenEatsJournalStrings.en,
+      searchMode: SearchMode.offline,
+    ))[1].foods![0];
+
+    int originalFoodId = food.id!;
+    List<int> originalfoodUnitIds = food.foodUnitsWithOrder.map((foodunit) => foodunit.object.id!).toList();
+
+    Food newFood = Food.copyAsNewUserFood(food: food);
+
+    OverlayDisplay overlayDisplay = MockOverlayDisplay();
+
+    Widget widget = MultiProvider(
+      providers: [
+        Provider.value(value: convert),
+        Provider.value(value: overlayDisplay),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(settingsRepository.languageCode.value),
+        navigatorKey: AppGlobal.navigatorKey,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
+          extensions: const <ThemeExtension<dynamic>>[
+            OpenEatsJournalColors(
+              userFoodColor: Color.fromARGB(255, 26, 65, 255),
+              standardFoodColor: Color.fromARGB(255, 5, 112, 89),
+              openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
+              quickEntryColor: Color.fromARGB(255, 255, 0, 233),
+              cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
+              shadowColor: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ],
+        ),
+        home: ChangeNotifierProvider<FoodEditScreenViewModel>(
+          create: (context) => FoodEditScreenViewModel(food: newFood, foodRepository: foodRepository, convert: convert),
+          child: FoodEditScreen(),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(widget);
+
+    await tester.ensureVisible(find.text("Create"));
+    await tester.tap(find.text("Create"));
+    await tester.pump();
+
+    expect(newFood.id, isNotNull);
+
+    //Loading food
+    Food loadedFood = (await foodRepository.getFoodsBySearchText(
+      searchText: "roll",
+      languageCode: OpenEatsJournalStrings.en,
+      searchMode: SearchMode.offline,
+    ))[0].foods![0];
+
+    //check if ids are new
+    expect(loadedFood.id != originalFoodId, true);
+    List<int> loadedFoodUnitIds = loadedFood.foodUnitsWithOrder.map((foodunit) => foodunit.object.id!).toList();
+    for (int loadedFoodUnitId in loadedFoodUnitIds) {
+      expect(originalfoodUnitIds.contains(loadedFoodUnitId), false);
+    }
+
+    //check if values are the same
+    expect(loadedFood, isNotNull);
+    expect(loadedFood.name, nameValue);
+    expect(loadedFood.brands.length, brandsLength);
+    expect(loadedFood.foodSource, foodSourceValue);
+    expect(loadedFood.originalFoodSource, originalFoodSourceValue);
+    expect(loadedFood.originalFoodSourceFoodId, originalFoodSourceFoodIdValue);
+    expect(loadedFood.fromDb, fromDbValue);
+    expect(loadedFood.barcode, null);
+    expect(loadedFood.kJoule, convert.getEnergyKJ(displayEnergy: kCalValue));
+    expect(loadedFood.nutritionPerGramAmount, nutritionPerGramAmountValue);
+    expect(loadedFood.nutritionPerMilliliterAmount, null);
+    expect(loadedFood.fat, fatValue);
+    expect(loadedFood.saturatedFat, saturatedFatValue);
+    expect(loadedFood.carbohydrates, carbohydratesValue);
+    expect(loadedFood.sugar, sugarValue);
+    expect(loadedFood.protein, proteinValue);
+    expect(loadedFood.salt, saltValue);
+    expect(loadedFood.quantity, quantityValue);
+    expect(loadedFood.foodUnitsWithOrder.length, foodUnitsLength);
+    expect(loadedFood.defaultFoodUnit!.name, defaultFoodUnitNameValue);
+
+    //Check if everything is displayed
+    widget = MultiProvider(
+      providers: [
+        Provider.value(value: convert),
+        Provider.value(value: overlayDisplay),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(settingsRepository.languageCode.value),
+        navigatorKey: AppGlobal.navigatorKey,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
+          extensions: const <ThemeExtension<dynamic>>[
+            OpenEatsJournalColors(
+              userFoodColor: Color.fromARGB(255, 26, 65, 255),
+              standardFoodColor: Color.fromARGB(255, 5, 112, 89),
+              openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
+              quickEntryColor: Color.fromARGB(255, 255, 0, 233),
+              cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
+              shadowColor: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ],
+        ),
+        home: ChangeNotifierProvider<FoodEditScreenViewModel>(
+          create: (context) => FoodEditScreenViewModel(food: loadedFood, foodRepository: foodRepository, convert: convert),
+          child: FoodEditScreen(),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(widget);
+
+    FinderResult<Element> textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    OpenEatsJournalTextField openEatsJournalTextField;
+
+    int textFieldIndex = 0;
+    for (Element element in textFields) {
+      openEatsJournalTextField = element.widget as OpenEatsJournalTextField;
+      if (textFieldIndex == 0) {
+        expect(openEatsJournalTextField.controller!.text, nameValue);
+      }
+
+      if (textFieldIndex == 1) {
+        expect(openEatsJournalTextField.controller!.text, OpenEatsJournalStrings.emptyString);
+      }
+
+      if (textFieldIndex == 2) {
+        expect(openEatsJournalTextField.controller!.text, OpenEatsJournalStrings.emptyString);
+      }
+
+      if (textFieldIndex == 3) {
+        expect(openEatsJournalTextField.controller!.text, convert.numberFomatterInt.format(nutritionPerGramAmountValue));
+      }
+
+      if (textFieldIndex == 4) {
+        expect(openEatsJournalTextField.controller!.text, OpenEatsJournalStrings.emptyString);
+      }
+
+      if (textFieldIndex == 5) {
+        expect(openEatsJournalTextField.controller!.text, "$kCalValue");
+      }
+
+      if (textFieldIndex == 6) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: carbohydratesValue));
+      }
+
+      if (textFieldIndex == 7) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: sugarValue));
+      }
+
+      if (textFieldIndex == 8) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: fatValue));
+      }
+
+      if (textFieldIndex == 9) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: saturatedFatValue));
+      }
+
+      if (textFieldIndex == 10) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: proteinValue));
+      }
+
+      if (textFieldIndex == 11) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: saltValue));
+      }
+
+      if (textFieldIndex == 12) {
+        expect(openEatsJournalTextField.controller!.text, "Roll");
+      }
+
+      if (textFieldIndex == 13) {
+        expect(openEatsJournalTextField.controller!.text, "80");
+      }
+
+      if (textFieldIndex == 14) {
+        expect(openEatsJournalTextField.controller!.text, "Slice");
+      }
+
+      if (textFieldIndex == 15) {
+        expect(openEatsJournalTextField.controller!.text, "50");
+      }
+
+      textFieldIndex++;
     }
   });
 }

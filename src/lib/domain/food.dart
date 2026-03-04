@@ -67,6 +67,7 @@ class Food {
       _fat = food.fat,
       _saturatedFat = food.saturatedFat,
       _protein = food.protein,
+      _salt = food.salt,
       _quantity = food.quantity,
       _foodUnitsWithOrder = [] {
     ObjectWithOrder<FoodUnit> foodUnitWithOrderCopy;

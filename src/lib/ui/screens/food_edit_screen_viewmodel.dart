@@ -271,8 +271,14 @@ class FoodEditScreenViewModel extends ChangeNotifier {
 
     if (foodValid) {
       _food.name = _name.value;
+
       _food.brands.clear();
-      _food.brands.addAll(_brands.value.split(",").map((brand) => brand.trim()));
+
+      List<String> brands = List.from(_brands.value.split(",").map((brand) => brand.trim()));
+      if (!(brands.length == 1 && brands[0] == OpenEatsJournalStrings.emptyString)) {
+        _food.brands.addAll(_brands.value.split(",").map((brand) => brand.trim()));
+      }
+
       _food.barcode = _barcode.value;
 
       //It is important to set non null values first, before setting null values, otherwise it can be that both ambounts may get null, which is throws an

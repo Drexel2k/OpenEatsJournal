@@ -136,7 +136,7 @@ void main() async {
 
     //page3
     expect(find.textContaining("gender"), findsOneWidget);
-    await tester.dragUntilVisible(find.text("Proceed"), find.byType(SingleChildScrollView), Offset(0, -10));
+    await tester.ensureVisible(find.text("Proceed"));
     await tester.tap(find.text("Proceed"));
     await tester.pumpAndSettle();
 
@@ -147,7 +147,7 @@ void main() async {
 
     expect(find.textContaining("Please select"), findsNothing);
 
-    await tester.dragUntilVisible(find.text("male"), find.byType(SingleChildScrollView), Offset(0, 10));
+    await tester.ensureVisible(find.text("male"));
     await tester.tap(find.text("male"));
 
     FinderResult<Element> textFields = find.byType(SettingsTextField).evaluate();
@@ -184,13 +184,13 @@ void main() async {
 
     await tester.tap(find.text("Low"));
 
-    await tester.dragUntilVisible(find.text("Proceed"), find.byType(SingleChildScrollView), Offset(0, -10));
+    await tester.ensureVisible(find.textContaining("Proceed"));
     await tester.tap(find.textContaining("Proceed"));
     await tester.pumpAndSettle();
 
     //page4
     expect(find.textContaining("weight target"), findsOneWidget);
-    await tester.dragUntilVisible(find.text("Proceed"), find.byType(SingleChildScrollView), Offset(0, -10));
+    await tester.ensureVisible(find.text("Proceed"));
     await tester.tap(find.text("Proceed"));
     await tester.pumpAndSettle();
 
@@ -281,7 +281,7 @@ void main() async {
     expect(settingsRepositoryRestart.kJouleFriday, 8664.018);
     expect(settingsRepositoryRestart.kJouleSaturday, 8664.018);
     expect(settingsRepositoryRestart.kJouleSunday, 8664.018);
-    expect(settingsRepositoryRestart.lastProcessedStandardFoodDataChangeDate, DateTime(2026, 02, 28, 1));
+    expect(settingsRepositoryRestart.lastProcessedStandardFoodDataChangeDate, DateTime(2026, 03, 04));
     expect(settingsRepositoryRestart.energyUnit, EnergyUnit.kcal);
     expect(settingsRepositoryRestart.heightUnit, HeightUnit.cm);
     expect(settingsRepositoryRestart.weightUnit, WeightUnit.g);

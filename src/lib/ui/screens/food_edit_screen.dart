@@ -921,8 +921,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
       foodUnitEditors.add(
         ChangeNotifierProvider.value(
+          key: ObjectKey(foodUnitEditorData),
           value: foodUnitEditorViewModel,
-          child: FoodUnitEditor(key: ObjectKey(foodUnitEditorData)),
+          child: FoodUnitEditor(),
         ),
       );
     }
