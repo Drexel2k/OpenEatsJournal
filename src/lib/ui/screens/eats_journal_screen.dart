@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
-import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
@@ -284,7 +283,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                           onSelected: (bool selected) {
                                             _changeDate(eatsJournalScreenViewModel: eatsJournalScreenViewModel, date: chipDate);
                                           },
-                                          label: Text(DateFormat("EEEE").format(chipDate).substring(0, 1), style: style),
+                                          label: Text(
+                                            _getDay1CharAbbreviation(context: context, date: chipDate),
+                                            style: style,
+                                          ),
                                         );
                                       }).toList(),
                                     );
@@ -1352,5 +1354,33 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  String _getDay1CharAbbreviation({required BuildContext context, required DateTime date}) {
+    if (date.weekday == 1) {
+      return AppLocalizations.of(context)!.monday_abbreviated_1char;
+    }
+
+    if (date.weekday == 2) {
+      return AppLocalizations.of(context)!.tuesday_abbreviated_1char;
+    }
+
+    if (date.weekday == 3) {
+      return AppLocalizations.of(context)!.wednesday_abbreviated_1char;
+    }
+
+    if (date.weekday == 4) {
+      return AppLocalizations.of(context)!.thursday_abbreviated_1char;
+    }
+
+    if (date.weekday == 5) {
+      return AppLocalizations.of(context)!.friday_abbreviated_1char;
+    }
+
+    if (date.weekday == 6) {
+      return AppLocalizations.of(context)!.saturday_abbreviated_1char;
+    }
+
+    return AppLocalizations.of(context)!.sunday_abbreviated_1char;
   }
 }

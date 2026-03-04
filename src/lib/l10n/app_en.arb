@@ -266,5 +266,12 @@
   "meal": "Meal",
   "as_is": "as is",
   "eats_journal_entries_copied": "Eats journal entries copied.",
-  "weight_journal_entry_added": "Weight entry added."
+  "weight_journal_entry_added": "Weight entry added.",
+  "monday_abbreviated_1char": "M",
+  "tuesday_abbreviated_1char": "T",
+  "wednesday_abbreviated_1char": "W",
+  "thursday_abbreviated_1char": "T",
+  "friday_abbreviated_1char": "F",
+  "saturday_abbreviated_1char": "S",
+  "sunday_abbreviated_1char": "S"
 }

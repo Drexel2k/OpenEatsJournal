@@ -266,5 +266,12 @@
   "meal": "Mahlzeit",
   "as_is": "wie es ist",
   "eats_journal_entries_copied": "Essenstagebucheinträge kopiert.",
-  "weight_journal_entry_added": "Gewichtseintrag hinzugefügt."
+  "weight_journal_entry_added": "Gewichtseintrag hinzugefügt.",
+  "monday_abbreviated_1char": "M",
+  "tuesday_abbreviated_1char": "D",
+  "wednesday_abbreviated_1char": "M",
+  "thursday_abbreviated_1char": "D",
+  "friday_abbreviated_1char": "F",
+  "saturday_abbreviated_1char": "S",
+  "sunday_abbreviated_1char": "S"
 }

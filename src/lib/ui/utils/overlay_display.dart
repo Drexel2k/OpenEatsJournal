@@ -45,7 +45,7 @@ class OverlayDisplay {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Spacer(),
+                SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Container(
@@ -74,7 +74,6 @@ class OverlayDisplay {
                     ),
                   ),
                 ),
-                SizedBox(height: 60),
               ],
             ),
           ),
