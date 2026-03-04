@@ -53,6 +53,21 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
 
   @override
   Widget build(BuildContext context) {
+    final OverlayDisplay overlayDisplay = OverlayDisplay(
+      animationController: _overlayAnimationController,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      shadowColorBase: Colors.black,
+      textStyle: Theme.of(context).textTheme.bodyMedium!,
+    );
+
+    final ConvertValidate convert = ConvertValidate(
+      languageCode: OpenEatsJournalStrings.en,
+      energyUnit: EnergyUnit.kcal,
+      heightUnit: HeightUnit.cm,
+      weightUnit: WeightUnit.g,
+      volumeUnit: VolumeUnit.ml,
+    );
+
     return Consumer<OpenEatsJournalAppViewModel>(
       builder: (context, openEatsJournalAppViewModel, _) => ListenableBuilder(
         listenable: openEatsJournalAppViewModel.appWideSettingChanged,
@@ -67,10 +82,6 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
               } else {
                 ThemeMode themeMode = ThemeMode.light;
                 String languageCode = OpenEatsJournalStrings.en;
-                EnergyUnit energyUnit = EnergyUnit.kcal;
-                HeightUnit heightUnit = HeightUnit.cm;
-                WeightUnit weightUnit = WeightUnit.g;
-                VolumeUnit volumeUnit = VolumeUnit.ml;
                 String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
 
                 if (openEatsJournalAppViewModel.onboarded) {
@@ -80,10 +91,11 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
                   }
 
                   languageCode = openEatsJournalAppViewModel.languageCode;
-                  energyUnit = openEatsJournalAppViewModel.energyUnit;
-                  heightUnit = openEatsJournalAppViewModel.heightUnit;
-                  weightUnit = openEatsJournalAppViewModel.weightUnit;
-                  volumeUnit = openEatsJournalAppViewModel.volumeUnit;
+                  convert.languageCode = openEatsJournalAppViewModel.languageCode;
+                  convert.energyUnit = openEatsJournalAppViewModel.energyUnit;
+                  convert.heightUnit = openEatsJournalAppViewModel.heightUnit;
+                  convert.weightUnit = openEatsJournalAppViewModel.weightUnit;
+                  convert.volumeUnit = openEatsJournalAppViewModel.volumeUnit;
                 } else {
                   Brightness brightness = MediaQuery.platformBrightnessOf(context);
                   if (brightness == Brightness.dark) {
@@ -97,14 +109,6 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
 
                   initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
                 }
-
-                final ConvertValidate convert = ConvertValidate(
-                  languageCode: languageCode,
-                  energyUnit: energyUnit,
-                  heightUnit: heightUnit,
-                  weightUnit: weightUnit,
-                  volumeUnit: volumeUnit,
-                );
 
                 openEatsJournalAppViewModel.initStandardFoodData(languageCode: languageCode);
 
@@ -122,26 +126,28 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
                       SettingsRepository settingsRepository = Provider.of<SettingsRepository>(context, listen: false);
                       FoodRepository foodRepository = Provider.of<FoodRepository>(context, listen: false);
                       JournalRepository journalRepository = Provider.of<JournalRepository>(context, listen: false);
-                      
-                      OverlayDisplay overlayDisplay = OverlayDisplay(
-                        animationController: _overlayAnimationController,
-                      );
 
-                      return MultiProvider(
-                        providers: [
-                          Provider.value(value: convert),
-                          Provider.value(value: overlayDisplay),
-                        ],
+                      return Provider.value(
+                        value: convert,
                         child: MaterialApp(
                           builder: (context, child) {
-                            return Overlay(
-                              initialEntries: [
-                                OverlayEntry(
-                                  builder: (context) {
-                                    return child!;
-                                  },
-                                ),
-                              ],
+                            overlayDisplay.updateStyle(
+                              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              shadowColorBase: Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!,
+                              textStyle: Theme.of(context).textTheme.bodyMedium!,
+                            );
+
+                            return Provider.value(
+                              value: overlayDisplay,
+                              child: Overlay(
+                                initialEntries: [
+                                  OverlayEntry(
+                                    builder: (context) {
+                                      return child!;
+                                    },
+                                  ),
+                                ],
+                              ),
                             );
                           },
                           localizationsDelegates: AppLocalizations.localizationsDelegates,

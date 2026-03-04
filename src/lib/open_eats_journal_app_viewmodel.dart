@@ -1,8 +1,6 @@
 import "package:flutter/material.dart";
-import "package:intl/date_symbol_data_local.dart";
 import "package:openeatsjournal/domain/utils/energy_unit.dart";
 import "package:openeatsjournal/domain/utils/height_unit.dart";
-import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/utils/volume_unit.dart";
 import "package:openeatsjournal/domain/utils/weight_unit.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
@@ -14,7 +12,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
     : _settingsRepository = settingsRepository,
       _foodRepository = foodRepository,
       //need to call initializeDateFormatting before first time calling ConvertValidate.init()
-      _settingsLoaded = Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
+      _settingsLoaded = settingsRepository.initSettings();
 
   final SettingsRepository _settingsRepository;
   final FoodRepository _foodRepository;

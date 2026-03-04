@@ -1,6 +1,7 @@
 import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
+import "package:intl/date_symbol_data_local.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/utils/energy_unit.dart";
 import "package:openeatsjournal/domain/utils/height_unit.dart";
@@ -69,6 +70,8 @@ void main() async {
     );
 
     result.add(JournalRepository(oejDatabase: _database!));
+
+    await initializeDateFormatting(OpenEatsJournalStrings.en);
     return result;
   }
 
@@ -78,7 +81,6 @@ void main() async {
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
       return await setupWithSpecificTodayDate(today: today);
     }))!;
-
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
     FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;

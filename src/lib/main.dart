@@ -2,6 +2,8 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:http/http.dart" as http show get;
+import "package:intl/date_symbol_data_local.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/open_eats_journal_app.dart";
 import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
@@ -16,9 +18,10 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
 import "package:provider/provider.dart";
 
-void main() {
+void main() async {
   //required for database initialization
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting(OpenEatsJournalStrings.en);
 
   ErrorWidget.builder = ErrorHandlers.errorWidget;
   FlutterError.onError = (FlutterErrorDetails details) async {

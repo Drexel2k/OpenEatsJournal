@@ -11,9 +11,7 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
-import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -89,8 +87,6 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
 
     double inputFieldsWidth = 90;
 
@@ -239,14 +235,9 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                                 if (eatsJournalEntryEdited != null) {
                                   overlayDisplay.enqueue(
-                                    overlayInfo: OverlayInfo(
-                                      displayText: eatsJournalEntryEdited.originalId == null
-                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                      backgroundColor: colorScheme.surfaceContainerHighest,
-                                      shadowColorBase: shadowColor,
-                                      textStyle: textTheme.bodyMedium!,
-                                    ),
+                                    message: eatsJournalEntryEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                   );
                                 }
                               },

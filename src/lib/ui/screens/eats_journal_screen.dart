@@ -25,9 +25,7 @@ import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewm
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
-import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
@@ -55,7 +53,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
     final double fabMenuWidth = 150;
 
     double dimension = 200;
@@ -550,14 +547,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      overlayInfo: OverlayInfo(
-                                                        displayText: eatsJournalEntryEdited.originalId == null
-                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                        backgroundColor: colorScheme.surfaceContainerHighest,
-                                                        shadowColorBase: shadowColor,
-                                                        textStyle: textTheme.bodyMedium!,
-                                                      ),
+                                                      message: eatsJournalEntryEdited.originalId == null
+                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                                     );
                                                   }
                                                 },
@@ -648,14 +640,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      overlayInfo: OverlayInfo(
-                                                        displayText: eatsJournalEntryEdited.originalId == null
-                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                        backgroundColor: colorScheme.surfaceContainerHighest,
-                                                        shadowColorBase: shadowColor,
-                                                        textStyle: textTheme.bodyMedium!,
-                                                      ),
+                                                      message: eatsJournalEntryEdited.originalId == null
+                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                                     );
                                                   }
                                                 },
@@ -746,14 +733,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      overlayInfo: OverlayInfo(
-                                                        displayText: eatsJournalEntryEdited.originalId == null
-                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                        backgroundColor: colorScheme.surfaceContainerHighest,
-                                                        shadowColorBase: shadowColor,
-                                                        textStyle: textTheme.bodyMedium!,
-                                                      ),
+                                                      message: eatsJournalEntryEdited.originalId == null
+                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                                     );
                                                   }
                                                 },
@@ -844,14 +826,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      overlayInfo: OverlayInfo(
-                                                        displayText: eatsJournalEntryEdited.originalId == null
-                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                                        backgroundColor: colorScheme.surfaceContainerHighest,
-                                                        shadowColorBase: shadowColor,
-                                                        textStyle: textTheme.bodyMedium!,
-                                                      ),
+                                                      message: eatsJournalEntryEdited.originalId == null
+                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                                     );
                                                   }
                                                 },
@@ -930,12 +907,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                   )) {
                                                     eatsJournalScreenViewModel.refreshCurrentWeight();
                                                     overlayDisplay.enqueue(
-                                                      overlayInfo: OverlayInfo(
-                                                        displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                                        backgroundColor: colorScheme.surfaceContainerHighest,
-                                                        shadowColorBase: shadowColor,
-                                                        textStyle: textTheme.bodyMedium!,
-                                                      ),
+                                                      message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
                                                     );
                                                   }
                                                 },
@@ -1095,14 +1067,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 convert: convert,
                               )) {
                                 eatsJournalScreenViewModel.refreshCurrentWeight();
-                                overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                    backgroundColor: colorScheme.surfaceContainerHighest,
-                                    shadowColorBase: shadowColor,
-                                    textStyle: textTheme.bodyMedium!,
-                                  ),
-                                );
+                                overlayDisplay.enqueue(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added);
                               }
                             },
                             label: Text(AppLocalizations.of(context)!.weight_journal_entry),
@@ -1132,14 +1097,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                               if (foodEdited != null) {
                                 overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    displayText: foodEdited.originalId == null
-                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                                    backgroundColor: colorScheme.surfaceContainerHighest,
-                                    shadowColorBase: shadowColor,
-                                    textStyle: textTheme.bodyMedium!,
-                                  ),
+                                  message: foodEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
                                 );
                               }
                             },
@@ -1163,14 +1123,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                               if (eatsJournalEntryEdited != null) {
                                 overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    displayText: eatsJournalEntryEdited.originalId == null
-                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                    backgroundColor: colorScheme.surfaceContainerHighest,
-                                    shadowColorBase: shadowColor,
-                                    textStyle: textTheme.bodyMedium!,
-                                  ),
+                                  message: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                 );
                               }
                             },

@@ -3,23 +3,40 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:openeatsjournal/app_global.dart';
-import 'package:openeatsjournal/ui/utils/overlay_info.dart';
 
 class OverlayDisplay {
-  OverlayDisplay({required AnimationController animationController}) : _animationController = animationController, _messageQueue = Queue<OverlayInfo>();
+  OverlayDisplay({
+    required AnimationController animationController,
+    required Color backgroundColor,
+    required Color shadowColorBase,
+    required TextStyle textStyle,
+  }) : _animationController = animationController,
+       _backgroundColor = backgroundColor,
+       _shadowColorBase = shadowColorBase,
+       _textStyle = textStyle,
+       _messageQueue = Queue<String>();
 
   final AnimationController _animationController;
+  late Color _backgroundColor;
+  late Color _shadowColorBase;
+  late TextStyle _textStyle;
   final Queue _messageQueue;
   OverlayEntry? _currentOverlayEntry;
 
-  void enqueue({required OverlayInfo overlayInfo}) {
-    _messageQueue.add(overlayInfo);
+  void updateStyle({required Color backgroundColor, required Color shadowColorBase, required TextStyle textStyle}) {
+    _backgroundColor = backgroundColor;
+    _shadowColorBase = shadowColorBase;
+    _textStyle = textStyle;
+  }
+
+  void enqueue({required String message}) {
+    _messageQueue.add(message);
     _display();
   }
 
   void _display() {
     if (_currentOverlayEntry == null) {
-      OverlayInfo message = _messageQueue.removeFirst();
+      String message = _messageQueue.removeFirst();
 
       _currentOverlayEntry = OverlayEntry(
         builder: (context) => FadeTransition(
@@ -34,17 +51,17 @@ class OverlayDisplay {
                   child: Container(
                     alignment: AlignmentGeometry.center,
                     decoration: BoxDecoration(
-                      color: message.backgroundColor,
+                      color: _backgroundColor,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       boxShadow: [
                         BoxShadow(
-                          color: Color.from(red: message.shadowColorBase.r, green: message.shadowColorBase.g, blue: message.shadowColorBase.r, alpha: 0.3),
+                          color: Color.from(red: _shadowColorBase.r, green: _shadowColorBase.g, blue: _shadowColorBase.r, alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 0,
                           offset: Offset(0, 7),
                         ),
                         BoxShadow(
-                          color: Color.from(red: message.shadowColorBase.r, green: message.shadowColorBase.g, blue: message.shadowColorBase.r, alpha: 0.4),
+                          color: Color.from(red: _shadowColorBase.r, green: _shadowColorBase.g, blue: _shadowColorBase.r, alpha: 0.4),
                           blurRadius: 6,
                           spreadRadius: 0,
                           offset: Offset(0, 4),
@@ -53,7 +70,7 @@ class OverlayDisplay {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(10),
-                      child: Text(message.displayText, style: message.textStyle),
+                      child: Text(message, style: _textStyle),
                     ),
                   ),
                 ),
@@ -67,7 +84,7 @@ class OverlayDisplay {
       Overlay.of(AppGlobal.navigatorKey.currentContext!).insert(_currentOverlayEntry!);
 
       _animationController.forward();
-      Timer(Duration(milliseconds: 5150), () {
+      Timer(Duration(milliseconds: 3150), () {
         _animationController.reverse();
         Timer(Duration(milliseconds: 150), () {
           _currentOverlayEntry!.remove();

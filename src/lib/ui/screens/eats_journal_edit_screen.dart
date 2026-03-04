@@ -9,9 +9,7 @@ import "package:openeatsjournal/ui/screens/copy_target_screen.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
-import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
-import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:provider/provider.dart";
@@ -33,7 +31,6 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
-    final Color shadowColor = Theme.of(context).extension<OpenEatsJournalColors>()!.shadowColor!;
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -106,14 +103,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                                         toMeal: copyTargetScreenViewModel.currentMeal.value,
                                       );
 
-                                      overlayDisplay.enqueue(
-                                        overlayInfo: OverlayInfo(
-                                          displayText: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
-                                          backgroundColor: colorScheme.surfaceContainerHighest,
-                                          shadowColorBase: shadowColor,
-                                          textStyle: textTheme.bodyMedium!,
-                                        ),
-                                      );
+                                      overlayDisplay.enqueue(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied);
                                     }
                                   },
                                   child: Icon(Icons.copy),
@@ -137,14 +127,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
 
                                         if (eatsJournalEntryEdited != null) {
                                           overlayDisplay.enqueue(
-                                            overlayInfo: OverlayInfo(
-                                              displayText: eatsJournalEntryEdited.originalId == null
-                                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                                              backgroundColor: colorScheme.surfaceContainerHighest,
-                                              shadowColorBase: shadowColor,
-                                              textStyle: textTheme.bodyMedium!,
-                                            ),
+                                            message: eatsJournalEntryEdited.originalId == null
+                                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
                                           );
                                         }
                                       } else {
@@ -154,14 +139,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
 
                                         if (eatsJournalEntryEdited != null) {
                                           overlayDisplay.enqueue(
-                                            overlayInfo: OverlayInfo(
-                                              displayText: eatsJournalEntryEdited.originalId == null
-                                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                              backgroundColor: colorScheme.surfaceContainerHighest,
-                                              shadowColorBase: shadowColor,
-                                              textStyle: textTheme.bodyMedium!,
-                                            ),
+                                            message: eatsJournalEntryEdited.originalId == null
+                                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
                                           );
                                         }
                                       }
