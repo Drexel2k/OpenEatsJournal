@@ -18,6 +18,7 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -61,7 +62,8 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    double inputFieldsWidth = 110;
+    final double overlaySpacer = 100;
+    final double inputFieldsWidth = 110;
 
     return Consumer<EatsJournalFoodEntryEditScreenViewModel>(
       builder: (context, eatsJournalFoodEntryEditScreenViewModel, _) => MainLayout(
@@ -164,9 +166,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                           if (foodEdited != null) {
                             overlayDisplay.enqueue(
-                              message: foodEdited.originalId == null
-                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                              overlayInfo: OverlayInfo(
+                                message: foodEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                spacer: overlaySpacer,
+                              ),
                             );
                           }
                         },
@@ -194,9 +199,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                             if (eatsJournalEntryEdited != null) {
                               overlayDisplay.enqueue(
-                                message: eatsJournalEntryEdited.originalId == null
-                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                overlayInfo: OverlayInfo(
+                                  message: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                  spacer: overlaySpacer,
+                                ),
                               );
                             }
                           },
@@ -219,9 +227,12 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                             if (foodEdited != null) {
                               overlayDisplay.enqueue(
-                                message: foodEdited.originalId == null
-                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                overlayInfo: OverlayInfo(
+                                  message: foodEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                  spacer: overlaySpacer,
+                                ),
                               );
                             }
                           },

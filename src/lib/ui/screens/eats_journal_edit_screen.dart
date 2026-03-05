@@ -10,6 +10,7 @@ import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:provider/provider.dart";
@@ -34,6 +35,8 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    final double overlaySpacer = 83;
 
     return Consumer<EatsJournalEditScreenViewModel>(
       builder: (context, eatsJournalEditScreenViewModel, _) => Padding(
@@ -103,7 +106,12 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                                         toMeal: copyTargetScreenViewModel.currentMeal.value,
                                       );
 
-                                      overlayDisplay.enqueue(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied);
+                                      overlayDisplay.enqueue(
+                                        overlayInfo: OverlayInfo(
+                                          message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.eats_journal_entries_copied,
+                                          spacer: overlaySpacer,
+                                        ),
+                                      );
                                     }
                                   },
                                   child: Icon(Icons.copy),
@@ -127,9 +135,12 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
 
                                         if (eatsJournalEntryEdited != null) {
                                           overlayDisplay.enqueue(
-                                            message: eatsJournalEntryEdited.originalId == null
-                                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                            overlayInfo: OverlayInfo(
+                                              message: eatsJournalEntryEdited.originalId == null
+                                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                              spacer: overlaySpacer,
+                                            ),
                                           );
                                         }
                                       } else {
@@ -139,9 +150,12 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
 
                                         if (eatsJournalEntryEdited != null) {
                                           overlayDisplay.enqueue(
-                                            message: eatsJournalEntryEdited.originalId == null
-                                                ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                            overlayInfo: OverlayInfo(
+                                              message: eatsJournalEntryEdited.originalId == null
+                                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                              spacer: overlaySpacer,
+                                            ),
                                           );
                                         }
                                       }

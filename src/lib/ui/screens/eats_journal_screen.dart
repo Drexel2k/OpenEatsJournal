@@ -25,6 +25,7 @@ import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
@@ -54,11 +55,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final double fabMenuWidth = 150;
 
-    double dimension = 200;
-    double radius = 0.9;
+    final double overlaySpacer = 110;
+    final double dimension = 200;
+    final double radius = 0.9;
 
-    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
-    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
+    final double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
+    final double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
 
     return Consumer<EatsJournalScreenViewModel>(
       builder: (context, eatsJournalScreenViewModel, _) => MainLayout(
@@ -549,9 +551,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      message: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                      overlayInfo: OverlayInfo(
+                                                        message: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        spacer: overlaySpacer,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -642,9 +647,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      message: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                      overlayInfo: OverlayInfo(
+                                                        message: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        spacer: overlaySpacer,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -735,9 +743,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      message: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                      overlayInfo: OverlayInfo(
+                                                        message: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        spacer: overlaySpacer,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -828,9 +839,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                                                   if (eatsJournalEntryEdited != null) {
                                                     overlayDisplay.enqueue(
-                                                      message: eatsJournalEntryEdited.originalId == null
-                                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                      overlayInfo: OverlayInfo(
+                                                        message: eatsJournalEntryEdited.originalId == null
+                                                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                                        spacer: overlaySpacer,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -909,7 +923,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                   )) {
                                                     eatsJournalScreenViewModel.refreshCurrentWeight();
                                                     overlayDisplay.enqueue(
-                                                      message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                                      overlayInfo: OverlayInfo(
+                                                        message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                                        spacer: overlaySpacer,
+                                                      ),
                                                     );
                                                   }
                                                 },
@@ -1069,7 +1086,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 convert: convert,
                               )) {
                                 eatsJournalScreenViewModel.refreshCurrentWeight();
-                                overlayDisplay.enqueue(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added);
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                    spacer: overlaySpacer,
+                                  ),
+                                );
                               }
                             },
                             label: Text(AppLocalizations.of(context)!.weight_journal_entry),
@@ -1099,9 +1121,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                               if (foodEdited != null) {
                                 overlayDisplay.enqueue(
-                                  message: foodEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                  overlayInfo: OverlayInfo(
+                                    message: foodEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                    spacer: overlaySpacer,
+                                  ),
                                 );
                               }
                             },
@@ -1125,9 +1150,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
 
                               if (eatsJournalEntryEdited != null) {
                                 overlayDisplay.enqueue(
-                                  message: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                  overlayInfo: OverlayInfo(
+                                    message: eatsJournalEntryEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                    spacer: overlaySpacer,
+                                  ),
                                 );
                               }
                             },

@@ -18,6 +18,7 @@ import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 import "package:openeatsjournal/ui/utils/ui_helpers.dart";
@@ -52,10 +53,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    double fabMenuWidth = 150;
+    final double overlaySpacer = 198;
+    final double fabMenuWidth = 150;
 
-    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
-    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
+    final double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
+    final double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
 
     Map<String, String> standardFoodUnitLocalizations = {
       OpenEatsJournalStrings.piece: AppLocalizations.of(context)!.piece,
@@ -341,9 +343,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                             if (eatsJournalEntryEdited != null) {
                               overlayDisplay.enqueue(
-                                message: eatsJournalEntryEdited.originalId == null
-                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                overlayInfo: OverlayInfo(
+                                  message: eatsJournalEntryEdited.originalId == null
+                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
+                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
+                                  spacer: overlaySpacer,
+                                ),
                               );
                             }
                           },
@@ -358,13 +363,21 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               ),
                             );
 
-                            overlayDisplay.enqueue(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added);
+                            overlayDisplay.enqueue(
+                              overlayInfo: OverlayInfo(
+                                message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added,
+                                spacer: overlaySpacer,
+                              ),
+                            );
                           },
                           onFoodEdited: ({required EntityEdited entityEdited}) {
                             overlayDisplay.enqueue(
-                              message: entityEdited.originalId == null
-                                  ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                  : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                              overlayInfo: OverlayInfo(
+                                message: entityEdited.originalId == null
+                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                spacer: overlaySpacer,
+                              ),
                             );
                           },
                         );
@@ -458,7 +471,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                 initialWeight: await foodSearchScreenViewModel.getLastWeightJournalEntry(),
                                 convert: convert,
                               )) {
-                                overlayDisplay.enqueue(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added);
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                    spacer: overlaySpacer,
+                                  ),
+                                );
                               }
                             },
                             label: Text(AppLocalizations.of(context)!.weight_journal_entry),
@@ -488,9 +506,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                               if (foodEdited != null) {
                                 overlayDisplay.enqueue(
-                                  message: foodEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                  overlayInfo: OverlayInfo(
+                                    message: foodEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
+                                    spacer: overlaySpacer,
+                                  ),
                                 );
                               }
                             },
@@ -512,9 +533,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                               if (eatsJournalEntryEdited != null) {
                                 overlayDisplay.enqueue(
-                                  message: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                  overlayInfo: OverlayInfo(
+                                    message: eatsJournalEntryEdited.originalId == null
+                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
+                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
+                                    spacer: overlaySpacer,
+                                  ),
                                 );
                               }
                             },

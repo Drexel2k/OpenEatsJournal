@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:openeatsjournal/app_global.dart';
+import 'package:openeatsjournal/ui/utils/overlay_info.dart';
 
 class OverlayDisplay {
   OverlayDisplay({
@@ -14,13 +15,13 @@ class OverlayDisplay {
        _backgroundColor = backgroundColor,
        _shadowColorBase = shadowColorBase,
        _textStyle = textStyle,
-       _messageQueue = Queue<String>();
+       _messageQueue = Queue<OverlayInfo>();
 
   final AnimationController _animationController;
   late Color _backgroundColor;
   late Color _shadowColorBase;
   late TextStyle _textStyle;
-  final Queue _messageQueue;
+  final Queue<OverlayInfo> _messageQueue;
   OverlayEntry? _currentOverlayEntry;
 
   void updateStyle({required Color backgroundColor, required Color shadowColorBase, required TextStyle textStyle}) {
@@ -29,14 +30,14 @@ class OverlayDisplay {
     _textStyle = textStyle;
   }
 
-  void enqueue({required String message}) {
-    _messageQueue.add(message);
+  void enqueue({required OverlayInfo overlayInfo}) {
+    _messageQueue.add(overlayInfo);
     _display();
   }
 
   void _display() {
     if (_currentOverlayEntry == null) {
-      String message = _messageQueue.removeFirst();
+      OverlayInfo overlayInfo = _messageQueue.removeFirst();
 
       _currentOverlayEntry = OverlayEntry(
         builder: (context) => FadeTransition(
@@ -45,7 +46,7 @@ class OverlayDisplay {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 10),
+                SizedBox(height: overlayInfo.spacer),
                 Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Container(
@@ -70,7 +71,7 @@ class OverlayDisplay {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(10),
-                      child: Text(message, style: _textStyle),
+                      child: Text(overlayInfo.message, style: _textStyle),
                     ),
                   ),
                 ),
