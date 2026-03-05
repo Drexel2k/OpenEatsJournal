@@ -1,7 +1,9 @@
 import "dart:io";
+import "package:csv/csv.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:intl/date_symbol_data_local.dart";
+import "package:mockito/mockito.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/utils/energy_unit.dart";
 import "package:openeatsjournal/domain/utils/height_unit.dart";
@@ -14,7 +16,6 @@ import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
@@ -51,7 +52,15 @@ void main() async {
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
 
-    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+    MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
+    when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
+      (_) => Future(() async {
+        return CsvToListConverter(
+          shouldParseNumbers: false,
+        ).convert(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync());
+      }),
+    );
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: MockCallbacks().get,

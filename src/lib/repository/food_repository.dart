@@ -645,7 +645,7 @@ class FoodRepository {
     List<List<String>> foodUnitsData = [];
 
     for (int fileIndex = 1; fileIndex <= standardFoodDataAssetsassets.length; fileIndex++) {
-      standardFoodDataCsv = await _oejAssetsService.getCsvContent("assets/standard_food_data.$fileIndex.csv");
+      standardFoodDataCsv = await _oejAssetsService.getCsvContent(path: "assets/standard_food_data.$fileIndex.csv");
 
       if (fileIndex == 1) {
         lastStandardFoodDataChangeDate = _csvDateFormat.parse(standardFoodDataCsv[2][0]);

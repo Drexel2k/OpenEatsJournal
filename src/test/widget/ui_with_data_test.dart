@@ -1,7 +1,9 @@
 import "dart:io";
+import "package:csv/csv.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:intl/date_symbol_data_local.dart";
+import "package:mockito/mockito.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -11,10 +13,11 @@ import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/open_eats_journal_app.dart";
+import "package:openeatsjournal/open_eats_journal_app_viewmodel.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.dart";
@@ -62,7 +65,15 @@ void main() async {
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
     result.add(settingsRepository);
 
-    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+    MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
+    when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
+      (_) => Future(() async {
+        return CsvToListConverter(
+          shouldParseNumbers: false,
+        ).convert(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync());
+      }),
+    );
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: MockCallbacks().get,
@@ -98,12 +109,20 @@ void main() async {
     return result;
   }
 
-  Future<List<Object>> setupWithSpecificTodayDate({required DateTime today}) async {
+  Future<List<Object>> setupWithSpecificTodayDate({required DateTime today, required bool addConvertValidate}) async {
     List<Object> result = List.empty(growable: true);
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
 
-    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+    MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
+    when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
+      (_) => Future(() async {
+        return CsvToListConverter(
+          shouldParseNumbers: false,
+        ).convert(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync());
+      }),
+    );
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: MockCallbacks().get,
@@ -125,15 +144,17 @@ void main() async {
     //required for database initialization
     await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
 
-    ConvertValidate convert = ConvertValidate(
-      languageCode: settingsRepository.languageCode.value,
-      energyUnit: settingsRepository.energyUnit,
-      heightUnit: settingsRepository.heightUnit,
-      weightUnit: settingsRepository.weightUnit,
-      volumeUnit: settingsRepository.volumeUnit,
-    );
+    if (addConvertValidate) {
+      ConvertValidate convert = ConvertValidate(
+        languageCode: settingsRepository.languageCode.value,
+        energyUnit: settingsRepository.energyUnit,
+        heightUnit: settingsRepository.heightUnit,
+        weightUnit: settingsRepository.weightUnit,
+        volumeUnit: settingsRepository.volumeUnit,
+      );
 
-    result.add(convert);
+      result.add(convert);
+    }
 
     return result;
   }
@@ -330,7 +351,7 @@ void main() async {
     DateTime today = DateTime(2026, 3, 18);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
-      return await setupWithSpecificTodayDate(today: today);
+      return await setupWithSpecificTodayDate(today: today, addConvertValidate: true);
     }))!;
 
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
@@ -361,7 +382,7 @@ void main() async {
     await tester.pumpWidget(widget);
 
     Finder dropdownFinder = find.byType(OpenEatsJournalDropdownMenu<int>);
-    Finder dropdownSelectedValueFinder = find.text('Energy');
+    Finder dropdownSelectedValueFinder = find.text("Energy");
     expect(dropdownSelectedValueFinder, findsOneWidget);
 
     //just test if the result is displayed without exceptions because of the null values.
@@ -598,5 +619,81 @@ void main() async {
 
       textFieldIndex++;
     }
+  });
+
+  testWidgets("Display units and language change", (tester) async {
+    DateTime today = DateTime(2026, 2, 11);
+    //without runAsync openDatabase will hang.
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
+      return await setupWithSpecificTodayDate(today: today, addConvertValidate: false);
+    }))!;
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
+
+    Widget widget = MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsRepository>.value(value: settingsRepository),
+        Provider<FoodRepository>.value(value: foodRepository),
+        Provider<JournalRepository>.value(value: journalRepository),
+        ChangeNotifierProvider(
+          create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
+        ),
+      ],
+      child: OpenEatsJournalApp(),
+    );
+
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    expect(find.text("kCal"), findsAny);
+    expect(find.textContaining("kg"), findsAny);
+    expect(find.text("kJoule"), findsNothing);
+    expect(find.textContaining("lb"), findsNothing);
+
+    //Icon is behind button because of stack layout, so it is missed
+    await tester.tap(find.byIcon(Icons.restaurant), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(find.textContaining(RegExp(r"^\d+\.?\d*ml$")), findsAny);
+    expect(find.textContaining(RegExp(r"^\d+\.?\d*g$")), findsAny);
+    expect(find.textContaining(RegExp(r"^\d+\.?\d*fl oz (GB)$")), findsNothing);
+    expect(find.textContaining(RegExp(r"^\d+\.?\d*oz$")), findsNothing);
+
+    await tester.tap(find.byIcon(Icons.arrow_back));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("App"));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("German"));
+    await tester.pumpAndSettle();
+
+    //on home screen again after translation, settings dialog closed
+    //continue with unit values in German
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("App"));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("kJoule"));
+    await tester.ensureVisible(find.text("Daten exportieren"));
+    await tester.tap(find.text("Zoll"));
+    await tester.tap(find.text("Oz"));
+    await tester.tap(find.text("Fl Oz (GB)"));
+    await tester.tap(find.byIcon(Icons.arrow_back));
+    await tester.pumpAndSettle();
+
+    expect(find.text("kCal"), findsNothing);
+    expect(find.textContaining("kg"), findsNothing);
+    expect(find.text("kJoule"), findsAny);
+    expect(find.textContaining("lb"), findsAny);
+
+    //Icon is behind button because of stack layout, so it is missed
+    await tester.tap(find.byIcon(Icons.restaurant), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(find.textContaining(RegExp(r"^\d+,?\d*ml$")), findsNothing);
+    expect(find.textContaining(RegExp(r"^\d+,?\d*g$")), findsNothing);
+    expect(find.textContaining(RegExp(r"^\d+,?\d*Fl Oz \(GB\)$")), findsAny);
+    expect(find.textContaining(RegExp(r"^\d+,?\d*Oz$")), findsAny);
   });
 }

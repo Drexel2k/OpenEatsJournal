@@ -1,4 +1,5 @@
 import "dart:io";
+import "package:csv/csv.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:http/http.dart";
 import "package:intl/date_symbol_data_local.dart";
@@ -12,7 +13,6 @@ import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums_result.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:path/path.dart";
@@ -50,7 +50,15 @@ void main() async {
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
     result.add(settingsRepository);
 
-    OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
+    MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
+    when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
+      (_) => Future(() async {
+        return CsvToListConverter(
+          shouldParseNumbers: false,
+        ).convert(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync());
+      }),
+    );
 
     var responses = [
       Future(() async => Response.bytes((await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()), 200)),
@@ -220,10 +228,12 @@ void main() async {
     JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await journalRepository.getNutritionDaySumsForLast32Days(
       today: today,
     );
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await journalRepository
-        .getNutritionWeekSumsForLast15Weeks(today: today);
-    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await journalRepository
-        .getNutritionMonthSumsForLast13Months(today: today);
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultWeeks = await journalRepository.getNutritionWeekSumsForLast15Weeks(
+      today: today,
+    );
+    JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultMonths = await journalRepository.getNutritionMonthSumsForLast13Months(
+      today: today,
+    );
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
     DateTime y2026m2d1 = DateTime(2026, 2, 1);
