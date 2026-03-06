@@ -15,9 +15,9 @@ class GaugeNutritionFactSmall extends StatelessWidget {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    double height = 80;
-    double width = 85;
-    double radius = 0.85;
+    final double height = 80;
+    final double width = 85;
+    final double radius = 0.85;
 
     return Stack(
       children: [

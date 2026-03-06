@@ -33,7 +33,7 @@ class BarLinechart extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    double barSize = _statisticsType == StatisticInterval.daily ? 4 : 18;
+    final double barSize = _statisticsType == StatisticInterval.daily ? 4 : 18;
 
     int? maxkCalIntake = _data.reduce((currentEntry, nextEntry) {
       if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
@@ -105,17 +105,17 @@ class BarLinechart extends StatelessWidget {
       xAxisLabelYOffset = 18;
     }
 
-    List entriesWithValues = _data.where((item) {
+    final List entriesWithValues = _data.where((item) {
       return item[OpenEatsJournalStrings.chartKCalIntake] != null;
     }).toList();
-    num totalkCalIntake = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartKCalIntake]);
-    num totalEntryCount = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartEntryCount]);
+    final num totalkCalIntake = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartKCalIntake]);
+    final num totalEntryCount = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartEntryCount]);
     int average = 0;
     if (entriesWithValues.isNotEmpty) {
       average = (totalkCalIntake / totalEntryCount).toInt();
     }
 
-    DateTime displayFrom =
+    final DateTime displayFrom =
         _data.reduce((currentEntry, nextEntry) {
               if ((currentEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime).compareTo(
                     nextEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime,
@@ -128,7 +128,7 @@ class BarLinechart extends StatelessWidget {
             })[OpenEatsJournalStrings.chartDateInformation]!
             as DateTime;
 
-    DateTime displayUntil =
+    final DateTime displayUntil =
         _data.reduce((currentEntry, nextEntry) {
               if ((currentEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime).compareTo(
                     nextEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime,
@@ -148,7 +148,7 @@ class BarLinechart extends StatelessWidget {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
-    String header = AppLocalizations.of(context)!.last_amount_timeinfo(_data.length - 1, timeInfo);
+    final String header = AppLocalizations.of(context)!.last_amount_timeinfo(_data.length - 1, timeInfo);
 
     return Column(
       children: [

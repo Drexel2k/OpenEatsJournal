@@ -44,10 +44,10 @@ class GaugeDistribution extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    List<Color> colors = [colorScheme.inversePrimary, colorScheme.primary, colorScheme.inversePrimary];
+    final List<Color> colors = [colorScheme.inversePrimary, colorScheme.primary, colorScheme.inversePrimary];
 
-    double dimension = 75;
-    double radius = 0.85;
+    final double dimension = 75;
+    final double radius = 0.85;
 
     return SizedBox(
       height: dimension,

@@ -22,8 +22,8 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-    String statisticVar = _getStatisticVar(statistic: _statistic);
-    double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
+    final String statisticVar = _getStatisticVar(statistic: _statistic);
+    final double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
     return Column(
       children: [

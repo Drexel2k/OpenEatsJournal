@@ -22,8 +22,8 @@ class AboutScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
-    double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
+    final double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
+    final double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),

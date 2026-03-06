@@ -116,7 +116,7 @@ class Linechart extends StatelessWidget {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
-    String header = AppLocalizations.of(context)!.last_amount_timeinfo(_xAxisInfo.length - 1, timeInfo);
+    final String header = AppLocalizations.of(context)!.last_amount_timeinfo(_xAxisInfo.length - 1, timeInfo);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

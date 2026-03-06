@@ -273,5 +273,8 @@
   "thursday_abbreviated_1char": "D",
   "friday_abbreviated_1char": "F",
   "saturday_abbreviated_1char": "S",
-  "sunday_abbreviated_1char": "S"
+  "sunday_abbreviated_1char": "S",
+  "eats_journal_entry_deleted": "Essenstagebucheintrag gelöscht.",
+  "eats_journal_entry_to_delete": "Essenstagebucheintrag zum Löschen nicht vorhanden.",
+  "eats_journal_entry_duplicated": "Essenstagebucheintrag dupliziert."
 }

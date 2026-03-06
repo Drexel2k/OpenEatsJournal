@@ -273,5 +273,8 @@
   "thursday_abbreviated_1char": "T",
   "friday_abbreviated_1char": "F",
   "saturday_abbreviated_1char": "S",
-  "sunday_abbreviated_1char": "S"
+  "sunday_abbreviated_1char": "S",
+  "eats_journal_entry_deleted": "Eats journal entry deleted.",
+  "eats_journal_entry_to_delete": "Eats journal entry to delete doesn't exist.",
+  "eats_journal_entry_duplicated": "Eats journal entry duplicated."
 }

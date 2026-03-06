@@ -62,7 +62,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    final double overlaySpacer = 100;
+    final double overlaySpacer = 170;
     final double inputFieldsWidth = 110;
 
     return Consumer<EatsJournalFoodEntryEditScreenViewModel>(

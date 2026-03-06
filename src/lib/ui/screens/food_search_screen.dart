@@ -53,13 +53,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final double overlaySpacer = 198;
+    final double overlaySpacer = 170;
     final double fabMenuWidth = 150;
 
     final double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
     final double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
 
-    Map<String, String> standardFoodUnitLocalizations = {
+    final Map<String, String> standardFoodUnitLocalizations = {
       OpenEatsJournalStrings.piece: AppLocalizations.of(context)!.piece,
       OpenEatsJournalStrings.serving: AppLocalizations.of(context)!.serving,
     };

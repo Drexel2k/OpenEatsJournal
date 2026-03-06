@@ -48,7 +48,7 @@ class OverlayDisplay {
               children: [
                 SizedBox(height: overlayInfo.spacer),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
                   child: Container(
                     alignment: AlignmentGeometry.center,
                     decoration: BoxDecoration(

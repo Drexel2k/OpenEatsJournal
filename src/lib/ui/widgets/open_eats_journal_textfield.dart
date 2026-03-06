@@ -47,7 +47,7 @@ class OpenEatsJournalTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    OutlineInputBorder border = OutlineInputBorder(
+    final OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
     );

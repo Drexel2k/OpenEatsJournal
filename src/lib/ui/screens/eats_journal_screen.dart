@@ -55,7 +55,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final double fabMenuWidth = 150;
 
-    final double overlaySpacer = 110;
+    final double overlaySpacer = 170;
     final double dimension = 200;
     final double radius = 0.9;
 

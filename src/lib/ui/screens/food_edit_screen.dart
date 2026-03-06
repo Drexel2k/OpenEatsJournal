@@ -93,7 +93,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    double inputFieldsWidth = 90;
+    final double inputFieldsWidth = 90;
 
     return Consumer<FoodEditScreenViewModel>(
       builder: (context, foodEditScreenViewModel, _) => MainLayout(

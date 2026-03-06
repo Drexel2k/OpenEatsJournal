@@ -19,7 +19,7 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-    double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
+    final double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
     return Column(
       children: [

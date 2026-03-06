@@ -89,7 +89,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    final double overlaySpacer = 105;
+    final double overlaySpacer = 170;
     final double inputFieldsWidth = 90;
 
     return Consumer<EatsJournalQuickEntryEditScreenViewModel>(

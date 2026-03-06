@@ -39,9 +39,9 @@ class _FoodCardState extends State<FoodCard> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final borderRadius = BorderRadius.circular(8);
 
-    MeasurementUnit measurementUnit = _getMeasurementUnit();
-    String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: widget._food, context: context);
-    Color foodSourceColor = UiHelpers.getFoodSourceColor(food: widget._food, context: context);
+    final MeasurementUnit measurementUnit = _getMeasurementUnit();
+    final String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: widget._food, context: context);
+    final Color foodSourceColor = UiHelpers.getFoodSourceColor(food: widget._food, context: context);
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
