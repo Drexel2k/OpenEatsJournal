@@ -32,6 +32,8 @@ class OpenEatsJournalStrings {
   static const String csvTrue = "true";
   static const String csvFood = "food";
   static const String csvFoodUnit = "foodunit";
+  static const String csvHeader = "---header---";
+  static const String csvComments = "---comments---";
   static const String csvData = "---data---";
 
   static const String chartKCalIntake = "kCalIntake";

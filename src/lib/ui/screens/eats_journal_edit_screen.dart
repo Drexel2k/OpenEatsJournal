@@ -174,7 +174,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
     required OverlayDisplay overlayDisplay,
     required double overlaySpacer,
   }) {
-    List<Widget> result = List.empty(growable: true);
+    List<Widget> result = [];
 
     for (EatsJournalEntry entry in eatsJournalEntries) {
       result.add(

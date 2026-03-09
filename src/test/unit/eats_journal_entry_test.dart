@@ -46,7 +46,7 @@ void main() async {
   });
 
   Future<List<Object>> generalSetup() async {
-    List<Object> result = List.empty(growable: true);
+    List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
     result.add(settingsRepository);
 

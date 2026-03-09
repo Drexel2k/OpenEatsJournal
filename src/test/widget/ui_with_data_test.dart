@@ -61,7 +61,7 @@ void main() async {
   });
 
   Future<List<Object>> generalSetup() async {
-    List<Object> result = List.empty(growable: true);
+    List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
     result.add(settingsRepository);
 
@@ -110,7 +110,7 @@ void main() async {
   }
 
   Future<List<Object>> setupWithSpecificTodayDate({required DateTime today, required bool addConvertValidate}) async {
-    List<Object> result = List.empty(growable: true);
+    List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
 

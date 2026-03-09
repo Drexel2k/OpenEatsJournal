@@ -9,6 +9,7 @@ import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/ordered_default_food_unit.dart";
+import "package:openeatsjournal/domain/standard_food_data_csv_header_info.dart";
 import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/convert.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
@@ -636,55 +637,62 @@ class FoodRepository {
     List<String> standardFoodDataAssetsassets = await _oejAssetsService.getStandardFoodFiles();
 
     List<List<String>> standardFoodDataCsv;
-    DateTime? lastStandardFoodDataChangeDate;
-
-    bool inDataSection = false;
     int currentFoodId = -1;
     bool foodRelevant = false;
     List<String> foodData = [];
     List<List<String>> foodUnitsData = [];
+    StandardFoodDataCsvHeaderInfo? standardFoodCsvHeaderInfo;
 
     for (int fileIndex = 1; fileIndex <= standardFoodDataAssetsassets.length; fileIndex++) {
       standardFoodDataCsv = await _oejAssetsService.getCsvContent(path: "assets/standard_food_data.$fileIndex.csv");
 
+      int csvLineIndex = 0;
       if (fileIndex == 1) {
-        lastStandardFoodDataChangeDate = _csvDateFormat.parse(standardFoodDataCsv[2][0]);
+        standardFoodCsvHeaderInfo = _getCsvHeaderInfo(standardFoodDataCsv: standardFoodDataCsv);
+        csvLineIndex = standardFoodCsvHeaderInfo.firstDataRowIndex;
       }
 
-      if (lastProcessedStandardFoodDataChangeDate == null || lastStandardFoodDataChangeDate!.isAfter(lastProcessedStandardFoodDataChangeDate)) {
-        for (int csvLineIndex = 0; csvLineIndex < standardFoodDataCsv.length; csvLineIndex++) {
-          if (inDataSection) {
-            if (standardFoodDataCsv[csvLineIndex].isNotEmpty) {
-              if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvFood) {
-                if (int.parse(standardFoodDataCsv[csvLineIndex][1]) != currentFoodId) {
-                  if (currentFoodId != -1 && foodRelevant) {
-                    await _setStandardFoodFromCsvData(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
-                  }
-                }
+      if (lastProcessedStandardFoodDataChangeDate == null ||
+          standardFoodCsvHeaderInfo!.lastStandardFoodDataChangeDate.isAfter(lastProcessedStandardFoodDataChangeDate)) {
+        while (csvLineIndex < standardFoodDataCsv.length) {
+          if (standardFoodDataCsv[csvLineIndex].isNotEmpty) {
+            if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvFood) {
+              //if last data field of a row is not closed with " it may be unregognized without length check
+              if (standardFoodDataCsv[csvLineIndex].length != 17) {
+                throw FormatException("Csv food row invalid data field amount, row ${csvLineIndex + 1}.");
+              }
 
-                currentFoodId = int.parse(standardFoodDataCsv[csvLineIndex][1]);
-
-                if (lastProcessedStandardFoodDataChangeDate == null ||
-                    _csvDateFormat.parse(standardFoodDataCsv[csvLineIndex][2]).isAfter(lastProcessedStandardFoodDataChangeDate)) {
-                  foodRelevant = true;
-                  foodData = standardFoodDataCsv[csvLineIndex];
-                  foodUnitsData.clear();
-                } else {
-                  foodRelevant = false;
+              if (int.parse(standardFoodDataCsv[csvLineIndex][1]) != currentFoodId) {
+                if (currentFoodId != -1 && foodRelevant) {
+                  await _setStandardFoodFromCsvData(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
                 }
               }
 
-              if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvFoodUnit) {
-                if (foodRelevant) {
-                  foodUnitsData.add(standardFoodDataCsv[csvLineIndex]);
-                }
+              currentFoodId = int.parse(standardFoodDataCsv[csvLineIndex][1]);
+
+              if (lastProcessedStandardFoodDataChangeDate == null ||
+                  _csvDateFormat.parse(standardFoodDataCsv[csvLineIndex][2]).isAfter(lastProcessedStandardFoodDataChangeDate)) {
+                foodRelevant = true;
+                foodData = standardFoodDataCsv[csvLineIndex];
+                foodUnitsData.clear();
+              } else {
+                foodRelevant = false;
               }
-            }
-          } else {
-            if (standardFoodDataCsv[csvLineIndex].length == 1 && standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvData) {
-              inDataSection = true;
+            } else if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvFoodUnit) {
+              //if last data field of a row is not closed with " it may be unregognized without length check
+              if (standardFoodDataCsv[csvLineIndex].length != 7) {
+                throw FormatException("Csv food unit row invalid data field amount, row ${csvLineIndex + 1}.");
+              }
+
+              if (foodRelevant) {
+                foodUnitsData.add(standardFoodDataCsv[csvLineIndex]);
+              }
+            } else {
+              throw FormatException("Csv invalid row type, row ${csvLineIndex + 1}.");
             }
           }
+
+          csvLineIndex++;
         }
       }
     }
@@ -693,7 +701,7 @@ class FoodRepository {
       await _setStandardFoodFromCsvData(foodDataCsv: foodData, foodUnitsCsv: foodUnitsData, languageCode: languageCode);
     }
 
-    return lastStandardFoodDataChangeDate!;
+    return standardFoodCsvHeaderInfo!.lastStandardFoodDataChangeDate;
   }
 
   Future<void> _setStandardFoodFromCsvData({required List<String> foodDataCsv, required List<List<String>> foodUnitsCsv, required String languageCode}) async {
@@ -764,5 +772,59 @@ class FoodRepository {
     }
 
     return searchText;
+  }
+
+  StandardFoodDataCsvHeaderInfo _getCsvHeaderInfo({required List<List<String>> standardFoodDataCsv}) {
+    DateTime? lastStandardFoodDataChangeDate;
+    int? firstDataRowIndex;
+
+    bool headerFound = false;
+    bool inHeader = false;
+    bool commentsFound = false;
+    int headerLineIndex = 0;
+    for (int csvLineIndex = 0; csvLineIndex < standardFoodDataCsv.length && firstDataRowIndex == null; csvLineIndex++) {
+      if (inHeader) {
+        if (headerLineIndex == 1) {
+          lastStandardFoodDataChangeDate = _csvDateFormat.parse(standardFoodDataCsv[2][0]);
+        }
+
+        headerLineIndex++;
+      }
+
+      if (standardFoodDataCsv[csvLineIndex].length == 1) {
+        if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvHeader) {
+          headerFound = true;
+          inHeader = true;
+        }
+
+        if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvComments) {
+          if (!headerFound) {
+            throw FormatException("Csv standard food data header not found before comments.");
+          }
+
+          commentsFound = true;
+          inHeader = false;
+        }
+
+        if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvData) {
+          if (!commentsFound) {
+            throw FormatException("Csv standard food data comments not found before data.");
+          }
+
+          inHeader = false;
+          firstDataRowIndex = csvLineIndex + 1;
+        }
+      }
+    }
+
+    if (lastStandardFoodDataChangeDate == null) {
+      throw FormatException("Csv standard food data last standard food data change date not found.");
+    }
+
+    if (firstDataRowIndex == null) {
+      throw FormatException("Csv standard food data first data row index not found.");
+    }
+
+    return StandardFoodDataCsvHeaderInfo(lastStandardFoodDataChangeDate: lastStandardFoodDataChangeDate, firstDataRowIndex: firstDataRowIndex);
   }
 }
