@@ -964,7 +964,7 @@ class OpenEatsJournalDatabaseService {
       }
     }
 
-    return _getFoods(
+    return _getAllFoodsByAllUsage(
       whereSql:
           """              
               ${whereSqls.join(" AND ")}
@@ -987,21 +987,37 @@ class OpenEatsJournalDatabaseService {
     whereSqls.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
     whereArgs.add(barcode);
 
-    return _getFoods(whereSql: whereSqls.join(" AND "), whereArgs: whereArgs);
+    return _getAllFoodsByAllUsage(whereSql: whereSqls.join(" AND "), whereArgs: whereArgs);
   }
 
-  Future<List<Map<String, Object?>>?> _getFoods({required String whereSql, required List<Object?> whereArgs}) async {
+  //gets all foods orderd by all time usage first, not used foods after used foods in alphabetical order
+  Future<List<Map<String, Object?>>?> _getAllFoodsByAllUsage({required String whereSql, required List<Object?> whereArgs}) async {
     Database db = await database;
 
-    //first block of columns from dbTableFood, second from dbTableFoodUnit
     final List<Map<String, Object?>> dbResult = await db.rawQuery("""
         SELECT
               $_sqlFoodColumns
-        FROM 
-              ${OpenEatsJournalStrings.dbTableFood}
-        $_sqlFoodUnitJoin
+        FROM
+                ${OpenEatsJournalStrings.dbTableFood}
+        LEFT JOIN 
+                (
+                      SELECT
+                              ${OpenEatsJournalStrings.dbColumnFoodIdRef},
+                              COUNT(${OpenEatsJournalStrings.dbColumnId}) AS ${OpenEatsJournalStrings.dbResultEntryCount}
+                      FROM
+                              ${OpenEatsJournalStrings.dbTableEatsJournal}
+                      WHERE
+                              ${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NOT NULL
+                      GROUP BY
+                              ${OpenEatsJournalStrings.dbColumnFoodIdRef}
+                ) AS ${OpenEatsJournalStrings.dbTableFoodByUsage}                
+        ON
+                ${OpenEatsJournalStrings.dbTableFoodByUsage}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
+                $_sqlFoodUnitJoin
         WHERE 
               $whereSql
+        ORDER BY
+                ${OpenEatsJournalStrings.dbResultEntryCount} DESC, ${OpenEatsJournalStrings.dbResultFoodName}
         """, whereArgs);
 
     if (dbResult.isEmpty) {
@@ -1038,7 +1054,7 @@ class OpenEatsJournalDatabaseService {
       }
     }
 
-    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(whereSqls: wheres, arguments: arguments);
+    List<Map<String, Object?>> dbResult = await _getUsedFoodsByTimePeriodUsage(whereSqls: wheres, arguments: arguments);
 
     if (dbResult.isEmpty) {
       return null;
@@ -1068,7 +1084,7 @@ class OpenEatsJournalDatabaseService {
     whereSqls.add("${OpenEatsJournalStrings.dbColumnBarcode} = ?");
     arguments.add(barcode);
 
-    List<Map<String, Object?>> dbResult = await _getFoodsByUsageInternal(whereSqls: whereSqls, arguments: arguments);
+    List<Map<String, Object?>> dbResult = await _getUsedFoodsByTimePeriodUsage(whereSqls: whereSqls, arguments: arguments);
 
     if (dbResult.isEmpty) {
       return null;
@@ -1077,7 +1093,8 @@ class OpenEatsJournalDatabaseService {
     return dbResult;
   }
 
-  Future<List<Map<String, Object?>>> _getFoodsByUsageInternal({required List<String> whereSqls, required List<Object?> arguments}) async {
+  //gets only used foods in a given time period orderd usage (time persiod first argument in arguments)
+  Future<List<Map<String, Object?>>> _getUsedFoodsByTimePeriodUsage({required List<String> whereSqls, required List<Object?> arguments}) async {
     Database db = await database;
     return db.rawQuery("""
         SELECT

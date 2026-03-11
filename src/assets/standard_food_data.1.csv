@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-03-09 00-00-00,2026-01-15 00-00-00
+2026-03-11 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -272,3 +272,5 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","126","2026-03-09 00-00-00","Honey","Honig",,,"100",,"1283","0","0","75","75","0.4","0",
 "foodunit","1","Teaspoon","Teelöffel","10","g","false"
 "foodunit","2","Tablespoon","Esslöffel","20","g","true"
+"food","127","2026-03-11 00-00-00","Goulash soup with potatoe","Gulaschsuppe mit Kartoffel",,,"100",,"477","5.8","2","5.2","0.4","9.6","0.9",
+"foodunit","1","Serving","Portion","450","g","true"
