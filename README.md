@@ -8,10 +8,12 @@ Open Eats Journal is a free, data minimized and privacy friendly open source eat
 <img width="265" height="561" alt="Open Eats Journal Food Search and Add Screen" src="https://github.com/user-attachments/assets/ecd79b01-dfcc-43cf-b6ea-343e9f55d6a5" />
 
 You get:
-- Full data sovereignty: The data remains on your device and is not shared with anyone. Exporting and importing your data is also possible.
+- Full data sovereignty: The data remains on your device and is not shared with anyone, exporting and importing your data is also possible
 - Easy recording of food consumption and thus calories and nutritional values consumed
+- General easy use: copying of single journal entries, copying of journal entries of whole meals or days, multiple navigation possibilities
 - Calorie target can be set per weekday
 - Detailed statistics
+- Barcode scanner for scanning food barcodes to ease searching for foods
 - Integration of Open Food Facts and thus access to over 3 million foods
 - Creation of own foods
 - Recording of food consumption based on foods or as a quick entry
