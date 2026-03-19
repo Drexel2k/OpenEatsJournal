@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-03-11 00-00-00,2026-01-15 00-00-00
+2026-03-19 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -195,7 +195,7 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","88","2026-02-13 01-00-00","Ketchup","Ketchup",,,"100",,"435","0.1",,"23.2","22.8","1.2","1.8",
 "food","89","2026-02-13 01-00-00","Mayonnaise","Mayonnaise",,,"100",,"2650","70","5.3","3","1.5","0.8","1",
 "food","90","2026-02-13 01-00-00","Curry ketchup","Curry Ketchup",,,"100",,"568","0.3",,"31.3","28.8","0.7","2",
-"food","91","2026-02-14 00-00-00","Beer (Pils/Alt)","Bier (Pils/Alt)",,,,"100","1777",,,"3.1",,"0.5",,
+"food","91","2026-02-14 00-00-00","Beer (Pils/Alt)","Bier (Pils/Alt)",,,,"100","177",,,"3.1",,"0.5",,
 "foodunit","1","Glas","Glas","200","ml","false"
 "foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
 "foodunit","3","0.5l bottle","0,5l Flasche","500","ml","true"
@@ -263,7 +263,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","120","2026-03-04 00-00-00","Parmesan cheese, hard cheese","Parmesankäse, Hartkäse",,,"100",,"1671","30","20","0","0","32","1.6",
 "foodunit","1","Tablespoon grated","Esslöffel gerieben","5","g","true"
 "food","121","2026-03-09 00-00-00","Smoked salmon","Räucherlachs",,,"100",,"784","12","2.3","0.5","0.5","20","1.9",
-"food","122","2026-03-09 00-00-00","Croissant","Croissant",,,"100",,"1807","26","17","43","6.5","7.4","1.2",
+"food","122","2026-03-19 00-00-00","Croissant","Croissant",,,"100",,"1807","26","17","43","6.5","7.4","1.2",
+"foodunit","1","Croissant","Croissant","70","g","true"
 "food","123","2026-03-09 00-00-00","Fruit spread (Confiture / Marmelade)","Fruchtaufstrich (Konfitüre / Marmelade)",,,"100",,"966","0.3","0.1","54.5","54.1","0.5","0",
 "food","124","2026-03-09 00-00-00","Seed roll / seed siwrl / seed pastry","Mohnschnecke / Mohnschleife / Mohnplunder",,,"100",,"1630","20.7","10.9","43.4","26.4","5.7","0.5",
 "foodunit","1","Piece","Stück","140","g","true"
@@ -274,3 +275,6 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","2","Tablespoon","Esslöffel","20","g","true"
 "food","127","2026-03-11 00-00-00","Goulash soup with potatoe","Gulaschsuppe mit Kartoffel",,,"100",,"477","5.8","2","5.2","0.4","9.6","0.9",
 "foodunit","1","Serving","Portion","450","g","true"
+"food","128","2026-03-11 00-00-00","Pretzel croissant / corner","Laugencroissant / Laugeneck",,,"100",,"1498","20.6","8.2","36.3","3.4","6","2",
+"foodunit","1","Croissant","Croissant","80","g","true"
+"foodunit","2","Corner","Eck","90","g","false"

@@ -270,28 +270,6 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                         children: [
                           Expanded(
                             child: Text(
-                              eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates != null
-                                  ? AppLocalizations.of(context)!.amount_carb(
-                                      "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}",
-                                    )
-                                  : AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar != null
-                                  ? AppLocalizations.of(context)!.amount_sugar(
-                                      "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}",
-                                    )
-                                  : AppLocalizations.of(context)!.amount_sugar(AppLocalizations.of(context)!.na),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
                               eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat != null
                                   ? AppLocalizations.of(context)!.amount_fat(
                                       "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.fat!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}",
@@ -306,6 +284,28 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                                       "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.saturatedFat!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}",
                                     )
                                   : AppLocalizations.of(context)!.amount_saturated_fat(AppLocalizations.of(context)!.na),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates != null
+                                  ? AppLocalizations.of(context)!.amount_carb(
+                                      "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.carbohydrates!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}",
+                                    )
+                                  : AppLocalizations.of(context)!.amount_carb(AppLocalizations.of(context)!.na),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar != null
+                                  ? AppLocalizations.of(context)!.amount_sugar(
+                                      "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightG(weightG: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!.sugar!))}${convert.getLocalizedWeightUnitGAbbreviated(context: context)}",
+                                    )
+                                  : AppLocalizations.of(context)!.amount_sugar(AppLocalizations.of(context)!.na),
                             ),
                           ),
                         ],

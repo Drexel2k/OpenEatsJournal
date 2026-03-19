@@ -383,112 +383,6 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
             ),
             Row(
               children: [
-                Expanded(child: Text("${AppLocalizations.of(context)!.carbohydrates}:", style: textTheme.titleSmall)),
-                Expanded(child: Text("${AppLocalizations.of(context)!.sugar}:", style: textTheme.titleSmall)),
-              ],
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: inputFieldsWidth,
-                  child: ValueListenableBuilder(
-                    valueListenable: eatsJournalQuickEntryEditScreenViewModel.carbohydrates,
-                    builder: (_, _, _) {
-                      return OpenEatsJournalTextField(
-                        controller: _carbohydratesController,
-                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
-                        inputFormatters: [
-                          TextInputFormatter.withFunction((oldValue, newValue) {
-                            final String text = newValue.text.trim();
-                            if (text.isEmpty) {
-                              return newValue;
-                            }
-
-                            num? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(text);
-                            if (doubleValue != null) {
-                              if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
-                                return oldValue;
-                              }
-
-                              return newValue;
-                            } else {
-                              return oldValue;
-                            }
-                          }),
-                        ],
-                        focusNode: _carbohydratesFocusNode,
-                        onTap: () {
-                          //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
-                          //effect.
-                          if (!_carbohydratesFocusNode.hasFocus) {
-                            _carbohydratesController.selection = TextSelection(baseOffset: 0, extentOffset: _carbohydratesController.text.length);
-                          }
-                        },
-                        onChanged: (value) {
-                          double? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
-                          eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value = doubleValue;
-
-                          if (doubleValue != null) {
-                            _carbohydratesController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Spacer(),
-                SizedBox(
-                  width: inputFieldsWidth,
-                  child: ValueListenableBuilder(
-                    valueListenable: eatsJournalQuickEntryEditScreenViewModel.sugar,
-                    builder: (_, _, _) {
-                      return OpenEatsJournalTextField(
-                        controller: _sugarController,
-                        keyboardType: TextInputType.numberWithOptions(signed: false),
-                        inputFormatters: [
-                          TextInputFormatter.withFunction((oldValue, newValue) {
-                            final String text = newValue.text.trim();
-                            if (text.isEmpty) {
-                              return newValue;
-                            }
-
-                            num? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(text);
-                            if (doubleValue != null) {
-                              if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
-                                return oldValue;
-                              }
-
-                              return newValue;
-                            } else {
-                              return oldValue;
-                            }
-                          }),
-                        ],
-                        focusNode: _sugarFocusNode,
-                        onTap: () {
-                          //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
-                          //effect.
-                          if (!_sugarFocusNode.hasFocus) {
-                            _sugarController.selection = TextSelection(baseOffset: 0, extentOffset: _sugarController.text.length);
-                          }
-                        },
-                        onChanged: (value) {
-                          double? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
-                          eatsJournalQuickEntryEditScreenViewModel.sugar.value = doubleValue;
-
-                          if (doubleValue != null) {
-                            _sugarController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Spacer(),
-              ],
-            ),
-            Row(
-              children: [
                 Expanded(child: Text("${AppLocalizations.of(context)!.fat}:", style: textTheme.titleSmall)),
                 Expanded(child: Text("${AppLocalizations.of(context)!.saturated_fat}:", style: textTheme.titleSmall)),
               ],
@@ -584,6 +478,112 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
 
                           if (doubleValue != null) {
                             _saturatedFatController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Spacer(),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(child: Text("${AppLocalizations.of(context)!.carbohydrates}:", style: textTheme.titleSmall)),
+                Expanded(child: Text("${AppLocalizations.of(context)!.sugar}:", style: textTheme.titleSmall)),
+              ],
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: inputFieldsWidth,
+                  child: ValueListenableBuilder(
+                    valueListenable: eatsJournalQuickEntryEditScreenViewModel.carbohydrates,
+                    builder: (_, _, _) {
+                      return OpenEatsJournalTextField(
+                        controller: _carbohydratesController,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                        inputFormatters: [
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            final String text = newValue.text.trim();
+                            if (text.isEmpty) {
+                              return newValue;
+                            }
+
+                            num? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(text);
+                            if (doubleValue != null) {
+                              if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
+                                return oldValue;
+                              }
+
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }),
+                        ],
+                        focusNode: _carbohydratesFocusNode,
+                        onTap: () {
+                          //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                          //effect.
+                          if (!_carbohydratesFocusNode.hasFocus) {
+                            _carbohydratesController.selection = TextSelection(baseOffset: 0, extentOffset: _carbohydratesController.text.length);
+                          }
+                        },
+                        onChanged: (value) {
+                          double? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                          eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value = doubleValue;
+
+                          if (doubleValue != null) {
+                            _carbohydratesController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Spacer(),
+                SizedBox(
+                  width: inputFieldsWidth,
+                  child: ValueListenableBuilder(
+                    valueListenable: eatsJournalQuickEntryEditScreenViewModel.sugar,
+                    builder: (_, _, _) {
+                      return OpenEatsJournalTextField(
+                        controller: _sugarController,
+                        keyboardType: TextInputType.numberWithOptions(signed: false),
+                        inputFormatters: [
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            final String text = newValue.text.trim();
+                            if (text.isEmpty) {
+                              return newValue;
+                            }
+
+                            num? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(text);
+                            if (doubleValue != null) {
+                              if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
+                                return oldValue;
+                              }
+
+                              return newValue;
+                            } else {
+                              return oldValue;
+                            }
+                          }),
+                        ],
+                        focusNode: _sugarFocusNode,
+                        onTap: () {
+                          //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
+                          //effect.
+                          if (!_sugarFocusNode.hasFocus) {
+                            _sugarController.selection = TextSelection(baseOffset: 0, extentOffset: _sugarController.text.length);
+                          }
+                        },
+                        onChanged: (value) {
+                          double? doubleValue = convert.numberFomatterDouble3DecimalDigits.tryParse(value) as double?;
+                          eatsJournalQuickEntryEditScreenViewModel.sugar.value = doubleValue;
+
+                          if (doubleValue != null) {
+                            _sugarController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                           }
                         },
                       );
