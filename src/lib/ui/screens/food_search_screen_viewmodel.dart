@@ -3,6 +3,7 @@ import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
@@ -457,6 +458,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _foodSearchResultAll.clear();
   }
 
+  Food getNewFood() {
+    return _foodRepository.getNewFood();
+  }
+
   @override
   void dispose() {
     _currentJournalDate.dispose();
@@ -470,5 +475,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortDesc.dispose();
 
     super.dispose();
+  }
+
+  EatsJournalEntry getNewQuickEntry({required DateTime entryDate, required Meal meal}) {
+    return _journalRepository.getNewQuickEntry(
+      entryDate: entryDate,
+      name: OpenEatsJournalStrings.emptyString,
+      kJoule: NutritionCalculator.kJouleForOnekCal,
+      meal: meal,
+    );
   }
 }

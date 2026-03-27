@@ -53,12 +53,8 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    final OverlayDisplay overlayDisplay = OverlayDisplay(
-      animationController: _overlayAnimationController,
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      shadowColorBase: Colors.black,
-      textStyle: Theme.of(context).textTheme.bodyMedium!,
-    );
+    OverlayDisplay? overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
+    overlayDisplay.setAnimationController(animationController: _overlayAnimationController);
 
     final ConvertValidate convert = ConvertValidate(
       languageCode: OpenEatsJournalStrings.en,
@@ -194,7 +190,11 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
                           routes: {
                             OpenEatsJournalStrings.navigatorRouteEatsJournal: (contextBuilder) {
                               return ChangeNotifierProvider<EatsJournalScreenViewModel>(
-                                create: (context) => EatsJournalScreenViewModel(journalRepository: journalRepository, settingsRepository: settingsRepository),
+                                create: (context) => EatsJournalScreenViewModel(
+                                  journalRepository: journalRepository,
+                                  foodRepository: foodRepository,
+                                  settingsRepository: settingsRepository,
+                                ),
                                 child: EatsJournalScreen(),
                               );
                             },

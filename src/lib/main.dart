@@ -16,6 +16,7 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.
 //for debugPaintSizeEnabled=true;
 //import "package:flutter/rendering.dart";
 import "package:openeatsjournal/ui/utils/error_handlers.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:provider/provider.dart";
 
 void main() async {
@@ -57,6 +58,8 @@ void main() async {
 
   //debugPaintSizeEnabled=true;
 
+  OverlayDisplay overlayDisplay = OverlayDisplay();
+
   runApp(
     MultiProvider(
       providers: [
@@ -66,6 +69,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
         ),
+        Provider<OverlayDisplay>.value(value: overlayDisplay),
       ],
       child: OpenEatsJournalApp(),
     ),

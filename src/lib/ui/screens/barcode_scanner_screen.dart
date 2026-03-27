@@ -5,9 +5,12 @@ import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 
 class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({super.key, required Color iconBackGroundColor}) : _iconBackGroundColor = iconBackGroundColor;
+  const BarcodeScannerScreen({super.key, required Color iconBackGroundColor, String? scanResult})
+    : _iconBackGroundColor = iconBackGroundColor,
+      _scanResult = scanResult;
 
   final Color _iconBackGroundColor;
+  final String? _scanResult;
 
   @override
   State<BarcodeScannerScreen> createState() => _BarcodeScannerScreenState();
@@ -22,12 +25,16 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     _mobileScannerController.start();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget._scanResult != null) {
+      Navigator.pop(context, widget._scanResult);
+    }
+
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return SafeArea(
@@ -115,7 +122,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   void dispose() {
     _mobileScannerController.dispose();
-    
+
     super.dispose();
   }
 }

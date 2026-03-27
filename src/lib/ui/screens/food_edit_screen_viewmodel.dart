@@ -13,6 +13,7 @@ import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart";
 
 class FoodEditScreenViewModel extends ChangeNotifier {
+  //barcodeScannerReturnCode for testing
   FoodEditScreenViewModel({required Food food, required FoodRepository foodRepository, required ConvertValidate convert})
     : _food = food,
       _foodRepository = foodRepository,
@@ -115,6 +116,8 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   List<FoodUnitEditorViewModel> get foodUnitEditorViewModels => _foodUnitEditorViewModels;
   int? get foodId => _foodId;
   FoodSource get foodSource => _food.foodSource;
+
+  String? get barcodeScannerReturnCode => _foodRepository.barcodeScannerResult;
 
   void addFoddUnit({required MeasurementUnit measurementUnit}) {
     FoodUnitEditorData foodUnitEditorData = FoodUnitEditorData(

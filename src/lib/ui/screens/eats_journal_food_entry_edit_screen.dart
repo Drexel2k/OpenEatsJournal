@@ -380,38 +380,6 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
               children: [
                 Expanded(
                   child: ValueListenableBuilder(
-                    valueListenable: eatsJournalFoodEntryEditScreenViewModel.carbohydrates,
-                    builder: (_, _, _) {
-                      return eatsJournalFoodEntryEditScreenViewModel.carbohydrates.value != null
-                          ? Text(
-                              "${convert.getCleanDoubleString1DecimalDigit(doubleValue: eatsJournalFoodEntryEditScreenViewModel.carbohydrates.value!)}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
-                            )
-                          : Text(
-                              "${AppLocalizations.of(context)!.na}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
-                            );
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: ValueListenableBuilder(
-                    valueListenable: eatsJournalFoodEntryEditScreenViewModel.sugar,
-                    builder: (_, _, _) {
-                      return eatsJournalFoodEntryEditScreenViewModel.sugar.value != null
-                          ? Text(
-                              "${convert.getCleanDoubleString1DecimalDigit(doubleValue: eatsJournalFoodEntryEditScreenViewModel.sugar.value!)}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.sugar}",
-                            )
-                          : Text(
-                              "${AppLocalizations.of(context)!.na}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.sugar}",
-                            );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: ValueListenableBuilder(
                     valueListenable: eatsJournalFoodEntryEditScreenViewModel.fat,
                     builder: (_, _, _) {
                       return eatsJournalFoodEntryEditScreenViewModel.fat.value != null
@@ -434,6 +402,38 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                             )
                           : Text(
                               "${AppLocalizations.of(context)!.na}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.saturated_fat}",
+                            );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: ValueListenableBuilder(
+                    valueListenable: eatsJournalFoodEntryEditScreenViewModel.carbohydrates,
+                    builder: (_, _, _) {
+                      return eatsJournalFoodEntryEditScreenViewModel.carbohydrates.value != null
+                          ? Text(
+                              "${convert.getCleanDoubleString1DecimalDigit(doubleValue: eatsJournalFoodEntryEditScreenViewModel.carbohydrates.value!)}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
+                            )
+                          : Text(
+                              "${AppLocalizations.of(context)!.na}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.carbs}",
+                            );
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: ValueListenableBuilder(
+                    valueListenable: eatsJournalFoodEntryEditScreenViewModel.sugar,
+                    builder: (_, _, _) {
+                      return eatsJournalFoodEntryEditScreenViewModel.sugar.value != null
+                          ? Text(
+                              "${convert.getCleanDoubleString1DecimalDigit(doubleValue: eatsJournalFoodEntryEditScreenViewModel.sugar.value!)}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.sugar}",
+                            )
+                          : Text(
+                              "${AppLocalizations.of(context)!.na}${convert.getLocalizedWeightUnitGAbbreviated(context: context)} ${AppLocalizations.of(context)!.sugar}",
                             );
                     },
                   ),

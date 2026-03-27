@@ -18,11 +18,11 @@ import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/widgets/settings_textfield.dart";
 import "package:path/path.dart";
 import "package:provider/provider.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
-
 import "../mocks.mocks.dart";
 
 OpenEatsJournalDatabaseService? _database;
@@ -47,7 +47,7 @@ void main() async {
     _database = null;
   });
 
-  Future<List<Object>> setupWithSpecificTodayDate({required DateTime today}) async {
+  Future<List<Object>> testSetup({DateTime? today}) async {
     List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
@@ -63,7 +63,7 @@ void main() async {
     );
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
-      httpGet: MockCallbacks().get,
+      httpGet: MockFunctions().httpGet,
       appName: settingsRepository.appName,
       appVersion: settingsRepository.appVersion,
       appContactMail: settingsRepository.appContactMail!,
@@ -88,11 +88,12 @@ void main() async {
     DateTime today = DateTime(2026, 3, 31);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
-      return await setupWithSpecificTodayDate(today: today);
+      return await testSetup(today: today);
     }))!;
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
     FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;
+    MockOverlayDisplay overlayDisplay = MockOverlayDisplay();
 
     Widget widget = MultiProvider(
       providers: [
@@ -102,6 +103,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
         ),
+        Provider<OverlayDisplay>.value(value: overlayDisplay),
       ],
       child: OpenEatsJournalApp(),
     );
@@ -163,8 +165,8 @@ void main() async {
     SettingsTextField settingsTextField;
 
     int textFieldIndex = 0;
-    for (Element element in textFields) {
-      settingsTextField = element.widget as SettingsTextField;
+    for (Element textFieldElement in textFields) {
+      settingsTextField = textFieldElement.widget as SettingsTextField;
 
       //birthday
       if (textFieldIndex == 0) {
@@ -236,7 +238,7 @@ void main() async {
 
     //"restart" the app
     List<Object> repositoriesRestart = (await tester.runAsync<List<Object>>(() async {
-      return await setupWithSpecificTodayDate(today: today);
+      return await testSetup(today: today);
     }))!;
 
     SettingsRepository settingsRepositoryRestart = repositoriesRestart[0] as SettingsRepository;
@@ -253,6 +255,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepositoryRestart, foodRepository: foodRepositoryRestart),
         ),
+        Provider<OverlayDisplay>.value(value: overlayDisplay),
       ],
       child: OpenEatsJournalApp(),
     );

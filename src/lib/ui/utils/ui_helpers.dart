@@ -1,14 +1,7 @@
-import "dart:async";
-
 import "package:flutter/material.dart";
-import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
-import "package:openeatsjournal/domain/meal.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
-import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
 class UiHelpers {
@@ -58,19 +51,5 @@ class UiHelpers {
     }
 
     return label;
-  }
-
-  static Future<EntityEdited?> pushQuickEntryRoute({required BuildContext context, required DateTime initialEntryDate, required Meal initialMeal}) async {
-    return await Navigator.pushNamed(
-          context,
-          OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-          arguments: EatsJournalEntry.quick(
-            entryDate: initialEntryDate,
-            name: OpenEatsJournalStrings.emptyString,
-            kJoule: NutritionCalculator.kJouleForOnekCal,
-            meal: initialMeal,
-          ),
-        )
-        as EntityEdited?;
   }
 }

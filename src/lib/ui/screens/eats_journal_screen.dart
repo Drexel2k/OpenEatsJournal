@@ -1,7 +1,5 @@
 import "package:flutter/material.dart";
 import "package:graphic/graphic.dart";
-import "package:openeatsjournal/domain/food.dart";
-import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -26,7 +24,6 @@ import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
-import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
 import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
@@ -541,11 +538,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               IconButton.outlined(
                                                 onPressed: () async {
                                                   _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.breakfast);
-                                                  EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
-                                                    context: (context),
-                                                    initialEntryDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                                    initialMeal: eatsJournalScreenViewModel.currentMeal.value,
-                                                  );
+                                                  EntityEdited? eatsJournalEntryEdited = await getQuickEntry(context, eatsJournalScreenViewModel);
                                                   eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
@@ -637,11 +630,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               IconButton.outlined(
                                                 onPressed: () async {
                                                   _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.lunch);
-                                                  EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
-                                                    context: (context),
-                                                    initialEntryDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                                    initialMeal: eatsJournalScreenViewModel.currentMeal.value,
-                                                  );
+                                                  EntityEdited? eatsJournalEntryEdited = await getQuickEntry(context, eatsJournalScreenViewModel);
                                                   eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
@@ -733,11 +722,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               IconButton.outlined(
                                                 onPressed: () async {
                                                   _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.dinner);
-                                                  EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
-                                                    context: (context),
-                                                    initialEntryDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                                    initialMeal: eatsJournalScreenViewModel.currentMeal.value,
-                                                  );
+                                                  EntityEdited? eatsJournalEntryEdited = await getQuickEntry(context, eatsJournalScreenViewModel);
                                                   eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
@@ -829,11 +814,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               IconButton.outlined(
                                                 onPressed: () async {
                                                   _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.snacks);
-                                                  EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
-                                                    context: (context),
-                                                    initialEntryDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                                    initialMeal: eatsJournalScreenViewModel.currentMeal.value,
-                                                  );
+                                                  EntityEdited? eatsJournalEntryEdited = await getQuickEntry(context, eatsJournalScreenViewModel);
                                                   eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                                                   eatsJournalScreenViewModel.refreshNutritionData();
 
@@ -1109,13 +1090,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                   await Navigator.pushNamed(
                                         context,
                                         OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                        arguments: Food(
-                                          name: OpenEatsJournalStrings.emptyString,
-                                          foodSource: FoodSource.user,
-                                          fromDb: true,
-                                          kJoule: NutritionCalculator.kJouleForOnekCal,
-                                          nutritionPerGramAmount: 100,
-                                        ),
+                                        arguments: eatsJournalScreenViewModel.getNewFood(),
                                       )
                                       as EntityEdited?;
 
@@ -1140,11 +1115,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                             heroTag: "2",
                             onPressed: () async {
                               eatsJournalScreenViewModel.toggleFloatingActionButtons();
-                              EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
-                                context: (context),
-                                initialEntryDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                initialMeal: eatsJournalScreenViewModel.currentMeal.value,
-                              );
+                              EntityEdited? eatsJournalEntryEdited = await getQuickEntry(context, eatsJournalScreenViewModel);
                               eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                               eatsJournalScreenViewModel.refreshNutritionData();
 
@@ -1182,6 +1153,21 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
         ),
       ),
     );
+  }
+
+  Future<EntityEdited?> getQuickEntry(BuildContext context, EatsJournalScreenViewModel eatsJournalScreenViewModel) async {
+    EntityEdited? eatsJournalEntryEdited =
+        await Navigator.pushNamed(
+              context,
+              OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+              arguments: eatsJournalScreenViewModel.getNewQuickEntry(
+                entryDate: eatsJournalScreenViewModel.currentJournalDate.value,
+                meal: eatsJournalScreenViewModel.currentMeal.value,
+              ),
+            )
+            as EntityEdited?;
+            
+    return eatsJournalEntryEdited;
   }
 
   Future<DateTime?> _selectDate({required DateTime initialDate, required BuildContext context}) async {

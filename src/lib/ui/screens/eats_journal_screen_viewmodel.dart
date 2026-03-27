@@ -1,27 +1,37 @@
 import "package:flutter/foundation.dart";
+import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/meal.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
+import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_journal_entry.dart";
+import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/food_repository_get_day_data_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
 class EatsJournalScreenViewModel extends ChangeNotifier {
-  EatsJournalScreenViewModel({required JournalRepository journalRepository, required SettingsRepository settingsRepository})
-    : _journalRepository = journalRepository,
-      _settingsRepository = settingsRepository,
-      _dayNutritionDataPerMeal = journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value),
-      _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value),
-      _eatsJournalEntriesAvailableForLast8Days = journalRepository.getEatsJournalEntriesAvailableForLast8Days(today: settingsRepository.today) {
+  EatsJournalScreenViewModel({
+    required JournalRepository journalRepository,
+    required FoodRepository foodRepository,
+    required SettingsRepository settingsRepository,
+  }) : _journalRepository = journalRepository,
+       _foodRepository = foodRepository,
+       _settingsRepository = settingsRepository,
+       _dayNutritionDataPerMeal = journalRepository.getDayMealSums(date: settingsRepository.currentJournalDate.value),
+       _currentWeight = journalRepository.getWeightJournalEntryFor(settingsRepository.currentJournalDate.value),
+       _eatsJournalEntriesAvailableForLast8Days = journalRepository.getEatsJournalEntriesAvailableForLast8Days(today: settingsRepository.today) {
     _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
     _currentMeal.value = _settingsRepository.currentMeal.value;
   }
 
   final JournalRepository _journalRepository;
+  final FoodRepository _foodRepository;
   final SettingsRepository _settingsRepository;
   final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
-  final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
+  final ValueNotifier<bool> _floatingActionMenuElapsed = ValueNotifier(false);
   final ExternalTriggerChangedNotifier _eatsJournalDataChanged = ExternalTriggerChangedNotifier();
   Future<FoodRepositoryGetDayMealSumsResult> _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> _currentWeight;
@@ -33,7 +43,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get languageCode => _settingsRepository.languageCode.value;
-  ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
+  ValueNotifier<bool> get floatingActionMenuElapsed => _floatingActionMenuElapsed;
   ExternalTriggerChangedNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
   Future<FoodRepositoryGetDayMealSumsResult> get dayNutritionDataPerMeal => _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> get currentWeight => _currentWeight;
@@ -85,7 +95,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   }
 
   void toggleFloatingActionButtons() {
-    _floatincActionMenuElapsed.value = !_floatincActionMenuElapsed.value;
+    _floatingActionMenuElapsed.value = !_floatingActionMenuElapsed.value;
   }
 
   double getCurrentJournalDayTargetKJoule() {
@@ -112,14 +122,27 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     await _journalRepository.setWeightJournalEntry(date: date, weight: weight);
   }
 
+  Food getNewFood() {
+    return _foodRepository.getNewFood();
+  }
+
   @override
   void dispose() {
     _currentJournalDate.dispose();
     _currentMeal.dispose();
-    _floatincActionMenuElapsed.dispose();
+    _floatingActionMenuElapsed.dispose();
     _eatsJournalDataChanged.dispose();
     _currentWeightChanged.dispose();
 
     super.dispose();
+  }
+
+  EatsJournalEntry getNewQuickEntry({required DateTime entryDate, required Meal meal}) {
+    return _journalRepository.getNewQuickEntry(
+      entryDate: entryDate,
+      name: OpenEatsJournalStrings.emptyString,
+      kJoule: NutritionCalculator.kJouleForOnekCal,
+      meal: meal,
+    );
   }
 }

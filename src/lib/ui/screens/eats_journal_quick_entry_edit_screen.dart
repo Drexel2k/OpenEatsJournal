@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -216,7 +215,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                                     await Navigator.pushNamed(
                                           context,
                                           OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                                          arguments: EatsJournalEntry.quick(
+                                          arguments: eatsJournalQuickEntryEditScreenViewModel.getNewQuickEntry(
                                             entryDate: eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value,
                                             name: eatsJournalQuickEntryEditScreenViewModel.name.value,
                                             kJoule: eatsJournalQuickEntryEditScreenViewModel.energy.value != null

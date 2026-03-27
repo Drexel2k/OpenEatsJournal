@@ -16,8 +16,11 @@ import "package:openeatsjournal/repository/convert.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 
 class JournalRepository {
-  JournalRepository({required OpenEatsJournalDatabaseService oejDatabase}) : _oejDatabase = oejDatabase;
+  JournalRepository({required OpenEatsJournalDatabaseService oejDatabase, EatsJournalEntry Function()? getNewQuickEntry})
+    : _oejDatabase = oejDatabase,
+      _getNewQuickEntry = getNewQuickEntry;
   final OpenEatsJournalDatabaseService _oejDatabase;
+  final EatsJournalEntry Function()? _getNewQuickEntry;
 
   Future<void> saveOnceDayNutritionTarget({required DateTime entryDate, required double dayTargetKJoule}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: entryDate);
@@ -715,5 +718,40 @@ class JournalRepository {
 
       _oejDatabase.setEatsJournalEntry(eatsJournalEntryData: _getEatsJournalEntryData(eatsJournalEntryCopy));
     }
+  }
+
+  //factory method which can be overriden for tests e.g.
+  EatsJournalEntry getNewQuickEntry({
+    required DateTime entryDate,
+    required String name,
+    required double kJoule,
+    required Meal meal,
+    double? amount,
+    MeasurementUnit? amountMeasurementUnit,
+    double? carbohydrates,
+    double? sugar,
+    double? fat,
+    double? saturatedFat,
+    double? protein,
+    double? salt,
+  }) {
+    if (_getNewQuickEntry == null) {
+      return EatsJournalEntry.quick(
+        entryDate: entryDate,
+        name: name,
+        kJoule: kJoule,
+        meal: meal,
+        amount: amount,
+        amountMeasurementUnit: amountMeasurementUnit,
+        carbohydrates: carbohydrates,
+        sugar: sugar,
+        fat: fat,
+        saturatedFat: saturatedFat,
+        protein: protein,
+        salt: salt,
+      );
+    }
+
+    return _getNewQuickEntry();
   }
 }

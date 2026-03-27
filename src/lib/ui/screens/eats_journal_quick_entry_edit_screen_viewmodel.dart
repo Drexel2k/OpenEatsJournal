@@ -182,4 +182,34 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
 
     super.dispose();
   }
+
+  EatsJournalEntry getNewQuickEntry({
+    required DateTime entryDate,
+    required String name,
+    required double kJoule,
+    required Meal meal,
+    double? amount,
+    MeasurementUnit? amountMeasurementUnit,
+    double? carbohydrates,
+    double? sugar,
+    double? fat,
+    double? saturatedFat,
+    double? protein,
+    double? salt,
+  }) {
+    return _journalRepository.getNewQuickEntry(
+      entryDate: entryDate,
+      name: name,
+      kJoule: kJoule,
+      meal: meal,
+      amount: amount,
+      amountMeasurementUnit: amountMeasurementUnit,
+      carbohydrates: carbohydrates,
+      sugar: sugar,
+      fat: fat,
+      saturatedFat: saturatedFat,
+      protein: protein,
+      salt: salt,
+    );
+  }
 }

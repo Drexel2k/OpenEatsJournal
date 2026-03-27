@@ -30,7 +30,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _gramAmountController = TextEditingController();
   final TextEditingController _milliliterAmountController = TextEditingController();
-  final TextEditingController _energyontroller = TextEditingController();
+  final TextEditingController _energyController = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
   final TextEditingController _sugarController = TextEditingController();
   final TextEditingController _fatController = TextEditingController();
@@ -67,7 +67,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _milliliterAmountController.text = foodEditScreenViewModel.nutritionPerVolumeUnitAmount.value != null
         ? convert.getCleanDoubleString3DecimalDigits(doubleValue: foodEditScreenViewModel.nutritionPerVolumeUnitAmount.value!)
         : OpenEatsJournalStrings.emptyString;
-    _energyontroller.text = convert.numberFomatterInt.format(foodEditScreenViewModel.energy.value);
+    _energyController.text = convert.numberFomatterInt.format(foodEditScreenViewModel.energy.value);
     _carbohydratesController.text = foodEditScreenViewModel.carbohydrates.value != null
         ? convert.getCleanDoubleString3DecimalDigits(doubleValue: foodEditScreenViewModel.carbohydrates.value!)
         : OpenEatsJournalStrings.emptyString;
@@ -173,9 +173,17 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           SizedBox(width: 5),
                           RoundOutlinedButton(
                             onPressed: () async {
-                              Object? barcodeScanResult = await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteBarcodeScanner);
+                              String? barcodeScanResult;
+                              if (foodEditScreenViewModel.barcodeScannerReturnCode == null) {
+                                barcodeScanResult = await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteBarcodeScanner) as String?;
+                              }
+                              else {
+                                barcodeScanResult = foodEditScreenViewModel.barcodeScannerReturnCode;
+                              }
+
                               if (barcodeScanResult != null) {
-                                foodEditScreenViewModel.barcode.value = int.tryParse(barcodeScanResult as String);
+                                foodEditScreenViewModel.barcode.value = int.tryParse(barcodeScanResult);
+                                _barcodeController.text = barcodeScanResult;
                               }
                             },
                             child: Icon(Icons.qr_code_scanner),
@@ -363,7 +371,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     valueListenable: foodEditScreenViewModel.energy,
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
-                        controller: _energyontroller,
+                        controller: _energyController,
                         keyboardType: TextInputType.numberWithOptions(signed: false),
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         focusNode: _energyFocusNode,
@@ -371,14 +379,14 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                           //effect.
                           if (!_energyFocusNode.hasFocus) {
-                            _energyontroller.selection = TextSelection(baseOffset: 0, extentOffset: _energyontroller.text.length);
+                            _energyController.selection = TextSelection(baseOffset: 0, extentOffset: _energyController.text.length);
                           }
                         },
                         onChanged: (value) {
                           int? intValue = int.tryParse(value);
                           foodEditScreenViewModel.energy.value = intValue;
                           if (intValue != null) {
-                            _energyontroller.text = convert.numberFomatterInt.format(intValue);
+                            _energyController.text = convert.numberFomatterInt.format(intValue);
                           }
                         },
                       );
@@ -931,7 +939,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     _barcodeController.dispose();
     _gramAmountController.dispose();
     _milliliterAmountController.dispose();
-    _energyontroller.dispose();
+    _energyController.dispose();
     _carbohydratesController.dispose();
     _sugarController.dispose();
     _fatController.dispose();

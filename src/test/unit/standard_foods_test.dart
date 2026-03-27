@@ -35,7 +35,7 @@ void main() async {
     _database = null;
   });
 
-  Future<List<Object>> generalSetup() async {
+  Future<List<Object>> testSetup() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     List<Object> result = [];
@@ -44,7 +44,7 @@ void main() async {
 
     OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
 
-    var getCallback = MockCallbacks().get;
+    var getCallback = MockFunctions().httpGet;
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: getCallback,
@@ -70,7 +70,7 @@ void main() async {
   }
 
   test("Initialize standard foods", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
     FoodRepository foodRepository = repositories[1] as FoodRepository;
 

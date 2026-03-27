@@ -2,10 +2,8 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
-import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
-import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/app_global.dart";
@@ -21,7 +19,6 @@ import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
-import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/food_card.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
@@ -494,13 +491,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                   await Navigator.pushNamed(
                                         context,
                                         OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                        arguments: Food(
-                                          name: OpenEatsJournalStrings.emptyString,
-                                          foodSource: FoodSource.user,
-                                          fromDb: true,
-                                          kJoule: NutritionCalculator.kJouleForOnekCal,
-                                          nutritionPerGramAmount: 100,
-                                        ),
+                                        arguments: foodSearchScreenViewModel.getNewFood(),
                                       )
                                       as EntityEdited?;
 
@@ -525,11 +516,18 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             heroTag: "2",
                             onPressed: () async {
                               foodSearchScreenViewModel.toggleFloatingActionButtons();
-                              EntityEdited? eatsJournalEntryEdited = await UiHelpers.pushQuickEntryRoute(
-                                context: context,
-                                initialEntryDate: foodSearchScreenViewModel.currentJournalDate.value,
-                                initialMeal: foodSearchScreenViewModel.currentMeal.value,
-                              );
+                              EntityEdited? eatsJournalEntryEdited =
+                                  (
+                                        await Navigator.pushNamed(
+                                          context,
+                                          OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                                          arguments: foodSearchScreenViewModel.getNewQuickEntry(
+                                            entryDate: foodSearchScreenViewModel.currentJournalDate.value,
+                                            meal: foodSearchScreenViewModel.currentMeal.value,
+                                          ),
+                                        ),
+                                      )
+                                      as EntityEdited?;
 
                               if (eatsJournalEntryEdited != null) {
                                 overlayDisplay.enqueue(

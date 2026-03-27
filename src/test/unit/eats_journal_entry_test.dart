@@ -45,7 +45,7 @@ void main() async {
     _database = null;
   });
 
-  Future<List<Object>> generalSetup() async {
+  Future<List<Object>> testSetup() async {
     List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
     result.add(settingsRepository);
@@ -64,7 +64,7 @@ void main() async {
       Future(() async => Response.bytes((await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()), 200)),
     ];
 
-    var getCallback = MockCallbacks().get;
+    var getCallback = MockFunctions().httpGet;
     when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) => Future(() async => responses.removeAt(0)));
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
@@ -91,7 +91,7 @@ void main() async {
   }
 
   test("Check statistic data", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime today = DateTime(2026, 2, 11);
@@ -219,7 +219,7 @@ void main() async {
   });
 
   test("Receive open food facts data and add food entry", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
     FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;
@@ -365,7 +365,7 @@ void main() async {
   });
 
   test("Change date and meal of eats journal entry", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
@@ -391,7 +391,7 @@ void main() async {
   });
 
   test("Copy eats journal entries from meal", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
@@ -424,7 +424,7 @@ void main() async {
   });
 
   test("Copy eats journal entries from whole day as is", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);
@@ -446,7 +446,7 @@ void main() async {
   });
 
   test("Copy eats journal entries from whole day to meal", () async {
-    List<Object> repositories = await generalSetup();
+    List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime y2026m2d9 = DateTime(2026, 2, 9);

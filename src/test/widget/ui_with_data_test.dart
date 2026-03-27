@@ -9,7 +9,7 @@ import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
-import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -20,8 +20,6 @@ import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen.dart";
@@ -60,56 +58,12 @@ void main() async {
     _database = null;
   });
 
-  Future<List<Object>> generalSetup() async {
-    List<Object> result = [];
-    SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
-    result.add(settingsRepository);
-
-    MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
-    when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
-    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
-      (_) => Future(() async {
-        return CsvToListConverter(
-          shouldParseNumbers: false,
-        ).convert(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync());
-      }),
-    );
-
-    OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
-      httpGet: MockCallbacks().get,
-      appName: settingsRepository.appName,
-      appVersion: settingsRepository.appVersion,
-      appContactMail: settingsRepository.appContactMail!,
-    );
-
-    result.add(
-      FoodRepository(
-        settingsRepository: settingsRepository,
-        openFoodFactsService: openFoodFactsService,
-        oejDatabaseService: _database!,
-        oejAssetsService: openEatsJournalAssetsService,
-      ),
-    );
-
-    result.add(JournalRepository(oejDatabase: _database!));
-
-    //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
-
-    ConvertValidate convert = ConvertValidate(
-      languageCode: settingsRepository.languageCode.value,
-      energyUnit: settingsRepository.energyUnit,
-      heightUnit: settingsRepository.heightUnit,
-      weightUnit: settingsRepository.weightUnit,
-      volumeUnit: settingsRepository.volumeUnit,
-    );
-
-    result.add(convert);
-
-    return result;
-  }
-
-  Future<List<Object>> setupWithSpecificTodayDate({required DateTime today, required bool addConvertValidate}) async {
+  Future<List<Object>> testSetup({
+    DateTime? today,
+    Food Function()? getFoodFunction,
+    String? barcodeScannerResult,
+    EatsJournalEntry Function()? getEatsJournalEntryFunction,
+  }) async {
     List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
@@ -125,7 +79,7 @@ void main() async {
     );
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
-      httpGet: MockCallbacks().get,
+      httpGet: MockFunctions().httpGet,
       appName: settingsRepository.appName,
       appVersion: settingsRepository.appVersion,
       appContactMail: settingsRepository.appContactMail!,
@@ -137,45 +91,59 @@ void main() async {
         openFoodFactsService: openFoodFactsService,
         oejDatabaseService: _database!,
         oejAssetsService: openEatsJournalAssetsService,
+        getNewFood: getFoodFunction,
+        barcodeScannerResult: barcodeScannerResult,
       ),
     );
-    result.add(JournalRepository(oejDatabase: _database!));
+
+    result.add(JournalRepository(oejDatabase: _database!, getNewQuickEntry: getEatsJournalEntryFunction));
 
     //required for database initialization
     await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
 
-    if (addConvertValidate) {
-      ConvertValidate convert = ConvertValidate(
+    result.add(
+      ConvertValidate(
         languageCode: settingsRepository.languageCode.value,
         energyUnit: settingsRepository.energyUnit,
         heightUnit: settingsRepository.heightUnit,
         weightUnit: settingsRepository.weightUnit,
         volumeUnit: settingsRepository.volumeUnit,
-      );
-
-      result.add(convert);
-    }
+      ),
+    );
 
     return result;
   }
 
   testWidgets("Adding and loading quick entry", (tester) async {
+    DateTime entryDateValue = DateTime(2026, 02, 12);
+    Meal mealValue = Meal.dinner;
+
+    EatsJournalEntry quickEntry = EatsJournalEntry.quick(
+      entryDate: entryDateValue,
+      name: OpenEatsJournalStrings.emptyString,
+      kJoule: NutritionCalculator.kJouleForOnekCal,
+      meal: mealValue,
+    );
+
+    var responses = [quickEntry];
+
+    var getEatsJournalEntryFunction = MockFunctions().getEatsJournalEntry;
+    when(getEatsJournalEntryFunction()).thenAnswer((_) => responses.removeAt(0));
+
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
-      return await generalSetup();
+      return await testSetup(today: entryDateValue, getEatsJournalEntryFunction: getEatsJournalEntryFunction);
     }))!;
 
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;
     ConvertValidate convert = repositories[3] as ConvertValidate;
 
     //Adding entry
-    DateTime entryDateValue = DateTime(2026, 02, 12);
     String nameValue = "Quick Entry 1";
     int kCalValue = 150;
-    Meal mealValue = Meal.dinner;
     double amountValue = 100;
-    MeasurementUnit amountMeasurementUnitValue = MeasurementUnit.milliliter;
     double fatValue = 90;
     double saturatedFatValue = 80;
     double carbohydratesValue = 70;
@@ -183,124 +151,111 @@ void main() async {
     double proteinValue = 50;
     double saltValue = 40;
 
-    EatsJournalEntry quickEntry = EatsJournalEntry.quick(
-      entryDate: entryDateValue,
-      name: nameValue,
-      kJoule: convert.getEnergyKJ(displayEnergy: kCalValue),
-      meal: mealValue,
-    );
-    quickEntry.amount = amountValue;
-    quickEntry.amountMeasurementUnit = amountMeasurementUnitValue;
-    quickEntry.fat = fatValue;
-    quickEntry.saturatedFat = saturatedFatValue;
-    quickEntry.carbohydrates = carbohydratesValue;
-    quickEntry.sugar = sugarValue;
-    quickEntry.protein = proteinValue;
-    quickEntry.salt = saltValue;
-
     OverlayDisplay overlayDisplay = MockOverlayDisplay();
 
     Widget widget = MultiProvider(
       providers: [
-        Provider.value(value: convert),
+        ChangeNotifierProvider<SettingsRepository>.value(value: settingsRepository),
+        Provider<FoodRepository>.value(value: foodRepository),
+        Provider<JournalRepository>.value(value: journalRepository),
+        ChangeNotifierProvider(
+          create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
+        ),
         Provider.value(value: overlayDisplay),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: Locale(settingsRepository.languageCode.value),
-        navigatorKey: AppGlobal.navigatorKey,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
-          extensions: const <ThemeExtension<dynamic>>[
-            OpenEatsJournalColors(
-              userFoodColor: Color.fromARGB(255, 26, 65, 255),
-              standardFoodColor: Color.fromARGB(255, 5, 112, 89),
-              openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
-              quickEntryColor: Color.fromARGB(255, 255, 0, 233),
-              cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
-              shadowColor: Color.fromARGB(255, 0, 0, 0),
-            ),
-          ],
-        ),
-        home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
-          create: (context) => EatsJournalQuickEntryEditScreenViewModel(
-            quickEntry: quickEntry,
-            journalRepository: journalRepository,
-            settingsRepository: settingsRepository,
-            convert: convert,
-          ),
-          child: EatsJournalQuickEntryEditScreen(),
-        ),
-      ),
+      child: OpenEatsJournalApp(),
     );
 
     await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.add_circle_outline));
+    await tester.tap(find.byType(FloatingActionButton));
     await tester.pump();
 
-    expect(quickEntry.id, isNotNull);
+    FinderResult<Element> fabs = find.byType(FloatingActionButton).evaluate();
+    FloatingActionButton fab;
 
-    //Loading entry
-    List<EatsJournalEntry>? entries = await journalRepository.getEatsJournalEntries(date: entryDateValue, meal: mealValue);
+    for (Element element in fabs) {
+      fab = element.widget as FloatingActionButton;
+      if (fab.heroTag == "2") {
+        await tester.tap(find.byWidgetPredicate((widgetInternal) => widgetInternal == fab));
+      }
+    }
 
-    expect(entries, isNotNull);
-    expect(entries!.length, 1);
-    expect(entries[0].entryDate, entryDateValue);
-    expect(entries[0].name, nameValue);
-    expect(entries[0].kJoule, convert.getEnergyKJ(displayEnergy: kCalValue));
-    expect(entries[0].amount, amountValue);
-    expect(entries[0].amountMeasurementUnit, amountMeasurementUnitValue);
-    expect(entries[0].fat, fatValue);
-    expect(entries[0].saturatedFat, saturatedFatValue);
-    expect(entries[0].carbohydrates, carbohydratesValue);
-    expect(entries[0].sugar, sugarValue);
-    expect(entries[0].protein, proteinValue);
-    expect(entries[0].salt, saltValue);
-
-    //Check if everything is displayed
-    widget = MultiProvider(
-      providers: [
-        Provider.value(value: convert),
-        Provider.value(value: overlayDisplay),
-      ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: Locale(settingsRepository.languageCode.value),
-        navigatorKey: AppGlobal.navigatorKey,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigoAccent.shade700, dynamicSchemeVariant: DynamicSchemeVariant.vibrant),
-          extensions: const <ThemeExtension<dynamic>>[
-            OpenEatsJournalColors(
-              userFoodColor: Color.fromARGB(255, 26, 65, 255),
-              standardFoodColor: Color.fromARGB(255, 5, 112, 89),
-              openFoodFactsFoodColor: Color.fromARGB(255, 255, 135, 20),
-              quickEntryColor: Color.fromARGB(255, 255, 0, 233),
-              cacheFoodColor: Color.fromARGB(255, 83, 83, 83),
-              shadowColor: Color.fromARGB(255, 0, 0, 0),
-            ),
-          ],
-        ),
-        home: ChangeNotifierProvider<EatsJournalQuickEntryEditScreenViewModel>(
-          create: (context) => EatsJournalQuickEntryEditScreenViewModel(
-            quickEntry: entries[0],
-            journalRepository: journalRepository,
-            settingsRepository: settingsRepository,
-            convert: convert,
-          ),
-          child: EatsJournalQuickEntryEditScreen(),
-        ),
-      ),
-    );
-
-    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
 
     FinderResult<Element> textFields = find.byType(OpenEatsJournalTextField).evaluate();
     OpenEatsJournalTextField openEatsJournalTextField;
 
     int textFieldIndex = 0;
+    for (Element textFieldElement in textFields) {
+      openEatsJournalTextField = textFieldElement.widget as OpenEatsJournalTextField;
+
+      //name
+      if (textFieldIndex == 0) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), nameValue);
+      }
+
+      //kCal
+      if (textFieldIndex == 1) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$kCalValue");
+      }
+
+      //amount
+      if (textFieldIndex == 2) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$amountValue");
+      }
+
+      //fat
+      if (textFieldIndex == 3) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$fatValue");
+      }
+
+      //sat fat
+      if (textFieldIndex == 4) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$saturatedFatValue");
+      }
+
+      //carbos
+      if (textFieldIndex == 5) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$carbohydratesValue");
+      }
+
+      //sugar
+      if (textFieldIndex == 6) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$sugarValue");
+      }
+
+      //protein
+      if (textFieldIndex == 7) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$proteinValue");
+      }
+
+      //salt
+      if (textFieldIndex == 8) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$saltValue");
+      }
+
+      textFieldIndex++;
+    }
+
+    await tester.tap(find.text("g"));
+
+    await tester.tap(find.byIcon(Icons.add_circle_outline));
+    await tester.pumpAndSettle();
+
+    expect(quickEntry.id, isNotNull);
+
+    //Loading entry
+    //Icon is behind button because of stack layout, so it is missed
+    await tester.tap(find.byIcon(Icons.restaurant), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("QCK"));
+    await tester.pumpAndSettle();
+
+    textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    textFieldIndex = 0;
     for (Element element in textFields) {
       openEatsJournalTextField = element.widget as OpenEatsJournalTextField;
       if (textFieldIndex == 0) {
@@ -316,19 +271,19 @@ void main() async {
       }
 
       if (textFieldIndex == 3) {
-        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: carbohydratesValue));
-      }
-
-      if (textFieldIndex == 4) {
-        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: sugarValue));
-      }
-
-      if (textFieldIndex == 5) {
         expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: fatValue));
       }
 
-      if (textFieldIndex == 6) {
+      if (textFieldIndex == 4) {
         expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: saturatedFatValue));
+      }
+
+      if (textFieldIndex == 5) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: carbohydratesValue));
+      }
+
+      if (textFieldIndex == 6) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString1DecimalDigit(doubleValue: sugarValue));
       }
 
       if (textFieldIndex == 7) {
@@ -351,7 +306,7 @@ void main() async {
     DateTime today = DateTime(2026, 3, 18);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
-      return await setupWithSpecificTodayDate(today: today, addConvertValidate: true);
+      return await testSetup(today: today);
     }))!;
 
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
@@ -402,7 +357,7 @@ void main() async {
   testWidgets("Adding new food from existing food", (tester) async {
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
-      return await generalSetup();
+      return await testSetup();
     }))!;
 
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
@@ -578,19 +533,19 @@ void main() async {
       }
 
       if (textFieldIndex == 6) {
-        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: carbohydratesValue));
-      }
-
-      if (textFieldIndex == 7) {
-        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: sugarValue));
-      }
-
-      if (textFieldIndex == 8) {
         expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: fatValue));
       }
 
-      if (textFieldIndex == 9) {
+      if (textFieldIndex == 7) {
         expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: saturatedFatValue));
+      }
+
+      if (textFieldIndex == 8) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: carbohydratesValue));
+      }
+
+      if (textFieldIndex == 9) {
+        expect(openEatsJournalTextField.controller!.text, convert.getCleanDoubleString3DecimalDigits(doubleValue: sugarValue));
       }
 
       if (textFieldIndex == 10) {
@@ -625,11 +580,13 @@ void main() async {
     DateTime today = DateTime(2026, 2, 11);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
-      return await setupWithSpecificTodayDate(today: today, addConvertValidate: false);
+      return await testSetup(today: today);
     }))!;
+
     SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
     FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;
+    MockOverlayDisplay overlayDisplay = MockOverlayDisplay();
 
     Widget widget = MultiProvider(
       providers: [
@@ -639,6 +596,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
         ),
+        Provider<OverlayDisplay>.value(value: overlayDisplay),
       ],
       child: OpenEatsJournalApp(),
     );
@@ -695,5 +653,233 @@ void main() async {
     expect(find.textContaining(RegExp(r"^\d+,?\d*g$")), findsNothing);
     expect(find.textContaining(RegExp(r"^\d+,?\d*Fl Oz \(GB\)$")), findsAny);
     expect(find.textContaining(RegExp(r"^\d+,?\d*Oz$")), findsAny);
+  });
+
+  testWidgets("Add and load food", (tester) async {
+    Food food = Food(
+      name: OpenEatsJournalStrings.emptyString,
+      foodSource: FoodSource.user,
+      fromDb: true,
+      kJoule: NutritionCalculator.kJouleForOnekCal,
+      nutritionPerGramAmount: 100,
+    );
+
+    var responses = [food];
+
+    var getFoodFunction = MockFunctions().getFood;
+    when(getFoodFunction()).thenAnswer((_) => responses.removeAt(0));
+
+    String barcodeScannerResult = "1234567890123";
+    //without runAsync openDatabase will hang.
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
+      return await testSetup(getFoodFunction: getFoodFunction, barcodeScannerResult: barcodeScannerResult);
+    }))!;
+
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
+    ConvertValidate convert = repositories[3] as ConvertValidate;
+
+    //Adding food
+    String nameValue = "Food 1";
+    String brandsValue = "Brand 1, Brand 2";
+    int kCalValue = 150;
+    double fatValue = 90;
+    double saturatedFatValue = 80;
+    double carbohydratesValue = 70;
+    double sugarValue = 60;
+    double proteinValue = 50;
+    double saltValue = 40;
+
+    OverlayDisplay overlayDisplay = MockOverlayDisplay();
+
+    Widget widget = MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsRepository>.value(value: settingsRepository),
+        Provider<FoodRepository>.value(value: foodRepository),
+        Provider<JournalRepository>.value(value: journalRepository),
+        ChangeNotifierProvider(
+          create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
+        ),
+        Provider.value(value: overlayDisplay),
+      ],
+      child: OpenEatsJournalApp(),
+    );
+
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+
+    FinderResult<Element> fabs = find.byType(FloatingActionButton).evaluate();
+    FloatingActionButton fab;
+
+    for (Element element in fabs) {
+      fab = element.widget as FloatingActionButton;
+      if (fab.heroTag == "3") {
+        await tester.tap(find.byWidgetPredicate((widgetInternal) => widgetInternal == fab));
+      }
+    }
+
+    await tester.pumpAndSettle();
+
+    FinderResult<Element> textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    OpenEatsJournalTextField openEatsJournalTextField;
+
+    int textFieldIndex = 0;
+    for (Element textFieldElement in textFields) {
+      openEatsJournalTextField = textFieldElement.widget as OpenEatsJournalTextField;
+
+      //name
+      if (textFieldIndex == 0) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), nameValue);
+      }
+
+      //brands
+      if (textFieldIndex == 2) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), brandsValue);
+      }
+
+      //kCal
+      if (textFieldIndex == 5) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$kCalValue");
+      }
+
+      //fat
+      if (textFieldIndex == 6) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$fatValue");
+      }
+
+      //sat fat
+      if (textFieldIndex == 7) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$saturatedFatValue");
+      }
+
+      //carbos
+      if (textFieldIndex == 8) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$carbohydratesValue");
+      }
+
+      //sugar
+      if (textFieldIndex == 9) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$sugarValue");
+      }
+
+      //protein
+      if (textFieldIndex == 10) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$proteinValue");
+      }
+
+      //salt
+      if (textFieldIndex == 11) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "$saltValue");
+      }
+
+      textFieldIndex++;
+    }
+
+    await tester.ensureVisible(find.byIcon(Icons.qr_code_scanner));
+    await tester.tap(find.byIcon(Icons.qr_code_scanner));
+
+    expect((textFields.elementAt(1).widget as OpenEatsJournalTextField).controller!.text, barcodeScannerResult);
+
+    await tester.ensureVisible(find.text("Create"));
+    await tester.tap(find.text("Create"));
+
+    await tester.pumpAndSettle();
+
+    expect(food.id, isNotNull);
+
+    //Loading food
+    await tester.tap(find.byIcon(Icons.lunch_dining));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Offline"));
+    await tester.pumpAndSettle();
+
+    textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    openEatsJournalTextField = textFields.elementAt(0).widget as OpenEatsJournalTextField;
+
+    await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), nameValue);
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Edit"));
+    await tester.pumpAndSettle();
+
+    textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    textFieldIndex = 0;
+    for (Element textFieldElement in textFields) {
+      openEatsJournalTextField = textFieldElement.widget as OpenEatsJournalTextField;
+
+      //name
+      if (textFieldIndex == 0) {
+        expect(openEatsJournalTextField.controller!.text, nameValue);
+      }
+
+      //brands
+      if (textFieldIndex == 2) {
+        expect(openEatsJournalTextField.controller!.text, brandsValue);
+      }
+
+      //kCal
+      if (textFieldIndex == 5) {
+        expect(openEatsJournalTextField.controller!.text, "$kCalValue");
+      }
+
+      //fat
+      if (textFieldIndex == 6) {
+        await tester.enterText(
+          find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField),
+          convert.getCleanDoubleString3DecimalDigits(doubleValue: fatValue),
+        );
+      }
+
+      //sat fat
+      if (textFieldIndex == 7) {
+        await tester.enterText(
+          find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField),
+          convert.getCleanDoubleString3DecimalDigits(doubleValue: saturatedFatValue),
+        );
+      }
+
+      //carbos
+      if (textFieldIndex == 8) {
+        await tester.enterText(
+          find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField),
+          convert.getCleanDoubleString3DecimalDigits(doubleValue: carbohydratesValue),
+        );
+      }
+
+      //sugar
+      if (textFieldIndex == 9) {
+        await tester.enterText(
+          find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField),
+          convert.getCleanDoubleString3DecimalDigits(doubleValue: sugarValue),
+        );
+      }
+
+      //protein
+      if (textFieldIndex == 10) {
+        await tester.enterText(
+          find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField),
+          convert.getCleanDoubleString3DecimalDigits(doubleValue: proteinValue),
+        );
+      }
+
+      //salt
+      if (textFieldIndex == 11) {
+        await tester.enterText(
+          find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField),
+          convert.getCleanDoubleString3DecimalDigits(doubleValue: saltValue),
+        );
+      }
+
+      textFieldIndex++;
+    }
   });
 }

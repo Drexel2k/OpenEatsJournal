@@ -7,6 +7,7 @@ import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/food_unit.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
+import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/ordered_default_food_unit.dart";
 import "package:openeatsjournal/domain/standard_food_data_csv_header_info.dart";
@@ -27,19 +28,28 @@ class FoodRepository {
     required OpenFoodFactsService openFoodFactsService,
     required OpenEatsJournalDatabaseService oejDatabaseService,
     required OpenEatsJournalAssetsService oejAssetsService,
+    Food Function()? getNewFood,
+    String? barcodeScannerResult,
   }) : _settingsRepository = settingsRepository,
        _openFoodFactsService = openFoodFactsService,
        _oejDatabaseService = oejDatabaseService,
-       _oejAssetsService = oejAssetsService;
+       _oejAssetsService = oejAssetsService,
+       _getNewFood = getNewFood,
+       _barcodeScannerResult = barcodeScannerResult;
 
   final SettingsRepository _settingsRepository;
   final OpenFoodFactsService _openFoodFactsService;
   final OpenEatsJournalDatabaseService _oejDatabaseService;
   final OpenEatsJournalAssetsService _oejAssetsService;
 
+  final Food Function()? _getNewFood;
+  final String? _barcodeScannerResult;
+
   final int _pageSize = 100;
   final int _dayForFoodUsage = 43;
   final DateFormat _csvDateFormat = DateFormat("yyyy-MM-dd HH-mm-ss");
+
+  String? get barcodeScannerResult => _barcodeScannerResult;
 
   //result list must always contain exactly 4 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
   // index 4 = all results
@@ -826,5 +836,20 @@ class FoodRepository {
     }
 
     return StandardFoodDataCsvHeaderInfo(lastStandardFoodDataChangeDate: lastStandardFoodDataChangeDate, firstDataRowIndex: firstDataRowIndex);
+  }
+
+  //factory method which can be overriden for tests e.g.
+  Food getNewFood() {
+    if (_getNewFood == null) {
+      return Food(
+        name: OpenEatsJournalStrings.emptyString,
+        foodSource: FoodSource.user,
+        fromDb: true,
+        kJoule: NutritionCalculator.kJouleForOnekCal,
+        nutritionPerGramAmount: 100,
+      );
+    }
+
+    return _getNewFood();
   }
 }
