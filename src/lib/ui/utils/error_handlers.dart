@@ -16,7 +16,7 @@ class ErrorHandlers {
     }
     
     String stack = stackTrace != null ? stackTrace.toString() : "";
-    logFile.writeAsString("${DateTime.now()} se ${error.toString()} $stack", mode: FileMode.append, flush: true);
+    logFile.writeAsString("${DateTime.now()} ${error.toString()} $stack", mode: FileMode.append, flush: true);
 
     final BuildContext? context = AppGlobal.navigatorKey.currentContext;
     if (context != null && context.mounted) {

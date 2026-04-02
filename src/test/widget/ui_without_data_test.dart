@@ -52,6 +52,8 @@ void main() async {
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
 
+    await initializeDateFormatting();
+
     MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
     when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
@@ -80,12 +82,11 @@ void main() async {
 
     result.add(JournalRepository(oejDatabase: _database!));
 
-    await initializeDateFormatting(OpenEatsJournalStrings.en);
     return result;
   }
 
   testWidgets("Onboarding test", (tester) async {
-    DateTime today = DateTime(2026, 3, 31);
+    DateTime today = DateTime.utc(2026, 3, 31);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
       return await testSetup(today: today);
@@ -282,7 +283,7 @@ void main() async {
     expect(settingsRepositoryRestart.darkMode.value, false);
     expect(settingsRepositoryRestart.languageCode.value, OpenEatsJournalStrings.en);
     expect(settingsRepositoryRestart.gender, Gender.male);
-    expect(settingsRepositoryRestart.birthday, DateTime(1980, 7, 1));
+    expect(settingsRepositoryRestart.birthday, DateTime.utc(1980, 7, 1));
     expect(settingsRepositoryRestart.height, 185);
     expect(settingsRepositoryRestart.activityFactor, 1.4);
     expect(settingsRepositoryRestart.weightTarget, WeightTarget.lose05);
@@ -293,7 +294,7 @@ void main() async {
     expect(settingsRepositoryRestart.kJouleFriday, 8664.018);
     expect(settingsRepositoryRestart.kJouleSaturday, 8664.018);
     expect(settingsRepositoryRestart.kJouleSunday, 8664.018);
-    expect(settingsRepositoryRestart.lastProcessedStandardFoodDataChangeDate, DateTime(2026, 03, 04));
+    expect(settingsRepositoryRestart.lastProcessedStandardFoodDataChangeDate, DateTime.utc(2026, 03, 04));
     expect(settingsRepositoryRestart.energyUnit, EnergyUnit.kcal);
     expect(settingsRepositoryRestart.heightUnit, HeightUnit.cm);
     expect(settingsRepositoryRestart.weightUnit, WeightUnit.g);

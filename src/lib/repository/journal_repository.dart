@@ -1,5 +1,4 @@
 import "package:collection/collection.dart";
-import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
@@ -91,7 +90,7 @@ class JournalRepository {
     if ((eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultFoodId] as int?) != null) {
       return EatsJournalEntry.fromData(
         id: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int,
-        entryDate: ConvertValidate.dateformatterDatabaseDateOnly.parse(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
+        entryDate: ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
         name: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryName] as String,
         kJoule: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule] as double,
         meal: Meal.getByValue(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnMealIdRef] as int),
@@ -110,7 +109,7 @@ class JournalRepository {
     } else {
       return EatsJournalEntry.fromData(
         id: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int,
-        entryDate: ConvertValidate.dateformatterDatabaseDateOnly.parse(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
+        entryDate: ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnEntryDate] as String),
         name: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryName] as String,
         kJoule: eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbResultEatsJournalEntryKiloJoule] as double,
         meal: Meal.getByValue(eatsJournalEntriesRows[0][OpenEatsJournalStrings.dbColumnMealIdRef] as int),
@@ -181,8 +180,6 @@ class JournalRepository {
 
   //current day and last month, paramter for testing
   Future<JournalRepositoryGetNutritionSumsResult> getNutritionDaySumsForLast32Days({required DateTime today}) async {
-    today = DateUtils.dateOnly(today);
-
     DateTime before31days = today.subtract(Duration(days: 31));
 
     List<Map<String, Object?>>? dbResultKJouleTargets = await _oejDatabase.getGroupedKJouleTargets(
@@ -206,7 +203,7 @@ class JournalRepository {
     if (dbResult != null) {
       nutritionSumsPerDay = {};
       for (Map<String, Object?> row in dbResult) {
-        nutritionSumsPerDay[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] = NutritionSums(
+        nutritionSumsPerDay[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] = NutritionSums(
           entryCount: row[OpenEatsJournalStrings.dbResultDayCount] as int,
           nutritions: Nutritions(
             kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as double),
@@ -254,8 +251,6 @@ class JournalRepository {
 
   //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
   Future<JournalRepositoryGetNutritionSumsResult> getNutritionWeekSumsForLast15Weeks({required DateTime today}) async {
-    today = DateUtils.dateOnly(today);
-
     DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
 
@@ -282,7 +277,7 @@ class JournalRepository {
     if (dbResult != null) {
       nutritionSumsPerWeek = {};
       for (Map<String, Object?> row in dbResult) {
-        nutritionSumsPerWeek[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] = NutritionSums(
+        nutritionSumsPerWeek[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] = NutritionSums(
           entryCount: row[OpenEatsJournalStrings.dbResultDayCount] as int,
           nutritions: Nutritions(
             kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as double),
@@ -330,9 +325,7 @@ class JournalRepository {
 
   //current month and last 12 months
   Future<JournalRepositoryGetNutritionSumsResult> getNutritionMonthSumsForLast13Months({required DateTime today}) async {
-    today = DateUtils.dateOnly(today);
-
-    DateTime thisMonthStartDate = DateTime(today.year, today.month, 1);
+    DateTime thisMonthStartDate = DateTime.utc(today.year, today.month, 1);
 
     int nextMonthYear = thisMonthStartDate.year;
     int nextMonth = thisMonthStartDate.month + 1;
@@ -341,7 +334,7 @@ class JournalRepository {
       nextMonthYear = nextMonthYear + 1;
     }
 
-    DateTime before12months = DateTime(today.year - 1, today.month, 1);
+    DateTime before12months = DateTime.utc(today.year - 1, today.month, 1);
 
     List<Map<String, Object?>>? dbResultKJouleTargets = await _oejDatabase.getGroupedKJouleTargets(
       from: before12months,
@@ -364,7 +357,9 @@ class JournalRepository {
     if (dbResult != null) {
       nutritionSumsPerMonth = {};
       for (Map<String, Object?> row in dbResult) {
-        nutritionSumsPerMonth[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] = NutritionSums(
+        nutritionSumsPerMonth[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(
+          row[OpenEatsJournalStrings.dbResultGroupColumn] as String,
+        )] = NutritionSums(
           entryCount: row[OpenEatsJournalStrings.dbResultDayCount] as int,
           nutritions: Nutritions(
             kJoule: (row[OpenEatsJournalStrings.dbResultKJouleSum] as double),
@@ -423,7 +418,7 @@ class JournalRepository {
     List<Map<String, Object?>>? dbResult = await _oejDatabase.getMaxWeightJournalEntryFor(date: date, maxOf: OpenEatsJournalStrings.dbColumnDate);
     if (dbResult != null) {
       return WeightJournalEntry(
-        date: ConvertValidate.dateformatterDatabaseDateOnly.parse(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
+        date: ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
         weight: dbResult[0][OpenEatsJournalStrings.dbResultWeightMax] as double,
       );
     }
@@ -443,7 +438,7 @@ class JournalRepository {
       for (Map<String, Object?> row in dbResult) {
         result.add(
           WeightJournalEntry(
-            date: ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbColumnEntryDate] as String),
+            date: ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbColumnEntryDate] as String),
             weight: row[OpenEatsJournalStrings.dbColumnWeight] as double,
           ),
         );
@@ -455,8 +450,6 @@ class JournalRepository {
 
   //current day and last month
   Future<JournalRepositoryGetWeightMaxResult>? getWeightPerDayForLast32Days({required DateTime today}) async {
-    today = DateUtils.dateOnly(today);
-
     DateTime before31days = today.subtract(Duration(days: 31));
 
     List<Map<String, Object?>>? dbResultWeightMax = await _oejDatabase.getWeightMax(
@@ -516,7 +509,7 @@ class JournalRepository {
 
   WeightJournalEntry? _getWeightJournalEntryFromDbResult(List<Map<String, Object?>> dbResult) {
     return WeightJournalEntry(
-      date: ConvertValidate.dateformatterDatabaseDateOnly.parse(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
+      date: ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
       weight: dbResult[0][OpenEatsJournalStrings.dbResultWeightMax] as double,
     );
   }
@@ -524,8 +517,6 @@ class JournalRepository {
   //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
   Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerWeekForLast15Weeks({required DateTime today}) async {
     //set start of week (monday) on before14weeks
-    today = DateUtils.dateOnly(today);
-
     DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
 
@@ -590,9 +581,7 @@ class JournalRepository {
 
   //current month and last 12 months
   Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerMonthForLast13Months({required DateTime today}) async {
-    today = DateUtils.dateOnly(today);
-
-    DateTime thisMonthStartDate = DateTime(today.year, today.month, 1);
+    DateTime thisMonthStartDate = DateTime.utc(today.year, today.month, 1);
 
     int nextMonthYear = thisMonthStartDate.year;
     int nextMonth = thisMonthStartDate.month + 1;
@@ -601,7 +590,7 @@ class JournalRepository {
       nextMonthYear = nextMonthYear + 1;
     }
 
-    DateTime before12monthsStartDate = DateTime(today.year - 1, today.month, 1);
+    DateTime before12monthsStartDate = DateTime.utc(today.year - 1, today.month, 1);
 
     List<Map<String, Object?>>? dbResultWeightMax = await _oejDatabase.getWeightMax(
       from: before12monthsStartDate,
@@ -633,7 +622,7 @@ class JournalRepository {
 
     if (weightMaxPerMonth != null && !weightMaxPerMonth.containsKey(thisMonthStartDate)) {
       List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(
-        date: DateTime(nextMonthYear, nextMonth, 1),
+        date: DateTime.utc(nextMonthYear, nextMonth, 1),
         maxOf: OpenEatsJournalStrings.dbColumnMonthStartDate,
       );
 
@@ -664,7 +653,6 @@ class JournalRepository {
   Future<Map<int, bool>> getEatsJournalEntriesAvailableForLast8Days({required DateTime today}) async {
     Map<int, bool> result = {};
 
-    today = DateUtils.dateOnly(today);
     DateTime currentDay = today.subtract(Duration(days: 7));
 
     List<Map<String, Object?>>? dbResult = await _oejDatabase.getEatsJournalEntriesAvailable(from: currentDay, until: today);
@@ -672,7 +660,7 @@ class JournalRepository {
     Map<DateTime, bool> dbData = {};
     if (dbResult != null) {
       for (Map<String, Object?> row in dbResult) {
-        dbData[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbColumnEntryDate] as String)] =
+        dbData[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbColumnEntryDate] as String)] =
             (row[OpenEatsJournalStrings.dbResultEntryCount] as int) > 0;
       }
     }
@@ -688,7 +676,7 @@ class JournalRepository {
   Map<DateTime, double> _getKJouleTargets({required List<Map<String, Object?>> dbResult}) {
     Map<DateTime, double> result = {};
     for (Map<String, Object?> row in dbResult) {
-      result[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
+      result[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
           row[OpenEatsJournalStrings.dbResultKJouleSum] as double;
     }
 
@@ -698,7 +686,7 @@ class JournalRepository {
   Map<DateTime, double> _getWeightMax({required List<Map<String, Object?>> dbResult}) {
     Map<DateTime, double> result = {};
     for (Map<String, Object?> row in dbResult) {
-      result[ConvertValidate.dateformatterDatabaseDateOnly.parse(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
+      result[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
           row[OpenEatsJournalStrings.dbResultWeightMax] as double;
     }
 

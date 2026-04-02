@@ -267,7 +267,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                   } else if (snapshot.hasError) {
                                     throw StateError("Something went wrong: ${snapshot.error}");
                                   } else if (snapshot.hasData) {
-                                    DateTime currentDate = DateUtils.dateOnly(eatsJournalScreenViewModel.today).subtract(Duration(days: 8));
+                                    DateTime currentDate = eatsJournalScreenViewModel.today.subtract(Duration(days: 8));
                                     return Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [-7, -6, -5, -4, -3, -2, -1, 0].map((int dayIndex) {
@@ -1171,7 +1171,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   }
 
   Future<DateTime?> _selectDate({required DateTime initialDate, required BuildContext context}) async {
-    return await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
+    return await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime.utc(1900), lastDate: DateTime.utc(9999));
   }
 
   GaugeData _getKJouleGaugeData({

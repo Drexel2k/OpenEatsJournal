@@ -125,7 +125,6 @@ class SettingsScreenViewModel extends ChangeNotifier {
 
   double _getDailyKJoule({required DateTime today}) {
     int age = 0;
-    today = DateUtils.dateOnly(today);
     age = today.year - _settingsRepository.birthday.year;
     final month = today.month - _settingsRepository.birthday.month;
 

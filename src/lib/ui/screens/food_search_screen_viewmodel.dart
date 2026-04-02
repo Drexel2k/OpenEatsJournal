@@ -32,7 +32,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final FoodRepository _foodRepository;
   final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
-  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
+  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime.utc(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
 

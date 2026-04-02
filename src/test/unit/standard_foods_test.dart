@@ -42,6 +42,9 @@ void main() async {
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
     result.add(settingsRepository);
 
+    //required for database initialization
+    await Future.wait([initializeDateFormatting(), settingsRepository.initSettings()]);
+
     OpenEatsJournalAssetsService openEatsJournalAssetsService = OpenEatsJournalAssetsService();
 
     var getCallback = MockFunctions().httpGet;
@@ -64,8 +67,6 @@ void main() async {
 
     result.add(JournalRepository(oejDatabase: _database!));
 
-    //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
     return result;
   }
 

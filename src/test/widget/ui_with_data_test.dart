@@ -68,6 +68,9 @@ void main() async {
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
 
+    //required for database initialization
+    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
+
     MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
     when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
@@ -98,9 +101,6 @@ void main() async {
 
     result.add(JournalRepository(oejDatabase: _database!, getNewQuickEntry: getEatsJournalEntryFunction));
 
-    //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
-
     result.add(
       ConvertValidate(
         languageCode: settingsRepository.languageCode.value,
@@ -115,7 +115,7 @@ void main() async {
   }
 
   testWidgets("Adding and loading quick entry", (tester) async {
-    DateTime entryDateValue = DateTime(2026, 02, 12);
+    DateTime entryDateValue = DateTime.utc(2026, 02, 12);
     Meal mealValue = Meal.dinner;
 
     EatsJournalEntry quickEntry = EatsJournalEntry.quick(
@@ -303,7 +303,7 @@ void main() async {
   });
 
   testWidgets("Check statistic data with nutritions null values", (tester) async {
-    DateTime today = DateTime(2026, 3, 18);
+    DateTime today = DateTime.utc(2026, 3, 18);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
       return await testSetup(today: today);
@@ -577,7 +577,7 @@ void main() async {
   });
 
   testWidgets("Display units and language change", (tester) async {
-    DateTime today = DateTime(2026, 2, 11);
+    DateTime today = DateTime.utc(2026, 2, 11);
     //without runAsync openDatabase will hang.
     List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
       return await testSetup(today: today);

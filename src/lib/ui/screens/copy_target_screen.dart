@@ -114,7 +114,7 @@ class _CopyTargetScreenScreenState extends State<CopyTargetScreen> {
   }
 
   Future<DateTime?> _selectDate({required DateTime initialDate, required BuildContext context}) async {
-    return await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
+    return await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime.utc(1900), lastDate: DateTime.utc(9999));
   }
 
   void _changeDate({required CopyTargetScreenViewModel copyTargetScreenViewModel, required DateTime date}) {

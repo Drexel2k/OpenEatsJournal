@@ -183,7 +183,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
 
               if (snapshot.data!.groupMaxWeights != null) {
                 for (int monthIndex = 0; monthIndex <= 12; monthIndex++) {
-                  currentMonthStartDate = DateTime(currentYear, currentMonth, 1);
+                  currentMonthStartDate = DateTime.utc(currentYear, currentMonth, 1);
 
                   if (monthIndex == 0) {
                     DateTime dateBeforeEntry = snapshot.data!.groupMaxWeights!.keys.min;

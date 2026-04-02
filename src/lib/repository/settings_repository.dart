@@ -1,5 +1,4 @@
 import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
 import "package:openeatsjournal/domain/gender.dart";
 import "package:openeatsjournal/domain/all_settings.dart";
 import "package:openeatsjournal/domain/meal.dart";
@@ -116,13 +115,20 @@ class SettingsRepository extends ChangeNotifier {
   String get appName => "OpenEatsJournal";
   String get appVersion => "1.5";
   bool get useStagingServices => kDebugMode ? true : false;
-  DateTime get today => _today ?? DateTime.now();
+  DateTime get today {
+    DateTime today = _today ?? DateTime.now();
+
+    //we use an utc object to avoid problems with daylight saving offset, when adding and subtracting days, see
+    //https://api.flutter.dev/flutter/dart-core/DateTime/add.html
+    return DateTime.utc(today.year, today.month, today.day);
+  }
+
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
   String? get contactData => null;
 
   Future<void> initSettings() async {
-    _currentJournalDate = ValueNotifier(DateUtils.dateOnly(today));
+    _currentJournalDate = ValueNotifier(today);
 
     Map<String, Object?> settingData = await _oejDatabase.getAllSettings();
 

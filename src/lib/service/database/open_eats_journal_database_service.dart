@@ -615,7 +615,7 @@ class OpenEatsJournalDatabaseService {
       return null;
     }
 
-    return ConvertValidate.dateFormatterDatabaseDateAndTime.parse(await _getSetting(setting: setting) as String);
+    return ConvertValidate.dateFormatterDatabaseDateAndTime.parseUtc(await _getSetting(setting: setting) as String);
   }
 
   Future<Map<String, Object?>> getAllSettings() async {
@@ -1168,7 +1168,7 @@ class OpenEatsJournalDatabaseService {
 
       await db.insert(OpenEatsJournalStrings.dbTableDateInfo, {
         OpenEatsJournalStrings.dbColumnDate: formattedDate,
-        OpenEatsJournalStrings.dbColumnMonthStartDate: ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime(date.year, date.month, 1)),
+        OpenEatsJournalStrings.dbColumnMonthStartDate: ConvertValidate.dateformatterDatabaseDateOnly.format(DateTime.utc(date.year, date.month, 1)),
         OpenEatsJournalStrings.dbColumnWeekStartDate: ConvertValidate.dateformatterDatabaseDateOnly.format(weekOfYearStartDate),
       });
     }

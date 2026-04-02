@@ -535,7 +535,7 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
     DateTime? date = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
+      firstDate: DateTime.utc(1900),
       lastDate: widget._onboardingScreenViewModel.today,
     );
 

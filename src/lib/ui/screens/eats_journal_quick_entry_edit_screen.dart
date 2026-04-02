@@ -738,7 +738,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
     required DateTime initialDate,
     required BuildContext context,
   }) async {
-    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime(9999));
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime.utc(1900), lastDate: DateTime.utc(9999));
 
     if (date != null) {
       eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value = date;

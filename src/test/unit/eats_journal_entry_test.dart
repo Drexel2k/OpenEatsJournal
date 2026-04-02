@@ -7,7 +7,6 @@ import "package:mockito/mockito.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
-import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
 import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
@@ -45,10 +44,13 @@ void main() async {
     _database = null;
   });
 
-  Future<List<Object>> testSetup() async {
+  Future<List<Object>> testSetup({DateTime? today}) async {
     List<Object> result = [];
-    SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!);
+    SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
     result.add(settingsRepository);
+
+    //required for database initialization
+    await Future.wait([initializeDateFormatting(), settingsRepository.initSettings()]);
 
     MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
@@ -85,8 +87,6 @@ void main() async {
 
     result.add(JournalRepository(oejDatabase: _database!));
 
-    //required for database initialization
-    await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
     return result;
   }
 
@@ -94,7 +94,7 @@ void main() async {
     List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
-    DateTime today = DateTime(2026, 2, 11);
+    DateTime today = DateTime.utc(2026, 2, 11);
     JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await journalRepository.getNutritionDaySumsForLast32Days(
       today: today,
     );
@@ -105,12 +105,12 @@ void main() async {
       today: today,
     );
 
-    DateTime y2026m1d16 = DateTime(2026, 1, 16);
-    DateTime y2026m2d11 = DateTime(2026, 2, 11);
-    DateTime y2026m2d12 = DateTime(2026, 1, 12);
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m1d1 = DateTime(2026, 1, 1);
-    DateTime y2026m2d1 = DateTime(2026, 2, 1);
+    DateTime y2026m1d16 = DateTime.utc(2026, 1, 16);
+    DateTime y2026m2d11 = DateTime.utc(2026, 2, 11);
+    DateTime y2026m2d12 = DateTime.utc(2026, 1, 12);
+    DateTime y2026m2d9 = DateTime.utc(2026, 2, 9);
+    DateTime y2026m1d1 = DateTime.utc(2026, 1, 1);
+    DateTime y2026m2d1 = DateTime.utc(2026, 2, 1);
 
     expect(journalRepositoryGetNutritionSumsResultDays.from, today.subtract(Duration(days: 31)));
     expect(journalRepositoryGetNutritionSumsResultDays.until, today);
@@ -182,8 +182,8 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.protein, 221.50588235294117);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.salt, null);
 
-    expect(journalRepositoryGetNutritionSumsResultMonths.from, DateTime(today.year - 1, today.month, 1));
-    expect(journalRepositoryGetNutritionSumsResultMonths.until, DateTime(today.year, today.month, 1));
+    expect(journalRepositoryGetNutritionSumsResultMonths.from, DateTime.utc(today.year - 1, today.month, 1));
+    expect(journalRepositoryGetNutritionSumsResultMonths.until, DateTime.utc(today.year, today.month, 1));
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums!.entries.length, 2);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m1d1]?.entryCount, 16);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m1d1]?.nutritions.kJoule, 141777.0);
@@ -224,7 +224,7 @@ void main() async {
     FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
-    DateTime today = DateTime(2026, 2, 11);
+    DateTime today = DateTime.utc(2026, 2, 11);
     JournalRepositoryGetNutritionSumsResult journalRepositoryGetNutritionSumsResultDays = await journalRepository.getNutritionDaySumsForLast32Days(
       today: today,
     );
@@ -235,10 +235,10 @@ void main() async {
       today: today,
     );
 
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m2d1 = DateTime(2026, 2, 1);
-    DateTime y2026m2d10 = DateTime(2026, 2, 10);
-    DateTime y2026m2d12 = DateTime(2026, 1, 12);
+    DateTime y2026m2d9 = DateTime.utc(2026, 2, 9);
+    DateTime y2026m2d1 = DateTime.utc(2026, 2, 1);
+    DateTime y2026m2d10 = DateTime.utc(2026, 2, 10);
+    DateTime y2026m2d12 = DateTime.utc(2026, 1, 12);
 
     double? orignalKJouleDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.kJoule;
     double? orignalFatDay = journalRepositoryGetNutritionSumsResultDays.groupNutritionSums![y2026m2d10]!.nutritions.fat;
@@ -270,7 +270,7 @@ void main() async {
       page: 3,
     );
 
-    DateTime entryDate = DateTime(2026, 2, 10);
+    DateTime entryDate = DateTime.utc(2026, 2, 10);
     EatsJournalEntry eatsJournalEntry = EatsJournalEntry.fromFood(entryDate: entryDate, food: foodRepositoryResult.foods![0], meal: Meal.lunch);
     eatsJournalEntry.amount = 500;
     double? addedKJoule = eatsJournalEntry.kJoule;
@@ -338,8 +338,8 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.protein, 221.50588235294117);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionTargets![y2026m2d9]?.salt, null);
 
-    expect(journalRepositoryGetNutritionSumsResultMonths.from, DateTime(today.year - 1, today.month, 1));
-    expect(journalRepositoryGetNutritionSumsResultMonths.until, DateTime(today.year, today.month, 1));
+    expect(journalRepositoryGetNutritionSumsResultMonths.from, DateTime.utc(today.year - 1, today.month, 1));
+    expect(journalRepositoryGetNutritionSumsResultMonths.until, DateTime.utc(today.year, today.month, 1));
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums!.entries.length, 2);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.entryCount, 11);
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]?.nutritions.kJoule, orignalKJouleMonth + addedKJoule);
@@ -368,8 +368,8 @@ void main() async {
     List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m2d8 = DateTime(2026, 2, 8);
+    DateTime y2026m2d9 = DateTime.utc(2026, 2, 9);
+    DateTime y2026m2d8 = DateTime.utc(2026, 2, 8);
 
     List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     EatsJournalEntry eatsJournalEntry = eatsJournalEntries![0];
@@ -394,8 +394,8 @@ void main() async {
     List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m2d16 = DateTime(2026, 2, 16);
+    DateTime y2026m2d9 = DateTime.utc(2026, 2, 9);
+    DateTime y2026m2d16 = DateTime.utc(2026, 2, 16);
 
     List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9, meal: Meal.dinner);
     int entryCount = eatsJournalEntries!.length;
@@ -427,8 +427,8 @@ void main() async {
     List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m2d16 = DateTime(2026, 2, 16);
+    DateTime y2026m2d9 = DateTime.utc(2026, 2, 9);
+    DateTime y2026m2d16 = DateTime.utc(2026, 2, 16);
 
     List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     int entryCountBreakfast = eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length;
@@ -449,8 +449,8 @@ void main() async {
     List<Object> repositories = await testSetup();
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
-    DateTime y2026m2d9 = DateTime(2026, 2, 9);
-    DateTime y2026m2d16 = DateTime(2026, 2, 16);
+    DateTime y2026m2d9 = DateTime.utc(2026, 2, 9);
+    DateTime y2026m2d16 = DateTime.utc(2026, 2, 16);
 
     List<EatsJournalEntry>? eatsJournalEntries = await journalRepository.getEatsJournalEntries(date: y2026m2d9);
     int entryCountBreakfast = eatsJournalEntries!.where((entry) => entry.meal == Meal.breakfast).length;

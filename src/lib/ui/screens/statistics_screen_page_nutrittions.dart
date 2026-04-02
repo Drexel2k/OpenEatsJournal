@@ -133,7 +133,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
 
               if (snapshot.data!.groupNutritionSums != null) {
                 for (int monthIndex = 0; monthIndex <= 12; monthIndex++) {
-                  currentMonthStartDate = DateTime(currentYear, currentMonth, 1);
+                  currentMonthStartDate = DateTime.utc(currentYear, currentMonth, 1);
 
                   //don't put in empty months, as the line in the chart will drop to 0 then
                   if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {

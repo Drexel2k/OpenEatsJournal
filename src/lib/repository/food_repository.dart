@@ -1,6 +1,5 @@
 import "dart:convert";
 import "package:collection/collection.dart";
-import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:intl/intl.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -67,7 +66,7 @@ class FoodRepository {
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources)
         : await _oejDatabaseService.getFoodsByBarcodeByUsage(
-            today: DateUtils.dateOnly(_settingsRepository.today),
+            today: _settingsRepository.today,
             barcode: barcode,
             foodSourceIds: localFoodSources,
             days: _dayForFoodUsage,
@@ -163,7 +162,7 @@ class FoodRepository {
     List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
         ? await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources)
         : await _oejDatabaseService.getFoodsBySearchtextByUsage(
-            today: DateUtils.dateOnly(_settingsRepository.today),
+            today: _settingsRepository.today,
             searchText: searchText,
             foodSourceIds: localFoodSources,
             days: _dayForFoodUsage,
@@ -681,7 +680,7 @@ class FoodRepository {
               currentFoodId = int.parse(standardFoodDataCsv[csvLineIndex][1]);
 
               if (lastProcessedStandardFoodDataChangeDate == null ||
-                  _csvDateFormat.parse(standardFoodDataCsv[csvLineIndex][2]).isAfter(lastProcessedStandardFoodDataChangeDate)) {
+                  _csvDateFormat.parseUtc(standardFoodDataCsv[csvLineIndex][2]).isAfter(lastProcessedStandardFoodDataChangeDate)) {
                 foodRelevant = true;
                 foodData = standardFoodDataCsv[csvLineIndex];
                 foodUnitsData.clear();
@@ -795,7 +794,7 @@ class FoodRepository {
     for (int csvLineIndex = 0; csvLineIndex < standardFoodDataCsv.length && firstDataRowIndex == null; csvLineIndex++) {
       if (inHeader) {
         if (headerLineIndex == 1) {
-          lastStandardFoodDataChangeDate = _csvDateFormat.parse(standardFoodDataCsv[2][0]);
+          lastStandardFoodDataChangeDate = _csvDateFormat.parseUtc(standardFoodDataCsv[2][0]);
         }
 
         headerLineIndex++;

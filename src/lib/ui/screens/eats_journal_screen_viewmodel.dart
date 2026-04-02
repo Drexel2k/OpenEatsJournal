@@ -29,7 +29,7 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final FoodRepository _foodRepository;
   final SettingsRepository _settingsRepository;
-  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime(1900));
+  final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime.utc(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatingActionMenuElapsed = ValueNotifier(false);
   final ExternalTriggerChangedNotifier _eatsJournalDataChanged = ExternalTriggerChangedNotifier();

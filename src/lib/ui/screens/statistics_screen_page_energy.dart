@@ -120,14 +120,13 @@ class StatisticsScreenPageEnergy extends StatelessWidget {
             } else if (snapshot.hasData) {
               List<Tuple> monthData = [];
 
-              DateTime currentDate = DateUtils.dateOnly(_statisticsScreenViewModel.today);
-              int currentMonth = currentDate.month;
-              int currentYear = currentDate.year - 1;
+              int currentMonth = _statisticsScreenViewModel.today.month;
+              int currentYear = _statisticsScreenViewModel.today.year - 1;
               DateTime currentMonthStartDate;
               Map<DateTime, String> xAxisInfo = {};
 
               for (int monthIndex = 0; monthIndex <= 12; monthIndex++) {
-                currentMonthStartDate = DateTime(currentYear, currentMonth, 1);
+                currentMonthStartDate = DateTime.utc(currentYear, currentMonth, 1);
 
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
                   monthData.add({

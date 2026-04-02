@@ -621,7 +621,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     required String languageCode,
     required ConvertValidate convert,
   }) async {
-    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateUtils.dateOnly(today));
+    DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime.utc(1900), lastDate: today);
 
     if (date != null) {
       _birthDayController.text = convert.dateFormatterDisplayLongDateOnly.format(date);

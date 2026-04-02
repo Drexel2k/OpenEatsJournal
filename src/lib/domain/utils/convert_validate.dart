@@ -417,11 +417,11 @@ class ConvertValidate {
       return date.subtract(Duration(days: date.weekday - 1));
     }
 
-    return DateTime(date.year, date.month, date.day);
+    return DateTime.utc(date.year, date.month, date.day);
   }
 
   static int _getWeekCount(int year) {
-    DateTime dec28 = DateTime(year, 12, 28);
+    DateTime dec28 = DateTime.utc(year, 12, 28);
     int dayOfDec28 = int.parse(DateFormat("D").format(dec28));
     return ((dayOfDec28 - dec28.weekday + 10) / 7).floor();
   }
