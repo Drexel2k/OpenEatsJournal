@@ -1,6 +1,6 @@
 ---header---
 last_content_update,last_file_format_change
-2026-03-19 00-00-00,2026-01-15 00-00-00
+2026-04-07 00-00-00,2026-01-15 00-00-00
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -278,3 +278,21 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","128","2026-03-11 00-00-00","Pretzel croissant / corner","Laugencroissant / Laugeneck",,,"100",,"1498","20.6","8.2","36.3","3.4","6","2",
 "foodunit","1","Croissant","Croissant","80","g","true"
 "foodunit","2","Corner","Eck","90","g","false"
+"food","129","2026-04-07 00-00-00","Croquettes","Kroketten",,,"100",,"708","6.8","0.9","23.5","0.6","2.4","0.8",
+"foodunit","1","Piece","Stück","20","g","true"
+"food","130","2026-04-07 00-00-00","Camembert","Camembert",,,"100",,"1163","22","14","0.5","0.5","20","1.8",
+"food","131","2026-04-07 00-00-00","Chocolate Muesli","Schoko Müsli",,,"100",,"1705","11","4.7","61","22","11","0.25",
+"foodunit","1","Serving","Portion","40","g","true"
+"food","132","2026-04-07 00-00-00","Muesli basis (with sunflower seeds, raisins)","Müsli Basis (mit Sonnenblumenkernen, Rosinen)",,,"100",,"1528","7.3","1.1","58","7.6","11","0",
+"foodunit","1","Serving","Portion","40","g","true"
+"food","133","2026-04-07 00-00-00","Crunchy Muesli","Knusper Müsli",,,"100",,"1855","15","5.5","64","18","8.4","0.22",
+"foodunit","1","Serving","Portion","40","g","true"
+"food","134","2026-04-07 00-00-00","Potato pancake","Reibekuchen / Kartoffelpuffer",,,"100",,"742","8.5","0.7","21","2","2.8","1.5",
+"food","135","2026-04-07 00-00-00","Pancake","Pfannkuchen",,,"100",,"862","9","2.1","24","4","8","0.3",
+"foodunit","1","Serving","Portion","100","g","true"
+"food","136","2026-04-07 00-00-00","Apple pancake","Apfelpfannkuchen",,,"100",,"691","6.1","1.7","21.7","17","5.2","0.1",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","137","2026-04-07 00-00-00","Apple with ham and cheese","Pfannkuchen mit Schinken und Käse",,,"100",,"955","10.5","4.2","22.1","1.3","10.6","1.5",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","138","2026-04-07 00-00-00","Crumb cake","Streuselkuchen",,,"100",,"1580","17.4","8.7","47.8","14.6","6.4","0.6",
+"foodunit","1","Piece","Stück","120","g","true"
