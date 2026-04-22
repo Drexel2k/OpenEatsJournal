@@ -1,6 +1,6 @@
 ---header---
-last_content_update,last_file_format_change
-2026-04-07 00-00-00,2026-01-15 00-00-00
+"last_content_update","last_file_format_change"
+"2026-04-22 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -292,7 +292,27 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Serving","Portion","100","g","true"
 "food","136","2026-04-07 00-00-00","Apple pancake","Apfelpfannkuchen",,,"100",,"691","6.1","1.7","21.7","17","5.2","0.1",
 "foodunit","1","Serving","Portion","150","g","true"
-"food","137","2026-04-07 00-00-00","Apple with ham and cheese","Pfannkuchen mit Schinken und Käse",,,"100",,"955","10.5","4.2","22.1","1.3","10.6","1.5",
+"food","137","2026-04-22 00-00-00","Pancake with ham and cheese","Pfannkuchen mit Schinken und Käse",,,"100",,"955","10.5","4.2","22.1","1.3","10.6","1.5",
 "foodunit","1","Serving","Portion","150","g","true"
 "food","138","2026-04-07 00-00-00","Crumb cake","Streuselkuchen",,,"100",,"1580","17.4","8.7","47.8","14.6","6.4","0.6",
 "foodunit","1","Piece","Stück","120","g","true"
+"food","139","2026-04-20 00-00-00","Salami","Salami",,,"100",,"1552","30","12","0","0","26","4.5",
+"food","140","2026-04-22 00-00-00","Cervelat / smoked dry saucage (Katenrauchwurst) ","Cervelatwurst / Katenrauchwurst",,,"100",,"1269","25","10","1","0.5","19","3.3",
+"foodunit","1","Slice","Scheibe","20","g","true"
+"food","141","2026-04-22 00-00-00","Cinnamon roll / Cinnamon pastry","Zimtschnecke / Zimtplunder",,,"100",,"1576","17.1","8.8","48.4","17.2","6.1","0.9",
+"foodunit","1","Piece","Stück","110","g","true"
+"food","142","2026-04-20 00-00-00","Gnocchi","Gnocchi",,,"100",,"632","1","0.3","31","4","2.8","0.7",
+"foodunit","1","Serving","Portion","175","g","true"
+"food","143","2026-04-21 00-00-00","Ice cream vanilla / chocolate","Eiscreme Vanille / Schokolade",,,"100",,"775","8","6","24.5","23","3.5","0.1",
+"foodunit","1","Ball","Kugel","75","g","true"
+"food","144","2026-04-20 00-00-00","Ice cream strawberry / cherry / raspberry / lemon","Eiscreme Erdbeer / Kirsche / Himbeere / Zitrone",,,"100",,"490","2.1","1.9","23","23","0","0.1",
+"foodunit","1","Ball","Kugel","75","g","true"
+"food","145","2026-04-20 00-00-00","Ice cream cookie / Oreo","Eiscreme Cookie / Oreo",,,"100",,"941","11.4","8.1","27.2","23.8","3.3","0.2",
+"foodunit","1","Ball","Kugel","75","g","true"
+"food","146","2026-04-22 00-00-00","Wine / red wine / white wine / sparkling wine","Wein / Weißwein / Rotwein / Sekt",,,,"100","320","0","0","1.5","0.5","0","0",
+"food","147","2026-04-22 00-00-00","Grilled sausage / barbecue sausage","Bratuwrst / Rostbratwurst",,,"100",,"1137 ","23.8","7.9","1.1","0.7","14.2","2.4",
+"foodunit","1","Sausage","Wurst","100","g","true"
+"food","148","2026-04-22 00-00-00","Chocolate marshamallow","Schokokuss",,,"100",,"1567","9.9","6.1","67.1","50.5","3.2","0.1",
+"foodunit","1","Piece","Stück","28","g","true"
+"food","149","2026-04-20 00-00-00","Crunchy salmon sushi","Crunchy Lachs Sushi",,,"100",,"900","10","3","25","5.3","5.3","1.2",
+"foodunit","1","Piece","Stück","35","g","true"
