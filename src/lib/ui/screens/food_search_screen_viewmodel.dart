@@ -60,6 +60,8 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   SortOrder _sortOrder = SortOrder.popularity;
   final ValueNotifier<bool> _sortDesc = ValueNotifier(true);
 
+  bool _disposed = false;
+
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
   String get languageCode => _settingsRepository.languageCode.value;
@@ -321,15 +323,19 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   void _initialSearchFinished() {
-    _showInitialLoading.value = false;
+    if (!_disposed) {
+      _showInitialLoading.value = false;
+    }
   }
 
   void _addToSearchResult(List<ObjectWithOrder<Food?>>? foods) {
-    if (foods != null) {
-      _foodSearchResult.addAll(foods);
-    }
+    if (!_disposed) {
+      if (foods != null) {
+        _foodSearchResult.addAll(foods);
+      }
 
-    _foodSearchResultChanged.notify();
+      _foodSearchResultChanged.notify();
+    }
   }
 
   void setSortOrder({required SortOrder sortOrder, required SearchMode searchMode}) {
@@ -464,6 +470,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _currentJournalDate.dispose();
     _currentMeal.dispose();
     _floatincActionMenuElapsed.dispose();
