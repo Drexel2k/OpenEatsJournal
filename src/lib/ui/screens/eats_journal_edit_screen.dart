@@ -8,7 +8,6 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen.dart";
 import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
@@ -183,33 +182,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
           eatsJournalEntry: entry,
           onPressed: ({required EatsJournalEntry eatsJournalEntry}) async {
             if (eatsJournalEntry.food != null) {
-              EntityEdited? eatsJournalEntryEdited =
-                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry) as EntityEdited?;
-
-              if (eatsJournalEntryEdited != null) {
-                overlayDisplay.enqueue(
-                  overlayInfo: OverlayInfo(
-                    message: eatsJournalEntryEdited.originalId == null
-                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                    spacer: overlaySpacer,
-                  ),
-                );
-              }
+              await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEntryEdit, arguments: eatsJournalEntry);
             } else {
-              EntityEdited? eatsJournalEntryEdited =
-                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry) as EntityEdited?;
-
-              if (eatsJournalEntryEdited != null) {
-                overlayDisplay.enqueue(
-                  overlayInfo: OverlayInfo(
-                    message: eatsJournalEntryEdited.originalId == null
-                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                    spacer: overlaySpacer,
-                  ),
-                );
-              }
+              await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteQuickEntryEdit, arguments: eatsJournalEntry);
             }
 
             eatsJournalEditScreenViewModel.getEatsJournalEntries();

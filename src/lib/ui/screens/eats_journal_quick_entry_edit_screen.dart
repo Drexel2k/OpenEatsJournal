@@ -8,7 +8,6 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_quick_entry_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
@@ -211,39 +210,26 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                           return [
                             PopupMenuItem(
                               onTap: () async {
-                                EntityEdited? eatsJournalEntryEdited =
-                                    await Navigator.pushNamed(
-                                          context,
-                                          OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                                          arguments: eatsJournalQuickEntryEditScreenViewModel.getNewQuickEntry(
-                                            entryDate: eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value,
-                                            name: eatsJournalQuickEntryEditScreenViewModel.name.value,
-                                            kJoule: eatsJournalQuickEntryEditScreenViewModel.energy.value != null
-                                                ? convert.getEnergyKJ(displayEnergy: eatsJournalQuickEntryEditScreenViewModel.energy.value!)
-                                                : 1,
-                                            meal: eatsJournalQuickEntryEditScreenViewModel.currentMeal.value,
-                                            amount: eatsJournalQuickEntryEditScreenViewModel.amount.value,
-                                            amountMeasurementUnit: eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value,
-                                            carbohydrates: eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value,
-                                            sugar: eatsJournalQuickEntryEditScreenViewModel.sugar.value,
-                                            fat: eatsJournalQuickEntryEditScreenViewModel.fat.value,
-                                            saturatedFat: eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value,
-                                            protein: eatsJournalQuickEntryEditScreenViewModel.protein.value,
-                                            salt: eatsJournalQuickEntryEditScreenViewModel.salt.value,
-                                          ),
-                                        )
-                                        as EntityEdited?;
-
-                                if (eatsJournalEntryEdited != null) {
-                                  overlayDisplay.enqueue(
-                                    overlayInfo: OverlayInfo(
-                                      message: eatsJournalEntryEdited.originalId == null
-                                          ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                          : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                      spacer: overlaySpacer,
-                                    ),
-                                  );
-                                }
+                                await Navigator.pushNamed(
+                                  context,
+                                  OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                                  arguments: eatsJournalQuickEntryEditScreenViewModel.getNewQuickEntry(
+                                    entryDate: eatsJournalQuickEntryEditScreenViewModel.currentEntryDate.value,
+                                    name: eatsJournalQuickEntryEditScreenViewModel.name.value,
+                                    kJoule: eatsJournalQuickEntryEditScreenViewModel.energy.value != null
+                                        ? convert.getEnergyKJ(displayEnergy: eatsJournalQuickEntryEditScreenViewModel.energy.value!)
+                                        : 1,
+                                    meal: eatsJournalQuickEntryEditScreenViewModel.currentMeal.value,
+                                    amount: eatsJournalQuickEntryEditScreenViewModel.amount.value,
+                                    amountMeasurementUnit: eatsJournalQuickEntryEditScreenViewModel.amountMeasurementUnit.value,
+                                    carbohydrates: eatsJournalQuickEntryEditScreenViewModel.carbohydrates.value,
+                                    sugar: eatsJournalQuickEntryEditScreenViewModel.sugar.value,
+                                    fat: eatsJournalQuickEntryEditScreenViewModel.fat.value,
+                                    saturatedFat: eatsJournalQuickEntryEditScreenViewModel.saturatedFat.value,
+                                    protein: eatsJournalQuickEntryEditScreenViewModel.protein.value,
+                                    salt: eatsJournalQuickEntryEditScreenViewModel.salt.value,
+                                  ),
+                                );
                               },
                               child: Text(AppLocalizations.of(context)!.as_new_eats_journal_entry),
                             ),
@@ -719,7 +705,16 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                     );
                     ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                   } else {
-                    Navigator.pop(AppGlobal.navigatorKey.currentContext!, EntityEdited(originalId: originalQuickEntryId));
+                    overlayDisplay.enqueue(
+                      overlayInfo: OverlayInfo(
+                        message: originalQuickEntryId != null
+                            ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated
+                            : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added,
+                        spacer: overlaySpacer,
+                      ),
+                    );
+
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                   }
                 },
                 child: eatsJournalQuickEntryEditScreenViewModel.quickEntry.id == null

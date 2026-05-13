@@ -15,7 +15,6 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_food_entry_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
-import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
@@ -156,24 +155,11 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     menuItems.add(
                       PopupMenuItem(
                         onTap: () async {
-                          EntityEdited? foodEdited =
-                              await Navigator.pushNamed(
-                                    context,
-                                    OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                    arguments: Food.copyAsNewUserFood(food: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!),
-                                  )
-                                  as EntityEdited?;
-
-                          if (foodEdited != null) {
-                            overlayDisplay.enqueue(
-                              overlayInfo: OverlayInfo(
-                                message: foodEdited.originalId == null
-                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                                spacer: overlaySpacer,
-                              ),
-                            );
-                          }
+                          await Navigator.pushNamed(
+                            context,
+                            OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                            arguments: Food.copyAsNewUserFood(food: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!),
+                          );
                         },
                         child: Text(AppLocalizations.of(context)!.as_new_food),
                       ),
@@ -183,30 +169,17 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       menuItems.add(
                         PopupMenuItem(
                           onTap: () async {
-                            EntityEdited? eatsJournalEntryEdited =
-                                await Navigator.pushNamed(
-                                      context,
-                                      OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
-                                      arguments: EatsJournalEntry.fromFood(
-                                        entryDate: eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value,
-                                        food: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
-                                        amount: eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value,
-                                        amountMeasurementUnit: eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value,
-                                        meal: eatsJournalFoodEntryEditScreenViewModel.currentMeal.value,
-                                      ),
-                                    )
-                                    as EntityEdited?;
-
-                            if (eatsJournalEntryEdited != null) {
-                              overlayDisplay.enqueue(
-                                overlayInfo: OverlayInfo(
-                                  message: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                                  spacer: overlaySpacer,
-                                ),
-                              );
-                            }
+                            await Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                              arguments: EatsJournalEntry.fromFood(
+                                entryDate: eatsJournalFoodEntryEditScreenViewModel.currentEntryDate.value,
+                                food: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
+                                amount: eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value,
+                                amountMeasurementUnit: eatsJournalFoodEntryEditScreenViewModel.currentMeasurementUnit.value,
+                                meal: eatsJournalFoodEntryEditScreenViewModel.currentMeal.value,
+                              ),
+                            );
                           },
                           child: Text(AppLocalizations.of(context)!.as_new_eats_journal_entry),
                         ),
@@ -217,29 +190,72 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                       menuItems.add(
                         PopupMenuItem(
                           onTap: () async {
-                            EntityEdited? foodEdited =
-                                await Navigator.pushNamed(
-                                      context,
-                                      OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                      arguments: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
-                                    )
-                                    as EntityEdited?;
-
-                            if (foodEdited != null) {
-                              overlayDisplay.enqueue(
-                                overlayInfo: OverlayInfo(
-                                  message: foodEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                                  spacer: overlaySpacer,
-                                ),
-                              );
-                            }
+                            await Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                              arguments: eatsJournalFoodEntryEditScreenViewModel.foodEntry.food!,
+                            );
                           },
-                          child: Text(AppLocalizations.of(context)!.edit),
+                          child: Text(AppLocalizations.of(context)!.edit_food),
                         ),
                       );
                     }
+
+                    menuItems.add(
+                      PopupMenuItem(
+                        onTap: () async {
+                          bool dataValid = true;
+
+                          if (eatsJournalFoodEntryEditScreenViewModel.amount.value == null) {
+                            dataValid = false;
+                            SnackBar snackBar = SnackBar(
+                              content: Text(AppLocalizations.of(context)!.enter_valid_amount),
+                              action: SnackBarAction(
+                                label: AppLocalizations.of(context)!.close,
+                                onPressed: () {
+                                  //Click on SnackbarAction closes the SnackBar,
+                                  //nothing else to do here...
+                                },
+                              ),
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          if (eatsJournalFoodEntryEditScreenViewModel.eatsAmount.value == null) {
+                            dataValid = false;
+                            SnackBar snackBar = SnackBar(
+                              content: Text(AppLocalizations.of(context)!.enter_valid_eats_amount),
+                              action: SnackBarAction(
+                                label: AppLocalizations.of(context)!.close,
+                                onPressed: () {
+                                  //Click on SnackbarAction closes the SnackBar,
+                                  //nothing else to do here...
+                                },
+                              ),
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+
+                          if (dataValid) {
+                            await eatsJournalFoodEntryEditScreenViewModel.setQuickEntry();
+
+                            overlayDisplay.enqueue(
+                              overlayInfo: OverlayInfo(
+                                message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added,
+                                spacer: overlaySpacer,
+                              ),
+                            );
+
+                            Navigator.pop(AppGlobal.navigatorKey.currentContext!);
+                          }
+                        },
+                        child: Text(AppLocalizations.of(context)!.add_as_quick_entry),
+                      ),
+                    );
 
                     return menuItems;
                   },
@@ -635,9 +651,19 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                     if (dataValid) {
                       int? originalFoodEntryId = eatsJournalFoodEntryEditScreenViewModel.foodEntry.id;
+
                       await eatsJournalFoodEntryEditScreenViewModel.setFoodEntry();
 
-                      Navigator.pop(AppGlobal.navigatorKey.currentContext!, EntityEdited(originalId: originalFoodEntryId));
+                      overlayDisplay.enqueue(
+                        overlayInfo: OverlayInfo(
+                          message: originalFoodEntryId != null
+                              ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated
+                              : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added,
+                          spacer: overlaySpacer,
+                        ),
+                      );
+
+                      Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
                   child: eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null

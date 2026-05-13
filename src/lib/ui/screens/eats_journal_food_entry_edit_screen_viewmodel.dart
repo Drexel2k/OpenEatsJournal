@@ -109,59 +109,27 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
 
   void _amountsChanged() {
     if (_amount.value != null && _eatsAmount.value != null) {
-      double eatsAmount;
-      if (currentMeasurementUnit.value == MeasurementUnit.gram) {
-        eatsAmount = _convert.getWeightG(displayWeight: _eatsAmount.value!);
+      double totalAmount =
+          (_currentMeasurementUnit.value == MeasurementUnit.gram
+              ? _convert.getWeightG(displayWeight: _eatsAmount.value!)
+              : _convert.getVolumeMl(displayVolume: _eatsAmount.value!)) *
+          _amount.value!;
 
-        _energy.value = _convert.getDisplayEnergy(
-          energyKJ: (_foodEntry.food!.kJoule * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!)),
-        );
-        _carbohydrates.value = _foodEntry.food!.carbohydrates != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.carbohydrates! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!))
-            : null;
-        _sugar.value = _foodEntry.food!.sugar != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.sugar! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!))
-            : null;
-        _fat.value = _foodEntry.food!.fat != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.fat! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!))
-            : null;
-        _saturatedFat.value = _foodEntry.food!.saturatedFat != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.saturatedFat! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!))
-            : null;
-        _protein.value = _foodEntry.food!.protein != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.protein! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!))
-            : null;
-        _salt.value = _foodEntry.food!.salt != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.salt! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerGramAmount!))
-            : null;
-      } else {
-        eatsAmount = _convert.getVolumeMl(displayVolume: _eatsAmount.value!);
-        _energy.value = _convert.getDisplayEnergy(
-          energyKJ: (_foodEntry.food!.kJoule * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!)),
-        );
-        _carbohydrates.value = _foodEntry.food!.carbohydrates != null
-            ? _convert.getDisplayWeightG(
-                weightG: _foodEntry.food!.carbohydrates! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!),
-              )
-            : null;
-        _sugar.value = _foodEntry.food!.sugar != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.sugar! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!))
-            : null;
-        _fat.value = _foodEntry.food!.fat != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.fat! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!))
-            : null;
-        _saturatedFat.value = _foodEntry.food!.saturatedFat != null
-            ? _convert.getDisplayWeightG(
-                weightG: _foodEntry.food!.saturatedFat! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!),
-              )
-            : null;
-        _protein.value = _foodEntry.food!.protein != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.protein! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!))
-            : null;
-        _salt.value = _foodEntry.food!.salt != null
-            ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.salt! * ((_amount.value! * eatsAmount) / _foodEntry.food!.nutritionPerMilliliterAmount!))
-            : null;
-      }
+      double nutritionFactor = _currentMeasurementUnit.value == MeasurementUnit.gram
+          ? totalAmount / _foodEntry.food!.nutritionPerGramAmount!
+          : totalAmount / _foodEntry.food!.nutritionPerMilliliterAmount!;
+
+      _energy.value = _convert.getDisplayEnergy(energyKJ: (_foodEntry.food!.kJoule * nutritionFactor));
+      _carbohydrates.value = _foodEntry.food!.carbohydrates != null
+          ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.carbohydrates! * nutritionFactor)
+          : null;
+      _sugar.value = _foodEntry.food!.sugar != null ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.sugar! * nutritionFactor) : null;
+      _fat.value = _foodEntry.food!.fat != null ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.fat! * nutritionFactor) : null;
+      _saturatedFat.value = _foodEntry.food!.saturatedFat != null
+          ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.saturatedFat! * nutritionFactor)
+          : null;
+      _protein.value = _foodEntry.food!.protein != null ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.protein! * nutritionFactor) : null;
+      _salt.value = _foodEntry.food!.salt != null ? _convert.getDisplayWeightG(weightG: _foodEntry.food!.salt! * nutritionFactor) : null;
     } else {
       _energy.value = null;
       _carbohydrates.value = null;
@@ -184,7 +152,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
         dayTargetKJoule: _settingsRepository.getTargetKJouleForDay(day: _currentEntryDate.value),
       );
 
-      double eatsAmount = currentMeasurementUnit.value == MeasurementUnit.gram
+      double eatsAmount = _currentMeasurementUnit.value == MeasurementUnit.gram
           ? _convert.getWeightG(displayWeight: _eatsAmount.value!)
           : _convert.getVolumeMl(displayVolume: _eatsAmount.value!);
 
@@ -196,6 +164,37 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
       _foodEntry.meal = _currentMeal.value;
 
       await _journalRepository.setEatsJournalEntry(eatsJournalEntry: _foodEntry);
+    }
+  }
+
+  Future<void> setQuickEntry() async {
+    if (_amount.value != null && eatsAmount.value != null) {
+      await _journalRepository.saveOnceDayNutritionTarget(
+        entryDate: _currentEntryDate.value,
+        dayTargetKJoule: _settingsRepository.getTargetKJouleForDay(day: _currentEntryDate.value),
+      );
+
+      EatsJournalEntry quickEntry = _journalRepository.getNewQuickEntry(
+        entryDate: _currentEntryDate.value,
+        name: _foodEntry.name,
+        kJoule: _convert.getEnergyKJ(displayEnergy: _energy.value!),
+        meal: _currentMeal.value,
+      );
+
+      quickEntry.amount =
+          _amount.value! *
+          (_currentMeasurementUnit.value == MeasurementUnit.gram
+              ? _convert.getWeightG(displayWeight: _eatsAmount.value!)
+              : _convert.getVolumeMl(displayVolume: _eatsAmount.value!));
+      quickEntry.amountMeasurementUnit = _currentMeasurementUnit.value;
+      quickEntry.carbohydrates = _carbohydrates.value != null ? _convert.getWeightG(displayWeight: _carbohydrates.value!) : null;
+      quickEntry.sugar = _sugar.value != null ? _convert.getWeightG(displayWeight: _sugar.value!) : null;
+      quickEntry.fat = _fat.value != null ? _convert.getWeightG(displayWeight: _fat.value!) : null;
+      quickEntry.saturatedFat = _saturatedFat.value != null ? _convert.getWeightG(displayWeight: _saturatedFat.value!) : null;
+      quickEntry.protein = _protein.value != null ? _convert.getWeightG(displayWeight: _protein.value!) : null;
+      quickEntry.salt = _salt.value != null ? _convert.getWeightG(displayWeight: _salt.value!) : null;
+
+      await _journalRepository.setEatsJournalEntry(eatsJournalEntry: quickEntry);
     }
   }
 

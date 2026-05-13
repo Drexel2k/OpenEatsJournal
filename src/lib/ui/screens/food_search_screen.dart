@@ -12,7 +12,6 @@ import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/entity_edited.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
@@ -325,29 +324,16 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           food: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object!,
                           textTheme: textTheme,
                           onCardTap: ({required Food food}) async {
-                            EntityEdited? eatsJournalEntryEdited =
-                                await Navigator.pushNamed(
-                                      context,
-                                      OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
-                                      arguments: EatsJournalEntry.fromFood(
-                                        entryDate: foodSearchScreenViewModel.currentJournalDate.value,
-                                        food: food,
-                                        amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
-                                        meal: foodSearchScreenViewModel.currentMeal.value,
-                                      ),
-                                    )
-                                    as EntityEdited?;
-
-                            if (eatsJournalEntryEdited != null) {
-                              overlayDisplay.enqueue(
-                                overlayInfo: OverlayInfo(
-                                  message: eatsJournalEntryEdited.originalId == null
-                                      ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added
-                                      : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_updated,
-                                  spacer: overlaySpacer,
-                                ),
-                              );
-                            }
+                            await Navigator.pushNamed(
+                              context,
+                              OpenEatsJournalStrings.navigatorRouteFoodEntryEdit,
+                              arguments: EatsJournalEntry.fromFood(
+                                entryDate: foodSearchScreenViewModel.currentJournalDate.value,
+                                food: food,
+                                amountMeasurementUnit: food.nutritionPerGramAmount != null ? MeasurementUnit.gram : MeasurementUnit.milliliter,
+                                meal: foodSearchScreenViewModel.currentMeal.value,
+                              ),
+                            );
                           },
                           onAddJournalEntryPressed: ({required Food food, required double amount, required MeasurementUnit amountMeasurementUnit}) async {
                             await foodSearchScreenViewModel.addEatsJournalEntry(
@@ -363,16 +349,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             overlayDisplay.enqueue(
                               overlayInfo: OverlayInfo(
                                 message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_entry_added,
-                                spacer: overlaySpacer,
-                              ),
-                            );
-                          },
-                          onFoodEdited: ({required EntityEdited entityEdited}) {
-                            overlayDisplay.enqueue(
-                              overlayInfo: OverlayInfo(
-                                message: entityEdited.originalId == null
-                                    ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                    : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
                                 spacer: overlaySpacer,
                               ),
                             );
@@ -487,24 +463,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             onPressed: () async {
                               foodSearchScreenViewModel.toggleFloatingActionButtons();
 
-                              EntityEdited? foodEdited =
-                                  await Navigator.pushNamed(
-                                        context,
-                                        OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                        arguments: foodSearchScreenViewModel.getNewFood(),
-                                      )
-                                      as EntityEdited?;
-
-                              if (foodEdited != null) {
-                                overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    message: foodEdited.originalId == null
-                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created
-                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated,
-                                    spacer: overlaySpacer,
-                                  ),
-                                );
-                              }
+                              await Navigator.pushNamed(
+                                context,
+                                OpenEatsJournalStrings.navigatorRouteFoodEdit,
+                                arguments: foodSearchScreenViewModel.getNewFood(),
+                              );
                             },
                             label: Text(AppLocalizations.of(context)!.food),
                           ),
@@ -516,29 +479,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             heroTag: "2",
                             onPressed: () async {
                               foodSearchScreenViewModel.toggleFloatingActionButtons();
-                              EntityEdited? eatsJournalEntryEdited =
-                                  (
-                                        await Navigator.pushNamed(
-                                          context,
-                                          OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                                          arguments: foodSearchScreenViewModel.getNewQuickEntry(
-                                            entryDate: foodSearchScreenViewModel.currentJournalDate.value,
-                                            meal: foodSearchScreenViewModel.currentMeal.value,
-                                          ),
-                                        ),
-                                      )
-                                      as EntityEdited?;
 
-                              if (eatsJournalEntryEdited != null) {
-                                overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    message: eatsJournalEntryEdited.originalId == null
-                                        ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_added
-                                        : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.quick_entry_updated,
-                                    spacer: overlaySpacer,
-                                  ),
-                                );
-                              }
+                              await Navigator.pushNamed(
+                                context,
+                                OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                                arguments: foodSearchScreenViewModel.getNewQuickEntry(
+                                  entryDate: foodSearchScreenViewModel.currentJournalDate.value,
+                                  meal: foodSearchScreenViewModel.currentMeal.value,
+                                ),
+                              );
                             },
                             label: Text(AppLocalizations.of(context)!.quick_entry),
                           ),

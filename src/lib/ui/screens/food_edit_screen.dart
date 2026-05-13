@@ -10,7 +10,8 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/food_edit_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/utils/entity_edited.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor.dart";
 import "package:openeatsjournal/ui/widgets/food_unit_editor_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
@@ -91,9 +92,12 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   @override
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
+    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     final double inputFieldsWidth = 90;
+    final double overlaySpacer = 170;
 
     return Consumer<FoodEditScreenViewModel>(
       builder: (context, foodEditScreenViewModel, _) => MainLayout(
@@ -176,8 +180,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                               String? barcodeScanResult;
                               if (foodEditScreenViewModel.barcodeScannerReturnCode == null) {
                                 barcodeScanResult = await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteBarcodeScanner) as String?;
-                              }
-                              else {
+                              } else {
                                 barcodeScanResult = foodEditScreenViewModel.barcodeScannerReturnCode;
                               }
 
@@ -840,7 +843,16 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                       );
                       ScaffoldMessenger.of(AppGlobal.navigatorKey.currentContext!).showSnackBar(snackBar);
                     } else {
-                      Navigator.pop(AppGlobal.navigatorKey.currentContext!, EntityEdited(originalId: originalFoodId));
+                      overlayDisplay.enqueue(
+                        overlayInfo: OverlayInfo(
+                          message: originalFoodId != null
+                              ? AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_updated
+                              : AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_created,
+                          spacer: overlaySpacer,
+                        ),
+                      );
+                      
+                      Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
                   child: foodEditScreenViewModel.foodId == null ? Text(AppLocalizations.of(context)!.create) : Text(AppLocalizations.of(context)!.update),
@@ -881,6 +893,14 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                               if (continueDelete) {
                                 await foodEditScreenViewModel.deleteFood();
+                                overlayDisplay.enqueue(
+                                  overlayInfo: OverlayInfo(
+                                    //food delete doesn't return here, it pops navigator stack until main eats journal screen
+                                    message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.food_deleted,
+                                    spacer: overlaySpacer,
+                                  ),
+                                );
+
                                 await Navigator.pushNamedAndRemoveUntil(
                                   AppGlobal.navigatorKey.currentContext!,
                                   OpenEatsJournalStrings.navigatorRouteEatsJournal,
