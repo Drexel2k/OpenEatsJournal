@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-04-22 00-00-00","2026-01-15 00-00-00"
+"2026-05-13 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -34,8 +34,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","2","Size L","Größe L","68","g","true"
 "food","11","2026-01-14 00-00-00","Butter","Butter",,,"100",,"3102","83","53.8","0.6","0.6","0.7",,
 "foodunit","1","Serving","Portion","10","g","true"
-"food","12","2026-01-14 00-00-00","Roast pork (lunch meats, cold cuts)","Schweinebraten (Aufschnitt)",,,"100",,"740","10.6","4.3","0.8","0.6","19.5","1.17",
-"foodunit","1","Slice","Scheibe","12","g","true"
+"food","12","2026-05-13 00-00-00","Roast pork (lunch meats, cold cuts)","Schweinebraten (Aufschnitt)",,,"100",,"740","10.6","4.3","0.8","0.6","19.5","1.17",
+"foodunit","1","Slice","Scheibe","20","g","true"
 "food","13","2026-01-14 00-00-00","Mozzarella","Mozzarella",,,"100",,"1035","19","13","1.5","1.5","18","0.5",
 "foodunit","1","Ball","Kugel","125","g","true"
 "food","14","2026-01-14 00-00-00","Gugelhupf (Sponge cake, bundt cake, batter)","Gugelhupf (Rührkuchen, Napfkuchen, Rührteig)",,,"100",,"1674","18.8","11.6","49","26","6.5","0.5",
@@ -316,3 +316,14 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Piece","Stück","28","g","true"
 "food","149","2026-04-20 00-00-00","Crunchy salmon sushi","Crunchy Lachs Sushi",,,"100",,"900","10","3","25","5.3","5.3","1.2",
 "foodunit","1","Piece","Stück","35","g","true"
+"food","150","2026-05-13 00-00-00","Potato chips","Kartoffelchips",,,"100",,"2221","33","2.8","49","2.5","6.1","1.5",
+"foodunit","1","Serving","Portion","30","g","true"
+"food","151","2026-05-13 00-00-00","Bamba ","Erdnussflips",,,"100",,"2056","24","3.5","52","3","14","1.7",
+"foodunit","1","Serving","Portion","30","g","true"
+"food","152","2026-05-13 00-00-00","Vodka / whisky / rum / alcohol 40%","Wodka / Vodka / Whisky / Rum / Alkohol 40%",,,,"100","950","","","","","","",
+"food","153","2026-05-13 00-00-00","Poultry (lunch meats, cold cuts, turkey / chicken)","Geflügelaufschnitt (Hähnchen / Pute)",,,"100",,"435","1.2","0.5","0.5","0.5","23","2.4",
+"foodunit","1","Slice","Scheibe","15","g","true"
+"food","154","2026-05-13 00-00-00","Red / green coconut milk or peanut curry vegetarian with rice","Rotes / grünes Kokosmilch oder Erdnuss Curry vegetarisch mit Reis",,,"100",,"545","6.4","4.6","15","2.4","3.2","0.6",
+"foodunit","1","Serving","Portion","500","g","true"
+"food","155","2026-05-13 00-00-00","Red / green coconut milk or peanut curry with meat and rice","Rotes / grünes Kokosmilch oder Erdnuss Curry mit Fleisch und Reis",,,"100",,"555","5.5","2.5","14.6","4.5","6.3","0.6",
+"foodunit","1","Serving","Portion","500","g","true"
