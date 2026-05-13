@@ -97,14 +97,20 @@ void main() async {
     files.sort((file1, file2) => file1.path.compareTo(file2.path));
 
     int foodCount = 0;
+    int foodUnitCount = 0;
     for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
       List<String> lines = files[fileIndex].readAsLinesSync();
 
       List<String> parts;
       for (String line in lines) {
         parts = line.split(",");
+
         if (parts[0] == "\"${OpenEatsJournalStrings.csvFood}\"") {
           foodCount++;
+        }
+
+        if (parts[0] == "\"${OpenEatsJournalStrings.csvFoodUnit}\"") {
+          foodUnitCount++;
         }
       }
     }
@@ -113,10 +119,12 @@ void main() async {
     List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableFood,
       columns: ["COUNT(${OpenEatsJournalStrings.dbColumnId}) AS id_count"],
-      where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ?",
-      whereArgs: ["2"],
     );
 
     expect(dbResult[0]["id_count"], foodCount);
+
+    dbResult = await db.query(OpenEatsJournalStrings.dbTableFoodUnit, columns: ["COUNT(${OpenEatsJournalStrings.dbColumnId}) AS id_count"]);
+
+    expect(dbResult[0]["id_count"], foodUnitCount);
   });
 }
