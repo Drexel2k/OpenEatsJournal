@@ -148,37 +148,99 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 ),
               ],
             ),
-            DefaultTabController(
-              length: 3,
-              child: Column(
-                children: [
-                  TabBar(
-                    tabs: [
-                      Tab(child: Text(AppLocalizations.of(context)!.online)),
-                      Tab(child: Text(AppLocalizations.of(context)!.offline)),
-                      Tab(child: Text(AppLocalizations.of(context)!.recent)),
-                    ],
+            Row(
+              children: [
+                Expanded(
+                  child: DefaultTabController(
+                    length: 3,
+                    child: Column(
+                      children: [
+                        TabBar(
+                          tabs: [
+                            Tab(child: Text(AppLocalizations.of(context)!.online)),
+                            Tab(child: Text(AppLocalizations.of(context)!.offline)),
+                            Tab(child: Text(AppLocalizations.of(context)!.recent)),
+                          ],
 
-                    onTap: (int tabIndex) async {
-                      foodSearchScreenViewModel.finishSearch();
-                      if (tabIndex == 0) {
-                        _searchMode = SearchMode.online;
-                      }
+                          onTap: (int tabIndex) async {
+                            foodSearchScreenViewModel.finishSearch();
+                            if (tabIndex == 0) {
+                              _searchMode = SearchMode.online;
+                            }
 
-                      if (tabIndex == 1) {
-                        _searchMode = SearchMode.offline;
-                      }
+                            if (tabIndex == 1) {
+                              _searchMode = SearchMode.offline;
+                            }
 
-                      if (tabIndex == 2) {
-                        _searchMode = SearchMode.recent;
-                        await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
-                      }
-                    },
+                            if (tabIndex == 2) {
+                              _searchMode = SearchMode.recent;
+                              await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
+                            }
+                          },
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 10),
-                ],
-              ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await showDialog(
+                      context: AppGlobal.navigatorKey.currentContext!,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          insetPadding: EdgeInsets.fromLTRB(dialogHorizontalPadding, dialogVerticalPadding, dialogHorizontalPadding, dialogVerticalPadding),
+                          title: Text(AppLocalizations.of(context)!.no_or_bad_food_data),
+                          content: SingleChildScrollView(
+                            child: RichText(
+                              text: TextSpan(
+                                style: textTheme.bodyMedium,
+                                text: AppLocalizations.of(context)!.adding_online_data_1,
+                                children: [
+                                  TextSpan(
+                                    text: " ${AppLocalizations.of(context)!.open_food_facts} ",
+                                    style: TextStyle(color: colorScheme.primary),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
+                                      },
+                                  ),
+                                  TextSpan(text: AppLocalizations.of(context)!.adding_online_data_2),
+                                  TextSpan(text: "\n\n"),
+                                  TextSpan(text: AppLocalizations.of(context)!.adding_offline_data_1),
+                                  TextSpan(
+                                    text: " ${OpenEatsJournalStrings.openEatsJournal} (${OpenEatsJournalStrings.github}) ",
+                                    style: TextStyle(color: colorScheme.primary),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        await launchUrl(
+                                          Uri.parse("https://github.com/Drexel2k/OpenEatsJournal/blob/main/src/assets/standard_food_data.1.csv"),
+                                          mode: LaunchMode.platformDefault,
+                                        );
+                                      },
+                                  ),
+                                  TextSpan(text: AppLocalizations.of(context)!.adding_offline_data_2),
+                                ],
+                              ),
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text(AppLocalizations.of(context)!.ok),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.help_outline),
+                ),
+              ],
             ),
+
             ValueListenableBuilder(
               valueListenable: foodSearchScreenViewModel.showInitialLoading,
               builder: (_, _, _) {
@@ -210,7 +272,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               valueListenable: foodSearchScreenViewModel.errorCode,
               builder: (_, _, _) {
                 if (foodSearchScreenViewModel.errorCode.value != null) {
-                  TextStyle? style = textTheme.bodySmall;
+                  TextStyle? style = textTheme.bodyMedium;
                   if (style != null) {
                     style = style.copyWith(color: Colors.red);
                   } else {
@@ -266,12 +328,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       SizedBox(width: 5),
                       RoundOutlinedButton(
                         onPressed: () {
-                          foodSearchScreenViewModel.changeSortDirection();
+                          foodSearchScreenViewModel.changeSortDirection(searchMode: _searchMode);
                         },
                         child: ValueListenableBuilder(
                           valueListenable: foodSearchScreenViewModel.sortDesc,
                           builder: (_, _, _) {
-                            return Transform.flip(flipY: !foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort));
+                            return foodSearchScreenViewModel.sortOrder != SortOrder.popularity
+                                ? Transform.flip(flipY: foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort))
+                                : Transform.flip(flipY: !foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort));
                           },
                         ),
                       ),
@@ -319,9 +383,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       }
 
                       //food is null, when online search for barcode returned no result.
-                      if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object != null) {
+                      if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.food != null) {
                         return FoodCard(
-                          food: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object!,
+                          food: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.food!,
                           textTheme: textTheme,
                           onCardTap: ({required Food food}) async {
                             await Navigator.pushNamed(
@@ -356,6 +420,46 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         );
                       } else {
                         final borderRadius = BorderRadius.circular(8);
+
+                        RichText richText = foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.infoCode! == 3
+                            ? RichText(
+                                text: TextSpan(
+                                  style: textTheme.bodyMedium,
+                                  text: AppLocalizations.of(context)!.adding_online_data_1,
+                                  children: [
+                                    TextSpan(
+                                      text: " ${AppLocalizations.of(context)!.open_food_facts} ",
+                                      style: TextStyle(color: colorScheme.primary),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
+                                        },
+                                    ),
+                                    TextSpan(text: AppLocalizations.of(context)!.adding_online_data_2),
+                                  ],
+                                ),
+                              )
+                            : RichText(
+                                text: TextSpan(
+                                  style: textTheme.bodyMedium,
+                                  text: AppLocalizations.of(context)!.adding_offline_data_1,
+                                  children: [
+                                    TextSpan(
+                                      text: " ${OpenEatsJournalStrings.openEatsJournal} (${OpenEatsJournalStrings.github}) ",
+                                      style: TextStyle(color: colorScheme.primary),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          await launchUrl(
+                                            Uri.parse("https://github.com/Drexel2k/OpenEatsJournal/blob/main/src/assets/standard_food_data.1.csv"),
+                                            mode: LaunchMode.platformDefault,
+                                          );
+                                        },
+                                    ),
+                                    TextSpan(text: AppLocalizations.of(context)!.adding_offline_data_2),
+                                  ],
+                                ),
+                              );
+
                         return Card(
                           shape: RoundedRectangleBorder(borderRadius: borderRadius),
                           child: InkWell(
@@ -371,26 +475,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                       dialogHorizontalPadding,
                                       dialogVerticalPadding,
                                     ),
-                                    title: Text(AppLocalizations.of(context)!.no_online_result_found),
-                                    content: SingleChildScrollView(
-                                      child: RichText(
-                                        text: TextSpan(
-                                          style: textTheme.bodyMedium,
-                                          text: AppLocalizations.of(context)!.adding_online_data_1,
-                                          children: [
-                                            TextSpan(
-                                              text: " ${AppLocalizations.of(context)!.open_food_facts} ",
-                                              style: TextStyle(color: colorScheme.primary),
-                                              recognizer: TapGestureRecognizer()
-                                                ..onTap = () async {
-                                                  await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
-                                                },
-                                            ),
-                                            TextSpan(text: AppLocalizations.of(context)!.adding_online_data_2),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                    title: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.infoCode! == 3
+                                        ? Text(AppLocalizations.of(context)!.no_online_result_found)
+                                        : Text(AppLocalizations.of(context)!.no_offline_result_found),
+                                    content: SingleChildScrollView(child: richText),
                                     actions: <Widget>[
                                       TextButton(
                                         child: Text(AppLocalizations.of(context)!.ok),
@@ -405,7 +493,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             },
                             child: Padding(
                               padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
-                              child: Text(AppLocalizations.of(context)!.no_result_from_online_source, textAlign: TextAlign.center),
+                              child: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.infoCode! == 3
+                                  ? Text(AppLocalizations.of(context)!.no_result_from_online_source, textAlign: TextAlign.center)
+                                  : Text(AppLocalizations.of(context)!.no_result_from_offline_source, textAlign: TextAlign.center),
                             ),
                           ),
                         );
@@ -523,7 +613,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       int? barcode = int.tryParse(parts[1]);
       await foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, localizations: standardFoodUnitLocalizations, searchMode: _searchMode);
     } else {
-      await foodSearchScreenViewModel.getFoodsBySearchText(searchText: cleanSearchText, localizations: standardFoodUnitLocalizations, searchMode: _searchMode);
+      await foodSearchScreenViewModel.getFoodsBySearchText(
+        searchText: cleanSearchText,
+        foodUnitLocalizations: standardFoodUnitLocalizations,
+        searchMode: _searchMode,
+      );
     }
   }
 

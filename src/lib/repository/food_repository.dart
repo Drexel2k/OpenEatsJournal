@@ -147,7 +147,7 @@ class FoodRepository {
     return FoodRepositoryResult(errorCode: 3);
   }
 
-  //result list must always contain exactly 4 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
+  //result list must always contain exactly 5 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
   // index 4 = all results
   Future<List<FoodRepositoryResult>> getFoodsBySearchText({required String searchText, required String languageCode, required SearchMode searchMode}) async {
     List<FoodRepositoryResult> result = [];

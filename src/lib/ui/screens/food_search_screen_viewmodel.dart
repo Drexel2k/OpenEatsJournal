@@ -11,6 +11,7 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/food_search_result_entry.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
 
@@ -36,12 +37,16 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatincActionMenuElapsed = ValueNotifier(false);
 
-  final List<ObjectWithOrder<Food>> _foodSearchResultUser = [];
-  final List<ObjectWithOrder<Food>> _foodSearchResultStandard = [];
-  final List<ObjectWithOrder<Food>> _foodSearchResultCache = [];
-  final List<ObjectWithOrder<Food?>> _foodSearchResultOpenFoodFacts = [];
-  final List<ObjectWithOrder<Food?>> _foodSearchResultAll = [];
-  final List<ObjectWithOrder<Food?>> _foodSearchResult = [];
+  final List<ObjectWithOrder<FoodSearchResultEntry>> _foodSearchResultUser = [];
+  final List<ObjectWithOrder<FoodSearchResultEntry>> _foodSearchResultStandard = [];
+  final List<ObjectWithOrder<FoodSearchResultEntry>> _foodSearchResultCache = [];
+  final List<ObjectWithOrder<FoodSearchResultEntry>> _foodSearchResultOpenFoodFacts = [];
+
+  //all for recent, no sorting but normal/reverse possible (no name or kcal sorting)
+  final List<ObjectWithOrder<FoodSearchResultEntry>> _foodSearchResultRecent = [];
+  //all for online and offline search, maybe ordered by all creterias, but still ordered by source first, therefore we keep them in seperate lists by source
+  //above
+  final List<ObjectWithOrder<FoodSearchResultEntry>> _foodSearchResult = [];
 
   bool _dontLoadMore = false;
   bool _hasMore = false;
@@ -52,7 +57,6 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _showInitialLoading = ValueNotifier(false);
   final ValueNotifier<int?> _errorCode = ValueNotifier(null);
   final ValueNotifier<bool> _showIsLoadingMessage = ValueNotifier(false);
-  final ValueNotifier<bool> _showBarcodeNotFoundMessage = ValueNotifier(false);
   String _errorMessage = OpenEatsJournalStrings.emptyString;
   final ValueNotifier<int?> _searchMessageCode = ValueNotifier(null);
   final ExternalTriggerChangedNotifier _sortButtonChanged = ExternalTriggerChangedNotifier();
@@ -67,14 +71,13 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   String get languageCode => _settingsRepository.languageCode.value;
   ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
 
-  List<ObjectWithOrder<Food?>> get foodSearchResult => _foodSearchResult;
+  List<ObjectWithOrder<FoodSearchResultEntry>> get foodSearchResult => _foodSearchResult;
   bool get hasMore => _hasMore;
   bool get isLoading => _isLoading;
   ExternalTriggerChangedNotifier get foodSearchResultChanged => _foodSearchResultChanged;
   ValueNotifier<bool> get showInitialLoading => _showInitialLoading;
   ValueNotifier<int?> get errorCode => _errorCode;
   ValueNotifier<bool> get showIsLoadingMessage => _showIsLoadingMessage;
-  ValueListenable<bool> get showBarcodeNotFoundMessage => _showBarcodeNotFoundMessage;
   String get errorMessage => _errorMessage;
   ValueNotifier<int?> get searchMessageCode => _searchMessageCode;
   ExternalTriggerChangedNotifier get sortButtonChanged => _sortButtonChanged;
@@ -113,15 +116,16 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       await _foodRepository.getFoodsBySearchText(searchText: OpenEatsJournalStrings.emptyString, languageCode: languageCode, searchMode: searchMode).then((
         List<FoodRepositoryResult> result,
       ) {
-        _processInitialResult(result: result, localizations: localizations, searchmode: searchMode);
+        _processInitialResult(result: result, foodUnitLocalizations: localizations, searchmode: searchMode);
       });
     } else {
       await _foodRepository.getFoodsByBarcode(barcode: barcode, languageCode: languageCode, searchMode: searchMode).then((List<FoodRepositoryResult> result) {
-        _processInitialResult(result: result, localizations: localizations, searchmode: searchMode);
+        _processInitialResult(result: result, foodUnitLocalizations: localizations, searchmode: searchMode);
       });
     }
   }
 
+  //Gatekeeper to not perform another search when last search is in async state
   bool _checkIsLoading() {
     if (_isLoading) {
       _showIsLoadingMessage.value = true;
@@ -132,7 +136,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     return false;
   }
 
-  Future<void> getFoodsBySearchText({required String searchText, required Map<String, String> localizations, required SearchMode searchMode}) async {
+  Future<void> getFoodsBySearchText({required String searchText, required Map<String, String> foodUnitLocalizations, required SearchMode searchMode}) async {
     if (_checkIsLoading()) {
       return;
     }
@@ -151,93 +155,110 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     await _foodRepository.getFoodsBySearchText(searchText: searchText, languageCode: languageCode, searchMode: searchMode).then((
       List<FoodRepositoryResult> result,
     ) {
-      _processInitialResult(result: result, localizations: localizations, searchmode: searchMode);
+      _processInitialResult(result: result, foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
     });
   }
 
-  void _processInitialResult({required List<FoodRepositoryResult> result, required Map<String, String> localizations, required SearchMode searchmode}) {
+  void _processInitialResult({required List<FoodRepositoryResult> result, required Map<String, String> foodUnitLocalizations, required SearchMode searchmode}) {
     _initialSearchFinished();
 
     int order = 0;
-    List<ObjectWithOrder<Food?>>? foodsWithOrder = [];
+    List<ObjectWithOrder<FoodSearchResultEntry>> foodsSearchResultEntriesWithOrder = [];
 
-    if (searchmode == SearchMode.online && result[3].errorCode == null) {
-      if (result[3].foods == null || result[3].foods!.isEmpty) {
-        _showBarcodeNotFoundMessage.value = true;
+    if (searchmode != SearchMode.recent) {
+      //user results
+      if (result[0].foods != null && result[0].foods!.isNotEmpty) {
+        for (Food food in result[0].foods!) {
+          _translateStandardFoodUnits(food, foodUnitLocalizations);
+          _foodSearchResultUser.add(
+            ObjectWithOrder(
+              object: FoodSearchResultEntry(food: food),
+              order: order++,
+            ),
+          );
+        }
+
+        foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultUser);
       }
-    }
 
-    //Popularity in recent mode shall not be ordered by source first, but strictly after usage amount
-    if (result[4].foods != null && result[4].foods!.isNotEmpty) {
-      for (Food food in result[4].foods!) {
-        if (food.foodUnitsWithOrder.isNotEmpty) {
-          for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
-            if (localizations.containsKey(unitWithOrder.object.name)) {
-              unitWithOrder.object.name = localizations[unitWithOrder.object.name]!;
-            }
+      //standard results
+      if (result[1].foods != null && result[1].foods!.isNotEmpty) {
+        for (Food food in result[1].foods!) {
+          _translateStandardFoodUnits(food, foodUnitLocalizations);
+          _foodSearchResultStandard.add(
+            ObjectWithOrder(
+              object: FoodSearchResultEntry(food: food),
+              order: order++,
+            ),
+          );
+        }
+
+        foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultStandard);
+      }
+
+      if (_foodSearchResultUser.isEmpty && _foodSearchResultStandard.isEmpty) {
+        _foodSearchResultUser.add(ObjectWithOrder(object: FoodSearchResultEntry(infoCode: 0), order: order++));
+
+        foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultUser);
+      }
+
+      //cached results
+      if (result[2].foods != null && result[2].foods!.isNotEmpty) {
+        for (Food food in result[2].foods!) {
+          _translateStandardFoodUnits(food, foodUnitLocalizations);
+          _foodSearchResultCache.add(
+            ObjectWithOrder(
+              object: FoodSearchResultEntry(food: food),
+              order: order++,
+            ),
+          );
+        }
+
+        foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultCache);
+      }
+
+      //open food facts results
+      if (result[3].errorCode == null) {
+        if (result[3].foods != null && result[3].foods!.isNotEmpty) {
+          for (Food food in result[3].foods!) {
+            _translateStandardFoodUnits(food, foodUnitLocalizations);
+            _foodSearchResultOpenFoodFacts.add(
+              ObjectWithOrder(
+                object: FoodSearchResultEntry(food: food),
+                order: order++,
+              ),
+            );
+          }
+        } else {
+          //If Open Food Facts returns nothing, this null food will display the Open Food Facts contribution hint in the ui.
+          if (searchmode == SearchMode.online) {
+            _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: FoodSearchResultEntry(infoCode: 3), order: order++));
           }
         }
 
-        _foodSearchResultAll.add(ObjectWithOrder(object: food, order: order++));
+        //Add also the info for noe entries to the search result entries, otherwise it will not be displayed.
+        foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultOpenFoodFacts);
       }
+    } else {
+      //all results
+      if (result[4].foods != null && result[4].foods!.isNotEmpty) {
+        for (Food food in result[4].foods!) {
+          _translateStandardFoodUnits(food, foodUnitLocalizations);
 
-      if (searchmode == SearchMode.recent) {
-        foodsWithOrder.addAll(_foodSearchResultAll);
-      }
-    }
-
-    if (result[0].foods != null && result[0].foods!.isNotEmpty) {
-      for (Food food in result[0].foods!) {
-        _foodSearchResultUser.add(ObjectWithOrder(object: food, order: order++));
-      }
-
-      if (searchmode != SearchMode.recent) {
-        foodsWithOrder.addAll(_foodSearchResultUser);
-      }
-    }
-
-    if (result[1].foods != null && result[1].foods!.isNotEmpty) {
-      for (Food food in result[1].foods!) {
-        _foodSearchResultStandard.add(ObjectWithOrder(object: food, order: order++));
-      }
-
-      if (searchmode != SearchMode.recent) {
-        foodsWithOrder.addAll(_foodSearchResultStandard);
-      }
-    }
-
-    if (result[2].foods != null && result[2].foods!.isNotEmpty) {
-      for (Food food in result[2].foods!) {
-        _foodSearchResultCache.add(ObjectWithOrder(object: food, order: order++));
-      }
-
-      if (searchmode != SearchMode.recent) {
-        foodsWithOrder.addAll(_foodSearchResultCache);
-      }
-    }
-
-    if (result[3].errorCode == null) {
-      if (result[3].foods != null && result[3].foods!.isNotEmpty) {
-        for (Food food in result[3].foods!) {
-          _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: food, order: order++));
+          //Popularity in recent mode shall not be ordered by source first, but strictly after usage amount, therefore we take it from all results now.
+          _foodSearchResultRecent.add(
+            ObjectWithOrder(
+              object: FoodSearchResultEntry(food: food),
+              order: order++,
+            ),
+          );
         }
 
-        if (searchmode != SearchMode.recent) {
-          foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
-        }
-      } else {
-        //If Open Food Facts return nothing, this null food will display the Open Food Facts contribution hint in the ui.
-        if (searchmode == SearchMode.online) {
-          _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: null, order: order++));
-
-          if (searchmode != SearchMode.recent) {
-            foodsWithOrder.addAll(_foodSearchResultOpenFoodFacts);
-          }
-        }
+        foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultRecent);
       }
     }
 
-    _addToSearchResult(foodsWithOrder);
+    _addToSearchResult(foodsSearchResultEntriesWithOrder);
 
     if (_foodSearchResult.length > 500) {
       _searchMessageCode.value = 1;
@@ -260,6 +281,16 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _isLoading = false;
   }
 
+  void _translateStandardFoodUnits(Food food, Map<String, String> foodUnitLocalizations) {
+    if (food.foodUnitsWithOrder.isNotEmpty) {
+      for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+        if (foodUnitLocalizations.containsKey(unitWithOrder.object.name)) {
+          unitWithOrder.object.name = foodUnitLocalizations[unitWithOrder.object.name]!;
+        }
+      }
+    }
+  }
+
   Future<void> getFoodBySearchTextLoadMore() async {
     if (_checkIsLoading()) {
       return;
@@ -271,10 +302,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         .getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _settingsRepository.languageCode.value, page: _currentPage)
         .then((FoodRepositoryResult result) {
           if (result.errorCode == null) {
-            List<ObjectWithOrder<Food>> foodsWithOrder = [];
+            List<ObjectWithOrder<FoodSearchResultEntry>> foodsWithOrder = [];
             if (result.foods!.isNotEmpty) {
               int order = 0;
-              for (ObjectWithOrder<Food?> food in _foodSearchResult) {
+              for (ObjectWithOrder<FoodSearchResultEntry> food in _foodSearchResult) {
                 if (food.order > order) {
                   order = food.order;
                 }
@@ -283,7 +314,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
               order++;
 
               for (Food food in result.foods!) {
-                foodsWithOrder.add(ObjectWithOrder(object: food, order: order++));
+                foodsWithOrder.add(
+                  ObjectWithOrder(
+                    object: FoodSearchResultEntry(food: food),
+                    order: order++,
+                  ),
+                );
               }
             }
 
@@ -304,11 +340,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         });
   }
 
+  //always called after _checkIsLoading
   void _initSearch() {
     _isLoading = true;
     _dontLoadMore = false;
     _hasMore = false;
-    _sortOrder == SortOrder.popularity;
+    _sortOrder = SortOrder.popularity;
     _sortDesc.value = true;
     _sortButtonEnabled = true;
     _errorMessage = OpenEatsJournalStrings.emptyString;
@@ -318,7 +355,6 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _clearAllSearchResults();
     _sortButtonChanged.notify();
     _showInitialLoading.value = true;
-    _showBarcodeNotFoundMessage.value = false;
     _foodSearchResultChanged.notify();
   }
 
@@ -328,12 +364,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     }
   }
 
-  void _addToSearchResult(List<ObjectWithOrder<Food?>>? foods) {
+  void _addToSearchResult(List<ObjectWithOrder<FoodSearchResultEntry>> foods) {
     if (!_disposed) {
-      if (foods != null) {
-        _foodSearchResult.addAll(foods);
-      }
-
+      _foodSearchResult.addAll(foods);
       _foodSearchResultChanged.notify();
     }
   }
@@ -343,28 +376,75 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortOrder = sortOrder;
     _sortButtonChanged.notify();
 
+    //Sorting with no result hint doesn't trigger null reference on food object, because sort doesn't do anything when there is only one item in the list.
     if (_sortOrder == SortOrder.name) {
-      _foodSearchResultUser.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
-      _foodSearchResultStandard.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
-      _foodSearchResultCache.sort((food1, food2) => food1.object.name.compareTo(food2.object.name));
-      _foodSearchResultOpenFoodFacts.sort((food1, food2) => _compareNullFoodWithOrder(foodWithOrder1: food1, foodWithOrder2: food2, sortOrder: sortOrder));
+      _foodSearchResultUser.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+      );
+      _foodSearchResultStandard.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+      );
+      _foodSearchResultCache.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+      );
+      _foodSearchResultOpenFoodFacts.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+      );
+      _foodSearchResultRecent.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+      );
     } else if (_sortOrder == SortOrder.kcal) {
-      _foodSearchResultUser.sort((food1, food2) => food1.object.kJoule.compareTo(food2.object.kJoule));
-      _foodSearchResultStandard.sort((food1, food2) => food1.object.kJoule.compareTo(food2.object.kJoule));
-      _foodSearchResultCache.sort((food1, food2) => food1.object.kJoule.compareTo(food2.object.kJoule));
-      _foodSearchResultOpenFoodFacts.sort((food1, food2) => _compareNullFoodWithOrder(foodWithOrder1: food1, foodWithOrder2: food2, sortOrder: sortOrder));
+      _foodSearchResultUser.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
+      );
+      _foodSearchResultStandard.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
+      );
+      _foodSearchResultCache.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
+      );
+      _foodSearchResultOpenFoodFacts.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
+      );
+      _foodSearchResultRecent.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
+      );
     } else if (_sortOrder == SortOrder.popularity) {
-      if (searchMode != SearchMode.recent) {
-        _foodSearchResultUser.sort((food1, food2) => food1.order.compareTo(food2.order));
-        _foodSearchResultStandard.sort((food1, food2) => food1.order.compareTo(food2.order));
-        _foodSearchResultCache.sort((food1, food2) => food1.order.compareTo(food2.order));
-        _foodSearchResultOpenFoodFacts.sort((food1, food2) => food1.order.compareTo(food2.order));
-      }
+      _foodSearchResultUser.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
+      );
+      _foodSearchResultStandard.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
+      );
+      _foodSearchResultCache.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
+      );
+      _foodSearchResultOpenFoodFacts.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
+      );
+      _foodSearchResultRecent.sort(
+        (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
+            foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
+      );
     }
 
     if (_sortDesc.value) {
       if (searchMode == SearchMode.recent) {
-        _foodSearchResult.addAll(_foodSearchResultAll);
+        _foodSearchResult.addAll(_foodSearchResultRecent);
       } else {
         _foodSearchResult.addAll(_foodSearchResultUser);
         _foodSearchResult.addAll(_foodSearchResultStandard);
@@ -373,7 +453,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       }
     } else {
       if (searchMode == SearchMode.recent) {
-        _foodSearchResult.addAll(_foodSearchResultAll.reversed);
+        _foodSearchResult.addAll(_foodSearchResultRecent.reversed);
       } else {
         _foodSearchResult.addAll(_foodSearchResultUser.reversed);
         _foodSearchResult.addAll(_foodSearchResultStandard.reversed);
@@ -385,47 +465,31 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _foodSearchResultChanged.notify();
   }
 
-  int _compareNullFoodWithOrder({
-    required ObjectWithOrder<Food?> foodWithOrder1,
-    required ObjectWithOrder<Food?> foodWithOrder2,
-    required SortOrder sortOrder,
-  }) {
-    if (foodWithOrder1.object == null) {
-      return -1;
-    }
-
-    if (foodWithOrder2.object == null) {
-      return 1;
-    }
-
-    if (sortOrder == SortOrder.kcal) {
-      return foodWithOrder1.object!.kJoule.compareTo(foodWithOrder2.object!.kJoule);
-    } else {
-      return foodWithOrder1.object!.name.compareTo(foodWithOrder2.object!.name);
-    }
-  }
-
-  void changeSortDirection() {
+  void changeSortDirection({required SearchMode searchMode}) {
     _sortDesc.value = !_sortDesc.value;
 
     _foodSearchResult.clear();
     if (_sortDesc.value) {
-      _foodSearchResult.addAll(_foodSearchResultUser);
-      _foodSearchResult.addAll(_foodSearchResultStandard);
-      _foodSearchResult.addAll(_foodSearchResultCache);
-      _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts);
+      if (searchMode == SearchMode.recent) {
+        _foodSearchResult.addAll(_foodSearchResultRecent);
+      } else {
+        _foodSearchResult.addAll(_foodSearchResultUser);
+        _foodSearchResult.addAll(_foodSearchResultStandard);
+        _foodSearchResult.addAll(_foodSearchResultCache);
+        _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts);
+      }
     } else {
-      _foodSearchResult.addAll(_foodSearchResultUser.reversed.toList());
-      _foodSearchResult.addAll(_foodSearchResultStandard.reversed.toList());
-      _foodSearchResult.addAll(_foodSearchResultCache.reversed.toList());
-      _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed.toList());
+      if (searchMode == SearchMode.recent) {
+        _foodSearchResult.addAll(_foodSearchResultRecent.reversed);
+      } else {
+        _foodSearchResult.addAll(_foodSearchResultUser.reversed);
+        _foodSearchResult.addAll(_foodSearchResultStandard.reversed);
+        _foodSearchResult.addAll(_foodSearchResultCache.reversed);
+        _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
+      }
     }
 
     _foodSearchResultChanged.notify();
-  }
-
-  ObjectWithOrder toElement(Food e, int order) {
-    return ObjectWithOrder(object: e, order: order);
   }
 
   Future<void> addEatsJournalEntry(EatsJournalEntry eatsJournalEntry) async {
@@ -461,7 +525,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _foodSearchResultStandard.clear();
     _foodSearchResultCache.clear();
     _foodSearchResultOpenFoodFacts.clear();
-    _foodSearchResultAll.clear();
+    _foodSearchResultRecent.clear();
   }
 
   Food getNewFood() {
