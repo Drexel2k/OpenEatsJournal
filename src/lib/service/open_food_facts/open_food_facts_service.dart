@@ -71,15 +71,19 @@ class OpenFoodFactsService {
     Response resp;
 
     int requestTry = 0;
-    while (requestTry < 5) {
+    int maxTries = 5;
+    while (requestTry < maxTries) {
       resp = await _httpGet(uri, headers: headers);
 
       if (validResponseCodes.contains(resp.statusCode)) {
         return resp.body;
       }
 
-      await Future.delayed(Duration(milliseconds: 750));
       requestTry++;
+
+      if (requestTry < maxTries) {
+        await Future.delayed(Duration(milliseconds: 750));
+      }
     }
 
     return null;
