@@ -44,17 +44,10 @@ class OpenFoodFactsService {
       headers[HttpHeaders.authorizationHeader] = "Basic ${base64.encode(utf8.encode("off:off"))}";
     }
 
-    Response resp = await _httpGet(
-      Uri.parse("$_apiV2Endpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}"),
-      headers: headers,
-    );
+    Uri uri = Uri.parse("$_apiV2Endpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}");
 
     //404 means no food with barcode was found, which is still a normal result for us.
-    if (resp.statusCode == 200 || resp.statusCode == 404) {
-      return resp.body;
-    }
-
-    return null;
+    return await _requestUri(uri: uri, headers: headers, validResponseCodes: [200, 404]);
   }
 
   Future<String?> getFoodBySearchTextApiV1({required String searchText, required int page, required int pageSize}) async {
@@ -71,10 +64,22 @@ class OpenFoodFactsService {
       "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFieldsAllNutriments.join(",")}&page=$page&page_size=$pageSize",
     );
 
-    Response resp = await _httpGet(uri, headers: headers);
+    return await _requestUri(uri: uri, headers: headers, validResponseCodes: [200]);
+  }
 
-    if (resp.statusCode == 200) {
-      return resp.body;
+  Future<String?> _requestUri({required Uri uri, required Map<String, String> headers, required List<int> validResponseCodes}) async {
+    Response resp;
+
+    int requestTry = 0;
+    while (requestTry < 5) {
+      resp = await _httpGet(uri, headers: headers);
+
+      if (validResponseCodes.contains(resp.statusCode)) {
+        return resp.body;
+      }
+
+      await Future.delayed(Duration(milliseconds: 750));
+      requestTry++;
     }
 
     return null;

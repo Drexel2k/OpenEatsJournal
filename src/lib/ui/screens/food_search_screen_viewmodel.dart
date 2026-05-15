@@ -1,3 +1,4 @@
+import "package:collection/collection.dart";
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -11,6 +12,7 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 import "package:openeatsjournal/domain/object_with_order.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
+import "package:openeatsjournal/ui/utils/food_search_result_status_code.dart";
 import "package:openeatsjournal/ui/utils/food_search_result_entry.dart";
 import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/utils/sort_order.dart";
@@ -172,7 +174,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           _translateStandardFoodUnits(food, foodUnitLocalizations);
           _foodSearchResultUser.add(
             ObjectWithOrder(
-              object: FoodSearchResultEntry(food: food),
+              object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.ok, food: food),
               order: order++,
             ),
           );
@@ -187,7 +189,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           _translateStandardFoodUnits(food, foodUnitLocalizations);
           _foodSearchResultStandard.add(
             ObjectWithOrder(
-              object: FoodSearchResultEntry(food: food),
+              object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.ok, food: food),
               order: order++,
             ),
           );
@@ -197,7 +199,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       }
 
       if (_foodSearchResultUser.isEmpty && _foodSearchResultStandard.isEmpty) {
-        _foodSearchResultUser.add(ObjectWithOrder(object: FoodSearchResultEntry(infoCode: 0), order: order++));
+        _foodSearchResultUser.add(
+          ObjectWithOrder(
+            object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.noOfflineResult),
+            order: order++,
+          ),
+        );
 
         foodsSearchResultEntriesWithOrder.addAll(_foodSearchResultUser);
       }
@@ -208,7 +215,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           _translateStandardFoodUnits(food, foodUnitLocalizations);
           _foodSearchResultCache.add(
             ObjectWithOrder(
-              object: FoodSearchResultEntry(food: food),
+              object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.ok, food: food),
               order: order++,
             ),
           );
@@ -224,7 +231,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
             _translateStandardFoodUnits(food, foodUnitLocalizations);
             _foodSearchResultOpenFoodFacts.add(
               ObjectWithOrder(
-                object: FoodSearchResultEntry(food: food),
+                object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.ok, food: food),
                 order: order++,
               ),
             );
@@ -232,7 +239,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         } else {
           //If Open Food Facts returns nothing, this null food will display the Open Food Facts contribution hint in the ui.
           if (searchmode == SearchMode.online) {
-            _foodSearchResultOpenFoodFacts.add(ObjectWithOrder(object: FoodSearchResultEntry(infoCode: 3), order: order++));
+            _foodSearchResultOpenFoodFacts.add(
+              ObjectWithOrder(
+                object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.openFoodFactsNoOnlineResult),
+                order: order++,
+              ),
+            );
           }
         }
 
@@ -248,7 +260,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
           //Popularity in recent mode shall not be ordered by source first, but strictly after usage amount, therefore we take it from all results now.
           _foodSearchResultRecent.add(
             ObjectWithOrder(
-              object: FoodSearchResultEntry(food: food),
+              object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.ok, food: food),
               order: order++,
             ),
           );
@@ -301,28 +313,29 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     await _foodRepository
         .getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _settingsRepository.languageCode.value, page: _currentPage)
         .then((FoodRepositoryResult result) {
+          int order = 0;
+          if (_foodSearchResult.isNotEmpty) {
+            ObjectWithOrder<FoodSearchResultEntry> maxOrderEntry = _foodSearchResult.reduce(
+              (currentResultEntry, nextResultEntry) => currentResultEntry.order > nextResultEntry.order ? currentResultEntry : nextResultEntry,
+            );
+
+            order = maxOrderEntry.order + 1;
+          }
+
           if (result.errorCode == null) {
             List<ObjectWithOrder<FoodSearchResultEntry>> foodsWithOrder = [];
             if (result.foods!.isNotEmpty) {
-              int order = 0;
-              for (ObjectWithOrder<FoodSearchResultEntry> food in _foodSearchResult) {
-                if (food.order > order) {
-                  order = food.order;
-                }
-              }
-
-              order++;
-
               for (Food food in result.foods!) {
                 foodsWithOrder.add(
                   ObjectWithOrder(
-                    object: FoodSearchResultEntry(food: food),
+                    object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.ok, food: food),
                     order: order++,
                   ),
                 );
               }
             }
 
+            _foodSearchResultOpenFoodFacts.addAll(foodsWithOrder);
             _addToSearchResult(foodsWithOrder);
 
             if (!_dontLoadMore) {
@@ -331,9 +344,20 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
               }
             }
           } else {
+            ObjectWithOrder<FoodSearchResultEntry> foodSearchResultEntryWithOrder = ObjectWithOrder(
+              object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.openFoodFactsErrorOnPagination),
+              order: order,
+            );
+
+            _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryWithOrder);
+            _addToSearchResult([foodSearchResultEntryWithOrder]);
+
             finishSearch();
             _errorCode.value = result.errorCode;
             _errorMessage = result.errorMessage != null ? result.errorMessage! : OpenEatsJournalStrings.emptyString;
+
+            //remove the circular loading indicator
+            _foodSearchResultChanged.notify();
           }
 
           _isLoading = false;
@@ -376,27 +400,31 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortOrder = sortOrder;
     _sortButtonChanged.notify();
 
+    ObjectWithOrder<FoodSearchResultEntry>? foodSearchResultEntryPaginationError;
     //Sorting with no result hint doesn't trigger null reference on food object, because sort doesn't do anything when there is only one item in the list.
     if (_sortOrder == SortOrder.name) {
       _foodSearchResultUser.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
-            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+            foodSearchResultEntryWithOrder1.object.food!.name.toLowerCase().compareTo(foodSearchResultEntryWithOrder2.object.food!.name.toLowerCase()),
       );
       _foodSearchResultStandard.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
-            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+            foodSearchResultEntryWithOrder1.object.food!.name.toLowerCase().compareTo(foodSearchResultEntryWithOrder2.object.food!.name.toLowerCase()),
       );
       _foodSearchResultCache.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
-            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+            foodSearchResultEntryWithOrder1.object.food!.name.toLowerCase().compareTo(foodSearchResultEntryWithOrder2.object.food!.name.toLowerCase()),
       );
+
+      foodSearchResultEntryPaginationError = _getAndRemoveOpenFoodFactsPaginationError();
       _foodSearchResultOpenFoodFacts.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
-            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+            foodSearchResultEntryWithOrder1.object.food!.name.toLowerCase().compareTo(foodSearchResultEntryWithOrder2.object.food!.name.toLowerCase()),
       );
+
       _foodSearchResultRecent.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
-            foodSearchResultEntryWithOrder1.object.food!.name.compareTo(foodSearchResultEntryWithOrder2.object.food!.name),
+            foodSearchResultEntryWithOrder1.object.food!.name.toLowerCase().compareTo(foodSearchResultEntryWithOrder2.object.food!.name.toLowerCase()),
       );
     } else if (_sortOrder == SortOrder.kcal) {
       _foodSearchResultUser.sort(
@@ -411,10 +439,13 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
             foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
       );
+
+      foodSearchResultEntryPaginationError = _getAndRemoveOpenFoodFactsPaginationError();
       _foodSearchResultOpenFoodFacts.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
             foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
       );
+
       _foodSearchResultRecent.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
             foodSearchResultEntryWithOrder1.object.food!.kJoule.compareTo(foodSearchResultEntryWithOrder2.object.food!.kJoule),
@@ -432,10 +463,13 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
             foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
       );
+
+      foodSearchResultEntryPaginationError = _getAndRemoveOpenFoodFactsPaginationError();
       _foodSearchResultOpenFoodFacts.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
             foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
       );
+
       _foodSearchResultRecent.sort(
         (foodSearchResultEntryWithOrder1, foodSearchResultEntryWithOrder2) =>
             foodSearchResultEntryWithOrder1.order.compareTo(foodSearchResultEntryWithOrder2.order),
@@ -449,6 +483,10 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultUser);
         _foodSearchResult.addAll(_foodSearchResultStandard);
         _foodSearchResult.addAll(_foodSearchResultCache);
+
+        if (foodSearchResultEntryPaginationError != null) {
+          _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryPaginationError);
+        }
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts);
       }
     } else {
@@ -459,10 +497,34 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultStandard.reversed);
         _foodSearchResult.addAll(_foodSearchResultCache.reversed);
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
+
+        //ensure hint that loading more foods on pagination failed is still at the end on reverse sorting
+        if (foodSearchResultEntryPaginationError != null) {
+          _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryPaginationError);
+          _foodSearchResult.add(foodSearchResultEntryPaginationError);
+        }
       }
     }
 
     _foodSearchResultChanged.notify();
+  }
+
+  //Open food facts result may have results and at the end a hint that loading more foods on pagination failed. We need to remove the hint (it has no food
+  //which will result in a null reference excpetion), sort, and then add it again at the end.
+  ObjectWithOrder<FoodSearchResultEntry>? _getAndRemoveOpenFoodFactsPaginationError() {
+    ObjectWithOrder<FoodSearchResultEntry>? foodSearchResultEntryPaginationError;
+    if (_foodSearchResultOpenFoodFacts.length > 1) {
+      foodSearchResultEntryPaginationError = _foodSearchResultOpenFoodFacts.firstWhereOrNull(
+        (foodSearchResultEntryWithOrder) =>
+            foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsErrorOnPagination,
+      );
+
+      if (foodSearchResultEntryPaginationError != null) {
+        _foodSearchResultOpenFoodFacts.remove(foodSearchResultEntryPaginationError);
+      }
+    }
+
+    return foodSearchResultEntryPaginationError;
   }
 
   void changeSortDirection({required SearchMode searchMode}) {
@@ -485,7 +547,15 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultUser.reversed);
         _foodSearchResult.addAll(_foodSearchResultStandard.reversed);
         _foodSearchResult.addAll(_foodSearchResultCache.reversed);
+
+        ObjectWithOrder<FoodSearchResultEntry>? foodSearchResultEntryPaginationError = _getAndRemoveOpenFoodFactsPaginationError();
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
+
+        //ensure hint that loading more foods on pagination failed is still at the end on reverse sorting
+        if (foodSearchResultEntryPaginationError != null) {
+          _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryPaginationError);
+          _foodSearchResult.add(foodSearchResultEntryPaginationError);
+        }
       }
     }
 
@@ -532,6 +602,15 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     return _foodRepository.getNewFood();
   }
 
+  EatsJournalEntry getNewQuickEntry({required DateTime entryDate, required Meal meal}) {
+    return _journalRepository.getNewQuickEntry(
+      entryDate: entryDate,
+      name: OpenEatsJournalStrings.emptyString,
+      kJoule: NutritionCalculator.kJouleForOnekCal,
+      meal: meal,
+    );
+  }
+
   @override
   void dispose() {
     _disposed = true;
@@ -546,14 +625,5 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortDesc.dispose();
 
     super.dispose();
-  }
-
-  EatsJournalEntry getNewQuickEntry({required DateTime entryDate, required Meal meal}) {
-    return _journalRepository.getNewQuickEntry(
-      entryDate: entryDate,
-      name: OpenEatsJournalStrings.emptyString,
-      kJoule: NutritionCalculator.kJouleForOnekCal,
-      meal: meal,
-    );
   }
 }

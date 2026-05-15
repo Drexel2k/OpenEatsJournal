@@ -12,6 +12,7 @@ import "package:openeatsjournal/ui/screens/food_search_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/food_search_result_status_code.dart";
 import "package:openeatsjournal/ui/utils/layout_mode.dart";
 import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
@@ -195,7 +196,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             child: RichText(
                               text: TextSpan(
                                 style: textTheme.bodyMedium,
-                                text: AppLocalizations.of(context)!.adding_online_data_1,
+                                text: AppLocalizations.of(context)!.open_food_facts_adding_online_data_1,
                                 children: [
                                   TextSpan(
                                     text: " ${AppLocalizations.of(context)!.open_food_facts} ",
@@ -205,7 +206,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                         await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
                                       },
                                   ),
-                                  TextSpan(text: AppLocalizations.of(context)!.adding_online_data_2),
+                                  TextSpan(text: AppLocalizations.of(context)!.open_food_facts_adding_online_data_2),
                                   TextSpan(text: "\n\n"),
                                   TextSpan(text: AppLocalizations.of(context)!.adding_offline_data_1),
                                   TextSpan(
@@ -255,12 +256,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               valueListenable: foodSearchScreenViewModel.showIsLoadingMessage,
               builder: (_, _, _) {
                 if (foodSearchScreenViewModel.showIsLoadingMessage.value) {
-                  TextStyle? style = textTheme.bodySmall;
-                  if (style != null) {
-                    style = style.copyWith(color: Colors.red);
-                  } else {
-                    style = TextStyle(color: Colors.red);
-                  }
+                  TextStyle? style = _getRedText(textTheme);
 
                   return Text(AppLocalizations.of(context)!.wait_search, style: style);
                 } else {
@@ -272,12 +268,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               valueListenable: foodSearchScreenViewModel.errorCode,
               builder: (_, _, _) {
                 if (foodSearchScreenViewModel.errorCode.value != null) {
-                  TextStyle? style = textTheme.bodyMedium;
-                  if (style != null) {
-                    style = style.copyWith(color: Colors.red);
-                  } else {
-                    style = TextStyle(color: Colors.red);
-                  }
+                  TextStyle? style = _getRedText(textTheme);
 
                   if (foodSearchScreenViewModel.errorCode.value == 1) {
                     return Text(AppLocalizations.of(context)!.open_food_facts_exception(foodSearchScreenViewModel.errorMessage), style: style);
@@ -308,12 +299,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           valueListenable: foodSearchScreenViewModel.searchMessageCode,
                           builder: (_, _, _) {
                             if (foodSearchScreenViewModel.searchMessageCode.value != null) {
-                              TextStyle? style = textTheme.bodySmall;
-                              if (style != null) {
-                                style = style.copyWith(color: Colors.red);
-                              } else {
-                                style = TextStyle(color: Colors.red);
-                              }
+                              TextStyle? style = _getRedText(textTheme);
+
                               if (foodSearchScreenViewModel.searchMessageCode.value == 1) {
                                 return Text(AppLocalizations.of(context)!.too_many_results_for_sorting, style: style);
                               } else {
@@ -382,8 +369,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                       }
 
-                      //food is null, when online search for barcode returned no result.
-                      if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.food != null) {
+                      if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.foodSearchResultCode == FoodSearchResultStatusCode.ok) {
                         return FoodCard(
                           food: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.food!,
                           textTheme: textTheme,
@@ -420,45 +406,99 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         );
                       } else {
                         final borderRadius = BorderRadius.circular(8);
+                        if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.foodSearchResultCode ==
+                            FoodSearchResultStatusCode.openFoodFactsNoOnlineResult) {
+                          RichText richText = RichText(
+                            text: TextSpan(
+                              style: textTheme.bodyMedium,
+                              text: AppLocalizations.of(context)!.open_food_facts_adding_online_data_1,
+                              children: [
+                                TextSpan(
+                                  text: " ${AppLocalizations.of(context)!.open_food_facts} ",
+                                  style: TextStyle(color: colorScheme.primary),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
+                                    },
+                                ),
+                                TextSpan(text: AppLocalizations.of(context)!.open_food_facts_adding_online_data_2),
+                              ],
+                            ),
+                          );
 
-                        RichText richText = foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.infoCode! == 3
-                            ? RichText(
-                                text: TextSpan(
-                                  style: textTheme.bodyMedium,
-                                  text: AppLocalizations.of(context)!.adding_online_data_1,
-                                  children: [
-                                    TextSpan(
-                                      text: " ${AppLocalizations.of(context)!.open_food_facts} ",
-                                      style: TextStyle(color: colorScheme.primary),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () async {
-                                          await launchUrl(Uri.parse("https://world.openfoodfacts.org/"), mode: LaunchMode.platformDefault);
-                                        },
-                                    ),
-                                    TextSpan(text: AppLocalizations.of(context)!.adding_online_data_2),
-                                  ],
-                                ),
-                              )
-                            : RichText(
-                                text: TextSpan(
-                                  style: textTheme.bodyMedium,
-                                  text: AppLocalizations.of(context)!.adding_offline_data_1,
-                                  children: [
-                                    TextSpan(
-                                      text: " ${OpenEatsJournalStrings.openEatsJournal} (${OpenEatsJournalStrings.github}) ",
-                                      style: TextStyle(color: colorScheme.primary),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () async {
-                                          await launchUrl(
-                                            Uri.parse("https://github.com/Drexel2k/OpenEatsJournal/blob/main/src/assets/standard_food_data.1.csv"),
-                                            mode: LaunchMode.platformDefault,
-                                          );
-                                        },
-                                    ),
-                                    TextSpan(text: AppLocalizations.of(context)!.adding_offline_data_2),
-                                  ],
-                                ),
-                              );
+                          return Card(
+                            shape: RoundedRectangleBorder(borderRadius: borderRadius),
+                            child: InkWell(
+                              borderRadius: borderRadius,
+                              onTap: () async {
+                                await showDialog(
+                                  context: AppGlobal.navigatorKey.currentContext!,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      insetPadding: EdgeInsets.fromLTRB(
+                                        dialogHorizontalPadding,
+                                        dialogVerticalPadding,
+                                        dialogHorizontalPadding,
+                                        dialogVerticalPadding,
+                                      ),
+                                      title: Text(AppLocalizations.of(context)!.no_online_result_found),
+                                      content: SingleChildScrollView(child: richText),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text(AppLocalizations.of(context)!.ok),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
+                                child: Text(AppLocalizations.of(context)!.no_result_from_online_source, textAlign: TextAlign.center),
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.foodSearchResultCode ==
+                            FoodSearchResultStatusCode.openFoodFactsErrorOnPagination) {
+                          TextStyle? style = _getRedText(textTheme);
+
+                          return Card(
+                            shape: RoundedRectangleBorder(borderRadius: borderRadius),
+                            child: Padding(
+                              padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
+                              child: Text(AppLocalizations.of(context)!.open_food_facts_could_not_load_more, style: style, textAlign: TextAlign.center),
+                            ),
+                          );
+                        }
+
+                        //last posibility, ensure this function returns always a widget
+                        //if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.foodSearchResultCode ==
+                        //    FoodSearchResultStatusCode.noOfflineResult) {
+                        RichText richText = RichText(
+                          text: TextSpan(
+                            style: textTheme.bodyMedium,
+                            text: AppLocalizations.of(context)!.adding_offline_data_1,
+                            children: [
+                              TextSpan(
+                                text: " ${OpenEatsJournalStrings.openEatsJournal} (${OpenEatsJournalStrings.github}) ",
+                                style: TextStyle(color: colorScheme.primary),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () async {
+                                    await launchUrl(
+                                      Uri.parse("https://github.com/Drexel2k/OpenEatsJournal/blob/main/src/assets/standard_food_data.1.csv"),
+                                      mode: LaunchMode.platformDefault,
+                                    );
+                                  },
+                              ),
+                              TextSpan(text: AppLocalizations.of(context)!.adding_offline_data_2),
+                            ],
+                          ),
+                        );
 
                         return Card(
                           shape: RoundedRectangleBorder(borderRadius: borderRadius),
@@ -475,9 +515,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                       dialogHorizontalPadding,
                                       dialogVerticalPadding,
                                     ),
-                                    title: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.infoCode! == 3
-                                        ? Text(AppLocalizations.of(context)!.no_online_result_found)
-                                        : Text(AppLocalizations.of(context)!.no_offline_result_found),
+                                    title: Text(AppLocalizations.of(context)!.no_offline_result_found),
                                     content: SingleChildScrollView(child: richText),
                                     actions: <Widget>[
                                       TextButton(
@@ -493,9 +531,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             },
                             child: Padding(
                               padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
-                              child: foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.infoCode! == 3
-                                  ? Text(AppLocalizations.of(context)!.no_result_from_online_source, textAlign: TextAlign.center)
-                                  : Text(AppLocalizations.of(context)!.no_result_from_offline_source, textAlign: TextAlign.center),
+                              child: Text(AppLocalizations.of(context)!.no_result_from_offline_source, textAlign: TextAlign.center),
                             ),
                           ),
                         );
@@ -602,6 +638,16 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
         ),
       ),
     );
+  }
+
+  TextStyle? _getRedText(TextTheme textTheme) {
+    TextStyle? style = textTheme.bodyMedium;
+    if (style != null) {
+      style = style.copyWith(color: Colors.red);
+    } else {
+      style = TextStyle(color: Colors.red);
+    }
+    return style;
   }
 
   Future<void> _search({required FoodSearchScreenViewModel foodSearchScreenViewModel, required Map<String, String> standardFoodUnitLocalizations}) async {
