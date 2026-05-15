@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-05-13 00-00-00","2026-01-15 00-00-00"
+"2026-05-15 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -246,8 +246,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Piece","Stück","20","g","true"
 "food","111","2026-02-27 00-00-00","Maki sushi tekka / tuna","Maki Sushi Tekka / Thunfisch",,,"100",,"697","1.3","0","28.9","3.4","8.8","0.8",
 "foodunit","1","Piece","Stück","20","g","true"
-"food","112","2026-02-27 00-00-00","California inside out sushi","California Inside Out Sushi",,,"100",,"685","4.7","0.7","26.5","8.5","2.8","1.2",
-"foodunit","1","Piece","Stück","35","g","true"
+"food","112","2026-05-15 00-00-00","California inside out sushi","California Inside Out Sushi",,,"100",,"685","4.7","0.7","26.5","8.5","2.8","1.2",
+"foodunit","1","Piece","Stück","30","g","true"
 "food","113","2026-02-27 00-00-00","Nigiri sushi sake / salmon","Nigiri Sushi Sake / Lachs",,,"100",,"870","4.8","1.1","23.5","2.7","10.6","0.6",
 "foodunit","1","Piece","Stück","35","g","true"
 "food","114","2026-02-27 00-00-00","Nigiri sushi tekka / tuna","Nigiri Sushi Tekka / Thunfisch",,,"100",,"665","1.8","0","23.2","2.7","11.5","0.7",
