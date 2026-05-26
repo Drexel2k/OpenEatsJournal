@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-05-24 00-00-00","2026-01-15 00-00-00"
+"2026-05-25 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -83,7 +83,7 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Piece","Stück","125","g","true"
 "food","31","2026-01-15 01-00-00","Strawberry","Erdbeere",,,"100",,"151","0.4",,"5.5","5.5","0.8",,
 "foodunit","1","Piece","Stück","15","g","true"
-"food","32","2026-01-15 01-00-00","French Fries Air Fryier","Pommes Frites Heißluftfriteuse",,,"100",,"729","4.4","0.5","29","0.6","3.1","0.5",
+"food","32","2026-05-25 01-00-00","French Fries oven / air fryer","Pommes Frites Ofen / Heißluftfriteuse",,,"100",,"729","4.4","0.5","29","0.6","3.1","0.5",
 "foodunit","1","Serving","Portion","150","g","true"
 "food","33","2026-01-15 01-00-00","Fried patatoes","Bratkartoffeln",,,"100",,"502","5.9","0.7","14.1","0.6","1.8","0.2",
 "foodunit","1","Serving","Portion","200","g","true"
@@ -91,7 +91,7 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Piece","Stück","120","g","true"
 "food","35","2026-01-15 01-00-00","Sweet patato Fries fried","Süßkartoffelpommes fritiert",,,"100",,"1360","9.9","1.5","52.6","11","3.1","0.5",
 "foodunit","1","Serving","Portion","150","g","true"
-"food","36","2026-01-15 01-00-00","Sweet patato Air Fryier","Süßkartoffelpommes Heißluftfriteuse",,,"100",,"838","7.1","1.1","29","14","2.3","0.6",
+"food","36","2026-05-25 01-00-00","Sweet patato fries oven / air fryer","Süßkartoffelpommes Ofen / Heißluftfriteuse",,,"100",,"838","7.1","1.1","29","14","2.3","0.6",
 "foodunit","1","Serving","Portion","150","g","true"
 "food","37","2026-01-16 00-00-00","Lemonade (Fanta/Sprite etc.)","Limonade (Fanta/Sprite etc.)",,,,"100","136",,,"7.7","7.7",,,
 "foodunit","1","Glas","Glas","200","ml","true"
@@ -357,3 +357,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Burger","Burger","285","g","true"
 "food","168","2026-05-24 00-00-00","Bacon Burger","Bacon Burger",,,"100",,"1131","17.9","7","11.4","3.1","15.9","1.2",
 "foodunit","1","Burger","Burger","360","g","true"
+"food","169","2026-05-25 00-00-00","Pistachios salted","Pistazien gesalzen",,,"100",,"2533","50.4","6.6","11.2","6.2","23.4","1.8",
+"food","170","2026-05-25 01-00-00","Chicken nuggets oven / air fryer","Chicken Nuggets Ofen / Heißluftfriteuse",,,"100",,"811","9.5","1.7","13","1.8","14","1.1",
+"foodunit","1","Piece","Stück","19","g","true"
+"food","171","2026-05-25 01-00-00","Chicken nuggets fried","Chicken Nuggets fritiert",,,"100",,"1133","15","3","18","0.5","15","1.1",
+"foodunit","1","Piece","Stück","19","g","true"
