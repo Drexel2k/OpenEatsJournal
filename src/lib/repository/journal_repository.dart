@@ -449,76 +449,63 @@ class JournalRepository {
   }
 
   //current day and last month
+  //Adds today and before 31 days as from and until to the result, but there maybe als a value before and and after that values in the result to draw the
+  //value line the chart border.
   Future<JournalRepositoryGetWeightMaxResult>? getWeightPerDayForLast32Days({required DateTime today}) async {
     DateTime before31days = today.subtract(Duration(days: 31));
+    DateTime nextDay = today.add(Duration(days: 1));
 
     List<Map<String, Object?>>? dbResultWeightMax = await _oejDatabase.getWeightMax(
       from: before31days,
       until: today,
       maxOf: OpenEatsJournalStrings.dbColumnEntryDate,
     );
-    Map<DateTime, double>? weightPerDay;
+    Map<DateTime, double>? weightPerDay = {};
 
     if (dbResultWeightMax != null) {
-      weightPerDay = _getWeightMax(dbResult: dbResultWeightMax);
+      _addWeightMaxToMap(dateWeightMap: weightPerDay, dbResult: dbResultWeightMax);
     }
 
-    if (weightPerDay == null || !weightPerDay.containsKey(before31days)) {
-      List<Map<String, Object?>>? dbResultFor = await _oejDatabase.getMaxWeightJournalEntryFor(
-        date: before31days.subtract(Duration(days: 1)),
-        maxOf: OpenEatsJournalStrings.dbColumnDate,
-      );
+    //Check if there is a weight entry before chart start and add it to ensure to draw the value line from the chart's border then.
+    List<Map<String, Object?>>? dbResultFor = await _oejDatabase.getMaxWeightJournalEntryFor(
+      date: before31days.subtract(Duration(days: 1)),
+      maxOf: OpenEatsJournalStrings.dbColumnDate,
+    );
 
-      WeightJournalEntry? weightBeforeInterval;
-      if (dbResultFor != null) {
-        weightBeforeInterval = _getWeightJournalEntryFromDbResult(dbResultFor);
-      }
-
-      if (weightBeforeInterval != null) {
-        weightPerDay ??= {};
-        weightPerDay[weightBeforeInterval.date] = weightBeforeInterval.weight;
-      }
+    if (dbResultFor != null) {
+      WeightJournalEntry weightBeforeInterval = _getWeightJournalEntryFromDbResult(dbResultFor);
+      weightPerDay[weightBeforeInterval.date] = weightBeforeInterval.weight;
     }
 
-    if (weightPerDay != null && !weightPerDay.containsKey(today)) {
-      List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(
-        date: today.add(Duration(days: 1)),
-        maxOf: OpenEatsJournalStrings.dbColumnDate,
-      );
+    //Check if there is a weight entry after chart end. If it is, add it to result, if not take the latest entry and add it also as last entry after chart end,
+    //because last weight entry is valid for all future dates. This ensures drawing the value line to the chart's border.
+    List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(date: nextDay, maxOf: OpenEatsJournalStrings.dbColumnDate);
 
-      WeightJournalEntry? weightAfterInterval;
-      if (dbResultAfter != null) {
-        weightAfterInterval = _getWeightJournalEntryFromDbResult(dbResultAfter);
-      }
-
-      if (weightAfterInterval != null) {
-        weightPerDay[weightAfterInterval.date] = weightAfterInterval.weight;
-      } else {
-        weightPerDay[today] = weightPerDay[weightPerDay.keys.max]!;
-      }
-    }
-
-    if (weightPerDay != null) {
-      JournalRepositoryGetWeightMaxResult result = JournalRepositoryGetWeightMaxResult(groupMaxWeights: weightPerDay, from: before31days, until: today);
-
-      return result;
+    if (dbResultAfter != null) {
+      WeightJournalEntry weightAfterInterval = _getWeightJournalEntryFromDbResult(dbResultAfter);
+      weightPerDay[weightAfterInterval.date] = weightAfterInterval.weight;
     } else {
-      return JournalRepositoryGetWeightMaxResult(from: before31days, until: today);
+      weightPerDay[nextDay] = weightPerDay[weightPerDay.keys.max]!;
     }
+
+    return JournalRepositoryGetWeightMaxResult(groupMaxWeights: weightPerDay, from: before31days, until: today);
   }
 
-  WeightJournalEntry? _getWeightJournalEntryFromDbResult(List<Map<String, Object?>> dbResult) {
+  WeightJournalEntry _getWeightJournalEntryFromDbResult(List<Map<String, Object?>> dbResult) {
     return WeightJournalEntry(
       date: ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(dbResult[0][OpenEatsJournalStrings.dbResultGroupColumn] as String),
       weight: dbResult[0][OpenEatsJournalStrings.dbResultWeightMax] as double,
     );
   }
 
-  //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
+  //Current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
+  //Adds this week and before 14 weeks as from and until to the result, but there maybe als a value before and and after that values in the result to draw the
+  //value line the chart border.
   Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerWeekForLast15Weeks({required DateTime today}) async {
     //set start of week (monday) on before14weeks
     DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
+    DateTime nextWeek = thisWeekStartDate.add(Duration(days: 7));
 
     List<Map<String, Object?>>? dbResultWeightMax = await _oejDatabase.getWeightMax(
       from: before14weeksStartDate,
@@ -526,60 +513,43 @@ class JournalRepository {
       maxOf: OpenEatsJournalStrings.dbColumnWeekStartDate,
     );
 
-    Map<DateTime, double>? weightMaxPerWeek;
+    Map<DateTime, double>? weightMaxPerWeek = {};
 
     if (dbResultWeightMax != null) {
-      weightMaxPerWeek = _getWeightMax(dbResult: dbResultWeightMax);
+      _addWeightMaxToMap(dateWeightMap: weightMaxPerWeek, dbResult: dbResultWeightMax);
     }
 
-    if (weightMaxPerWeek == null || !weightMaxPerWeek.containsKey(before14weeksStartDate)) {
-      List<Map<String, Object?>>? dbResultFor = await _oejDatabase.getMaxWeightJournalEntryFor(
-        date: before14weeksStartDate.subtract(Duration(days: 1)),
-        maxOf: OpenEatsJournalStrings.dbColumnWeekStartDate,
-      );
+    //Check if there is a weight entry before chart start and add it to ensure to draw the value line from the chart's border then.
+    List<Map<String, Object?>>? dbResultFor = await _oejDatabase.getMaxWeightJournalEntryFor(
+      date: before14weeksStartDate.subtract(Duration(days: 1)),
+      maxOf: OpenEatsJournalStrings.dbColumnWeekStartDate,
+    );
 
-      WeightJournalEntry? weightBeforeInterval;
-      if (dbResultFor != null) {
-        weightBeforeInterval = _getWeightJournalEntryFromDbResult(dbResultFor);
-      }
-
-      if (weightBeforeInterval != null) {
-        weightMaxPerWeek ??= {};
-        weightMaxPerWeek[weightBeforeInterval.date] = weightBeforeInterval.weight;
-      }
+    if (dbResultFor != null) {
+      WeightJournalEntry weightBeforeInterval = _getWeightJournalEntryFromDbResult(dbResultFor);
+      weightMaxPerWeek[weightBeforeInterval.date] = weightBeforeInterval.weight;
     }
 
-    if (weightMaxPerWeek != null && !weightMaxPerWeek.containsKey(thisWeekStartDate)) {
-      List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(
-        date: thisWeekStartDate.add(Duration(days: 7)),
-        maxOf: OpenEatsJournalStrings.dbColumnWeekStartDate,
-      );
+    //Check if there is a weight entry after chart end. If it is, add it to result, if not take the latest entry and add it also as last entry after chart end,
+    //because last weight entry is valid for all future dates. This ensures drawing the value line to the chart's border.
+    List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(
+      date: nextWeek,
+      maxOf: OpenEatsJournalStrings.dbColumnWeekStartDate,
+    );
 
-      WeightJournalEntry? weightAfterInterval;
-      if (dbResultAfter != null) {
-        weightAfterInterval = _getWeightJournalEntryFromDbResult(dbResultAfter);
-      }
-
-      if (weightAfterInterval != null) {
-        weightMaxPerWeek[weightAfterInterval.date] = weightAfterInterval.weight;
-      } else {
-        weightMaxPerWeek[thisWeekStartDate] = weightMaxPerWeek[weightMaxPerWeek.keys.max]!;
-      }
-    }
-
-    if (weightMaxPerWeek != null) {
-      JournalRepositoryGetWeightMaxResult result = JournalRepositoryGetWeightMaxResult(
-        groupMaxWeights: weightMaxPerWeek,
-        from: before14weeksStartDate,
-        until: thisWeekStartDate,
-      );
-      return result;
+    if (dbResultAfter != null) {
+      WeightJournalEntry weightAfterInterval = _getWeightJournalEntryFromDbResult(dbResultAfter);
+      weightMaxPerWeek[weightAfterInterval.date] = weightAfterInterval.weight;
     } else {
-      return JournalRepositoryGetWeightMaxResult(from: before14weeksStartDate, until: thisWeekStartDate);
+      weightMaxPerWeek[nextWeek] = weightMaxPerWeek[weightMaxPerWeek.keys.max]!;
     }
+
+    return JournalRepositoryGetWeightMaxResult(groupMaxWeights: weightMaxPerWeek, from: before14weeksStartDate, until: thisWeekStartDate);
   }
 
-  //current month and last 12 months
+  //Current month and last 12 months.
+  //Adds this month and before 12 months as from and until to the result, but there maybe als a value before and and after that values in the result to draw the
+  //value line the chart border.
   Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerMonthForLast13Months({required DateTime today}) async {
     DateTime thisMonthStartDate = DateTime.utc(today.year, today.month, 1);
 
@@ -598,56 +568,37 @@ class JournalRepository {
       maxOf: OpenEatsJournalStrings.dbColumnMonthStartDate,
     );
 
-    Map<DateTime, double>? weightMaxPerMonth;
+    Map<DateTime, double> weightMaxPerMonth = {};
     if (dbResultWeightMax != null) {
-      weightMaxPerMonth = _getWeightMax(dbResult: dbResultWeightMax);
+      _addWeightMaxToMap(dateWeightMap: weightMaxPerMonth, dbResult: dbResultWeightMax);
     }
 
-    if (weightMaxPerMonth == null || !weightMaxPerMonth.containsKey(before12monthsStartDate)) {
-      List<Map<String, Object?>>? dbResultFor = await _oejDatabase.getMaxWeightJournalEntryFor(
-        date: before12monthsStartDate.subtract(Duration(days: 1)),
-        maxOf: OpenEatsJournalStrings.dbColumnMonthStartDate,
-      );
+    //Check if there is a weight entry before chart start and add it to ensure to draw the value line from the chart's border then.
+    List<Map<String, Object?>>? dbResultFor = await _oejDatabase.getMaxWeightJournalEntryFor(
+      date: before12monthsStartDate.subtract(Duration(days: 1)),
+      maxOf: OpenEatsJournalStrings.dbColumnMonthStartDate,
+    );
 
-      WeightJournalEntry? weightBeforeInterval;
-      if (dbResultFor != null) {
-        weightBeforeInterval = _getWeightJournalEntryFromDbResult(dbResultFor);
-      }
-
-      if (weightBeforeInterval != null) {
-        weightMaxPerMonth ??= {};
-        weightMaxPerMonth[weightBeforeInterval.date] = weightBeforeInterval.weight;
-      }
+    if (dbResultFor != null) {
+      WeightJournalEntry weightBeforeInterval = _getWeightJournalEntryFromDbResult(dbResultFor);
+      weightMaxPerMonth[weightBeforeInterval.date] = weightBeforeInterval.weight;
     }
 
-    if (weightMaxPerMonth != null && !weightMaxPerMonth.containsKey(thisMonthStartDate)) {
-      List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(
-        date: DateTime.utc(nextMonthYear, nextMonth, 1),
-        maxOf: OpenEatsJournalStrings.dbColumnMonthStartDate,
-      );
+    //Check if there is a weight entry after chart end. If it is, add it to result, if not take the latest entry and add it also as last entry after chart end,
+    //because last weight entry is valid for all future dates. This ensures drawing the value line to the chart's border.
+    List<Map<String, Object?>>? dbResultAfter = await _oejDatabase.getMaxWeightJournalEntryAfter(
+      date: DateTime.utc(nextMonthYear, nextMonth, 1),
+      maxOf: OpenEatsJournalStrings.dbColumnMonthStartDate,
+    );
 
-      WeightJournalEntry? weightAfterInterval;
-      if (dbResultAfter != null) {
-        weightAfterInterval = _getWeightJournalEntryFromDbResult(dbResultAfter);
-      }
-
-      if (weightAfterInterval != null) {
-        weightMaxPerMonth[weightAfterInterval.date] = weightAfterInterval.weight;
-      } else {
-        weightMaxPerMonth[thisMonthStartDate] = weightMaxPerMonth[weightMaxPerMonth.keys.max]!;
-      }
-    }
-
-    if (weightMaxPerMonth != null) {
-      JournalRepositoryGetWeightMaxResult result = JournalRepositoryGetWeightMaxResult(
-        groupMaxWeights: weightMaxPerMonth,
-        from: before12monthsStartDate,
-        until: thisMonthStartDate,
-      );
-      return result;
+    if (dbResultAfter != null) {
+      WeightJournalEntry weightAfterInterval = _getWeightJournalEntryFromDbResult(dbResultAfter);
+      weightMaxPerMonth[weightAfterInterval.date] = weightAfterInterval.weight;
     } else {
-      return JournalRepositoryGetWeightMaxResult(from: before12monthsStartDate, until: thisMonthStartDate);
+      weightMaxPerMonth[thisMonthStartDate] = weightMaxPerMonth[weightMaxPerMonth.keys.max]!;
     }
+
+    return JournalRepositoryGetWeightMaxResult(groupMaxWeights: weightMaxPerMonth, from: before12monthsStartDate, until: thisMonthStartDate);
   }
 
   Future<Map<int, bool>> getEatsJournalEntriesAvailableForLast8Days({required DateTime today}) async {
@@ -683,14 +634,11 @@ class JournalRepository {
     return result;
   }
 
-  Map<DateTime, double> _getWeightMax({required List<Map<String, Object?>> dbResult}) {
-    Map<DateTime, double> result = {};
+  void _addWeightMaxToMap({required Map<DateTime, double> dateWeightMap, required List<Map<String, Object?>> dbResult}) {
     for (Map<String, Object?> row in dbResult) {
-      result[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
+      dateWeightMap[ConvertValidate.dateformatterDatabaseDateOnly.parseUtc(row[OpenEatsJournalStrings.dbResultGroupColumn] as String)] =
           row[OpenEatsJournalStrings.dbResultWeightMax] as double;
     }
-
-    return result;
   }
 
   Future<void> copyEatsJournalEntries({required List<EatsJournalEntry> eatsJournalEntries, required DateTime toDate, required int toMeal}) async {

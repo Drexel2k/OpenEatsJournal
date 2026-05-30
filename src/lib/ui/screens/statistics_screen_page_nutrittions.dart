@@ -8,7 +8,7 @@ import "package:openeatsjournal/domain/utils/week_of_year.dart";
 import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums_result.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
-import "package:openeatsjournal/ui/widgets/linechart.dart";
+import "package:openeatsjournal/ui/widgets/bar_linechart.dart";
 import "package:provider/provider.dart";
 
 class StatisticsScreenPageNutritions extends StatelessWidget {
@@ -22,7 +22,6 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-    final String statisticVar = _getStatisticVar(statistic: _statistic);
     final double chartsWidth = MediaQuery.sizeOf(context).width * 0.96;
 
     return Column(
@@ -40,29 +39,42 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
               DateTime currentDate;
               Map<DateTime, String> xAxisInfo = {};
 
-              if (snapshot.data!.groupNutritionSums != null) {
-                for (int dayIndex = 0; dayIndex <= 31; dayIndex++) {
-                  currentDate = snapshot.data!.from!.add(Duration(days: dayIndex));
-                  if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentDate)) {
-                    //don't put in empty days, as the line in the chart will drop to 0 then
-                    dayData.add({
-                      OpenEatsJournalStrings.chartDateInformation: currentDate,
-                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentDate, convert: convert),
-                    });
-                  }
-
-                  xAxisInfo[currentDate] = dateFormatter.format(currentDate);
+              for (int dayIndex = 0; dayIndex <= 31; dayIndex++) {
+                currentDate = snapshot.data!.from.add(Duration(days: dayIndex));
+                if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentDate)) {
+                  dayData.add({
+                    OpenEatsJournalStrings.chartDateInformation: currentDate,
+                    OpenEatsJournalStrings.chartDataIs: _getNutritionIntake(
+                      statistic: _statistic,
+                      snapshot: snapshot,
+                      currentDate: currentDate,
+                      convert: convert,
+                    ),
+                    OpenEatsJournalStrings.chartDataTarget: _getNutritionTarget(
+                      statistic: _statistic,
+                      snapshot: snapshot,
+                      currentDate: currentDate,
+                      convert: convert,
+                    ),
+                    OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentDate]!.entryCount,
+                  });
+                } else {
+                  dayData.add({
+                    OpenEatsJournalStrings.chartDateInformation: currentDate,
+                    OpenEatsJournalStrings.chartDataIs: null,
+                    OpenEatsJournalStrings.chartDataTarget: null,
+                  });
                 }
+
+                xAxisInfo[currentDate] = dateFormatter.format(currentDate);
               }
 
-              return Linechart(
-                dataVar: statisticVar,
+              return BarLinechart(
                 data: dayData,
-                displayFrom: snapshot.data!.from!,
-                displayUntil: snapshot.data!.until!,
+                scaleMinValue: snapshot.data!.from.subtract(Duration(hours: 8)),
+                scaleMaxValue: snapshot.data!.until.add(Duration(hours: 8)),
                 xAxisInfo: xAxisInfo,
-                yAxisStartAtZero: true,
-                statisticsType: StatisticInterval.daily,
+                statisticInterval: StatisticInterval.daily,
                 width: chartsWidth,
               );
             } else {
@@ -83,31 +95,44 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
               DateTime currentWeekStartDate;
               Map<DateTime, String> xAxisInfo = {};
 
-              if (snapshot.data!.groupNutritionSums != null) {
-                for (int weekIndex = 0; weekIndex <= 14; weekIndex++) {
-                  currentWeekStartDate = snapshot.data!.from!.add(Duration(days: weekIndex * 7));
-                  WeekOfYear currentWeekOfYear = ConvertValidate.getweekOfYear(currentWeekStartDate);
+              for (int weekIndex = 0; weekIndex <= 14; weekIndex++) {
+                currentWeekStartDate = snapshot.data!.from.add(Duration(days: weekIndex * 7));
+                WeekOfYear currentWeekOfYear = ConvertValidate.getweekOfYear(currentWeekStartDate);
 
-                  //don't put in empty weeks, as the line in the chart will drop to 0 then
-                  if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
-                    weekData.add({
-                      OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
-                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentWeekStartDate, convert: convert),
-                    });
-                  }
-
-                  xAxisInfo[currentWeekStartDate] = ("${currentWeekOfYear.week}/${currentWeekOfYear.year}");
+                if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
+                  weekData.add({
+                    OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
+                    OpenEatsJournalStrings.chartDataIs: _getNutritionIntake(
+                      statistic: _statistic,
+                      snapshot: snapshot,
+                      currentDate: currentWeekStartDate,
+                      convert: convert,
+                    ),
+                    OpenEatsJournalStrings.chartDataTarget: _getNutritionTarget(
+                      statistic: _statistic,
+                      snapshot: snapshot,
+                      currentDate: currentWeekStartDate,
+                      convert: convert,
+                    ),
+                    OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentWeekStartDate]!.entryCount,
+                  });
+                } else {
+                  weekData.add({
+                    OpenEatsJournalStrings.chartDateInformation: currentWeekStartDate,
+                    OpenEatsJournalStrings.chartDataIs: null,
+                    OpenEatsJournalStrings.chartDataTarget: null,
+                  });
                 }
+
+                xAxisInfo[currentWeekStartDate] = ("${currentWeekOfYear.week}/${currentWeekOfYear.year}");
               }
 
-              return Linechart(
-                dataVar: statisticVar,
+              return BarLinechart(
                 data: weekData,
-                displayFrom: snapshot.data!.from!,
-                displayUntil: snapshot.data!.until!,
+                scaleMinValue: snapshot.data!.from.subtract(Duration(hours: 80)),
+                scaleMaxValue: snapshot.data!.until.add(Duration(hours: 80)),
                 xAxisInfo: xAxisInfo,
-                yAxisStartAtZero: true,
-                statisticsType: StatisticInterval.weekly,
+                statisticInterval: StatisticInterval.daily,
                 width: chartsWidth,
               );
             } else {
@@ -131,36 +156,49 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
               DateTime currentMonthStartDate;
               Map<DateTime, String> xAxisInfo = {};
 
-              if (snapshot.data!.groupNutritionSums != null) {
-                for (int monthIndex = 0; monthIndex <= 12; monthIndex++) {
-                  currentMonthStartDate = DateTime.utc(currentYear, currentMonth, 1);
+              for (int monthIndex = 0; monthIndex <= 12; monthIndex++) {
+                currentMonthStartDate = DateTime.utc(currentYear, currentMonth, 1);
 
-                  //don't put in empty months, as the line in the chart will drop to 0 then
-                  if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
-                    monthData.add({
-                      OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
-                      statisticVar: _getStatisticData(statistic: _statistic, snapshot: snapshot, currentDate: currentMonthStartDate, convert: convert),
-                    });
-                  }
+                if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentMonthStartDate)) {
+                  monthData.add({
+                    OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
+                    OpenEatsJournalStrings.chartDataIs: _getNutritionIntake(
+                      statistic: _statistic,
+                      snapshot: snapshot,
+                      currentDate: currentMonthStartDate,
+                      convert: convert,
+                    ),
+                    OpenEatsJournalStrings.chartDataTarget: _getNutritionTarget(
+                      statistic: _statistic,
+                      snapshot: snapshot,
+                      currentDate: currentMonthStartDate,
+                      convert: convert,
+                    ),
+                    OpenEatsJournalStrings.chartEntryCount: snapshot.data!.groupNutritionSums![currentMonthStartDate]!.entryCount,
+                  });
+                } else {
+                  monthData.add({
+                    OpenEatsJournalStrings.chartDateInformation: currentMonthStartDate,
+                    OpenEatsJournalStrings.chartDataIs: null,
+                    OpenEatsJournalStrings.chartDataTarget: null,
+                  });
+                }
 
-                  xAxisInfo[currentMonthStartDate] = ("$currentMonth/$currentYear");
+                xAxisInfo[currentMonthStartDate] = ("$currentMonth/$currentYear");
 
-                  currentMonth = currentMonth + 1;
-                  if (currentMonth > 12) {
-                    currentMonth = 1;
-                    currentYear = currentYear + 1;
-                  }
+                currentMonth = currentMonth + 1;
+                if (currentMonth > 12) {
+                  currentMonth = 1;
+                  currentYear = currentYear + 1;
                 }
               }
 
-              return Linechart(
-                dataVar: statisticVar,
+              return BarLinechart(
                 data: monthData,
-                displayFrom: snapshot.data!.from!,
-                displayUntil: snapshot.data!.until!,
+                scaleMinValue: snapshot.data!.from.subtract(Duration(hours: 300)),
+                scaleMaxValue: snapshot.data!.until.add(Duration(hours: 300)),
                 xAxisInfo: xAxisInfo,
-                yAxisStartAtZero: true,
-                statisticsType: StatisticInterval.monthly,
+                statisticInterval: StatisticInterval.daily,
                 width: chartsWidth,
               );
             } else {
@@ -174,7 +212,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
     );
   }
 
-  double? _getStatisticData({
+  double? _getNutritionIntake({
     required StatisticType statistic,
     required DateTime currentDate,
     required AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot,
@@ -219,29 +257,46 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
     throw StateError("Unknown statistic type.");
   }
 
-  String _getStatisticVar({required StatisticType statistic}) {
+  double? _getNutritionTarget({
+    required StatisticType statistic,
+    required DateTime currentDate,
+    required AsyncSnapshot<JournalRepositoryGetNutritionSumsResult> snapshot,
+    required ConvertValidate convert,
+  }) {
     if (statistic == StatisticType.fat) {
-      return OpenEatsJournalStrings.chartfat;
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat != null
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.fat!)
+          : 0;
     }
 
     if (statistic == StatisticType.stauratedFat) {
-      return OpenEatsJournalStrings.chartSaturatedFat;
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat != null
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.saturatedFat!)
+          : 0;
     }
 
     if (statistic == StatisticType.carbohydrates) {
-      return OpenEatsJournalStrings.chartCarbohydrates;
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates != null
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.carbohydrates!)
+          : 0;
     }
 
     if (statistic == StatisticType.sugar) {
-      return OpenEatsJournalStrings.chartSugar;
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar != null
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.sugar!)
+          : 0;
     }
 
     if (statistic == StatisticType.protein) {
-      return OpenEatsJournalStrings.chartProtein;
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein != null
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.protein!)
+          : 0;
     }
 
     if (statistic == StatisticType.salt) {
-      return OpenEatsJournalStrings.chartSalt;
+      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt != null
+          ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.salt!)
+          : 0;
     }
 
     throw StateError("Unknown statistic type.");

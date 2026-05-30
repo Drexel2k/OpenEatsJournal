@@ -6,37 +6,28 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:provider/provider.dart";
 
-//Values and bars on the corner cases are cut off, due to limitation on setting marginMin and marginMax on a TimeScale when min and max values are set.
-//See issue https://github.com/entronad/graphic/issues/358
 class Linechart extends StatelessWidget {
   const Linechart({
     super.key,
-    required String dataVar,
     required List<Tuple> data,
-    required DateTime displayFrom,
-    required DateTime displayUntil,
+    required DateTime scaleMinValue,
+    required DateTime scaleMaxValue,
     required Map<DateTime, String> xAxisInfo,
-    required bool yAxisStartAtZero,
-    required StatisticInterval statisticsType,
+    required StatisticInterval statisticInterval,
     required double width,
   }) : _data = data,
-       _dataVar = dataVar,
-       _displayFrom = displayFrom,
-       _displayUntil = displayUntil,
+       _scaleMinValue = scaleMinValue,
+       _scaleMaxValue = scaleMaxValue,
        _xAxisInfo = xAxisInfo,
-       _statisticsType = statisticsType,
-       _yAxisStartAtZero = yAxisStartAtZero,
-       _chartVar = "$dataVar${OpenEatsJournalStrings.chartDateVar}",
+       _statisticInterval = statisticInterval,
        _width = width;
 
   final List<Tuple> _data;
-  final String _dataVar;
-  final DateTime _displayFrom;
-  final DateTime _displayUntil;
+  //with adjusted scaleMin/MaxValues a margin can be created
+  final DateTime _scaleMinValue;
+  final DateTime _scaleMaxValue;
   final Map<DateTime, String> _xAxisInfo;
-  final bool _yAxisStartAtZero;
-  final StatisticInterval _statisticsType;
-  final String _chartVar;
+  final StatisticInterval _statisticInterval;
   final double _width;
 
   @override
@@ -46,36 +37,36 @@ class Linechart extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     double? minValue = _data.reduce((currentEntry, nextEntry) {
-      if (currentEntry[_dataVar] == null) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] == null) {
         return nextEntry;
       }
 
-      if (nextEntry[_dataVar] == null) {
+      if (nextEntry[OpenEatsJournalStrings.chartDataIs] == null) {
         return currentEntry;
       }
 
-      if (currentEntry[_dataVar] < nextEntry[_dataVar]) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] < nextEntry[OpenEatsJournalStrings.chartDataIs]) {
         return currentEntry;
       } else {
         return nextEntry;
       }
-    })[_dataVar];
+    })[OpenEatsJournalStrings.chartDataIs];
 
     double? maxValue = _data.reduce((currentEntry, nextEntry) {
-      if (currentEntry[_dataVar] == null) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] == null) {
         return nextEntry;
       }
 
-      if (nextEntry[_dataVar] == null) {
+      if (nextEntry[OpenEatsJournalStrings.chartDataIs] == null) {
         return currentEntry;
       }
 
-      if (currentEntry[_dataVar] > nextEntry[_dataVar]) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] > nextEntry[OpenEatsJournalStrings.chartDataIs]) {
         return currentEntry;
       } else {
         return nextEntry;
       }
-    })[_dataVar];
+    })[OpenEatsJournalStrings.chartDataIs];
 
     minValue ??= 0;
     maxValue ??= 0;
@@ -83,40 +74,29 @@ class Linechart extends StatelessWidget {
     int yAxisScaleMinValue = 0;
     int yAxisScaleMaxValue = 0;
 
-    if (_yAxisStartAtZero) {
-      yAxisScaleMaxValue = (maxValue * 1.3).toInt();
-      if (maxValue >= 100000) {
-        yAxisScaleMaxValue = (maxValue * 1.5).toInt();
-      } else if (maxValue >= 50000) {
-        yAxisScaleMaxValue = (maxValue * 1.4).toInt();
-      } else if (maxValue >= 10000) {
-        yAxisScaleMaxValue = (maxValue * 1.35).toInt();
-      } else if (maxValue >= 5000) {
-        yAxisScaleMaxValue = (maxValue * 1.5).toInt();
-      }
-    } else {
-      yAxisScaleMinValue = minValue.toInt() - 5;
-      yAxisScaleMaxValue = maxValue.toInt() + 5;
-    }
+    yAxisScaleMinValue = minValue.toInt() - 5;
+    yAxisScaleMaxValue = maxValue.toInt() + 5;
 
     double xAxisLabelXOffset = 12;
     double xAxisLabelYOffset = 15;
-    if (_statisticsType == StatisticInterval.weekly) {
+    if (_statisticInterval == StatisticInterval.weekly) {
       xAxisLabelXOffset = 14;
       xAxisLabelYOffset = 18;
-    } else if (_statisticsType == StatisticInterval.monthly) {
+    } else if (_statisticInterval == StatisticInterval.monthly) {
       xAxisLabelXOffset = 12;
       xAxisLabelYOffset = 18;
     }
 
     String timeInfo = AppLocalizations.of(context)!.days;
-    if (_statisticsType == StatisticInterval.weekly) {
+    if (_statisticInterval == StatisticInterval.weekly) {
       timeInfo = AppLocalizations.of(context)!.weeks;
-    } else if (_statisticsType == StatisticInterval.monthly) {
+    } else if (_statisticInterval == StatisticInterval.monthly) {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
     final String header = AppLocalizations.of(context)!.last_amount_timeinfo(_xAxisInfo.length - 1, timeInfo);
+
+    final double fontSize = 12;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,39 +112,35 @@ class Linechart extends StatelessWidget {
               OpenEatsJournalStrings.chartDateVar: Variable(
                 accessor: (Map<dynamic, dynamic> map) => map[OpenEatsJournalStrings.chartDateInformation] as DateTime,
                 scale: TimeScale(
-                  min: _displayFrom,
-                  max: _displayUntil,
+                  min: _scaleMinValue,
+                  max: _scaleMaxValue,
                   ticks: _xAxisInfo.keys.toList(),
                   formatter: (DateTime date) {
                     return _xAxisInfo[date];
                   },
                 ),
               ),
-              _chartVar: Variable(
-                accessor: (Map<dynamic, dynamic> map) => map[_dataVar] != null ? map[_dataVar] as num : 0,
+              OpenEatsJournalStrings.chartDataIsVar: Variable(
+                accessor: (Map<dynamic, dynamic> map) => map[OpenEatsJournalStrings.chartDataIs] != null ? map[OpenEatsJournalStrings.chartDataIs] as num : 0,
                 scale: LinearScale(min: yAxisScaleMinValue, max: yAxisScaleMaxValue),
               ),
             },
             marks: [
               LineMark(
-                position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(_chartVar),
+                position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(OpenEatsJournalStrings.chartDataIsVar),
                 size: SizeEncode(value: 1.5),
                 color: ColorEncode(value: colorScheme.tertiary),
                 shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                 label: LabelEncode(
                   encoder: (Map<dynamic, dynamic> map) {
-                    if (map[OpenEatsJournalStrings.chartDateVar] != _displayUntil) {
-                      return Label(
-                        convert.getCleanDoubleString1DecimalDigit(doubleValue: map[_chartVar]),
-                        LabelStyle(
-                          textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
-                          offset: Offset(6, -15),
-                          rotation: 4.72,
-                        ),
-                      );
-                    }
-
-                    return Label(OpenEatsJournalStrings.emptyString);
+                    return Label(
+                      convert.getCleanDoubleString1DecimalDigit(doubleValue: map[OpenEatsJournalStrings.chartDataIsVar]),
+                      LabelStyle(
+                        textStyle: TextStyle(fontSize: fontSize, color: const Color(0xff808080)),
+                        offset: Offset(6, -15),
+                        rotation: 4.72,
+                      ),
+                    );
                   },
                 ),
               ),
@@ -174,7 +150,7 @@ class Linechart extends StatelessWidget {
                 dim: Dim.x,
                 line: PaintStyle(strokeColor: Color(0xffe8e8e8), strokeWidth: 1),
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
+                  textStyle: TextStyle(fontSize: fontSize, color: colorScheme.secondary),
                   offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
                   rotation: 1,
                 ),
@@ -182,7 +158,7 @@ class Linechart extends StatelessWidget {
               AxisGuide(
                 dim: Dim.y,
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
+                  textStyle: TextStyle(fontSize: fontSize, color: colorScheme.secondary),
                   offset: const Offset(-7.5, 0),
                 ),
                 grid: PaintStyle(strokeColor: colorScheme.surfaceDim, strokeWidth: 1),

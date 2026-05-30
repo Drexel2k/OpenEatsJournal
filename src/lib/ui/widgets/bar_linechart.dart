@@ -6,25 +6,28 @@ import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/statistic_interval.dart";
 import "package:provider/provider.dart";
 
-//Values and bars on the corner cases are cut off, due to limitation on setting marginMin and marginMax on a TimeScale when min and max values are set.
-//We could work with a linear scale here, but the placement of xAxis values is different than on the line charts, that looks also strange, especially
-//on switching charts.
-//See issue https://github.com/entronad/graphic/issues/358
 class BarLinechart extends StatelessWidget {
   const BarLinechart({
     super.key,
     required List<Tuple> data,
+    required DateTime scaleMinValue,
+    required DateTime scaleMaxValue,
     required Map<DateTime, String> xAxisInfo,
-    required StatisticInterval statisticsType,
+    required StatisticInterval statisticInterval,
     required double width,
   }) : _data = data,
+       _scaleMinValue = scaleMinValue,
+       _scaleMaxValue = scaleMaxValue,
        _xAxisInfo = xAxisInfo,
-       _statisticsType = statisticsType,
+       _statisticInterval = statisticInterval,
        _width = width;
 
   final List<Tuple> _data;
+  //with adjusted scaleMin/MaxValues a margin can be created
+  final DateTime _scaleMinValue;
+  final DateTime _scaleMaxValue;
   final Map<DateTime, String> _xAxisInfo;
-  final StatisticInterval _statisticsType;
+  final StatisticInterval _statisticInterval;
   final double _width;
 
   @override
@@ -33,122 +36,98 @@ class BarLinechart extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final double barSize = _statisticsType == StatisticInterval.daily ? 4 : 18;
+    final double barSize = _statisticInterval == StatisticInterval.daily ? 4 : 18;
 
-    int? maxkCalIntake = _data.reduce((currentEntry, nextEntry) {
-      if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
+    num? maxNutritionIntake = _data.reduce((currentEntry, nextEntry) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] == null) {
         return nextEntry;
       }
 
-      if (nextEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
+      if (nextEntry[OpenEatsJournalStrings.chartDataIs] == null) {
         return currentEntry;
       }
 
-      if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] > nextEntry[OpenEatsJournalStrings.chartKCalIntake]) {
-        return currentEntry;
-      } else {
-        return nextEntry;
-      }
-    })[OpenEatsJournalStrings.chartKCalIntake];
-
-    int? maxkCalTarget = _data.reduce((currentEntry, nextEntry) {
-      if (currentEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
-        return nextEntry;
-      }
-
-      if (nextEntry[OpenEatsJournalStrings.chartKCalIntake] == null) {
-        return currentEntry;
-      }
-
-      if (currentEntry[OpenEatsJournalStrings.chartKCalTarget] > nextEntry[OpenEatsJournalStrings.chartKCalTarget]) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] > nextEntry[OpenEatsJournalStrings.chartDataIs]) {
         return currentEntry;
       } else {
         return nextEntry;
       }
-    })[OpenEatsJournalStrings.chartKCalTarget];
+    })[OpenEatsJournalStrings.chartDataIs];
 
-    int maxValue = 0;
-    if (maxkCalIntake != null) {
-      maxValue = maxkCalIntake;
+    num? maxNutritionTarget = _data.reduce((currentEntry, nextEntry) {
+      if (currentEntry[OpenEatsJournalStrings.chartDataIs] == null) {
+        return nextEntry;
+      }
+
+      if (nextEntry[OpenEatsJournalStrings.chartDataIs] == null) {
+        return currentEntry;
+      }
+
+      if (currentEntry[OpenEatsJournalStrings.chartDataTarget] > nextEntry[OpenEatsJournalStrings.chartDataTarget]) {
+        return currentEntry;
+      } else {
+        return nextEntry;
+      }
+    })[OpenEatsJournalStrings.chartDataTarget];
+
+    num maxValue = 0;
+    if (maxNutritionIntake != null) {
+      maxValue = maxNutritionIntake;
     }
 
-    if (maxkCalTarget != null) {
-      if (maxkCalTarget > maxValue) {
-        maxValue = maxkCalTarget;
+    if (maxNutritionTarget != null) {
+      if (maxNutritionTarget > maxValue) {
+        maxValue = maxNutritionTarget;
       }
     }
 
     //offset for point values
-    double markOffset = -15;
-    int yAxisScaleMaxValue = (maxValue * 1.3).toInt();
+    double markOffset = -20;
+    int yAxisScaleMaxValue = (maxValue * 1.4).toInt();
     if (maxValue >= 100000) {
-      markOffset = -20;
-      yAxisScaleMaxValue = (maxValue * 1.5).toInt();
+      markOffset = -23;
+      yAxisScaleMaxValue = (maxValue * 1.55).toInt();
     } else if (maxValue >= 50000) {
-      markOffset = -18;
-      yAxisScaleMaxValue = (maxValue * 1.4).toInt();
+      markOffset = -20;
+      yAxisScaleMaxValue = (maxValue * 1.45).toInt();
     } else if (maxValue >= 10000) {
-      markOffset = -18;
-      yAxisScaleMaxValue = (maxValue * 1.35).toInt();
+      markOffset = -20;
+      yAxisScaleMaxValue = (maxValue * 1.45).toInt();
     } else if (maxValue >= 5000) {
-      markOffset = -15;
+      markOffset = -18;
       yAxisScaleMaxValue = (maxValue * 1.5).toInt();
     }
 
     double xAxisLabelXOffset = 12;
     double xAxisLabelYOffset = 15;
-    if (_statisticsType == StatisticInterval.weekly) {
+    if (_statisticInterval == StatisticInterval.weekly) {
       xAxisLabelXOffset = 14;
       xAxisLabelYOffset = 18;
-    } else if (_statisticsType == StatisticInterval.monthly) {
+    } else if (_statisticInterval == StatisticInterval.monthly) {
       xAxisLabelXOffset = 12;
       xAxisLabelYOffset = 18;
     }
 
     final List entriesWithValues = _data.where((item) {
-      return item[OpenEatsJournalStrings.chartKCalIntake] != null;
+      return item[OpenEatsJournalStrings.chartDataIs] != null;
     }).toList();
-    final num totalkCalIntake = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartKCalIntake]);
+    final num totalNutritionIntake = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartDataIs]);
     final num totalEntryCount = entriesWithValues.fold(0, (sum, item) => sum + item[OpenEatsJournalStrings.chartEntryCount]);
     int average = 0;
     if (entriesWithValues.isNotEmpty) {
-      average = (totalkCalIntake / totalEntryCount).toInt();
+      average = (totalNutritionIntake / totalEntryCount).toInt();
     }
 
-    final DateTime displayFrom =
-        _data.reduce((currentEntry, nextEntry) {
-              if ((currentEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime).compareTo(
-                    nextEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime,
-                  ) <
-                  1) {
-                return currentEntry;
-              } else {
-                return nextEntry;
-              }
-            })[OpenEatsJournalStrings.chartDateInformation]!
-            as DateTime;
-
-    final DateTime displayUntil =
-        _data.reduce((currentEntry, nextEntry) {
-              if ((currentEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime).compareTo(
-                    nextEntry[OpenEatsJournalStrings.chartDateInformation] as DateTime,
-                  ) >
-                  1) {
-                return currentEntry;
-              } else {
-                return nextEntry;
-              }
-            })[OpenEatsJournalStrings.chartDateInformation]!
-            as DateTime;
-
     String timeInfo = AppLocalizations.of(context)!.days;
-    if (_statisticsType == StatisticInterval.weekly) {
+    if (_statisticInterval == StatisticInterval.weekly) {
       timeInfo = AppLocalizations.of(context)!.weeks;
-    } else if (_statisticsType == StatisticInterval.monthly) {
+    } else if (_statisticInterval == StatisticInterval.monthly) {
       timeInfo = AppLocalizations.of(context)!.months;
     }
 
     final String header = AppLocalizations.of(context)!.last_amount_timeinfo(_data.length - 1, timeInfo);
+
+    final double fontSize = 12;
 
     return Column(
       children: [
@@ -169,17 +148,16 @@ class BarLinechart extends StatelessWidget {
               OpenEatsJournalStrings.chartDateVar: Variable(
                 accessor: (Map<dynamic, dynamic> map) => map[OpenEatsJournalStrings.chartDateInformation] as DateTime,
                 scale: TimeScale(
-                  min: displayFrom,
-                  max: displayUntil,
+                  min: _scaleMinValue,
+                  max: _scaleMaxValue,
                   ticks: _xAxisInfo.keys.toList(),
                   formatter: (DateTime date) {
                     return _xAxisInfo[date];
                   },
                 ),
               ),
-              OpenEatsJournalStrings.chartKCalIntakeVar: Variable(
-                accessor: (Map<dynamic, dynamic> map) =>
-                    map[OpenEatsJournalStrings.chartKCalIntake] != null ? map[OpenEatsJournalStrings.chartKCalIntake] as num : 0,
+              OpenEatsJournalStrings.chartDataIsVar: Variable(
+                accessor: (Map<dynamic, dynamic> map) => map[OpenEatsJournalStrings.chartDataIs] != null ? map[OpenEatsJournalStrings.chartDataIs] as num : 0,
                 scale: LinearScale(
                   min: 0,
                   max: yAxisScaleMaxValue,
@@ -188,9 +166,9 @@ class BarLinechart extends StatelessWidget {
                   //ticks: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
                 ),
               ),
-              OpenEatsJournalStrings.chartKCalTargetVar: Variable(
+              OpenEatsJournalStrings.chartDataTargetVar: Variable(
                 accessor: (Map<dynamic, dynamic> map) =>
-                    map[OpenEatsJournalStrings.chartKCalTarget] != null ? map[OpenEatsJournalStrings.chartKCalTarget] as num : 0,
+                    map[OpenEatsJournalStrings.chartDataTarget] != null ? map[OpenEatsJournalStrings.chartDataTarget] as num : 0,
                 scale: LinearScale(min: 0, max: yAxisScaleMaxValue),
               ),
             },
@@ -199,11 +177,13 @@ class BarLinechart extends StatelessWidget {
                 size: SizeEncode(value: barSize),
                 label: LabelEncode(
                   encoder: (Map<dynamic, dynamic> map) => Label(
-                    map[OpenEatsJournalStrings.chartKCalIntakeVar] > 0
-                        ? convert.numberFomatterInt.format(map[OpenEatsJournalStrings.chartKCalIntakeVar])
+                    map[OpenEatsJournalStrings.chartDataIsVar] > 0
+                        ? (map[OpenEatsJournalStrings.chartDataIsVar] is int
+                              ? convert.numberFomatterInt.format(map[OpenEatsJournalStrings.chartDataIsVar])
+                              : convert.getCleanDoubleString1DecimalDigit(doubleValue: map[OpenEatsJournalStrings.chartDataIsVar]))
                         : OpenEatsJournalStrings.emptyString,
                     LabelStyle(
-                      textStyle: TextStyle(fontSize: 10, color: const Color(0xff808080)),
+                      textStyle: TextStyle(fontSize: fontSize, color: const Color(0xff808080)),
                       offset: Offset(6, markOffset),
                       rotation: 4.72,
                     ),
@@ -212,7 +192,7 @@ class BarLinechart extends StatelessWidget {
                 color: ColorEncode(value: colorScheme.primary),
               ),
               LineMark(
-                position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(OpenEatsJournalStrings.chartKCalTargetVar),
+                position: Varset(OpenEatsJournalStrings.chartDateVar) * Varset(OpenEatsJournalStrings.chartDataTargetVar),
                 size: SizeEncode(value: 1.5),
                 color: ColorEncode(value: colorScheme.tertiary),
               ),
@@ -222,7 +202,7 @@ class BarLinechart extends StatelessWidget {
                 dim: Dim.x,
                 line: PaintStyle(strokeColor: Color(0xffe8e8e8), strokeWidth: 1),
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
+                  textStyle: TextStyle(fontSize: fontSize, color: colorScheme.secondary),
                   offset: Offset(xAxisLabelXOffset, xAxisLabelYOffset),
                   rotation: 1,
                 ),
@@ -230,7 +210,7 @@ class BarLinechart extends StatelessWidget {
               AxisGuide(
                 dim: Dim.y,
                 label: LabelStyle(
-                  textStyle: TextStyle(fontSize: 10, color: colorScheme.secondary),
+                  textStyle: TextStyle(fontSize: fontSize, color: colorScheme.secondary),
                   offset: const Offset(-7.5, 0),
                 ),
                 grid: PaintStyle(strokeColor: colorScheme.surfaceDim, strokeWidth: 1),

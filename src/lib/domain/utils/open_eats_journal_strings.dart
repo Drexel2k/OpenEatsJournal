@@ -36,22 +36,13 @@ class OpenEatsJournalStrings {
   static const String csvComments = "---comments---";
   static const String csvData = "---data---";
 
-  static const String chartKCalIntake = "kCalIntake";
-  static const String chartKCalIntakeVar = "kCalIntakeVar";
-  static const String chartKCalTarget = "kCalTarget";
-  static const String chartKCalTargetVar = "kCalTargetVar";
+  static const String chartDataIs = "dataIs";
+  static const String chartDataIsVar = "dataIsVar";
+  static const String chartDataTarget = "dataTarget";
+  static const String chartDataTargetVar = "dataTargetVar";
   static const String chartDateInformation = "dateInformation";
   static const String chartDateVar = "dateVar";
-  static const String chartDateLabelVar = "dateLabelVar";
   static const String chartEntryCount = "entryCount";
-  static const String chartWeight = "weight";
-  static const String chartfat = "fat";
-  static const String chartSaturatedFat = "saturatedFat";
-  static const String chartCarbohydrates = "carbohydrates";
-  static const String chartSugar = "sugar";
-  static const String chartProtein = "protein";
-  static const String chartSalt = "salz";
-  static const String chartVar = "Var";
 
   static const String settingDarkmode = "darkmode";
   static const String settingGender = "gender";
@@ -73,8 +64,6 @@ class OpenEatsJournalStrings {
   static const String settingHeightUnit = "height_unit";
   static const String settingWeightUnit = "weight_unit";
   static const String settingVolumeUnit = "volume_unit";
-
-  
 
   static const String dbTableSetting = "t_setting";
   static const String dbTableWeightJournal = "t_weight_journal";
