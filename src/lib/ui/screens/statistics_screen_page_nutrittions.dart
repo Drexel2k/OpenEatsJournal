@@ -264,37 +264,37 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
     required ConvertValidate convert,
   }) {
     if (statistic == StatisticType.fat) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.fat != null
+      return snapshot.data!.groupNutritionTargets![currentDate]!.fat != null
           ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.fat!)
           : 0;
     }
 
     if (statistic == StatisticType.stauratedFat) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.saturatedFat != null
+      return snapshot.data!.groupNutritionTargets![currentDate]!.saturatedFat != null
           ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.saturatedFat!)
           : 0;
     }
 
     if (statistic == StatisticType.carbohydrates) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.carbohydrates != null
+      return snapshot.data!.groupNutritionTargets![currentDate]!.carbohydrates != null
           ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.carbohydrates!)
           : 0;
     }
 
     if (statistic == StatisticType.sugar) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.sugar != null
+      return snapshot.data!.groupNutritionTargets![currentDate]!.sugar != null
           ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.sugar!)
           : 0;
     }
 
     if (statistic == StatisticType.protein) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.protein != null
+      return snapshot.data!.groupNutritionTargets![currentDate]!.protein != null
           ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.protein!)
           : 0;
     }
 
     if (statistic == StatisticType.salt) {
-      return snapshot.data!.groupNutritionSums![currentDate]!.nutritions.salt != null
+      return snapshot.data!.groupNutritionTargets![currentDate]!.salt != null
           ? convert.getDisplayWeightG(weightG: snapshot.data!.groupNutritionTargets![currentDate]!.salt!)
           : 0;
     }
