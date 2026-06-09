@@ -882,4 +882,66 @@ void main() async {
       textFieldIndex++;
     }
   });
+
+  testWidgets("Daily calories editor", (tester) async {
+    DateTime today = DateTime.utc(2026, 2, 11);
+    //without runAsync openDatabase will hang.
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
+      return await testSetup(today: today);
+    }))!;
+
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
+    MockOverlayDisplay overlayDisplay = MockOverlayDisplay();
+
+    Widget widget = MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsRepository>.value(value: settingsRepository),
+        Provider<FoodRepository>.value(value: foodRepository),
+        Provider<JournalRepository>.value(value: journalRepository),
+        ChangeNotifierProvider(
+          create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
+        ),
+        Provider<OverlayDisplay>.value(value: overlayDisplay),
+      ],
+      child: OpenEatsJournalApp(),
+    );
+
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.edit));
+    await tester.pumpAndSettle();
+
+    //existing average daily target
+    expect(find.text("2,150kCal"), findsAny);
+
+    FinderResult<Element> textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    OpenEatsJournalTextField openEatsJournalTextField;
+
+    int textFieldIndex = 0;
+
+    textFieldIndex = 0;
+    for (Element textFieldElement in textFields) {
+      openEatsJournalTextField = textFieldElement.widget as OpenEatsJournalTextField;
+
+      //monday target
+      if (textFieldIndex == 3) {
+        await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "2100");
+      }
+
+      textFieldIndex++;
+    }
+
+    await tester.pump();
+
+    //new average daily target
+    expect(find.text("2,164kCal"), findsAny);
+
+    //wait for the debouncer timer to end, otherwise we get a pending timers exception at the end..
+    await tester.pump(const Duration(milliseconds: 550));
+  });
 }

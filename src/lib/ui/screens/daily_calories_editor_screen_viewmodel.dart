@@ -225,17 +225,16 @@ class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
         _energyFriday.value != null &&
         _energySaturday.value != null &&
         _energySunday.value != null) {
-      _energyTargetDaily.value = _convert.getDisplayEnergy(
-        energyKJ:
-            ((_energyMonday.value! +
-                _energyTuesday.value! +
-                _energyWednesday.value! +
-                _energyThursday.value! +
-                _energyFriday.value! +
-                _energySaturday.value! +
-                _energySunday.value!) /
-            7),
-      );
+      _energyTargetDaily.value =
+          ((_energyMonday.value! +
+                      _energyTuesday.value! +
+                      _energyWednesday.value! +
+                      _energyThursday.value! +
+                      _energyFriday.value! +
+                      _energySaturday.value! +
+                      _energySunday.value!) /
+                  7)
+              .round();
     }
   }
 

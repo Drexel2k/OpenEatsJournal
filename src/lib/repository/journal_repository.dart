@@ -178,7 +178,7 @@ class JournalRepository {
     }
   }
 
-  //current day and last month, paramter for testing
+  //current day and last month, parameter for testing
   Future<JournalRepositoryGetNutritionSumsResult> getNutritionDaySumsForLast32Days({required DateTime today}) async {
     DateTime before31days = today.subtract(Duration(days: 31));
 
