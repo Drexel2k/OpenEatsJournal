@@ -272,6 +272,7 @@ class _EatsJournalQuickEntryEditScreenState extends State<EatsJournalQuickEntryE
                         onChanged: (value) {
                           int? intValue = int.tryParse(value);
                           eatsJournalQuickEntryEditScreenViewModel.energy.value = intValue;
+                          
                           if (intValue != null) {
                             _energyController.text = convert.numberFomatterInt.format(intValue);
                           }

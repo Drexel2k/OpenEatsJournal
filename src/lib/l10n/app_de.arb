@@ -53,9 +53,8 @@
   "professional_athlete": "Prof. Sportler",
   "select_gender": "Bitte wähle Dein Geschlecht.",
   "select_birthday": "Bitte wähle Deinen Geburtstag.",
-  "valid_height": "Bitte gib eine gültige Größe ein",
-  "valid_weight": "Bitte gib ein gültiges Gewicht ein",
-  "valid_energy": "Bitte gib eine gültige Energie ein",
+  "valid_height": "Bitte gib eine gültige Größe ein.",
+  "valid_weight": "Bitte gib ein gültiges Gewicht ein.",
   "select_activity_level": "Bitte wähle Dein Aktivitätslevel.",
   "your_weight_target": "Dein Gewicht Ziel:",
   "keep_weight": "Gewicht halten",
@@ -284,5 +283,8 @@
   "sunday_abbreviated_1char": "S",
   "eats_journal_entry_deleted": "Essenstagebucheintrag gelöscht.",
   "eats_journal_entry_to_delete": "Essenstagebucheintrag zum Löschen nicht vorhanden.",
-  "eats_journal_entry_duplicated": "Essenstagebucheintrag dupliziert."
+  "eats_journal_entry_duplicated": "Essenstagebucheintrag dupliziert.",
+  "edit_day_energy_target": "Bearbeite Tages {energy_unit} Ziel",
+  "target": "Ziel",
+  "valid_energy_target": "Bitte gib ein gültiges {energy_unit} Ziel ein {valid_range}."
 }

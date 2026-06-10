@@ -69,6 +69,13 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     _eatsJournalDataChanged.notify();
   }
 
+  void refreshEnergyTarget() {
+    //no need to refresh data _dayNutritionDataPerMeal, either the screen was opened with saved day targets then they remain the same in _dayData,
+    //or the screen was opened without saved day targets then the target is requeried in EatsJournalScreen._getKJouleGaugeData e.g., so theoretically this
+    //refresh is only needed when no day targets were saved.
+    _eatsJournalDataChanged.notify();
+  }
+
   void refreshCurrentJournalDateAndMeal() {
     if (_settingsRepository.currentJournalDate.value != _currentJournalDate.value) {
       _currentJournalDate.value = _settingsRepository.currentJournalDate.value;
@@ -77,12 +84,6 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     if (_settingsRepository.currentMeal.value != _currentMeal.value) {
       _currentMeal.value = _settingsRepository.currentMeal.value;
     }
-  }
-
-  void refreshWeightTarget() {
-    //no need to refresh data _dayData, either the screen was opened with saved day targets then they remain the same in _dayData,
-    //or the screen was opened without saved day targets then the target is requeried in EatsJournalScreen._getKJouleGaugeData e.g.
-    _eatsJournalDataChanged.notify();
   }
 
   void notifySettingsChanged() {
@@ -126,6 +127,19 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     return _foodRepository.getNewFood();
   }
 
+  EatsJournalEntry getNewQuickEntry({required DateTime entryDate, required Meal meal}) {
+    return _journalRepository.getNewQuickEntry(
+      entryDate: entryDate,
+      name: OpenEatsJournalStrings.emptyString,
+      kJoule: NutritionCalculator.kJouleForOnekCal,
+      meal: meal,
+    );
+  }
+
+  Future<void> setDayEnergyTarget({required DateTime day, required energyTargetKJoule}) async {
+    await _journalRepository.setDayNutritionTarget(entryDate: day, dayTargetKJoule: energyTargetKJoule);
+  }
+
   @override
   void dispose() {
     _currentJournalDate.dispose();
@@ -135,14 +149,5 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
     _currentWeightChanged.dispose();
 
     super.dispose();
-  }
-
-  EatsJournalEntry getNewQuickEntry({required DateTime entryDate, required Meal meal}) {
-    return _journalRepository.getNewQuickEntry(
-      entryDate: entryDate,
-      name: OpenEatsJournalStrings.emptyString,
-      kJoule: NutritionCalculator.kJouleForOnekCal,
-      meal: meal,
-    );
   }
 }

@@ -4,8 +4,8 @@ import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/debouncer.dart";
 
-class DailyCaloriesEditorScreenViewModel extends ChangeNotifier {
-  DailyCaloriesEditorScreenViewModel({required KJoulePerDay kJoulePerDay, required SettingsRepository settingsRepository, required ConvertValidate convert})
+class DailyEnergyEditorScreenViewModel extends ChangeNotifier {
+  DailyEnergyEditorScreenViewModel({required KJoulePerDay kJoulePerDay, required SettingsRepository settingsRepository, required ConvertValidate convert})
     : _settingsRepository = settingsRepository,
       _convert = convert,
       _energyTargetDaily = ValueNotifier(

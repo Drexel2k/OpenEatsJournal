@@ -2,30 +2,30 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
-import "package:openeatsjournal/ui/screens/weight_journal_entry_add_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:provider/provider.dart";
 
-class WeightJournalEntryAddScreen extends StatefulWidget {
-  const WeightJournalEntryAddScreen({super.key, required DateTime date}) : _date = date;
+class DayEnergyTargetEditorScreen extends StatefulWidget {
+  const DayEnergyTargetEditorScreen({super.key, required DateTime date}) : _date = date;
 
   final DateTime _date;
 
   @override
-  State<WeightJournalEntryAddScreen> createState() => _WeightJournalEntryAddScreenState();
+  State<DayEnergyTargetEditorScreen> createState() => _DayEnergyTargetEditorScreen();
 }
 
-class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScreen> {
-  final TextEditingController _weightController = TextEditingController();
-  final FocusNode _weightFocusNode = FocusNode();
+class _DayEnergyTargetEditorScreen extends State<DayEnergyTargetEditorScreen> {
+  final TextEditingController _energyTargetController = TextEditingController();
+  final FocusNode _energyTargetFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-    final WeightJournalEntryAddScreenViewModel weightJournalEntryAddScreenViewModel = Provider.of<WeightJournalEntryAddScreenViewModel>(context, listen: false);
+    final DayEnergyTargetEditorScreenViewModel dayEnergyTargetEditorScreenViewModel = Provider.of<DayEnergyTargetEditorScreenViewModel>(context, listen: false);
 
-    _weightController.text = convert.getCleanDoubleString1DecimalDigit(doubleValue: weightJournalEntryAddScreenViewModel.lastValidWeightDisplay);
+    _energyTargetController.text = convert.numberFomatterInt.format(dayEnergyTargetEditorScreenViewModel.lastValidEnergyTargetDisplay);
   }
 
   @override
@@ -33,8 +33,8 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Consumer<WeightJournalEntryAddScreenViewModel>(
-      builder: (context, weightJournalEntryAddScreenViewModel, _) => Padding(
+    return Consumer<DayEnergyTargetEditorScreenViewModel>(
+      builder: (context, dayEnergyTargetEditorScreenViewModel, _) => Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -42,24 +42,24 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
             AppBar(
               backgroundColor: Color.fromARGB(0, 0, 0, 0),
               automaticallyImplyLeading: false,
-              title: Text(AppLocalizations.of(context)!.add_weight_journal_entry),
+              title: Text(AppLocalizations.of(context)!.edit_day_energy_target(convert.getLocalizedEnergyUnit(context: context))),
             ),
             Row(
               children: [
                 Expanded(
                   flex: 3,
                   child: Text(
-                    "${AppLocalizations.of(context)!.weight} ${convert.dateFormatterDisplayLongDateOnly.format(widget._date)} (${convert.getLocalizedWeightUnitKgAbbreviated(context: context)})",
+                    "${AppLocalizations.of(context)!.target} ${convert.dateFormatterDisplayLongDateOnly.format(widget._date)} (${convert.getLocalizedEnergyUnitAbbreviated(context: context)})",
                     style: textTheme.titleSmall,
                   ),
                 ),
                 Expanded(
                   flex: 2,
                   child: ValueListenableBuilder(
-                    valueListenable: weightJournalEntryAddScreenViewModel.weightDisplay,
+                    valueListenable: dayEnergyTargetEditorScreenViewModel.energyTargetDisplay,
                     builder: (_, _, _) {
                       return OpenEatsJournalTextField(
-                        controller: _weightController,
+                        controller: _energyTargetController,
                         keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                         inputFormatters: [
                           TextInputFormatter.withFunction((oldValue, newValue) {
@@ -80,20 +80,20 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                             }
                           }),
                         ],
-                        focusNode: _weightFocusNode,
+                        focusNode: _energyTargetFocusNode,
                         onTap: () {
                           //selectAllOnFocus works only when virtual keyboard comes up, changing textfields when keyboard is already on screen has no
                           //effect.
-                          if (!_weightFocusNode.hasFocus) {
-                            _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
+                          if (!_energyTargetFocusNode.hasFocus) {
+                            _energyTargetController.selection = TextSelection(baseOffset: 0, extentOffset: _energyTargetController.text.length);
                           }
                         },
                         onChanged: (value) {
-                          num? doubleValue = convert.numberFomatterDouble1DecimalDigit.tryParse(value);
-                          weightJournalEntryAddScreenViewModel.weightDisplay.value = doubleValue as double?;
+                          int? intValue = int.tryParse(value);
+                          dayEnergyTargetEditorScreenViewModel.energyTargetDisplay.value = intValue;
 
-                          if (doubleValue != null) {
-                            _weightController.text = convert.getCleanDoubleEditString1DecimalDigit(doubleValue: doubleValue, doubleValueString: value);
+                          if (intValue != null) {
+                            _energyTargetController.text = convert.numberFomatterInt.format(intValue);
                           }
                         },
                       );
@@ -103,13 +103,12 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
               ],
             ),
             SizedBox(height: 10),
-            Text(AppLocalizations.of(context)!.weight_impact),
             ValueListenableBuilder(
-              valueListenable: weightJournalEntryAddScreenViewModel.weightValid,
+              valueListenable: dayEnergyTargetEditorScreenViewModel.energyTargetValid,
               builder: (_, _, _) {
-                if (!weightJournalEntryAddScreenViewModel.weightValid.value) {
+                if (!dayEnergyTargetEditorScreenViewModel.energyTargetValid.value) {
                   return Text(
-                    "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, weightJournalEntryAddScreenViewModel.lastValidWeightDisplay)} ${AppLocalizations.of(context)!.valid_weight} (1-${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
+                    "${AppLocalizations.of(context)!.input_invalid_value(convert.getLocalizedEnergyUnit(context: context), convert.numberFomatterInt.format(dayEnergyTargetEditorScreenViewModel.lastValidEnergyTargetDisplay))} ${AppLocalizations.of(context)!.valid_energy_target(convert.getLocalizedEnergyUnit(context: context), "(1-${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayEnergy(energyKJ: ConvertValidate.maxKJoulePerDay).toDouble())})")}",
                     style: textTheme.labelSmall!.copyWith(color: Colors.red),
                   );
                 } else {
@@ -143,8 +142,8 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
 
   @override
   void dispose() {
-    _weightController.dispose();
-    _weightFocusNode.dispose();
+    _energyTargetController.dispose();
+    _energyTargetFocusNode.dispose();
 
     super.dispose();
   }

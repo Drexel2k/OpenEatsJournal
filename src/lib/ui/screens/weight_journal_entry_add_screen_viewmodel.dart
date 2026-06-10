@@ -4,16 +4,16 @@ import "package:openeatsjournal/ui/utils/debouncer.dart";
 
 class WeightJournalEntryAddScreenViewModel extends ChangeNotifier {
   WeightJournalEntryAddScreenViewModel({required double initialWeight, required ConvertValidate convert})
-    : _lastValidWeight = initialWeight,
-      _weight = ValueNotifier(convert.getDisplayWeightKg(weightKg: initialWeight)),
+    : _lastValidWeightKg = initialWeight,
+      _weightDisplay = ValueNotifier(convert.getDisplayWeightKg(weightKg: initialWeight)),
       _convert = convert {
-    _weight.addListener(_weightChangedInternal);
+    _weightDisplay.addListener(_weightChangedInternal);
   }
 
   final ConvertValidate _convert;
 
-  final ValueNotifier<double?> _weight;
-  double _lastValidWeight;
+  final ValueNotifier<double?> _weightDisplay;
+  double _lastValidWeightKg;
   final ValueNotifier<bool> _weightValid = ValueNotifier(true);
 
   final Debouncer _weightDebouncer = Debouncer();
@@ -23,18 +23,18 @@ class WeightJournalEntryAddScreenViewModel extends ChangeNotifier {
     _weightChanged = value;
   }
 
-  ValueNotifier<double?> get weight => _weight;
-  double get lastValidWeightDisplay => _convert.getDisplayWeightKg(weightKg: _lastValidWeight);
-  double get lastValidWeight => _lastValidWeight;
+  ValueNotifier<double?> get weightDisplay => _weightDisplay;
+  double get lastValidWeightDisplay => _convert.getDisplayWeightKg(weightKg: _lastValidWeightKg);
+  double get lastValidWeightKg => _lastValidWeightKg;
   ValueNotifier<bool> get weightValid => _weightValid;
 
   void _weightChangedInternal() {
-    if (_convert.weightValid(displayWeight: _weight.value)) {
+    if (_convert.weightValid(displayWeight: _weightDisplay.value)) {
       _weightValid.value = true;
 
       _weightDebouncer.run(
         callback: () async {
-          _lastValidWeight = _convert.getWeightKg(displayWeight: _weight.value!);
+          _lastValidWeightKg = _convert.getWeightKg(displayWeight: _weightDisplay.value!);
           if (_weightChanged != null) {
             _weightChanged!();
           }
@@ -48,7 +48,7 @@ class WeightJournalEntryAddScreenViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _weight.dispose();
+    _weightDisplay.dispose();
     _weightValid.dispose();
 
     super.dispose();

@@ -53,9 +53,8 @@
   "professional_athlete": "Professional Athlete",
   "select_gender": "Please select your gender.",
   "select_birthday": "Please select your birth day.",
-  "valid_height": "Please enter a valid height",
-  "valid_weight": "Please enter a valid weight",
-  "valid_energy": "Please enter a valid energy",
+  "valid_height": "Please enter a valid height.",
+  "valid_weight": "Please enter a valid weight.",
   "select_activity_level": "Please select your activity level.",
   "your_weight_target": "Your weight target:",
   "keep_weight": "Keep weight",
@@ -284,5 +283,8 @@
   "sunday_abbreviated_1char": "S",
   "eats_journal_entry_deleted": "Eats journal entry deleted.",
   "eats_journal_entry_to_delete": "Eats journal entry to delete doesn't exist.",
-  "eats_journal_entry_duplicated": "Eats journal entry duplicated."
+  "eats_journal_entry_duplicated": "Eats journal entry duplicated.",
+  "edit_day_energy_target": "Edit day {energy_unit} target",
+  "target": "Ziel",
+  "valid_energy_target": "Please enter a valid {energy_unit} target {valid_range}."
 }

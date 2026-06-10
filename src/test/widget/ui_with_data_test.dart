@@ -619,6 +619,8 @@ void main() async {
 
     await tester.tap(find.byIcon(Icons.arrow_back));
     await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.settings));
     await tester.pumpAndSettle();
     await tester.tap(find.text("App"));
@@ -628,6 +630,8 @@ void main() async {
 
     //on home screen again after translation, settings dialog closed
     //continue with unit values in German
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.settings));
     await tester.pumpAndSettle();
     await tester.tap(find.text("App"));
@@ -911,6 +915,8 @@ void main() async {
     await tester.pumpWidget(widget);
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.settings));
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.edit));

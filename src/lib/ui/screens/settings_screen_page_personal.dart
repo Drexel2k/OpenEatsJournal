@@ -6,8 +6,8 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/ui/screens/daily_calories_editor_screen.dart";
-import "package:openeatsjournal/ui/screens/daily_calories_editor_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/daily_energy_editor_screen.dart";
+import "package:openeatsjournal/ui/screens/daily_energy_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -136,8 +136,8 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
                               return Dialog(
                                 insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                                child: ChangeNotifierProvider<DailyCaloriesEditorScreenViewModel>(
-                                  create: (context) => DailyCaloriesEditorScreenViewModel(
+                                child: ChangeNotifierProvider<DailyEnergyEditorScreenViewModel>(
+                                  create: (context) => DailyEnergyEditorScreenViewModel(
                                     kJoulePerDay: KJoulePerDay(
                                       kJouleMonday: widget._settingsScreenViewModel.kJouleMonday,
                                       kJouleTuesday: widget._settingsScreenViewModel.kJouleTuesday,
@@ -150,7 +150,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                     settingsRepository: Provider.of<SettingsRepository>(context, listen: false),
                                     convert: convert,
                                   ),
-                                  child: DailyCaloriesEditorScreen(
+                                  child: DailyEnergyEditorScreen(
                                     dailyKJoule: widget._settingsScreenViewModel.dailyKJoule.value,
                                     originalDailyTargetKJoule: widget._settingsScreenViewModel.dailyTargetKJoule.value,
                                   ),

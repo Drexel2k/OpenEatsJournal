@@ -1123,7 +1123,7 @@ class OpenEatsJournalDatabaseService {
         """, arguments);
   }
 
-  Future<void> insertOnceDayNutritionTarget({required DateTime day, required double dayTargetKJoule}) async {
+  Future<bool> insertOnceDayNutritionTarget({required DateTime day, required double dayTargetKJoule}) async {
     Database db = await database;
 
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
@@ -1144,6 +1144,26 @@ class OpenEatsJournalDatabaseService {
         OpenEatsJournalStrings.dbColumnEntryDate: formattedDate,
         OpenEatsJournalStrings.dbColumnKiloJoule: dayTargetKJoule,
       });
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> setDayNutritionTarget({required DateTime day, required double dayTargetKJoule}) async {
+    bool inserted = await insertOnceDayNutritionTarget(day: day, dayTargetKJoule: dayTargetKJoule);
+
+    //Not inserted means it already exists, so we update it.
+    if (!inserted) {
+      Database db = await database;
+      final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(day);
+      await db.update(
+        OpenEatsJournalStrings.dbTableDailyNutritionTarget,
+        {OpenEatsJournalStrings.dbColumnKiloJoule: dayTargetKJoule},
+        where: "${OpenEatsJournalStrings.dbColumnEntryDate} = ?",
+        whereArgs: [formattedDate],
+      );
     }
   }
 

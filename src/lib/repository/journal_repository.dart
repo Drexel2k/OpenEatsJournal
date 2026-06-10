@@ -26,6 +26,11 @@ class JournalRepository {
     await _oejDatabase.insertOnceDayNutritionTarget(day: entryDate, dayTargetKJoule: dayTargetKJoule);
   }
 
+  Future<void> setDayNutritionTarget({required DateTime entryDate, required double dayTargetKJoule}) async {
+    await _oejDatabase.insertOnceDaDateInfo(date: entryDate);
+    await _oejDatabase.setDayNutritionTarget(day: entryDate, dayTargetKJoule: dayTargetKJoule);
+  }
+
   Future<void> setEatsJournalEntry({required EatsJournalEntry eatsJournalEntry}) async {
     await _oejDatabase.insertOnceDaDateInfo(date: eatsJournalEntry.entryDate);
     int eatsJournalEntryId = await _oejDatabase.setEatsJournalEntry(eatsJournalEntryData: _getEatsJournalEntryData(eatsJournalEntry), id: eatsJournalEntry.id);

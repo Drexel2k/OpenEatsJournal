@@ -10,6 +10,8 @@ import "package:openeatsjournal/repository/food_repository_get_day_data_result.d
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
+import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen.dart";
+import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
@@ -926,42 +928,89 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                           ),
                           Column(
                             children: [
-                              SizedBox(height: 7),
+                              SizedBox(height: 15),
                               Row(
                                 children: [
                                   Expanded(
                                     child: Align(
                                       alignment: Alignment.centerRight,
                                       //settings button
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          double weight = await eatsJournalScreenViewModel.getLastWeightJournalEntry();
-                                          await showDialog<void>(
-                                            useSafeArea: true,
-                                            barrierDismissible: false,
-                                            context: AppGlobal.navigatorKey.currentContext!,
-                                            builder: (BuildContext contextBuilder) {
-                                              return Dialog(
-                                                insetPadding: EdgeInsets.fromLTRB(
-                                                  dialogHorizontalPadding,
-                                                  dialogVerticalPadding,
-                                                  dialogHorizontalPadding,
-                                                  dialogVerticalPadding,
-                                                ),
-                                                child: ChangeNotifierProvider(
-                                                  create: (context) =>
-                                                      SettingsScreenViewModel(settingsRepository: settingsRepository, convert: convert, weight: weight),
-                                                  child: SettingsScreen(),
-                                                ),
+                                      child: PopupMenuButton<String>(
+                                        onSelected: (selected) {},
+                                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                          PopupMenuItem(
+                                            onTap: () async {
+                                              DayEnergyTargetEditorScreenViewModel dayEnergyTargetEditorScreenViewModel = DayEnergyTargetEditorScreenViewModel(
+                                                initialEnergyTargetKJoule: kJouleGaugeData.maxValue.toDouble(),
+                                                convert: convert,
                                               );
-                                            },
-                                          );
 
-                                          eatsJournalScreenViewModel.refreshWeightTarget();
-                                          eatsJournalScreenViewModel.notifySettingsChanged();
-                                        },
-                                        icon: Icon(Icons.settings),
-                                        iconSize: 36,
+                                              if ((await showDialog<bool>(
+                                                useSafeArea: true,
+                                                barrierDismissible: false,
+                                                context: AppGlobal.navigatorKey.currentContext!,
+                                                builder: (BuildContext contextBuilder) {
+                                                  return Dialog(
+                                                    insetPadding: EdgeInsets.fromLTRB(
+                                                      dialogHorizontalPadding,
+                                                      dialogVerticalPadding,
+                                                      dialogHorizontalPadding,
+                                                      dialogVerticalPadding,
+                                                    ),
+                                                    child: ChangeNotifierProvider(
+                                                      create: (context) => dayEnergyTargetEditorScreenViewModel,
+                                                      child: DayEnergyTargetEditorScreen(date: eatsJournalScreenViewModel.currentJournalDate.value),
+                                                    ),
+                                                  );
+                                                },
+                                              ))!) {
+                                                await eatsJournalScreenViewModel.setDayEnergyTarget(
+                                                  day: eatsJournalScreenViewModel.currentJournalDate.value,
+                                                  energyTargetKJoule: dayEnergyTargetEditorScreenViewModel.lastValidEnergyTargetKJoule,
+                                                );
+                                                //does reload stored day targets
+                                                eatsJournalScreenViewModel.refreshNutritionData();
+                                              }
+                                            },
+                                            child: ListTile(
+                                              leading: Icon(Icons.vertical_align_top),
+                                              title: Text(
+                                                AppLocalizations.of(context)!.edit_day_energy_target(convert.getLocalizedEnergyUnit(context: context)),
+                                              ),
+                                            ),
+                                          ),
+                                          PopupMenuItem(
+                                            onTap: () async {
+                                              double weight = await eatsJournalScreenViewModel.getLastWeightJournalEntry();
+                                              await showDialog<void>(
+                                                useSafeArea: true,
+                                                barrierDismissible: false,
+                                                context: AppGlobal.navigatorKey.currentContext!,
+                                                builder: (BuildContext contextBuilder) {
+                                                  return Dialog(
+                                                    insetPadding: EdgeInsets.fromLTRB(
+                                                      dialogHorizontalPadding,
+                                                      dialogVerticalPadding,
+                                                      dialogHorizontalPadding,
+                                                      dialogVerticalPadding,
+                                                    ),
+                                                    child: ChangeNotifierProvider(
+                                                      create: (context) =>
+                                                          SettingsScreenViewModel(settingsRepository: settingsRepository, convert: convert, weight: weight),
+                                                      child: SettingsScreen(),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+
+                                              eatsJournalScreenViewModel.refreshEnergyTarget();
+                                              eatsJournalScreenViewModel.notifySettingsChanged();
+                                            },
+                                            child: ListTile(leading: Icon(Icons.settings), title: Text(AppLocalizations.of(context)!.settings)),
+                                          ),
+                                        ],
+
+                                        child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
                                       ),
                                     ),
                                   ),
@@ -1284,7 +1333,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     ))!) {
       await eatsJournalScreenViewModel.setWeightJournalEntry(
         date: eatsJournalScreenViewModel.currentJournalDate.value,
-        weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
+        weight: weightJournalEntryAddScreenViewModel.lastValidWeightKg,
       );
       return true;
     }

@@ -706,7 +706,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     ))!) {
       await foodSearchScreenViewModel.setWeightJournalEntry(
         date: foodSearchScreenViewModel.currentJournalDate.value,
-        weight: weightJournalEntryAddScreenViewModel.lastValidWeight,
+        weight: weightJournalEntryAddScreenViewModel.lastValidWeightKg,
       );
       return true;
     }
