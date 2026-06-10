@@ -97,7 +97,7 @@ class StatisticsScreenPageNutritions extends StatelessWidget {
 
               for (int weekIndex = 0; weekIndex <= 14; weekIndex++) {
                 currentWeekStartDate = snapshot.data!.from.add(Duration(days: weekIndex * 7));
-                WeekOfYear currentWeekOfYear = ConvertValidate.getweekOfYear(currentWeekStartDate);
+                WeekOfYear currentWeekOfYear = ConvertValidate.getweekOfYear(date: currentWeekStartDate);
 
                 if (snapshot.data!.groupNutritionSums != null && snapshot.data!.groupNutritionSums!.containsKey(currentWeekStartDate)) {
                   weekData.add({

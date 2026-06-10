@@ -110,7 +110,7 @@ class StatisticsScreenPageWeight extends StatelessWidget {
               if (snapshot.data!.groupMaxWeights != null) {
                 for (int weekIndex = 0; weekIndex <= 14; weekIndex++) {
                   currentWeekStartDate = snapshot.data!.from.add(Duration(days: weekIndex * 7));
-                  WeekOfYear currentWeekOfYear = ConvertValidate.getweekOfYear(currentWeekStartDate);
+                  WeekOfYear currentWeekOfYear = ConvertValidate.getweekOfYear(date: currentWeekStartDate);
 
                   if (weekIndex == 0) {
                     DateTime dateBeforeEntry = snapshot.data!.groupMaxWeights!.keys.min;

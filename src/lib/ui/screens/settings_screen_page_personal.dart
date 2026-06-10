@@ -6,8 +6,8 @@ import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/domain/weight_target.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
-import "package:openeatsjournal/ui/screens/daily_energy_editor_screen.dart";
-import "package:openeatsjournal/ui/screens/daily_energy_editor_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/daily_energy_target_editor_screen.dart";
+import "package:openeatsjournal/ui/screens/daily_energy_target_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
@@ -27,10 +27,8 @@ class SettingsScreenPagePersonal extends StatefulWidget {
 class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal> {
   final TextEditingController _birthDayController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
-  final TextEditingController _weightController = TextEditingController();
 
   final FocusNode _heightFocusNode = FocusNode();
-  final FocusNode _weightFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -40,7 +38,6 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     _birthDayController.text = convert.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
 
     _heightController.text = convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
-    _weightController.text = convert.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.weight.value!);
   }
 
   @override
@@ -68,7 +65,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                           Expanded(
                             flex: 8,
                             child: Text(
-                              "${AppLocalizations.of(context)!.daily_target} ${convert.getLocalizedEnergyUnit(context: context)}",
+                              "${AppLocalizations.of(context)!.daily_target} ${convert.getLocalizedEnergyUnit(context: context)}:",
                               style: textTheme.titleSmall,
                             ),
                           ),
@@ -78,7 +75,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                               valueListenable: widget._settingsScreenViewModel.dailyTargetKJoule,
                               builder: (_, _, _) {
                                 return Text(
-                                  convert.numberFomatterInt.format(widget._settingsScreenViewModel.dailyTargetKJoule.value),
+                                  convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: widget._settingsScreenViewModel.dailyTargetKJoule.value)),
                                   style: textTheme.titleSmall,
                                 );
                               },
@@ -92,16 +89,19 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                           Expanded(
                             flex: 8,
                             child: Text(
-                              "${AppLocalizations.of(context)!.daily_need} ${convert.getLocalizedEnergyUnit(context: context)}",
+                              "${AppLocalizations.of(context)!.daily_need} ${convert.getLocalizedEnergyUnit(context: context)} (${convert.numberFomatterDouble1DecimalDigit.format(convert.getDisplayWeightKg(weightKg: widget._settingsScreenViewModel.currentWeightKg))}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
                               style: textTheme.bodySmall,
                             ),
                           ),
                           Expanded(
                             flex: 3,
                             child: ValueListenableBuilder(
-                              valueListenable: widget._settingsScreenViewModel.dailyKJoule,
+                              valueListenable: widget._settingsScreenViewModel.dailyNeedKJoule,
                               builder: (_, _, _) {
-                                return Text(convert.numberFomatterInt.format(widget._settingsScreenViewModel.dailyKJoule.value), style: textTheme.bodySmall);
+                                return Text(
+                                  convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: widget._settingsScreenViewModel.dailyNeedKJoule.value)),
+                                  style: textTheme.bodySmall,
+                                );
                               },
                             ),
                           ),
@@ -136,9 +136,9 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
                               return Dialog(
                                 insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                                child: ChangeNotifierProvider<DailyEnergyEditorScreenViewModel>(
-                                  create: (context) => DailyEnergyEditorScreenViewModel(
-                                    kJoulePerDay: KJoulePerDay(
+                                child: ChangeNotifierProvider<DailyEnergyTargetEditorScreenViewModel>(
+                                  create: (context) => DailyEnergyTargetEditorScreenViewModel(
+                                    targetkJoulePerDay: KJoulePerDay(
                                       kJouleMonday: widget._settingsScreenViewModel.kJouleMonday,
                                       kJouleTuesday: widget._settingsScreenViewModel.kJouleTuesday,
                                       kJouleWednesday: widget._settingsScreenViewModel.kJouleWednesday,
@@ -147,17 +147,20 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                                       kJouleSaturday: widget._settingsScreenViewModel.kJouleSaturday,
                                       kJouleSunday: widget._settingsScreenViewModel.kJouleSunday,
                                     ),
+                                    currentWeightKg: widget._settingsScreenViewModel.currentWeightKg,
                                     settingsRepository: Provider.of<SettingsRepository>(context, listen: false),
                                     convert: convert,
                                   ),
-                                  child: DailyEnergyEditorScreen(
-                                    dailyKJoule: widget._settingsScreenViewModel.dailyKJoule.value,
+                                  child: DailyEnergyTargetEditorScreen(
+                                    dailyNeedKJoule: widget._settingsScreenViewModel.dailyNeedKJoule.value,
                                     originalDailyTargetKJoule: widget._settingsScreenViewModel.dailyTargetKJoule.value,
                                   ),
                                 ),
                               );
                             },
                           );
+
+                          widget._settingsScreenViewModel.setDailyTargetKJoule();
                         },
                         child: Icon(Icons.edit),
                       ),
@@ -306,100 +309,6 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         },
                       ),
                     ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Text(
-                        "${AppLocalizations.of(context)!.your_weight} (${convert.getLocalizedWeightUnitKgAbbreviated(context: context)}):",
-                        style: textTheme.titleSmall,
-                      ),
-                      Tooltip(
-                        triggerMode: TooltipTriggerMode.tap,
-                        showDuration: Duration(seconds: 60),
-                        message: AppLocalizations.of(context)!.settings_weight_explanation,
-                        child: Icon(Icons.help_outline),
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  child: ValueListenableBuilder(
-                    valueListenable: widget._settingsScreenViewModel.weight,
-                    builder: (_, _, _) {
-                      //when widget._settingsScreenViewModel.weight was changed programatically we need to update the controller
-                      if (widget._settingsScreenViewModel.weight.value != null) {
-                        _weightController.text = convert.getCleanDoubleEditString1DecimalDigit(
-                          doubleValue: widget._settingsScreenViewModel.weight.value!,
-                          doubleValueString: OpenEatsJournalStrings.emptyString,
-                        );
-                      }
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SettingsTextField(
-                            controller: _weightController,
-                            keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
-                            inputFormatters: [
-                              //If filter is not matched, the value is set to empty string which feels strange in the ui.
-                              //FilteringTextInputFormatter.allow(RegExp(weightRegExp)),
-                              TextInputFormatter.withFunction((oldValue, newValue) {
-                                final String text = newValue.text.trim();
-                                if (text.isEmpty) {
-                                  return newValue;
-                                }
-
-                                num? doubleValue = convert.numberFomatterDouble1DecimalDigit.tryParse(text);
-                                if (doubleValue != null) {
-                                  if (convert.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
-                                    return oldValue;
-                                  }
-
-                                  return newValue;
-                                } else {
-                                  return oldValue;
-                                }
-                              }),
-                            ],
-                            focusNode: _weightFocusNode,
-                            onTap: () {
-                              if (!_weightFocusNode.hasFocus) {
-                                _weightController.selection = TextSelection(baseOffset: 0, extentOffset: _weightController.text.length);
-                              }
-                            },
-                            onChanged: (value) {
-                              num? doubleValue = convert.numberFomatterDouble1DecimalDigit.tryParse(value);
-                              widget._settingsScreenViewModel.setWeight(weight: doubleValue as double?);
-
-                              if (doubleValue != null) {
-                                _weightController.text = convert.getCleanDoubleEditString1DecimalDigit(doubleValue: doubleValue, doubleValueString: value);
-                              }
-                            },
-                          ),
-                          ValueListenableBuilder(
-                            valueListenable: widget._settingsScreenViewModel.weightValid,
-                            builder: (_, _, _) {
-                              if (!widget._settingsScreenViewModel.weightValid.value) {
-                                return Text(
-                                  "${AppLocalizations.of(context)!.input_invalid_value(AppLocalizations.of(context)!.weight_capital, convert.getCleanDoubleString1DecimalDigit(doubleValue: widget._settingsScreenViewModel.lastValidWeight))} ${AppLocalizations.of(context)!.valid_weight} (1-${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightKg(weightKg: ConvertValidate.maxWeightKg.toDouble()))}).",
-                                  style: textTheme.labelMedium!.copyWith(color: Colors.red),
-                                );
-                              } else {
-                                return SizedBox();
-                              }
-                            },
-                          ),
-                        ],
-                      );
-                    },
                   ),
                 ),
               ],
@@ -634,8 +543,6 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     _birthDayController.dispose();
     _heightController.dispose();
     _heightFocusNode.dispose();
-    _weightController.dispose();
-    _weightFocusNode.dispose();
 
     super.dispose();
   }

@@ -147,8 +147,8 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.protein, 73.83529411764705);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d11]?.salt, null);
 
-    expect(journalRepositoryGetNutritionSumsResultWeeks.from, ConvertValidate.getWeekStartDate(today).subtract(Duration(days: 98)));
-    expect(journalRepositoryGetNutritionSumsResultWeeks.until, ConvertValidate.getWeekStartDate(today));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.from, ConvertValidate.getWeekStartDate(date: today).subtract(Duration(days: 98)));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.until, ConvertValidate.getWeekStartDate(date: today));
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums!.entries.length, 5);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d12]?.entryCount, 3);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d12]?.nutritions.kJoule, 27441.0);
@@ -313,8 +313,8 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.protein, 73.83529411764705);
     expect(journalRepositoryGetNutritionSumsResultDays.groupNutritionTargets![y2026m2d10]?.salt, null);
 
-    expect(journalRepositoryGetNutritionSumsResultWeeks.from, ConvertValidate.getWeekStartDate(today).subtract(Duration(days: 98)));
-    expect(journalRepositoryGetNutritionSumsResultWeeks.until, ConvertValidate.getWeekStartDate(today));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.from, ConvertValidate.getWeekStartDate(date: today).subtract(Duration(days: 98)));
+    expect(journalRepositoryGetNutritionSumsResultWeeks.until, ConvertValidate.getWeekStartDate(date: today));
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums!.entries.length, 5);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d12]?.entryCount, 3);
     expect(journalRepositoryGetNutritionSumsResultWeeks.groupNutritionSums![y2026m2d9]?.nutritions.kJoule, orignalKJouleWeek + addedKJoule);

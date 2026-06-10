@@ -256,7 +256,7 @@ class JournalRepository {
 
   //current week and last 14 weeks, data of last 3 months. Last 3 months can have 31+30+31=92 days, 92/7=13.14, so we need 14 weeks + current week.
   Future<JournalRepositoryGetNutritionSumsResult> getNutritionWeekSumsForLast15Weeks({required DateTime today}) async {
-    DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
+    DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(date: today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
 
     before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
@@ -508,7 +508,7 @@ class JournalRepository {
   //value line the chart border.
   Future<JournalRepositoryGetWeightMaxResult>? getMaxWeightPerWeekForLast15Weeks({required DateTime today}) async {
     //set start of week (monday) on before14weeks
-    DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(today);
+    DateTime thisWeekStartDate = ConvertValidate.getWeekStartDate(date: today);
     DateTime before14weeksStartDate = thisWeekStartDate.subtract(Duration(days: 98));
     DateTime nextWeek = thisWeekStartDate.add(Duration(days: 7));
 

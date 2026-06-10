@@ -196,7 +196,6 @@
   "inch_abbreviated" : "in",
   "kg" : "kg",
   "lb" : "lb",
-  "settings_weight_explanation": "Gewicht des letzten Gewichttagebucheintrags. Das eingegebene Gewicht wird hier nicht gespeicher sonder nur für die kCal Kalkulation genutzt.",
   "na": "n/a",
   "weight_journal": "Gewichtstagebuch",
   "delete_weight_journal_entry": "Gewichtseintrag löschen",

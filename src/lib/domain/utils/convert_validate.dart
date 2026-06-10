@@ -397,7 +397,7 @@ class ConvertValidate {
     return (kCals * ConvertValidate.kJoulekCalConversionFactor);
   }
 
-  static WeekOfYear getweekOfYear(DateTime date) {
+  static WeekOfYear getweekOfYear({required DateTime date}) {
     int year = date.year;
     int dayOfYear = int.parse(DateFormat("D").format(date));
     int weekOfYear = ((dayOfYear - date.weekday + 10) / 7).floor();
@@ -412,12 +412,24 @@ class ConvertValidate {
     return WeekOfYear(week: weekOfYear, year: year);
   }
 
-  static DateTime getWeekStartDate(DateTime date) {
+  static DateTime getWeekStartDate({required DateTime date}) {
     if (date.weekday != 1) {
       return date.subtract(Duration(days: date.weekday - 1));
     }
 
     return DateTime.utc(date.year, date.month, date.day);
+  }
+
+  static int getAge({required DateTime today, required DateTime birthday}) {
+    int age = 0;
+    age = today.year - birthday.year;
+    final month = today.month - birthday.month;
+
+    if (month < 0) {
+      age = age - 1;
+    }
+
+    return age;
   }
 
   static int _getWeekCount(int year) {

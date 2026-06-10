@@ -1184,7 +1184,7 @@ class OpenEatsJournalDatabaseService {
     }
 
     if (dbResult.isEmpty) {
-      DateTime weekOfYearStartDate = ConvertValidate.getWeekStartDate(date);
+      DateTime weekOfYearStartDate = ConvertValidate.getWeekStartDate(date: date);
 
       await db.insert(OpenEatsJournalStrings.dbTableDateInfo, {
         OpenEatsJournalStrings.dbColumnDate: formattedDate,

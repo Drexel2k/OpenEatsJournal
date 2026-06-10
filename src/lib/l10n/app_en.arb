@@ -196,7 +196,6 @@
   "inch_abbreviated" : "in",
   "kg" : "kg",
   "lb" : "lb",
-  "settings_weight_explanation": "Weight of the last weight journal entry. The weight entered is not saved here, but is only used for the kCal calculation.",
   "na": "n/a",
   "weight_journal": "Weight Journal",
   "delete_weight_journal_entry": "Delete Weight Entry",

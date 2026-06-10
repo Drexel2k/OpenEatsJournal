@@ -979,9 +979,11 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               ),
                                             ),
                                           ),
+                                          PopupMenuDivider(indent: 10, endIndent: 10),
                                           PopupMenuItem(
                                             onTap: () async {
-                                              double weight = await eatsJournalScreenViewModel.getLastWeightJournalEntry();
+                                              double weightKg = await eatsJournalScreenViewModel.getLastWeightJournalEntry();
+
                                               await showDialog<void>(
                                                 useSafeArea: true,
                                                 barrierDismissible: false,
@@ -995,8 +997,11 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                                       dialogVerticalPadding,
                                                     ),
                                                     child: ChangeNotifierProvider(
-                                                      create: (context) =>
-                                                          SettingsScreenViewModel(settingsRepository: settingsRepository, convert: convert, weight: weight),
+                                                      create: (context) => SettingsScreenViewModel(
+                                                        settingsRepository: settingsRepository,
+                                                        convert: convert,
+                                                        currentWeightKg: weightKg,
+                                                      ),
                                                       child: SettingsScreen(),
                                                     ),
                                                   );
