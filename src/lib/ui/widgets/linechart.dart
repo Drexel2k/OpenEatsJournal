@@ -137,7 +137,7 @@ class Linechart extends StatelessWidget {
                       convert.getCleanDoubleString1DecimalDigit(doubleValue: map[OpenEatsJournalStrings.chartDataIsVar]),
                       LabelStyle(
                         textStyle: TextStyle(fontSize: fontSize, color: const Color(0xff808080)),
-                        offset: Offset(6, -15),
+                        offset: Offset(6, -18),
                         rotation: 4.72,
                       ),
                     );

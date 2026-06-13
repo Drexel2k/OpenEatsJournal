@@ -88,10 +88,10 @@ class BarLinechart extends StatelessWidget {
       markOffset = -23;
       yAxisScaleMaxValue = (maxValue * 1.55).toInt();
     } else if (maxValue >= 50000) {
-      markOffset = -20;
+      markOffset = -23;
       yAxisScaleMaxValue = (maxValue * 1.45).toInt();
     } else if (maxValue >= 10000) {
-      markOffset = -20;
+      markOffset = -23;
       yAxisScaleMaxValue = (maxValue * 1.45).toInt();
     } else if (maxValue >= 5000) {
       markOffset = -18;
