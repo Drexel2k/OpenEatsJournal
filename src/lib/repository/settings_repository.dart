@@ -113,7 +113,7 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get appName => "OpenEatsJournal";
-  String get appVersion => "1.10";
+  String get appVersion => "1.11";
   bool get useStagingServices => kDebugMode ? true : false;
   DateTime get today {
     DateTime today = _today ?? DateTime.now();
