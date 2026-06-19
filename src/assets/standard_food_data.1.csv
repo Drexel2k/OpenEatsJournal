@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-06-13 00-00-00","2026-01-15 00-00-00"
+"2026-06-19 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -368,3 +368,13 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","174","2026-06-13 00-00-00","Shortcrust pastry (cookies / cake base)","Mürbeteig (Kekse / Tortenboden)",,,"100",,"2005","25","6.5","57","31","5.7","0.4",
 "foodunit","1","Cake base","Tortenboden","300","g","false"
 "foodunit","2","Piece of cake base (eighth)","Stück Tortenboden (Achtel)","37.5","g","true"
+"food","175","2026-06-19 00-00-00","Franzbrötchen / Cinnamon roll","Franzbrötchen",,,"100",,"1954","30.1","15.1","43.1","15.2","5.6","0.7",
+"foodunit","1","Piece","Stück","85","g","true"
+"food","176","2026-06-19 00-00-00","Kohlrabi","Kohlrabi",,,"100",,"116","0.2","0","3.7","3.7","2","0.1",
+"foodunit","1","Piece","Stück","250","g","true"
+"food","177","2026-06-19 00-00-00","Wiener sausage","Wiener Würstchen",,,"100",,"1179","26","10","0.5","0.5","12","2",
+"foodunit","1","Sausage","Würstchen","50","g","true"
+"food","178","2026-06-19 00-00-00","Wiener sausage (poultry)","Wiener Würstchen (Geflügel)",,,"100",,"933","19","5.8","0.5","0.5","13","2.2",
+"foodunit","1","Sausage","Würstchen","50","g","true"
+"food","179","2026-06-19 00-00-00","Grapes","Weintrauben",,,"100",,"280","0.3","0","15.2","15.1","0.7","0",
+"foodunit","1","Grape","Traube","6","g","true"
