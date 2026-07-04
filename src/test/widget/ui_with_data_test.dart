@@ -26,7 +26,6 @@ import "package:openeatsjournal/ui/screens/statistics_screen.dart";
 import "package:openeatsjournal/ui/screens/statistics_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
-import "package:openeatsjournal/ui/utils/search_mode.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_textfield.dart";
 import "package:path/path.dart";
@@ -382,11 +381,7 @@ void main() async {
     int foodUnitsLength = 2;
     String defaultFoodUnitNameValue = "Roll";
 
-    Food food = (await foodRepository.getFoodsBySearchText(
-      searchText: "roll",
-      languageCode: OpenEatsJournalStrings.en,
-      searchMode: SearchMode.offline,
-    ))[1].foods![0];
+    Food food = (await foodRepository.getFoodsBySearchTextDb(searchText: "roll", languageCode: OpenEatsJournalStrings.en, includeCache: true))[1].foods![0];
 
     int originalFoodId = food.id!;
     List<int> originalfoodUnitIds = food.foodUnitsWithOrder.map((foodunit) => foodunit.object.id!).toList();
@@ -434,10 +429,10 @@ void main() async {
     expect(newFood.id, isNotNull);
 
     //Loading food
-    Food loadedFood = (await foodRepository.getFoodsBySearchText(
+    Food loadedFood = (await foodRepository.getFoodsBySearchTextDb(
       searchText: "roll",
       languageCode: OpenEatsJournalStrings.en,
-      searchMode: SearchMode.offline,
+      includeCache: true,
     ))[0].foods![0];
 
     //check if ids are new

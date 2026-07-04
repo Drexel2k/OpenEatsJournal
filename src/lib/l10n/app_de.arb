@@ -236,7 +236,6 @@
   "database_exported": "Die Datenbank wurde exportiert.",
   "export_not_succeeded": "Export nicht erfolgreich",
   "database_not_exported": "Die Datenbank konnte nicht exportiert werden.",
-  "wait_search": "Bitte warte bis die vorherige Suche beendet ist, bevor Du eine neue Suche startest.",
   "no_result_from_online_source": "Kein Ergebnis in der Online Suche.\nBitte hilf mit und füge fehlende Daten hinzu.\nTippe für Informationen, wie Du beitragen kannst.",
   "no_result_from_offline_source": "Kein Ergebnis in der Offline Suche.\nFüge Deine eigenen Lebensmittel hinzu.\nTippe für mehr Informationen über das Hinzufügen von Offline Lebensmimtteln.",
   "no_or_bad_food_data": "Keine oder schlechte Lebensmitteldaten?", 
@@ -285,5 +284,7 @@
   "eats_journal_entry_duplicated": "Essenstagebucheintrag dupliziert.",
   "edit_day_energy_target": "Bearbeite Tages {energy_unit} Ziel",
   "target": "Ziel",
-  "valid_energy_target": "Bitte gib ein gültiges {energy_unit} Ziel ein {valid_range}."
+  "valid_energy_target": "Bitte gib ein gültiges {energy_unit} Ziel ein {valid_range}.",
+  "waiting_offline_results": "Warte auf offline Ergebnisse",
+  "waiting_online_results": "Warte auf online Ergebnisse"
 }

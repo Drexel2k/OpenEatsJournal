@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-06-24 00-00-00","2026-01-15 00-00-00"
+"2026-07-02 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -383,3 +383,13 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","182","2026-06-24 00-00-00","Vanilla sauce / Dessert sauce","Vanillesauce / Vanillesoße / Dessertsauce / Dessertsoße",,,"100",,"508","4.4","2.7","17","14","3.4","0.1",
 "food","183","2026-06-24 00-00-00","Pulled pork","Pulled Pork",,,"100",,"830","13","4","0","0","18","0.2",
 "food","184","2026-06-24 00-00-00","Pulled chicken","Pulled Chicken",,,"100",,"567","3.4","1.1","3.2","3.1","23","1.9",
+"food","185","2026-06-30 00-00-00","Asia fried noodles with meat","Asiatische gebratene Nudeln mit Fleisch",,,"100",,"801","8.8","3.6","19.3","3.1","9.2","1.2",
+"foodunit","1","Serving","Portion","400","g","true"
+"food","186","2026-06-30 00-00-00","Asia fried noodles vegetarian","Asiatische gebratene Nudeln vegetarisch",,,"100",,"654","4.1","0.6","23.7","3.7","5.2","0.41",
+"foodunit","1","Serving","Portion","400","g","true"
+"food","187","2026-06-30 00-00-00","Asia fried rice with meat","Asiatische gebratener Reis mit Fleisch",,,"100",,"548","6.3","2.6","13.7","2.2","5.8","1",
+"foodunit","1","Serving","Portion","400","g","true"
+"food","188","2026-06-30 00-00-00","Asia fried rice vegetarian","Asiatische gebratener Reis vegetarisch",,,"100",,"454","3.4","2.2","16.6","3.9","2.8","0.6",
+"foodunit","1","Serving","Portion","400","g","true"
+"food","189","2026-07-02 00-00-00","Kasseler (pork meat cured and smoked)","Kasseler (Schweinefleisch geräuchert und gepökelt)",,,"100",,"553","3","1.3","1","0.4","20","2.1",
+"food","190","2026-07-02 00-00-00","Feta / sheep milk cheese (sheep / goat / cow milk)","Fetakäse / Schafskäse (Schafs- / Ziegen- / Kuhmilch)",,,"100",,"1194","24","17","0.5","0.5","18","2.4",

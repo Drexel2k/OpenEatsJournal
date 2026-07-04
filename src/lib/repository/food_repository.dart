@@ -19,7 +19,6 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_stri
 import "package:openeatsjournal/service/open_food_facts/data/food_api.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_service.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
-import "package:openeatsjournal/ui/utils/search_mode.dart";
 
 class FoodRepository {
   FoodRepository({
@@ -50,76 +49,75 @@ class FoodRepository {
 
   String? get barcodeScannerResult => _barcodeScannerResult;
 
-  //result list must always contain exactly 4 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
-  // index 4 = all results
-  Future<List<FoodRepositoryResult>> getFoodsByBarcode({required int barcode, required String languageCode, required SearchMode searchMode}) async {
+  Future<List<FoodRepositoryResult>> getFoodsByBarcodeDb({required int barcode, required String languageCode, required bool includeCache}) async {
     List<FoodRepositoryResult> result = [];
 
-    List<int> localFoodSources;
-    if (searchMode == SearchMode.online) {
-      localFoodSources = [FoodSource.user.value];
-    } else {
-      localFoodSources = [FoodSource.user.value, FoodSource.openFoodFacts.value];
-    }
+    List<int> localFoodSources = includeCache ? [FoodSource.user.value, FoodSource.openFoodFacts.value] : [FoodSource.user.value];
 
-    List<Food> allResults = [];
-    List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
-        ? await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources)
-        : await _oejDatabaseService.getFoodsByBarcodeByUsage(
-            today: _settingsRepository.today,
-            barcode: barcode,
-            foodSourceIds: localFoodSources,
-            days: _dayForFoodUsage,
-          );
+    List<Map<String, Object?>>? dbResult = await _oejDatabaseService.getFoodsByBarcode(barcode: barcode, foodSourceIds: localFoodSources);
 
-    List<Food>? foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
+    List<Food>? foods = dbResult != null && dbResult.isNotEmpty ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
 
     Food? foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.user);
     if (foodExists != null) {
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()));
+      result.add(
+        FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true, foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()),
+      );
     } else {
-      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.standard);
     if (foodExists != null) {
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
+      result.add(
+        FoodRepositoryResult(
+          foodSources: [FoodSource.standard],
+          fromDb: true,
+          foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList(),
+        ),
+      );
     } else {
-      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.standard], fromDb: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.openFoodFacts);
     if (foodExists != null) {
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
+      result.add(
+        FoodRepositoryResult(
+          foodSources: [FoodSource.openFoodFacts],
+          fromDb: true,
+          foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList(),
+        ),
+      );
     } else {
-      result.add(FoodRepositoryResult());
-    }
-
-    if (searchMode == SearchMode.online) {
-      result.add(await getOpenFoodFactsFoodByBarcode(barcode: barcode, languageCode: languageCode));
-    } else {
-      result.add(FoodRepositoryResult());
-    }
-
-    if (result[3].foods != null) {
-      allResults.addAll(result[3].foods!);
-    }
-
-    if (allResults.isNotEmpty) {
-      result.add(FoodRepositoryResult(foods: allResults));
-    } else {
-      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: true));
     }
 
     return result;
   }
 
-  Future<FoodRepositoryResult> getOpenFoodFactsFoodByBarcode({required int barcode, required String languageCode}) async {
+  Future<FoodRepositoryResult> getFoodsByBarcodeByUsageDb({required int barcode, required String languageCode}) async {
+    List<Map<String, Object?>>? dbResult = await _oejDatabaseService.getFoodsByBarcodeByUsage(
+      today: _settingsRepository.today,
+      barcode: barcode,
+      foodSourceIds: [FoodSource.user.value, FoodSource.openFoodFacts.value],
+      days: _dayForFoodUsage,
+    );
+
+    if (dbResult != null && dbResult.isNotEmpty) {
+      List<Food> foods = Convert.getFoodsFromDbResult(dbResult: dbResult);
+      return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.openFoodFacts], fromDb: true, foods: foods);
+    }
+
+    return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.openFoodFacts], fromDb: true);
+  }
+
+  Future<FoodRepositoryResult> getFoodByBarcodeOpenFoodFacts({required int barcode, required String languageCode}) async {
     String? jsonString;
     try {
       jsonString = await _openFoodFactsService.getFoodByBarcode(barcode: barcode);
     } on ClientException catch (clientException) {
-      return FoodRepositoryResult(errorCode: 1, errorMessage: clientException.message);
+      return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 1, errorMessage: clientException.message);
     }
 
     if (jsonString != null) {
@@ -127,90 +125,93 @@ class FoodRepository {
       try {
         json = jsonDecode(jsonString);
       } on FormatException {
-        return FoodRepositoryResult(errorCode: 5);
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 5);
       }
 
       if (json.containsKey(OpenFoodFactsApiStrings.product)) {
         Food? food = _getFoodFromOpenFoodFactsApiV1V2Food(json: json[OpenFoodFactsApiStrings.product], languageCode: languageCode);
 
         if (food != null) {
-          return FoodRepositoryResult(foods: [food]);
+          return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, foods: [food]);
         }
 
-        return FoodRepositoryResult();
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false);
       } else {
         //no food found for this barcode
-        return FoodRepositoryResult();
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false);
       }
     }
 
-    return FoodRepositoryResult(errorCode: 3);
+    return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 3);
   }
 
-  //result list must always contain exactly 5 entries, index 0 = user results, index 1 = standard results, index 2 = cached results, 3= open food facts results,
-  // index 4 = all results
-  Future<List<FoodRepositoryResult>> getFoodsBySearchText({required String searchText, required String languageCode, required SearchMode searchMode}) async {
+  Future<List<FoodRepositoryResult>> getFoodsBySearchTextDb({required String searchText, required String languageCode, required bool includeCache}) async {
     List<FoodRepositoryResult> result = [];
 
-    List<int> localFoodSources;
-    if (searchMode == SearchMode.online) {
-      localFoodSources = [FoodSource.user.value, FoodSource.standard.value];
-    } else {
-      localFoodSources = [FoodSource.user.value, FoodSource.openFoodFacts.value, FoodSource.standard.value];
-    }
+    List<int> localFoodSources = includeCache
+        ? [FoodSource.user.value, FoodSource.openFoodFacts.value, FoodSource.standard.value]
+        : [FoodSource.user.value, FoodSource.standard.value];
 
-    List<Map<String, Object?>>? dbResult = searchMode != SearchMode.recent
-        ? await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources)
-        : await _oejDatabaseService.getFoodsBySearchtextByUsage(
-            today: _settingsRepository.today,
-            searchText: searchText,
-            foodSourceIds: localFoodSources,
-            days: _dayForFoodUsage,
-          );
+    List<Map<String, Object?>>? dbResult = await _oejDatabaseService.getFoodsBySearchtext(searchText: searchText, foodSourceIds: localFoodSources);
 
-    List<Food> allResults = [];
-    List<Food> foods = dbResult != null ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
-
-    allResults.addAll(foods);
+    List<Food> foods = dbResult != null && dbResult.isNotEmpty ? Convert.getFoodsFromDbResult(dbResult: dbResult) : [];
 
     Food? foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.user);
     if (foodExists != null) {
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()));
+      result.add(
+        FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true, foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()),
+      );
     } else {
-      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.standard);
     if (foodExists != null) {
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList()));
+      result.add(
+        FoodRepositoryResult(
+          foodSources: [FoodSource.standard],
+          fromDb: true,
+          foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList(),
+        ),
+      );
     } else {
-      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.standard], fromDb: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.openFoodFacts);
     if (foodExists != null) {
-      result.add(FoodRepositoryResult(foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList()));
+      result.add(
+        FoodRepositoryResult(
+          foodSources: [FoodSource.openFoodFacts],
+          fromDb: true,
+          foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList(),
+        ),
+      );
     } else {
-      result.add(FoodRepositoryResult());
-    }
-
-    if (searchMode == SearchMode.online) {
-      result.add(await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1));
-    } else {
-      result.add(FoodRepositoryResult());
-    }
-
-    if (result[3].foods != null) {
-      allResults.addAll(result[3].foods!);
-    }
-
-    if (allResults.isNotEmpty) {
-      result.add(FoodRepositoryResult(foods: allResults));
-    } else {
-      result.add(FoodRepositoryResult());
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: true));
     }
 
     return result;
+  }
+
+  Future<FoodRepositoryResult> getFoodsBySearchTextByUsageDb({required String searchText, required String languageCode}) async {
+    List<Map<String, Object?>>? dbResult = await _oejDatabaseService.getFoodsBySearchtextByUsage(
+      today: _settingsRepository.today,
+      searchText: searchText,
+      foodSourceIds: [FoodSource.user.value, FoodSource.openFoodFacts.value, FoodSource.standard.value],
+      days: _dayForFoodUsage,
+    );
+
+    if (dbResult != null && dbResult.isNotEmpty) {
+      List<Food> foods = Convert.getFoodsFromDbResult(dbResult: dbResult);
+      return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.standard, FoodSource.openFoodFacts], fromDb: true, foods: foods);
+    }
+
+    return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.standard, FoodSource.openFoodFacts], fromDb: true);
+  }
+
+  Future<FoodRepositoryResult> getFoodsBySearchTextOpenFoodFacts({required String searchText, required String languageCode}) async {
+    return await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1);
   }
 
   Future<FoodRepositoryResult> getOpenFoodFactsFoodBySearchTextApiV1({required String searchText, required String languageCode, required int page}) async {
@@ -224,16 +225,17 @@ class FoodRepository {
     try {
       jsonString = await _openFoodFactsService.getFoodBySearchTextApiV1(searchText: searchText, page: page, pageSize: _pageSize);
     } on ClientException catch (clientException) {
-      return FoodRepositoryResult(errorCode: 1, errorMessage: clientException.message);
+      return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 1, errorMessage: clientException.message);
     }
 
-    List<Food> foods = [];
-    Map<String, dynamic> json;
     if (jsonString != null) {
+      List<Food> foods = [];
+      Map<String, dynamic> json;
+
       try {
         json = jsonDecode(jsonString);
       } on FormatException {
-        return FoodRepositoryResult(errorCode: 5);
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 5);
       }
 
       if (json.containsKey(OpenFoodFactsApiStrings.products)) {
@@ -245,13 +247,18 @@ class FoodRepository {
           }
         }
 
-        return FoodRepositoryResult(foods: foods, finished: (json[OpenFoodFactsApiStrings.products] as List<dynamic>).length < _pageSize);
+        return FoodRepositoryResult(
+          foodSources: [FoodSource.openFoodFacts],
+          fromDb: false,
+          foods: foods,
+          finished: (json[OpenFoodFactsApiStrings.products] as List<dynamic>).length < _pageSize,
+        );
       } else {
-        return FoodRepositoryResult(errorCode: 2);
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 2);
       }
     }
 
-    return FoodRepositoryResult(errorCode: 3);
+    return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 3);
   }
 
   Food? _getFoodFromOpenFoodFactsApiV1V2Food({required Map<String, dynamic> json, required String languageCode}) {

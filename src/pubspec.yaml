@@ -1,12 +1,13 @@
 name: openeatsjournal
 description: "Free and open source eats, nutrition and calories journal"
 publish_to: 'none'
-version: 1.12.0+27
+version: 1.13.0+28
 
 environment:
   sdk: ^3.8.1
 
 dependencies:
+  async: ^2.13.1
   collection: ^1.19.1
   csv: ^6.0.0
   file_picker: ^10.3.8
