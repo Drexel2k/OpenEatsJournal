@@ -113,9 +113,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         });
       }
 
-      searchOperation = CancelableOperation.fromFuture(
-        _foodRepository.getFoodsByBarcodeDb(barcode: barcode!, languageCode: languageCode, includeCache: searchMode == SearchMode.offline),
-      );
+      searchOperation = CancelableOperation.fromFuture(_foodRepository.getFoodsByBarcodeDb(barcode: barcode!, languageCode: languageCode, includeCache: true));
       _searchOperations.add(searchOperation);
 
       searchOperation.then((result) {
@@ -166,7 +164,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       }
 
       searchOperation = CancelableOperation.fromFuture(
-        _foodRepository.getFoodsBySearchTextDb(searchText: searchText, languageCode: languageCode, includeCache: searchMode == SearchMode.offline),
+        _foodRepository.getFoodsBySearchTextDb(searchText: searchText, languageCode: languageCode, includeCache: true),
       );
       _searchOperations.add(searchOperation);
 

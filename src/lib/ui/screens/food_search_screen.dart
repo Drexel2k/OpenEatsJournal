@@ -378,8 +378,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(height: 24, width: 24, child: CircularProgressIndicator()),
-                              SizedBox(width: 5),
-                              Text("Waiting for online results"),
+                              SizedBox(width: 10),
+                              Text(AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.waiting_online_results),
                             ],
                           ),
                         );
