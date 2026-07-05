@@ -155,7 +155,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     CancelableOperation searchOperation;
     if (searchMode != SearchMode.recent) {
       if (searchMode == SearchMode.online) {
-        searchOperation = CancelableOperation.fromFuture(_foodRepository.getFoodsBySearchTextOpenFoodFacts(searchText: searchText, languageCode: languageCode));
+        searchOperation = CancelableOperation.fromFuture(
+          _foodRepository.getFoodsBySearchTextOpenFoodFactsApiV1(searchText: searchText, languageCode: languageCode, page: 1),
+        );
         _searchOperations.add(searchOperation);
 
         searchOperation.then((result) {
@@ -186,12 +188,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       //open food facts result is length 1, db result is length 3
       //open food facts result can call this code multiple times due to pagination, db result is only queried one time and therefore calls this code only once
       if (result.length > 1) {
+        //results from db
         _getAndRemoveStatusOnResultEntries(resultEntries: _foodSearchResultUser, foodSearchResultStatusCode: FoodSearchResultStatusCode.offlineIsLoading);
 
         if (result.every((resultInternal) => resultInternal.foods == null || resultInternal.foods!.isEmpty)) {
           _foodSearchResultUser.add(ObjectWithOrder(object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.offlineNoResult), order: 0));
         }
       } else {
+        //results from open food facts
         _getAndRemoveStatusOnResultEntries(
           resultEntries: _foodSearchResultOpenFoodFacts,
           foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsIsLoading,
@@ -242,6 +246,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
         if (foodRepositoryResult.foodSources[0] == FoodSource.openFoodFacts) {
           if (foodRepositoryResult.errorCode == null) {
+            int order = 0;
             if (foodRepositoryResult.foods != null && foodRepositoryResult.foods!.isNotEmpty) {
               ObjectWithOrder<FoodSearchResultEntry> foodSearchResultWithOrder;
 
@@ -252,7 +257,6 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
                 foodSearchResult = _foodSearchResultOpenFoodFacts;
               }
 
-              int order = 0;
               for (Food food in foodRepositoryResult.foods!) {
                 _translateStandardFoodUnits(food, foodUnitLocalizations);
                 foodSearchResultWithOrder = ObjectWithOrder(
@@ -262,16 +266,16 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
                 foodSearchResult.add(foodSearchResultWithOrder);
               }
+            }
 
-              if (!foodRepositoryResult.fromDb) {
-                if (!foodRepositoryResult.finished!) {
-                  _foodSearchResultOpenFoodFacts.add(
-                    ObjectWithOrder(
-                      object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.openFoodFactsMoreResults),
-                      order: order++,
-                    ),
-                  );
-                }
+            if (!foodRepositoryResult.fromDb) {
+              if (!foodRepositoryResult.finished!) {
+                _foodSearchResultOpenFoodFacts.add(
+                  ObjectWithOrder(
+                    object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.openFoodFactsMoreResults, moreRequested: false),
+                    order: order++,
+                  ),
+                );
               }
             }
           } else {
@@ -334,9 +338,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> getFoodBySearchTextLoadMore({required Map<String, String> foodUnitLocalizations}) async {
-    _currentPage = _currentPage + 1;
+    _currentPage++;
     await _foodRepository
-        .getOpenFoodFactsFoodBySearchTextApiV1(searchText: _currentSearchText, languageCode: _settingsRepository.languageCode.value, page: _currentPage)
+        .getFoodsBySearchTextOpenFoodFactsApiV1(searchText: _currentSearchText, languageCode: _settingsRepository.languageCode.value, page: _currentPage)
         .then((FoodRepositoryResult result) {
           _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: SearchMode.online);
         });

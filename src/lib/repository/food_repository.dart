@@ -61,10 +61,15 @@ class FoodRepository {
     Food? foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.user);
     if (foodExists != null) {
       result.add(
-        FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true, foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()),
+        FoodRepositoryResult(
+          foodSources: [FoodSource.user],
+          fromDb: true,
+          foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList(),
+          finished: true,
+        ),
       );
     } else {
-      result.add(FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true));
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true, finished: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.standard);
@@ -74,10 +79,11 @@ class FoodRepository {
           foodSources: [FoodSource.standard],
           fromDb: true,
           foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList(),
+          finished: true,
         ),
       );
     } else {
-      result.add(FoodRepositoryResult(foodSources: [FoodSource.standard], fromDb: true));
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.standard], fromDb: true, finished: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.openFoodFacts);
@@ -87,10 +93,11 @@ class FoodRepository {
           foodSources: [FoodSource.openFoodFacts],
           fromDb: true,
           foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList(),
+          finished: true,
         ),
       );
     } else {
-      result.add(FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: true));
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: true, finished: true));
     }
 
     return result;
@@ -106,10 +113,10 @@ class FoodRepository {
 
     if (dbResult != null && dbResult.isNotEmpty) {
       List<Food> foods = Convert.getFoodsFromDbResult(dbResult: dbResult);
-      return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.openFoodFacts], fromDb: true, foods: foods);
+      return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.openFoodFacts], fromDb: true, foods: foods, finished: true);
     }
 
-    return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.openFoodFacts], fromDb: true);
+    return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.openFoodFacts], fromDb: true, finished: true);
   }
 
   Future<FoodRepositoryResult> getFoodByBarcodeOpenFoodFacts({required int barcode, required String languageCode}) async {
@@ -132,13 +139,13 @@ class FoodRepository {
         Food? food = _getFoodFromOpenFoodFactsApiV1V2Food(json: json[OpenFoodFactsApiStrings.product], languageCode: languageCode);
 
         if (food != null) {
-          return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, foods: [food]);
+          return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, foods: [food], finished: true);
         }
 
-        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false);
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, finished: true);
       } else {
         //no food found for this barcode
-        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false);
+        return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, finished: true);
       }
     }
 
@@ -159,10 +166,15 @@ class FoodRepository {
     Food? foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.user);
     if (foodExists != null) {
       result.add(
-        FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true, foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList()),
+        FoodRepositoryResult(
+          foodSources: [FoodSource.user],
+          fromDb: true,
+          foods: foods.where((Food food) => food.foodSource == FoodSource.user).toList(),
+          finished: true,
+        ),
       );
     } else {
-      result.add(FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true));
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.user], fromDb: true, finished: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.standard);
@@ -172,10 +184,11 @@ class FoodRepository {
           foodSources: [FoodSource.standard],
           fromDb: true,
           foods: foods.where((Food food) => food.foodSource == FoodSource.standard).toList(),
+          finished: true,
         ),
       );
     } else {
-      result.add(FoodRepositoryResult(foodSources: [FoodSource.standard], fromDb: true));
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.standard], fromDb: true, finished: true));
     }
 
     foodExists = foods.firstWhereOrNull((Food food) => food.foodSource == FoodSource.openFoodFacts);
@@ -185,10 +198,11 @@ class FoodRepository {
           foodSources: [FoodSource.openFoodFacts],
           fromDb: true,
           foods: foods.where((Food food) => food.foodSource == FoodSource.openFoodFacts).toList(),
+          finished: true,
         ),
       );
     } else {
-      result.add(FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: true));
+      result.add(FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: true, finished: true));
     }
 
     return result;
@@ -204,17 +218,13 @@ class FoodRepository {
 
     if (dbResult != null && dbResult.isNotEmpty) {
       List<Food> foods = Convert.getFoodsFromDbResult(dbResult: dbResult);
-      return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.standard, FoodSource.openFoodFacts], fromDb: true, foods: foods);
+      return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.standard, FoodSource.openFoodFacts], fromDb: true, foods: foods, finished: true);
     }
 
-    return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.standard, FoodSource.openFoodFacts], fromDb: true);
+    return FoodRepositoryResult(foodSources: [FoodSource.user, FoodSource.standard, FoodSource.openFoodFacts], fromDb: true, finished: true);
   }
 
-  Future<FoodRepositoryResult> getFoodsBySearchTextOpenFoodFacts({required String searchText, required String languageCode}) async {
-    return await getOpenFoodFactsFoodBySearchTextApiV1(searchText: searchText, languageCode: languageCode, page: 1);
-  }
-
-  Future<FoodRepositoryResult> getOpenFoodFactsFoodBySearchTextApiV1({required String searchText, required String languageCode, required int page}) async {
+  Future<FoodRepositoryResult> getFoodsBySearchTextOpenFoodFactsApiV1({required String searchText, required String languageCode, required int page}) async {
     String? jsonString;
 
     searchText = searchText.trim();
@@ -223,7 +233,7 @@ class FoodRepository {
     }
 
     try {
-      jsonString = await _openFoodFactsService.getFoodBySearchTextApiV1(searchText: searchText, page: page, pageSize: _pageSize);
+      jsonString = await _openFoodFactsService.getFoodsBySearchTextApiV1(searchText: searchText, page: page, pageSize: _pageSize);
     } on ClientException catch (clientException) {
       return FoodRepositoryResult(foodSources: [FoodSource.openFoodFacts], fromDb: false, errorCode: 1, errorMessage: clientException.message);
     }

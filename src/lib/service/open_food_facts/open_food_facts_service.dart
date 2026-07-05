@@ -50,7 +50,7 @@ class OpenFoodFactsService {
     return await _requestUri(uri: uri, headers: headers, validResponseCodes: [200, 404]);
   }
 
-  Future<String?> getFoodBySearchTextApiV1({required String searchText, required int page, required int pageSize}) async {
+  Future<String?> getFoodsBySearchTextApiV1({required String searchText, required int page, required int pageSize}) async {
     Map<String, String> headers = {HttpHeaders.userAgentHeader: "$_appName/$_appVersion ($_appContactMail)"};
 
     if (_useStaging) {

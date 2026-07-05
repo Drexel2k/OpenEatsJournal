@@ -371,7 +371,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                       if (foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.foodSearchResultCode ==
                           FoodSearchResultStatusCode.openFoodFactsMoreResults) {
-                        foodSearchScreenViewModel.getFoodBySearchTextLoadMore(foodUnitLocalizations: standardFoodUnitLocalizations);
+                        if (!foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.moreRequested!) {
+                          foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.moreRequested = true;
+                          foodSearchScreenViewModel.getFoodBySearchTextLoadMore(foodUnitLocalizations: standardFoodUnitLocalizations);
+                        }
+
                         return Padding(
                           padding: EdgeInsetsGeometry.symmetric(vertical: 7),
                           child: Row(

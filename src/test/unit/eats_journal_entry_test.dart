@@ -264,7 +264,7 @@ void main() async {
     double? orignalProteinMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.protein;
     double? orignalSaltMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.salt;
 
-    FoodRepositoryResult foodRepositoryResult = await foodRepository.getOpenFoodFactsFoodBySearchTextApiV1(
+    FoodRepositoryResult foodRepositoryResult = await foodRepository.getFoodsBySearchTextOpenFoodFactsApiV1(
       searchText: "",
       languageCode: settingsRepository.languageCode.value,
       page: 3,
