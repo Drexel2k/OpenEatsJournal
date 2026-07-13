@@ -2,7 +2,11 @@ import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:mobile_scanner/mobile_scanner.dart";
 import "package:openeatsjournal/app_global.dart";
+import "package:openeatsjournal/l10n/app_localizations.dart";
+import "package:openeatsjournal/ui/utils/overlay_display.dart";
+import "package:openeatsjournal/ui/utils/overlay_info.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
+import "package:provider/provider.dart";
 
 class BarcodeScannerScreen extends StatefulWidget {
   const BarcodeScannerScreen({super.key, required Color iconBackGroundColor, String? scanResult})
@@ -36,6 +40,9 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
     }
 
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
+
+    final double overlaySpacer = 170;
 
     return SafeArea(
       child: Stack(
@@ -80,8 +87,15 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
 
                       if (result != null) {
                         BarcodeCapture? barcodeCapture = await _mobileScannerController.analyzeImage(result.files.single.path!);
-                        if (barcodeCapture != null) {
+                        if (barcodeCapture != null && barcodeCapture.barcodes.isNotEmpty) {
                           Navigator.pop(AppGlobal.navigatorKey.currentContext!, barcodeCapture.barcodes.first.rawValue);
+                        } else {
+                          overlayDisplay.enqueue(
+                            overlayInfo: OverlayInfo(
+                              message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.no_barcode_found_on_picture,
+                              spacer: overlaySpacer,
+                            ),
+                          );
                         }
                       }
                     },

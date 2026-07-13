@@ -286,5 +286,6 @@
   "target": "Ziel",
   "valid_energy_target": "Bitte gib ein gültiges {energy_unit} Ziel ein {valid_range}.",
   "waiting_offline_results": "Warte auf offline Ergebnisse",
-  "waiting_online_results": "Warte auf online Ergebnisse"
+  "waiting_online_results": "Warte auf online Ergebnisse",
+  "no_barcode_found_on_picture": "Kein QR- oder Barcode auf dem Bild gefunden."
 }

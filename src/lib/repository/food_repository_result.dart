@@ -2,19 +2,21 @@ import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
 
 class FoodRepositoryResult {
-  const FoodRepositoryResult({
-    required List<FoodSource> foodSources,
-    required bool fromDb,
-    List<Food>? foods,
-    bool? finished,
-    int? errorCode,
-    String? errorMessage,
-  }) : _foodSources = foodSources,
-       _fromDb = fromDb,
-       _foods = foods,
-       _finished = finished,
-       _errorCode = errorCode,
-       _errorMessage = errorMessage;
+  const FoodRepositoryResult.ok({required List<FoodSource> foodSources, required bool fromDb, required bool finished, List<Food>? foods})
+    : _foodSources = foodSources,
+      _fromDb = fromDb,
+      _foods = foods,
+      _finished = finished,
+      _errorCode = null,
+      _errorMessage = null;
+
+  const FoodRepositoryResult.error({required List<FoodSource> foodSources, required bool fromDb, required int errorCode, String? errorMessage})
+    : _foodSources = foodSources,
+      _fromDb = fromDb,
+      _foods = null,
+      _finished = null,
+      _errorCode = errorCode,
+      _errorMessage = errorMessage;
 
   final List<FoodSource> _foodSources;
   //to distinguish between data from objects from online services or cached versions which wer loaded from database
