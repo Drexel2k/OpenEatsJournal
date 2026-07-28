@@ -16,7 +16,7 @@ You get:
 - Barcode scanner for scanning food barcodes to ease searching for foods
 - Integration of Open Food Facts and thus access to over 3 million foods
 - Creation of own foods
-- Using every food from every food source as template for own food
+- Using every food from every source as template for own food
 - Multiple serving sizes per food
 - Recording of food consumption based on foods or as a quick entry
 - Easy weight recording

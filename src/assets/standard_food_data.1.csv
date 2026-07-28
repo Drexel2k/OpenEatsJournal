@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-07-13 00-00-00","2026-01-15 00-00-00"
+"2026-07-2 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -132,7 +132,7 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Serving","Portion","110","g","true"
 "food","51","2026-01-25 00-00-00","Cucumber","Gurke",,,"100",,"59","0.2",,"1.8","1.8","0.6",,
 "foodunit","1","Cucumber","Gurke","300","g","true"
-"food","52","2026-01-25 00-00-00","Carrot","Karotte/Möhre",,,"100",,"172","0.2",,"9.6","4.7","0.9",,
+"food","52","2026-07-28 00-00-00","Carrot","Karotte / Möhre",,,"100",,"172","0.2",,"9.6","4.7","0.9",,
 "foodunit","1","Carrot","Karotte","75","g","true"
 "food","53","2026-01-25 00-00-00","Green salad / lettuce / Iceberg lettuce","Blattsalat / Kopfsalat / Eisbergsalat",,,"100",,"63","0.2",,"1.6","1.6","1",,
 "foodunit","1","Head","Kopf","400","g","true"
@@ -201,16 +201,10 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Glas","Glas","200","ml","false"
 "foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
 "foodunit","3","0.5l bottle","0,5l Flasche","500","ml","true"
-"food","92","2026-02-14 00-00-00","Popcorn sweet","Popcorn süß",,,"100",,"2095","25","1.9","59","29","5.8",,
-"foodunit","1","Junior","Junior","72","g","false"
-"foodunit","2","small","klein","145","g","false"
-"foodunit","3","middle","mittel","260","g","true"
-"foodunit","4","big","groß","290","g","false"
-"food","93","2026-02-14 00-00-00","Popcorn salty","Popcorn salzig",,,"100",,"1984","24","2","51","2.3","8.2",,
-"foodunit","1","Junior","Junior","72","g","false"
-"foodunit","2","small","klein","145","g","false"
-"foodunit","3","middle","mittel","260","g","true"
-"foodunit","4","big","groß","290","g","false"
+"food","92","2026-07-24 00-00-00","Popcorn sweet","Popcorn süß",,,"100",,"2095","25","1.9","59","29","5.8",,
+"foodunit","1","Small (UCI)","Klein (UCI)","230","g","true"
+"food","93","2026-07-24 00-00-00","Popcorn salty","Popcorn salzig",,,"100",,"1984","24","2","51","2.3","8.2",,
+"foodunit","1","Small (UCI)","Klein (UCI)","230","g","true"
 "food","94","2026-02-14 00-00-00","Nachos","Nachos",,,"100",,"1979","20","2","64.4","0.8","6.6","0.9",
 "foodunit","1","small","klein","100","g","false"
 "foodunit","2","big","groß","150","g","true"
@@ -402,3 +396,9 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","1","Slice","Scheibe","30","g","true"
 "food","196","2026-07-13 00-00-00","Dry-cured ham / Country ham","Rohschinken / Gepökelter Schinken / Schwarzwälder Schinken",,,"100",,"1121","18.5","6.8","0.5","0","25","2.4",
 "foodunit","1","Slice","Scheibe","15","g","true"
+"food","197","2026-07-28 00-00-00","Salt sticks / Salted pretzel","Salzstangen / Salzbrezel",,,"100",,"1670 ","7.2","0.8","69","2","12","3.5",
+"food","198","2026-07-28 00-00-00","Apple strudel","Apfelstrudel",,,"100",,"829 ","9.1","4.4","25","15","3.8","0.1",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","199","2026-07-28 00-00-00","Apple strudel (flaky / puffy pastry)","Apfelstrudel (Blätterteig)",,,"100",,"1192 ","13.3","6.3","35.8","16","3.9","0.5",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","200","2026-07-28 00-00-00","Sweet corn","Gemüsemais / Süßmais / Zuckermais",,,"100",,"309 ","1.4","0.2","11","5.1","2.7","0.3",
