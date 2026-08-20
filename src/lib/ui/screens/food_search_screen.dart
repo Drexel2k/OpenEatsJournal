@@ -602,6 +602,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               }
                             },
                             label: Text(AppLocalizations.of(context)!.weight_journal_entry),
+                            icon: Icon(Icons.scale),
                           ),
                         ),
                         SizedBox(height: 5),
@@ -619,6 +620,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               );
                             },
                             label: Text(AppLocalizations.of(context)!.food),
+                            icon: Icon(Icons.lunch_dining),
                           ),
                         ),
                         SizedBox(height: 5),
@@ -639,6 +641,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               );
                             },
                             label: Text(AppLocalizations.of(context)!.quick_entry),
+                            icon: Icon(Icons.speed),
                           ),
                         ),
                       ],

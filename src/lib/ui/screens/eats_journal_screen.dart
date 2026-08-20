@@ -1058,6 +1058,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               await Navigator.pushNamedAndRemoveUntil(context, OpenEatsJournalStrings.navigatorRouteFood, (Route<dynamic> route) => false);
                             },
                             label: Text(AppLocalizations.of(context)!.eats_journal_entry),
+                            icon: Icon(Icons.menu_book),
                           ),
                         ),
                         SizedBox(height: 5),
@@ -1085,6 +1086,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               }
                             },
                             label: Text(AppLocalizations.of(context)!.weight_journal_entry),
+                            icon: Icon(Icons.scale),
                           ),
                         ),
                         SizedBox(height: 5),
@@ -1102,6 +1104,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               );
                             },
                             label: Text(AppLocalizations.of(context)!.food),
+                            icon: Icon(Icons.lunch_dining),
                           ),
                         ),
                         SizedBox(height: 5),
@@ -1116,6 +1119,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               eatsJournalScreenViewModel.refreshNutritionData();
                             },
                             label: Text(AppLocalizations.of(context)!.quick_entry),
+                            icon: Icon(Icons.speed),
                           ),
                         ),
                       ],

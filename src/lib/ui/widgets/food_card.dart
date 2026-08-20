@@ -38,9 +38,13 @@ class _FoodCardState extends State<FoodCard> {
     final MeasurementUnit measurementUnit = _getMeasurementUnit();
     final String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: widget._food, context: context);
     final Color foodSourceColor = UiHelpers.getFoodSourceColor(food: widget._food, context: context);
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: colorScheme.outline),
+        borderRadius: borderRadius,
+      ),
       child: InkWell(
         borderRadius: borderRadius,
         onTap: () {
