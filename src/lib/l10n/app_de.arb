@@ -223,7 +223,7 @@
   "recent": "Zuletzt",
   "as_new_eats_journal_entry": "Als neuer Essenstagebucheintrag",
   "export_import": "Export/Import:",
-  "database_import_hint": "Die Datenbank wird nach \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\export exportiert und wird von \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\import\\oej.db importiert. Alle Deine existierenden Daten werden während des Imports überschrieben. Die Datenbank ist im SQLite Format und kan z.B. mit DB Browser for SQLite (DB4S) geöffnet werden.",
+  "database_import_hint": "Die Datenbank wird nach \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\export\\oej.db exportiert und wird von \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\import\\oej.db importiert. Alle Deine existierenden Daten werden während des Imports überschrieben. Die Datenbank ist im SQLite Format und kan z.B. mit DB Browser for SQLite (DB4S) geöffnet werden.",
   "export_data": "Daten exportieren",
   "import_data": "Daten importieren",
   "import_data_title": "Datenbank importieren?",

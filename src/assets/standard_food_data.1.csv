@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-07-2 00-00-00","2026-01-15 00-00-00"
+"2026-08-20 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -364,8 +364,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","2","Piece of cake base (eighth)","Stück Tortenboden (Achtel)","37.5","g","true"
 "food","175","2026-06-19 00-00-00","Franzbrötchen / Cinnamon roll","Franzbrötchen",,,"100",,"1954","30.1","15.1","43.1","15.2","5.6","0.7",
 "foodunit","1","Piece","Stück","85","g","true"
-"food","176","2026-06-19 00-00-00","Kohlrabi","Kohlrabi",,,"100",,"116","0.2","0","3.7","3.7","2","0.1",
-"foodunit","1","Piece","Stück","250","g","true"
+"food","176","2026-08-20 00-00-00","Kohlrabi","Kohlrabi",,,"100",,"116","0.2","0","3.7","3.7","2","0.1",
+"foodunit","1","Piece","Stück","400","g","true"
 "food","177","2026-06-19 00-00-00","Wiener sausage","Wiener Würstchen",,,"100",,"1179","26","10","0.5","0.5","12","2",
 "foodunit","1","Sausage","Würstchen","50","g","true"
 "food","178","2026-06-19 00-00-00","Wiener sausage (poultry)","Wiener Würstchen (Geflügel)",,,"100",,"933","19","5.8","0.5","0.5","13","2.2",
@@ -402,3 +402,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","199","2026-07-28 00-00-00","Apple strudel (flaky / puffy pastry)","Apfelstrudel (Blätterteig)",,,"100",,"1192 ","13.3","6.3","35.8","16","3.9","0.5",
 "foodunit","1","Serving","Portion","150","g","true"
 "food","200","2026-07-28 00-00-00","Sweet corn","Gemüsemais / Süßmais / Zuckermais",,,"100",,"309 ","1.4","0.2","11","5.1","2.7","0.3",
+"food","201","2026-08-20 00-00-00","Salad mix with carrot and corn","Salatmix / Salatmischung mit Karotte und Mais",,,"100",,"118","0","0","3.6","2.4","1.5","0.1",
+"food","202","2026-08-20 00-00-00","Hummus","Hummus",,,"100",,"1136 ","22","2.3","9.3","2.4","6.6","1",
+"food","203","2026-08-20 00-00-00","Chocolate donut","Schoko Donut",,,"100",,"1881 ","28","14","41","20","6.9","1.4",
+"foodunit","1","Normal","Normal","60","g","true"
+"foodunit","2","Mini","Mini","25","g","false"

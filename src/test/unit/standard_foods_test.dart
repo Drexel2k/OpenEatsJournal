@@ -1,4 +1,5 @@
 import "dart:io";
+import "package:csv/csv.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:intl/date_symbol_data_local.dart";
@@ -99,17 +100,34 @@ void main() async {
     int foodCount = 0;
     int foodUnitCount = 0;
     for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
-      List<String> lines = files[fileIndex].readAsLinesSync();
+      List<List<String>> lines = CsvToListConverter(shouldParseNumbers: false).convert(await files[fileIndex].readAsString());
 
-      List<String> parts;
-      for (String line in lines) {
-        parts = line.split(",");
-
-        if (parts[0] == "\"${OpenEatsJournalStrings.csvFood}\"") {
+      double kJoule;
+      for (List<String> line in lines) {
+        if (line[0] == OpenEatsJournalStrings.csvFood) {
           foodCount++;
+
+          //quality check if nutritions result in correct kJoules roughly
+          //exceptionals id (line[1]) are alcoholic, we don't have alcohol in our food data
+          if (!["91", "146", "152"].contains(line[1])) {
+            kJoule = 0;
+            if (line[10] != OpenEatsJournalStrings.emptyString) {
+              kJoule += double.parse(line[10]) * 37;
+            }
+
+            if (line[12] != OpenEatsJournalStrings.emptyString) {
+              kJoule += double.parse(line[12]) * 17;
+            }
+
+            if (line[14] != OpenEatsJournalStrings.emptyString) {
+              kJoule += double.parse(line[14]) * 17;
+            }
+
+            expect(double.parse(line[9]) / kJoule, lessThan(2));
+          }
         }
 
-        if (parts[0] == "\"${OpenEatsJournalStrings.csvFoodUnit}\"") {
+        if (line[0] == OpenEatsJournalStrings.csvFoodUnit) {
           foodUnitCount++;
         }
       }

@@ -223,7 +223,7 @@
   "recent": "Recent",
   "as_new_eats_journal_entry": "As new eats journal entry",
   "export_import": "Export/import:",
-  "database_import_hint": "All your exisiting data is overwritten during import. The database is in SQLite format and can be opened with DB Browser for SQLite (DB4S) e.g.",
+  "database_import_hint": "The database is exported to \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\export\\oej.db and is imported from \\Android\\data\\com.drexeldevelopment.openeatsjournal\\files\\import\\oej.db. All your exisiting data is overwritten during import. The database is in SQLite format and can be opened with DB Browser for SQLite (DB4S) e.g.",
   "export_data": "Export data",
   "import_data": "Import data",
   "import_data_title": "Import database?",
