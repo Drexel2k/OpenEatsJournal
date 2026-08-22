@@ -56,14 +56,6 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
     OverlayDisplay? overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     overlayDisplay.setAnimationController(animationController: _overlayAnimationController);
 
-    final ConvertValidate convert = ConvertValidate(
-      languageCode: OpenEatsJournalStrings.en,
-      energyUnit: EnergyUnit.kcal,
-      heightUnit: HeightUnit.cm,
-      weightUnit: WeightUnit.g,
-      volumeUnit: VolumeUnit.ml,
-    );
-
     return Consumer<OpenEatsJournalAppViewModel>(
       builder: (context, openEatsJournalAppViewModel, _) => ListenableBuilder(
         listenable: openEatsJournalAppViewModel.appWideSettingChanged,
@@ -79,6 +71,14 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
                 ThemeMode themeMode = ThemeMode.light;
                 String languageCode = OpenEatsJournalStrings.en;
                 String initialRoute = OpenEatsJournalStrings.navigatorRouteEatsJournal;
+
+                final ConvertValidate convert = ConvertValidate(
+                  languageCode: languageCode,
+                  energyUnit: EnergyUnit.kcal,
+                  heightUnit: HeightUnit.cm,
+                  weightUnit: WeightUnit.g,
+                  volumeUnit: VolumeUnit.ml,
+                );
 
                 if (openEatsJournalAppViewModel.onboarded) {
                   openEatsJournalAppViewModel.startListening();
@@ -101,6 +101,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
                   String platformLanguageCode = PlatformDispatcher.instance.locale.languageCode;
                   if (AppLocalizations.supportedLocales.any((locale) => locale.languageCode == platformLanguageCode)) {
                     languageCode = platformLanguageCode;
+                    convert.languageCode = languageCode;
                   }
 
                   initialRoute = OpenEatsJournalStrings.navigatorRouteOnboarding;
