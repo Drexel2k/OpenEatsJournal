@@ -83,10 +83,10 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                   SizedBox(width: 15),
                   RoundOutlinedButton(
                     onPressed: () async {
-                      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ["jpg", "jpeg", "png"]);
+                      List<PlatformFile> result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ["jpg", "jpeg", "png"]);
 
-                      if (result != null) {
-                        BarcodeCapture? barcodeCapture = await _mobileScannerController.analyzeImage(result.files.single.path!);
+                      if (result.isNotEmpty) {
+                        BarcodeCapture? barcodeCapture = await _mobileScannerController.analyzeImage(result.first.path!);
                         if (barcodeCapture != null && barcodeCapture.barcodes.isNotEmpty) {
                           Navigator.pop(AppGlobal.navigatorKey.currentContext!, barcodeCapture.barcodes.first.rawValue);
                         } else {

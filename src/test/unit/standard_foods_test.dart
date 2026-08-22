@@ -100,7 +100,10 @@ void main() async {
     int foodCount = 0;
     int foodUnitCount = 0;
     for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
-      List<List<String>> lines = CsvToListConverter(shouldParseNumbers: false).convert(await files[fileIndex].readAsString());
+      List<List<String>> lines = csv
+          .decode(await files[fileIndex].readAsString())
+          .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
+          .toList();
 
       double kJoule;
       for (List<String> line in lines) {

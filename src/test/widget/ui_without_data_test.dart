@@ -58,9 +58,10 @@ void main() async {
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
     when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
       (_) => Future(() async {
-        return CsvToListConverter(
-          shouldParseNumbers: false,
-        ).convert(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync());
+        return csv
+            .decode(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync())
+            .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
+            .toList();
       }),
     );
 

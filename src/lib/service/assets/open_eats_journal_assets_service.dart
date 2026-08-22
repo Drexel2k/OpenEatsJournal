@@ -10,6 +10,7 @@ class OpenEatsJournalAssetsService {
   Future<List<List<String>>> getCsvContent({required String path}) async {
     //assets can't be streamed, the entire file need to be loaded into memory, so we have to split the data file in chunks to don't escalate memory usage one
     //large files: https://github.com/flutter/flutter/issues/73322
-    return CsvToListConverter(shouldParseNumbers: false).convert(await rootBundle.loadString(path));
+
+    return csv.decode(await rootBundle.loadString(path)).map<List<String>>((first) => first.map<String>((second) => second as String).toList()).toList();
   }
 }

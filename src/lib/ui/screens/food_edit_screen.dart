@@ -815,7 +815,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
                 return ReorderableListView(
                   buildDefaultDragHandles: !foodEditScreenViewModel.foodUnitsEditMode.value,
-                  onReorder: (oldIndex, newIndex) {
+                  onReorderItem: (oldIndex, newIndex) {
                     foodEditScreenViewModel.reorder(oldIndex, newIndex);
                   },
                   shrinkWrap: true,
