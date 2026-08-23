@@ -51,8 +51,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final double fabMenuWidth = 150;
-
+    
     final double overlaySpacer = 170;
     final double dimension = 200;
     final double radius = 0.9;
@@ -1034,111 +1033,94 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
             ),
           ],
         ),
-        floatingActionButton: SizedBox(
-          width: fabMenuWidth,
-          height: 310,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ValueListenableBuilder(
-                valueListenable: eatsJournalScreenViewModel.floatingActionMenuElapsed,
-                builder: (_, _, _) {
-                  if (eatsJournalScreenViewModel.floatingActionMenuElapsed.value) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "5",
-                            onPressed: () async {
-                              eatsJournalScreenViewModel.toggleFloatingActionButtons();
+        floatingActionButton: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: eatsJournalScreenViewModel.floatingActionMenuElapsed,
+              builder: (_, _, _) {
+                if (eatsJournalScreenViewModel.floatingActionMenuElapsed.value) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      FloatingActionButton.extended(
+                        heroTag: "5",
+                        onPressed: () async {
+                          eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                              await Navigator.pushNamedAndRemoveUntil(context, OpenEatsJournalStrings.navigatorRouteFood, (Route<dynamic> route) => false);
-                            },
-                            label: Text(AppLocalizations.of(context)!.eats_journal_entry),
-                            icon: Icon(Icons.menu_book),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "4",
-                            onPressed: () async {
-                              eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                          await Navigator.pushNamedAndRemoveUntil(context, OpenEatsJournalStrings.navigatorRouteFood, (Route<dynamic> route) => false);
+                        },
+                        label: Text(AppLocalizations.of(context)!.eats_journal_entry),
+                        icon: Icon(Icons.menu_book),
+                      ),
 
-                              if (await _showAddWeightDialog(
-                                context: AppGlobal.navigatorKey.currentContext!,
-                                eatsJournalScreenViewModel: eatsJournalScreenViewModel,
-                                initialDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
-                                convert: convert,
-                              )) {
-                                eatsJournalScreenViewModel.refreshCurrentWeight();
-                                overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                    spacer: overlaySpacer,
-                                  ),
-                                );
-                              }
-                            },
-                            label: Text(AppLocalizations.of(context)!.weight_journal_entry),
-                            icon: Icon(Icons.scale),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "3",
-                            onPressed: () async {
-                              eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                      SizedBox(height: 5),
+                      FloatingActionButton.extended(
+                        heroTag: "4",
+                        onPressed: () async {
+                          eatsJournalScreenViewModel.toggleFloatingActionButtons();
 
-                              await Navigator.pushNamed(
-                                context,
-                                OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                arguments: eatsJournalScreenViewModel.getNewFood(),
-                              );
-                            },
-                            label: Text(AppLocalizations.of(context)!.food),
-                            icon: Icon(Icons.lunch_dining),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "2",
-                            onPressed: () async {
-                              eatsJournalScreenViewModel.toggleFloatingActionButtons();
-                              await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
-                              eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                              eatsJournalScreenViewModel.refreshNutritionData();
-                            },
-                            label: Text(AppLocalizations.of(context)!.quick_entry),
-                            icon: Icon(Icons.speed),
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return SizedBox();
-                  }
-                },
-              ),
-              const SizedBox(height: 10, width: 0),
-              FloatingActionButton(
-                heroTag: "1",
-                onPressed: () {
-                  eatsJournalScreenViewModel.toggleFloatingActionButtons();
-                },
-                child: Icon(Icons.add),
-              ),
-            ],
-          ),
+                          if (await _showAddWeightDialog(
+                            context: AppGlobal.navigatorKey.currentContext!,
+                            eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                            initialDate: eatsJournalScreenViewModel.currentJournalDate.value,
+                            initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
+                            convert: convert,
+                          )) {
+                            eatsJournalScreenViewModel.refreshCurrentWeight();
+                            overlayDisplay.enqueue(
+                              overlayInfo: OverlayInfo(
+                                message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                spacer: overlaySpacer,
+                              ),
+                            );
+                          }
+                        },
+                        label: Text(AppLocalizations.of(context)!.weight_journal_entry),
+                        icon: Icon(Icons.scale),
+                      ),
+
+                      SizedBox(height: 5),
+                      FloatingActionButton.extended(
+                        heroTag: "3",
+                        onPressed: () async {
+                          eatsJournalScreenViewModel.toggleFloatingActionButtons();
+
+                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: eatsJournalScreenViewModel.getNewFood());
+                        },
+                        label: Text(AppLocalizations.of(context)!.food),
+                        icon: Icon(Icons.lunch_dining),
+                      ),
+
+                      SizedBox(height: 5),
+                      FloatingActionButton.extended(
+                        heroTag: "2",
+                        onPressed: () async {
+                          eatsJournalScreenViewModel.toggleFloatingActionButtons();
+                          await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
+                          eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
+                          eatsJournalScreenViewModel.refreshNutritionData();
+                        },
+                        label: Text(AppLocalizations.of(context)!.quick_entry),
+                        icon: Icon(Icons.speed),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              },
+            ),
+            const SizedBox(height: 10, width: 0),
+            FloatingActionButton(
+              heroTag: "1",
+              onPressed: () {
+                eatsJournalScreenViewModel.toggleFloatingActionButtons();
+              },
+              child: Icon(Icons.add),
+            ),
+          ],
         ),
       ),
     );

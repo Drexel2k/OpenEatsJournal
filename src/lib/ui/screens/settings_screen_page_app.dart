@@ -51,7 +51,7 @@ class SettingsScreenPageApp extends StatelessWidget {
                             insetPadding: EdgeInsets.fromLTRB(dialogHorizontalPadding, dialogVerticalPadding, dialogHorizontalPadding, dialogVerticalPadding),
                             child: AboutScreen(
                               languageCode: _settingsViewModel.languageCode.value,
-                              contactData: _settingsViewModel.contactData,
+                              contactData: _settingsViewModel.appContactAddress,
                               appVersion: _settingsViewModel.appVersion,
                               useStagingServices: _settingsViewModel.useStagingServices,
                             ),

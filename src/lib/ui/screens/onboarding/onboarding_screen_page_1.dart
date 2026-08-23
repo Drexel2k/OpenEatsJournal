@@ -101,7 +101,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                               String privacyText = await rootBundle.loadString("assets/privacy.txt");
                               privacyText = privacyText.replaceAll(
                                 OpenEatsJournalStrings.contactDataPlaceholder,
-                                widget._onboardingScreenViewModel.contactData,
+                                widget._onboardingScreenViewModel.appContactAddress,
                               );
 
                               await showDialog(

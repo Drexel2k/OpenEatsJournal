@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-08-20 00-00-00","2026-01-15 00-00-00"
+"2026-08-23 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -407,3 +407,6 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","203","2026-08-20 00-00-00","Chocolate donut","Schoko Donut",,,"100",,"1881 ","28","14","41","20","6.9","1.4",
 "foodunit","1","Normal","Normal","60","g","true"
 "foodunit","2","Mini","Mini","25","g","false"
+"food","204","2026-08-23 00-00-00","Cheesecake","Käsekuchen",,,"100",,"1134 ","16.5","11.6","24.1","14.1","6.7","0.1",
+"foodunit","1","Serving","Portion","150","g","true"
+"food","205","2026-08-23 00-00-00","Salted peanuts","Erdnüsse gesalzen",,,"100",,"2569 ","51.2","7.8","11","5.2","2.4","1",

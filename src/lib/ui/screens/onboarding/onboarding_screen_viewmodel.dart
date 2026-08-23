@@ -82,7 +82,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
   double get displayWeightTarget2 => _displayWeightTarget2;
   double get displayWeightTarget3 => _displayWeightTarget3;
 
-  String get contactData => _settingsRepository.contactData!;
+  String get appContactAddress => _settingsRepository.appContactAddress!;
   String get languageCode => _languageCode;
   DateTime get today => _settingsRepository.today;
 

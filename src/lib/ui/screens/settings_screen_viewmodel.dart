@@ -100,7 +100,7 @@ class SettingsScreenViewModel extends ChangeNotifier {
   double get repositoryHeight => _convert.getDisplayHeight(heightCm: _settingsRepository.height);
 
   bool get useStagingServices => _settingsRepository.useStagingServices;
-  String get contactData => _settingsRepository.contactData!;
+  String get appContactAddress => _settingsRepository.appContactAddress!;
   String get appVersion => _settingsRepository.appVersion;
   DateTime get today => _settingsRepository.today;
 

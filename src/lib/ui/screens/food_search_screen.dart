@@ -51,7 +51,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     final double overlaySpacer = 170;
-    final double fabMenuWidth = 150;
 
     final double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.1;
     final double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.06;
@@ -566,101 +565,84 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             ),
           ],
         ),
-        floatingActionButton: SizedBox(
-          width: fabMenuWidth,
-          height: 310,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ValueListenableBuilder(
-                valueListenable: foodSearchScreenViewModel.floatingActionMenuElapsed,
-                builder: (_, _, _) {
-                  if (foodSearchScreenViewModel.floatingActionMenuElapsed.value) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "4",
-                            onPressed: () async {
-                              foodSearchScreenViewModel.toggleFloatingActionButtons();
-                              if (await _showAddWeightDialog(
-                                context: AppGlobal.navigatorKey.currentContext!,
-                                foodSearchScreenViewModel: foodSearchScreenViewModel,
-                                initialDate: foodSearchScreenViewModel.currentJournalDate.value,
-                                initialWeight: await foodSearchScreenViewModel.getLastWeightJournalEntry(),
-                                convert: convert,
-                              )) {
-                                overlayDisplay.enqueue(
-                                  overlayInfo: OverlayInfo(
-                                    message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                    spacer: overlaySpacer,
-                                  ),
-                                );
-                              }
-                            },
-                            label: Text(AppLocalizations.of(context)!.weight_journal_entry),
-                            icon: Icon(Icons.scale),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "3",
-                            onPressed: () async {
-                              foodSearchScreenViewModel.toggleFloatingActionButtons();
+        floatingActionButton: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ValueListenableBuilder(
+              valueListenable: foodSearchScreenViewModel.floatingActionMenuElapsed,
+              builder: (_, _, _) {
+                if (foodSearchScreenViewModel.floatingActionMenuElapsed.value) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      FloatingActionButton.extended(
+                        heroTag: "4",
+                        onPressed: () async {
+                          foodSearchScreenViewModel.toggleFloatingActionButtons();
+                          if (await _showAddWeightDialog(
+                            context: AppGlobal.navigatorKey.currentContext!,
+                            foodSearchScreenViewModel: foodSearchScreenViewModel,
+                            initialDate: foodSearchScreenViewModel.currentJournalDate.value,
+                            initialWeight: await foodSearchScreenViewModel.getLastWeightJournalEntry(),
+                            convert: convert,
+                          )) {
+                            overlayDisplay.enqueue(
+                              overlayInfo: OverlayInfo(
+                                message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                spacer: overlaySpacer,
+                              ),
+                            );
+                          }
+                        },
+                        label: Text(AppLocalizations.of(context)!.weight_journal_entry),
+                        icon: Icon(Icons.scale),
+                      ),
+                      SizedBox(height: 5),
+                      FloatingActionButton.extended(
+                        heroTag: "3",
+                        onPressed: () async {
+                          foodSearchScreenViewModel.toggleFloatingActionButtons();
 
-                              await Navigator.pushNamed(
-                                context,
-                                OpenEatsJournalStrings.navigatorRouteFoodEdit,
-                                arguments: foodSearchScreenViewModel.getNewFood(),
-                              );
-                            },
-                            label: Text(AppLocalizations.of(context)!.food),
-                            icon: Icon(Icons.lunch_dining),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        SizedBox(
-                          width: fabMenuWidth,
-                          child: FloatingActionButton.extended(
-                            heroTag: "2",
-                            onPressed: () async {
-                              foodSearchScreenViewModel.toggleFloatingActionButtons();
+                          await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFoodEdit, arguments: foodSearchScreenViewModel.getNewFood());
+                        },
+                        label: Text(AppLocalizations.of(context)!.food),
+                        icon: Icon(Icons.lunch_dining),
+                      ),
+                      SizedBox(height: 5),
+                      FloatingActionButton.extended(
+                        heroTag: "2",
+                        onPressed: () async {
+                          foodSearchScreenViewModel.toggleFloatingActionButtons();
 
-                              await Navigator.pushNamed(
-                                context,
-                                OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-                                arguments: foodSearchScreenViewModel.getNewQuickEntry(
-                                  entryDate: foodSearchScreenViewModel.currentJournalDate.value,
-                                  meal: foodSearchScreenViewModel.currentMeal.value,
-                                ),
-                              );
-                            },
-                            label: Text(AppLocalizations.of(context)!.quick_entry),
-                            icon: Icon(Icons.speed),
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return SizedBox();
-                  }
-                },
-              ),
-              const SizedBox(height: 10, width: 0),
-              FloatingActionButton(
-                heroTag: "1",
-                onPressed: () {
-                  foodSearchScreenViewModel.toggleFloatingActionButtons();
-                },
-                child: Icon(Icons.add),
-              ),
-            ],
-          ),
+                          await Navigator.pushNamed(
+                            context,
+                            OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+                            arguments: foodSearchScreenViewModel.getNewQuickEntry(
+                              entryDate: foodSearchScreenViewModel.currentJournalDate.value,
+                              meal: foodSearchScreenViewModel.currentMeal.value,
+                            ),
+                          );
+                        },
+                        label: Text(AppLocalizations.of(context)!.quick_entry),
+                        icon: Icon(Icons.speed),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              },
+            ),
+            const SizedBox(height: 10, width: 0),
+            FloatingActionButton(
+              heroTag: "1",
+              onPressed: () {
+                foodSearchScreenViewModel.toggleFloatingActionButtons();
+              },
+              child: Icon(Icons.add),
+            ),
+          ],
         ),
       ),
     );

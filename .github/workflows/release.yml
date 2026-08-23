@@ -1,0 +1,157 @@
+name: Build and release mobile artifacts
+
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '*' 
+
+jobs:
+  build_apk:
+    name: Build Android APKs (Split)
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        id: flutter-action
+        with:
+          channel: 'stable'
+          flutter-version: '3.38.9'
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: flutter pub get
+
+      - name: Add app contact data
+        working-directory: ./src
+        run: |
+          sed -i 's/String? get appContactMail => null;/String? get appContactMail => ${{ secrets.APP_CONTACT_EMAIL }};/g' ./lib/repository/settings_repository.dart
+          sed -i 's/String? get appContactAddress => null;/String? get appContactAddress => ${{ secrets.APP_CONTACT_ADDRESS }};/g' ./lib/repository/settings_repository.dart
+
+      - name: Decode Keystore
+        working-directory: ./src
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
+
+      - name: Build Split APKs
+        working-directory: ./src
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_PATH: release-keystore.jks
+        run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
+
+      - name: Rename APK Artifacts
+        working-directory: ./src
+        run: |
+          mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk ../oej-v${{ github.ref_name }}-armeabi-v7a.apk
+          mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk ../oej-v${{ github.ref_name }}-arm64-v8a.apk
+          mv build/app/outputs/flutter-apk/app-x86_64-release.apk ../oej-v${{ github.ref_name }}-x86_64.apk
+
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: oej-apk
+          path: |
+            oej-v${{ github.ref_name }}-armeabi-v7a.apk
+            oej-v${{ github.ref_name }}-arm64-v8a.apk
+            oej-v${{ github.ref_name }}-x86_64.apk
+
+  build_aab:
+    name: Build Android App Bundle
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: flutter pub get
+
+      - name: Add app contact data
+        working-directory: ./src
+        run: |
+          sed -i 's/String? get appContactMail => null;/String? get appContactMail => ${{ secrets.APP_CONTACT_EMAIL }};/g' ./lib/repository/settings_repository.dart
+          sed -i 's/String? get appContactAddress => null;/String? get appContactAddress => ${{ secrets.APP_CONTACT_ADDRESS }};/g' ./lib/repository/settings_repository.dart
+
+      - name: Decode Keystore
+        working-directory: ./src
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
+
+      - name: Build App Bundle
+        working-directory: ./src
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_PATH: release-keystore.jks
+        run: flutter build appbundle --release
+
+      - name: Rename AAB Artifact
+        working-directory: ./src
+        run: |
+          mv build/app/outputs/bundle/release/app-release.aab ../oej-v${{ github.ref_name }}.aab
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: oej-aab
+          path: |
+            oej-v${{ github.ref_name }}.aab
+
+  upload_to_release:
+    name: Upload to GitHub Release
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [build_apk, build_aab]
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create attestation for build
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            artifacts/*.apk
+            artifacts/*.aab
+
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v3
+        with:
+          draft: true
+          generate_release_notes: true
+          overwrite_files: false
+          tag_name: ${{ github.ref_name }}
+          files: |
+            artifacts/*.apk
+            artifacts/*.aab

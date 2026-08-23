@@ -113,7 +113,7 @@ class SettingsRepository extends ChangeNotifier {
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get appName => "OpenEatsJournal";
-  String get appVersion => "1.14";
+  String get appVersion => "1.15";
   bool get useStagingServices => kDebugMode ? true : false;
   DateTime get today {
     DateTime today = _today ?? DateTime.now();
@@ -125,7 +125,7 @@ class SettingsRepository extends ChangeNotifier {
 
   //Data required, but shall not be in the repo...
   String? get appContactMail => null;
-  String? get contactData => null;
+  String? get appContactAddress => null;
 
   Future<void> initSettings() async {
     _currentJournalDate = ValueNotifier(today);
