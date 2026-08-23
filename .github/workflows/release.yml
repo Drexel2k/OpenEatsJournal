@@ -29,7 +29,7 @@ jobs:
         id: flutter-action
         with:
           channel: 'stable'
-          flutter-version: '3.38.9'
+          flutter-version: '3.47.1'
 
       - name: Install dependencies
         working-directory: ./src
@@ -38,8 +38,8 @@ jobs:
       - name: Add app contact data
         working-directory: ./src
         run: |
-          sed -i 's/String? get appContactMail => null;/String? get appContactMail => ${{ secrets.APP_CONTACT_EMAIL }};/g' ./lib/repository/settings_repository.dart
-          sed -i 's/String? get appContactAddress => null;/String? get appContactAddress => ${{ secrets.APP_CONTACT_ADDRESS }};/g' ./lib/repository/settings_repository.dart
+          sed -i 's|String? get appContactMail => null;|String? get appContactMail => "${{ secrets.APP_CONTACT_EMAIL }}";|g' ./lib/repository/settings_repository.dart
+          sed -i 's|String? get appContactAddress => null;|String? get appContactAddress => "${{ secrets.APP_CONTACT_ADDRESS }}";|g' ./lib/repository/settings_repository.dart
 
       - name: Decode Keystore
         working-directory: ./src
@@ -89,8 +89,10 @@ jobs:
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
+        id: flutter-action
         with:
           channel: 'stable'
+          flutter-version: '3.47.1'
 
       - name: Install dependencies
         working-directory: ./src
@@ -99,8 +101,8 @@ jobs:
       - name: Add app contact data
         working-directory: ./src
         run: |
-          sed -i 's/String? get appContactMail => null;/String? get appContactMail => ${{ secrets.APP_CONTACT_EMAIL }};/g' ./lib/repository/settings_repository.dart
-          sed -i 's/String? get appContactAddress => null;/String? get appContactAddress => ${{ secrets.APP_CONTACT_ADDRESS }};/g' ./lib/repository/settings_repository.dart
+          sed -i 's|String? get appContactMail => null;|String? get appContactMail => "${{ secrets.APP_CONTACT_EMAIL }}";|g' ./lib/repository/settings_repository.dart
+          sed -i 's|String? get appContactAddress => null;|String? get appContactAddress => "${{ secrets.APP_CONTACT_ADDRESS }}";|g' ./lib/repository/settings_repository.dart
 
       - name: Decode Keystore
         working-directory: ./src
