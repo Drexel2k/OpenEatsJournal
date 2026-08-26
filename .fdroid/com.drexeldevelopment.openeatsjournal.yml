@@ -1,0 +1,157 @@
+Categories:
+  - Sports & Health
+  - Diet
+  - Health Manager
+License: AGPL-3.0-only
+AuthorName: Drexel Development
+AuthorWebSite: https://github.com/Drexel2k/
+SourceCode: https://github.com/Drexel2k/OpenEatsJournal/
+IssueTracker: https://github.com/Drexel2k/OpenEatsJournal/issues
+Donate: https://ko-fi.com/openeatsjournal
+
+AutoName: Open Eats Journal
+
+RepoType: git
+Repo: https://github.com/Drexel2k/OpenEatsJournal.git
+
+Builds:
+  # armeabi-v7a
+  - versionName: 1.16
+    versionCode: 331
+    commit: <GIT_HASH_HERE>
+    sudo:
+      - mkdir -p /home/runner/work/OpenEatsJournal
+      - chown -R vagrant /home/runner
+    output: src/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+    binary:
+      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/oej-v%v-armeabi-v7a.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - src/ios
+    prebuild:
+      - export repo=/home/runner/work/OpenEatsJournal/OpenEatsJournal
+      - cd ..
+      - mv com.drexeldevelopment.openeatsjournal $repo
+      - pushd $repo/src
+      - export APP_CONTACT_EMAIL="$(printf '%s' '<APP_CONTACT_EMAIL_OBFUSCATED_HERE>' | base64 -d)"
+      - export APP_CONTACT_ADDRESS="$(printf '%s' '<APP_CONTACT_ADDRESS_OBFUSCATED_HERE>' | base64 -d)"
+      - sed -i "s|String? get appContactMail => null;|String? get appContactMail => \"$APP_CONTACT_EMAIL\";|g" lib/repository/settings_repository.dart
+      - sed -i "s|String? get appContactAddress => null;|String? get appContactAddress => \"$APP_CONTACT_ADDRESS\";|g" lib/repository/settings_repository.dart
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" ../.github/workflows/release.yml | head -n1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - popd
+      - mv $repo com.drexeldevelopment.openeatsjournal
+    scandelete:
+      - src/.pub-cache
+    build:
+      - export repo=/home/runner/work/OpenEatsJournal/OpenEatsJournal
+      - cd ..
+      - mv com.drexeldevelopment.openeatsjournal $repo
+      - pushd $repo/src
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm" --split-debug-info=build/symbols
+      - popd
+      - mv $repo com.drexeldevelopment.openeatsjournal
+
+  # arm64-v8a
+  - versionName: 1.16
+    versionCode: 332
+    commit: <GIT_HASH_HERE>
+    sudo:
+      - mkdir -p /home/runner/work/OpenEatsJournal
+      - chown -R vagrant /home/runner
+    output: src/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    binary:
+      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/oej-v%v-arm64-v8a.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - src/ios
+    prebuild:
+      - export repo=/home/runner/work/OpenEatsJournal/OpenEatsJournal
+      - cd ..
+      - mv com.drexeldevelopment.openeatsjournal $repo
+      - pushd $repo/src
+      - export APP_CONTACT_EMAIL="$(printf '%s' '<APP_CONTACT_EMAIL_OBFUSCATED_HERE>' | base64 -d)"
+      - export APP_CONTACT_ADDRESS="$(printf '%s' '<APP_CONTACT_ADDRESS_OBFUSCATED_HERE>' | base64 -d)"
+      - sed -i "s|String? get appContactMail => null;|String? get appContactMail => \"$APP_CONTACT_EMAIL\";|g" lib/repository/settings_repository.dart
+      - sed -i "s|String? get appContactAddress => null;|String? get appContactAddress => \"$APP_CONTACT_ADDRESS\";|g" lib/repository/settings_repository.dart
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" ../.github/workflows/release.yml | head -n1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - popd
+      - mv $repo com.drexeldevelopment.openeatsjournal
+    scandelete:
+      - src/.pub-cache
+    build:
+      - export repo=/home/runner/work/OpenEatsJournal/OpenEatsJournal
+      - cd ..
+      - mv com.drexeldevelopment.openeatsjournal $repo
+      - pushd $repo/src
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-arm64" --split-debug-info=build/symbols
+      - popd
+      - mv $repo com.drexeldevelopment.openeatsjournal
+
+  # x86_64
+  - versionName: 1.16
+    versionCode: 333
+    commit: <GIT_HASH_HERE>
+    sudo:
+      - mkdir -p /home/runner/work/OpenEatsJournal
+      - chown -R vagrant /home/runner
+    output: src/build/app/outputs/flutter-apk/app-x86_64-release.apk
+    binary:
+      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/oej-v%v-x86_64.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - src/ios
+    prebuild:
+      - export repo=/home/runner/work/OpenEatsJournal/OpenEatsJournal
+      - cd ..
+      - mv com.drexeldevelopment.openeatsjournal $repo
+      - pushd $repo/src
+      - export APP_CONTACT_EMAIL="$(printf '%s' '<APP_CONTACT_EMAIL_OBFUSCATED_HERE>' | base64 -d)"
+      - export APP_CONTACT_ADDRESS="$(printf '%s' '<APP_CONTACT_ADDRESS_OBFUSCATED_HERE>' | base64 -d)"
+      - sed -i "s|String? get appContactMail => null;|String? get appContactMail => \"$APP_CONTACT_EMAIL\";|g" lib/repository/settings_repository.dart
+      - sed -i "s|String? get appContactAddress => null;|String? get appContactAddress => \"$APP_CONTACT_ADDRESS\";|g" lib/repository/settings_repository.dart
+      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" ../.github/workflows/release.yml | head -n1)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+      - popd
+      - mv $repo com.drexeldevelopment.openeatsjournal
+    scandelete:
+      - src/.pub-cache
+    build:
+      - export repo=/home/runner/work/OpenEatsJournal/OpenEatsJournal
+      - cd ..
+      - mv com.drexeldevelopment.openeatsjournal $repo
+      - pushd $repo/src
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform="android-x64" --split-debug-info=build/symbols
+      - popd
+      - mv $repo com.drexeldevelopment.openeatsjournal
+
+AllowedAPKSigningKeys: <KEY_HERE>
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 1.16
+CurrentVersionCode: 33

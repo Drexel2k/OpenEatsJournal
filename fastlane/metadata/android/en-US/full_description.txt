@@ -1,0 +1,18 @@
+Open Eats Journal is a free, data minimized and privacy friendly open source eats journal to track your food intake, nutritions, calories and weight.
+
+You get:
+- Full data sovereignty: The data remains on your device and is not shared with anyone, exporting and importing your data is also possible
+- Easy recording of food consumption and thus calories and nutritional values consumed
+- General easy use: copying of single journal entries, copying of journal entries of whole meals or days, multiple navigation possibilities
+- Calorie target can be set per weekday
+- Detailed statistics
+- Barcode scanner for scanning food barcodes to ease searching for foods
+- Integration of Open Food Facts and thus access to over 3 million foods
+- Creation of own foods
+- Using every food from every source as template for own food
+- Multiple serving sizes per food
+- Recording of food consumption based on foods or as a quick entry
+- Easy weight recording
+- Dark mode
+- Supported languages: English, German
+- Support for different units: metric (cm/kg/g/ml) and imperial (inch/lb/oz/fl oz)

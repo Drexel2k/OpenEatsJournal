@@ -1,7 +1,7 @@
 name: openeatsjournal
-description: "Free and open source eats, nutrition and calories journal"
+description: "Open Eats Journal is a free, data minimized and privacy friendly open source eats journal to track your food intake, nutritions, calories and weight."
 publish_to: 'none'
-version: 1.15.0+32
+version: 1.16.0+33
 
 environment:
   sdk: ^3.8.1

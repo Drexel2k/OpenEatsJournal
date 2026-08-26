@@ -1,0 +1,18 @@
+Open Eats Journal ist ein freies, datensparsarmes und datenschutzfreundliches Open Source Ernährungstagebuch um Deine Nahrungsaufnahme, Nährwerte, Kalorien und Gewicht nachzuverfolgen.
+
+Du bekommst:
+- Volle Datenhoheit: Die Daten bleiben auf Deinem Gerät und werden nicht geteilt, Export und Import Deiner Daten ist ebenfalls möglich
+- Einfaches Erfassen von Lebensmittelverzehr und damit von aufgenommenen Kalorien und Nährwerten
+- Generell einfache Benutzung: Kopieren einzelner Tagebucheinträge, Kopieren von Tagebucheinträgen einzelner Mahlzeiten oder ganzer Tage, mehrere Navigationsmöglichkeiten
+- Kalorienziel pro Wochentag einstellbar
+- Ausführliche Statistiken
+- Barcode Scanner zum Scannen von Lebensmittel Barcodes um die Suche nach Lebensmitteln zu erleichtern
+- Anbindung von Open Food Facts und damit Zugriff auf über 3 Millionen Lebensmittel
+- Erstellung eigener Lebensmittel
+- Nutzung jedes Lebensmittels aus jeder Quelle als Vorlage für eigenes Lebensmittel
+- Mehrere Portionsgrößen pro Lebensmittel
+- Erfassen von Lebensmittelverzehr auf Basis von Lebensmitteln oder als Schnelleintrag
+- Einfaches Erfassen von Gewicht
+- Dark Mode
+- Unterstützte Sprachen: Deutsch, Englisch
+- Unterstützung verschiedener Einheiten: Metrisch (cm/kg/g/ml) und imperial (inch/lb/oz/fl oz)
