@@ -33,7 +33,7 @@ class _FoodCardState extends State<FoodCard> {
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final borderRadius = BorderRadius.circular(8);
+    final borderRadius = BorderRadius.circular(20);
 
     final MeasurementUnit measurementUnit = _getMeasurementUnit();
     final String foodSourceLabel = UiHelpers.getFoodSourceLabel(food: widget._food, context: context);

@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:graphic/graphic.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
@@ -12,8 +11,6 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen_viewmodel.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_edit_screen.dart";
-import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
@@ -25,9 +22,9 @@ import "package:openeatsjournal/ui/utils/localized_drop_down_entries.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
+import "package:openeatsjournal/ui/widgets/eats_journal_main_button.dart";
+import "package:openeatsjournal/ui/widgets/eats_journal_meal_button.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
-import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
-import "package:openeatsjournal/ui/widgets/gauge_nutrition_fact_small.dart";
 import "package:openeatsjournal/ui/widgets/open_eats_journal_dropdown_menu.dart";
 import "package:openeatsjournal/ui/widgets/round_transparent_choice_chip.dart";
 import "package:provider/provider.dart";
@@ -49,12 +46,9 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
-    final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    
+
     final double overlaySpacer = 170;
-    final double dimension = 200;
-    final double radius = 0.9;
 
     final double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.05;
     final double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.03;
@@ -104,10 +98,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                 ),
               ],
             ),
-            //Hack for renderring graphic pie chart. The pie chart takes always the space of the full circle,
-            //even if through start and end angle not the full space is needed.
-            //Through the stack widgets can be placed closer together by overlapping the free space of the
-            //pie chart.
             ListenableBuilder(
               listenable: eatsJournalScreenViewModel.eatsJournalDataChanged,
               builder: (_, _) {
@@ -148,880 +138,340 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         dayKJoule: kJouleGaugeData.currentValue,
                       );
 
-                      double breakfastStartPoint = 0;
-                      double breakfastEndpoint = breakfastPercent;
+                      double breakfastStartValue = 0;
+                      double breakfastEndValue = breakfastPercent;
 
                       double lunchKJoule = _getLunchKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                       double lunchPercent = _getLunchKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
-                      double lunchStartPoint = breakfastPercent;
-                      double lunchEndpoint = breakfastPercent + lunchPercent;
+                      double lunchStartValue = breakfastPercent;
+                      double lunchEndValue = breakfastPercent + lunchPercent;
 
                       double dinnerKJoule = _getDinnerKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                       double dinnerPercent = _getDinnerKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
-                      double dinnerStartPoint = breakfastPercent + lunchPercent;
-                      double dinnerEndpoint = breakfastPercent + lunchPercent + dinnerPercent;
+                      double dinnerStartValue = breakfastPercent + lunchPercent;
+                      double dinnerEndValue = breakfastPercent + lunchPercent + dinnerPercent;
 
                       double snacksKJoule = _getSnacksKJoule(foodRepositoryGetDayDataResult: snapshot.data!);
                       double snacksPercent = _getSnacksKJoulePercent(foodRepositoryGetDayDataResult: snapshot.data!, dayKJoule: kJouleGaugeData.currentValue);
-                      double snacksStartPoint = breakfastPercent + lunchPercent + dinnerPercent;
-                      double snacksEndpoint = breakfastPercent + lunchPercent + dinnerPercent + snacksPercent;
+                      double snacksStartValue = breakfastPercent + lunchPercent + dinnerPercent;
+                      double snacksEndValue = breakfastPercent + lunchPercent + dinnerPercent + snacksPercent;
 
                       SettingsRepository settingsRepository = Provider.of<SettingsRepository>(context, listen: false);
                       JournalRepository journalRepository = Provider.of<JournalRepository>(context, listen: false);
 
-                      return Stack(
+                      //We now use gauge_indicator for display of gauges, instead of graphic, which we use now only for the statistics display. Graphic has
+                      //the issue, that it reserves space for a whole circle when building a gauge with it, so spacing between widges became too large.
+                      //We used stacks as a workaround, but that made other problems, e.g. if font size of android phone was change, texts become larger,
+                      //but the gauges don't move, becaus they were in their own layer of the stack. And the code structure was not intuitive.
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Center(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 55),
-                                ListenableBuilder(
-                                  listenable: eatsJournalScreenViewModel.settingsChanged,
-                                  builder: (_, _) {
-                                    return Column(
-                                      children: [
-                                        Text(
-                                          convert.getLocalizedEnergyUnit(context: context),
-                                          style: textTheme.titleLarge,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
-                                            Text(
-                                              " ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: (kJouleGaugeData.maxValue - kJouleGaugeData.currentValue).toDouble()))}",
-                                              style: textTheme.titleMedium,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          "${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: kJouleGaugeData.currentValue.toDouble()))}/${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: kJouleGaugeData.maxValue.toDouble()))}",
-                                          style: textTheme.titleSmall,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
+                          SizedBox(height: 10),
+                          Stack(
+                            children: [
+                              EatsJournalMainButton(
+                                kJouleGaugeData: kJouleGaugeData,
+                                fatGaugeData: fatGaugeData,
+                                carbohydratesGaugeData: carbohydratesGaugeData,
+                                proteinGaugeData: proteinGaugeData,
+                                eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                                journalRepository: journalRepository,
+                                settingsRepository: settingsRepository,
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: PopupMenuButton<String>(
+                                  onSelected: (selected) {},
+                                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                    PopupMenuItem(
+                                      onTap: () async {
+                                        DayEnergyTargetEditorScreenViewModel dayEnergyTargetEditorScreenViewModel = DayEnergyTargetEditorScreenViewModel(
+                                          initialEnergyTargetKJoule: kJouleGaugeData.maxValue.toDouble(),
+                                          convert: convert,
+                                        );
+
+                                        if ((await showDialog<bool>(
+                                          useSafeArea: true,
+                                          barrierDismissible: false,
+                                          context: AppGlobal.navigatorKey.currentContext!,
+                                          builder: (BuildContext contextBuilder) {
+                                            return Dialog(
+                                              insetPadding: EdgeInsets.fromLTRB(
+                                                dialogHorizontalPadding,
+                                                dialogVerticalPadding,
+                                                dialogHorizontalPadding,
+                                                dialogVerticalPadding,
+                                              ),
+                                              child: ChangeNotifierProvider(
+                                                create: (context) => dayEnergyTargetEditorScreenViewModel,
+                                                child: DayEnergyTargetEditorScreen(date: eatsJournalScreenViewModel.currentJournalDate.value),
+                                              ),
+                                            );
+                                          },
+                                        ))!) {
+                                          await eatsJournalScreenViewModel.setDayEnergyTarget(
+                                            day: eatsJournalScreenViewModel.currentJournalDate.value,
+                                            energyTargetKJoule: dayEnergyTargetEditorScreenViewModel.lastValidEnergyTargetKJoule,
+                                          );
+                                          //does reload stored day targets
+                                          eatsJournalScreenViewModel.refreshNutritionData();
+                                        }
+                                      },
+                                      child: ListTile(
+                                        leading: Icon(Icons.vertical_align_top),
+                                        title: Text(AppLocalizations.of(context)!.edit_day_energy_target(convert.getLocalizedEnergyUnit(context: context))),
+                                      ),
+                                    ),
+                                    PopupMenuDivider(indent: 10, endIndent: 10),
+                                    PopupMenuItem(
+                                      onTap: () async {
+                                        double weightKg = await eatsJournalScreenViewModel.getLastWeightJournalEntry();
+
+                                        await showDialog<void>(
+                                          useSafeArea: true,
+                                          barrierDismissible: false,
+                                          context: AppGlobal.navigatorKey.currentContext!,
+                                          builder: (BuildContext contextBuilder) {
+                                            return Dialog(
+                                              insetPadding: EdgeInsets.fromLTRB(
+                                                dialogHorizontalPadding,
+                                                dialogVerticalPadding,
+                                                dialogHorizontalPadding,
+                                                dialogVerticalPadding,
+                                              ),
+                                              child: ChangeNotifierProvider(
+                                                create: (context) => SettingsScreenViewModel(
+                                                  settingsRepository: settingsRepository,
+                                                  convert: convert,
+                                                  currentWeightKg: weightKg,
+                                                ),
+                                                child: SettingsScreen(),
+                                              ),
+                                            );
+                                          },
+                                        );
+
+                                        eatsJournalScreenViewModel.refreshEnergyTarget();
+                                        eatsJournalScreenViewModel.notifySettingsChanged();
+                                      },
+                                      child: ListTile(leading: Icon(Icons.settings), title: Text(AppLocalizations.of(context)!.settings)),
+                                    ),
+                                  ],
+
+                                  child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          FutureBuilder<Map<int, bool>>(
+                            future: eatsJournalScreenViewModel.eatsJournalEntriesAvailableForLast8Days,
+                            builder: (BuildContext context, AsyncSnapshot<Map<int, bool>> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
+                              } else if (snapshot.hasError) {
+                                throw StateError("Something went wrong: ${snapshot.error}");
+                              } else if (snapshot.hasData) {
+                                DateTime currentDate = eatsJournalScreenViewModel.today.subtract(Duration(days: 8));
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [-7, -6, -5, -4, -3, -2, -1, 0].map((int dayIndex) {
+                                    currentDate = currentDate.add(Duration(days: 1));
+                                    DateTime chipDate = currentDate;
+                                    TextStyle? style = snapshot.data![dayIndex]! ? TextStyle(color: dayButtonsTextColor, fontWeight: FontWeight.w900) : null;
+
+                                    return RoundTransparentChoiceChip(
+                                      selected: eatsJournalScreenViewModel.currentJournalDate.value == chipDate,
+                                      onSelected: (bool selected) {
+                                        _changeDate(eatsJournalScreenViewModel: eatsJournalScreenViewModel, date: chipDate);
+                                      },
+                                      label: Text(
+                                        _getDay1CharAbbreviation(context: context, date: chipDate),
+                                        style: style,
+                                      ),
+                                    );
+                                  }).toList(),
+                                );
+                              } else {
+                                return Text(AppLocalizations.of(context)!.no_data);
+                              }
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          EatsJournalMealButton(
+                            meal: Meal.breakfast,
+                            mealStartValue: breakfastStartValue,
+                            mealEndValue: breakfastEndValue,
+                            mealKJoule: breakfastKJoule,
+                            mealPercent: breakfastPercent,
+                            eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                            journalRepository: journalRepository,
+                            settingsRepository: settingsRepository,
+                            changeMealCallback: ({required Meal meal}) {
+                              _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: meal);
+                            },
+                            pushQuickEntryScreenCallback: () async {
+                              await _pushQuickEntryScreen(context: context, eatsJournalScreenViewModel: eatsJournalScreenViewModel);
+                            },
+                          ),
+                          SizedBox(height: 3),
+                          EatsJournalMealButton(
+                            meal: Meal.lunch,
+                            mealStartValue: lunchStartValue,
+                            mealEndValue: lunchEndValue,
+                            mealKJoule: lunchKJoule,
+                            mealPercent: lunchPercent,
+                            eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                            journalRepository: journalRepository,
+                            settingsRepository: settingsRepository,
+                            changeMealCallback: ({required Meal meal}) {
+                              _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: meal);
+                            },
+                            pushQuickEntryScreenCallback: () async {
+                              await _pushQuickEntryScreen(context: context, eatsJournalScreenViewModel: eatsJournalScreenViewModel);
+                            },
+                          ),
+                          SizedBox(height: 3),
+                          EatsJournalMealButton(
+                            meal: Meal.dinner,
+                            mealStartValue: dinnerStartValue,
+                            mealEndValue: dinnerEndValue,
+                            mealKJoule: dinnerKJoule,
+                            mealPercent: dinnerPercent,
+                            eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                            journalRepository: journalRepository,
+                            settingsRepository: settingsRepository,
+                            changeMealCallback: ({required Meal meal}) {
+                              _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: meal);
+                            },
+                            pushQuickEntryScreenCallback: () async {
+                              await _pushQuickEntryScreen(context: context, eatsJournalScreenViewModel: eatsJournalScreenViewModel);
+                            },
+                          ),
+                          SizedBox(height: 3),
+                          EatsJournalMealButton(
+                            meal: Meal.snacks,
+                            mealStartValue: snacksStartValue,
+                            mealEndValue: snacksEndValue,
+                            mealKJoule: snacksKJoule,
+                            mealPercent: snacksPercent,
+                            eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                            journalRepository: journalRepository,
+                            settingsRepository: settingsRepository,
+                            changeMealCallback: ({required Meal meal}) {
+                              _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: meal);
+                            },
+                            pushQuickEntryScreenCallback: () async {
+                              await _pushQuickEntryScreen(context: context, eatsJournalScreenViewModel: eatsJournalScreenViewModel);
+                            },
+                          ),
+                          SizedBox(height: 3),
+                          SizedBox(
+                            height: 48,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () async {
+                                await showDialog<void>(
+                                  useSafeArea: true,
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (BuildContext contextBuilder) {
+                                    double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
+                                    double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
+
+                                    return Dialog(
+                                      insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
+                                      child: ChangeNotifierProvider(
+                                        create: (context) => WeightJournalEditScreenViewModel(journalRepository: journalRepository),
+                                        child: WeightJournalEditScreen(),
+                                      ),
                                     );
                                   },
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              SizedBox(height: 5),
-                              Center(
-                                child: SizedBox(
-                                  height: dimension,
-                                  width: dimension,
-                                  child: Chart(
-                                    data: [
-                                      {"type": "100Percent", "percent": 100},
-                                      {"type": "currentPercent", "percent": kJouleGaugeData.percentageFilled},
-                                    ],
-                                    variables: {
-                                      "type": Variable(accessor: (Map map) => map["type"] as String),
-                                      "percent": Variable(accessor: (Map map) => map["percent"] as num, scale: LinearScale(min: 0, max: 100)),
-                                    },
-                                    marks: [
-                                      IntervalMark(
-                                        shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(8)))),
-                                        color: ColorEncode(variable: "type", values: kJouleGaugeData.colors),
-                                      ),
-                                    ],
-                                    coord: PolarCoord(transposed: true, startAngle: 2.5, endAngle: 6.93, startRadius: radius, endRadius: radius),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              SizedBox(height: 155),
-                              Row(
+                                );
+
+                                eatsJournalScreenViewModel.refreshCurrentWeight();
+                              },
+                              child: Row(
                                 children: [
-                                  Expanded(
-                                    child: Center(
-                                      child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.fat, gaugeData: fatGaugeData),
+                                  SizedBox(width: 17),
+                                  SizedBox(
+                                    width: 60,
+                                    height: 54,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Icon(Icons.scale, size: 45, color: colorScheme.primary),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Center(
-                                      child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.carbs, gaugeData: carbohydratesGaugeData),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Center(
-                                      child: GaugeNutritionFactSmall(factName: AppLocalizations.of(context)!.protein, gaugeData: proteinGaugeData),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              FutureBuilder<Map<int, bool>>(
-                                future: eatsJournalScreenViewModel.eatsJournalEntriesAvailableForLast8Days,
-                                builder: (BuildContext context, AsyncSnapshot<Map<int, bool>> snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
-                                  } else if (snapshot.hasError) {
-                                    throw StateError("Something went wrong: ${snapshot.error}");
-                                  } else if (snapshot.hasData) {
-                                    DateTime currentDate = eatsJournalScreenViewModel.today.subtract(Duration(days: 8));
-                                    return Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [-7, -6, -5, -4, -3, -2, -1, 0].map((int dayIndex) {
-                                        currentDate = currentDate.add(Duration(days: 1));
-                                        DateTime chipDate = currentDate;
-                                        TextStyle? style = snapshot.data![dayIndex]!
-                                            ? TextStyle(color: dayButtonsTextColor, fontWeight: FontWeight.w900)
-                                            : null;
-
-                                        return RoundTransparentChoiceChip(
-                                          selected: eatsJournalScreenViewModel.currentJournalDate.value == chipDate,
-                                          onSelected: (bool selected) {
-                                            _changeDate(eatsJournalScreenViewModel: eatsJournalScreenViewModel, date: chipDate);
-                                          },
-                                          label: Text(
-                                            _getDay1CharAbbreviation(context: context, date: chipDate),
-                                            style: style,
-                                          ),
-                                        );
-                                      }).toList(),
-                                    );
-                                  } else {
-                                    return Text(AppLocalizations.of(context)!.no_data);
-                                  }
-                                },
-                              ),
-                              SizedBox(height: 4),
-                              //Hack for renderring graphic pie chart. The pie chart takes always the space of the full circle,
-                              //even if through start and end angle not the full space is needed.
-                              //Through the stack widgets can be placed closer together by overlapping the free space of the
-                              //pie chart.
-                              Stack(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 80,
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: GaugeDistribution(startValue: breakfastStartPoint, endValue: breakfastEndpoint),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          margin: const EdgeInsets.only(top: 11),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(AppLocalizations.of(context)!.breakfast),
-                                              Text(
-                                                "${convert.getCleanDoubleString1DecimalDigit(doubleValue: breakfastPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: breakfastKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 50),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 80,
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: GaugeDistribution(startValue: lunchStartPoint, endValue: lunchEndpoint),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              margin: const EdgeInsets.only(top: 11),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(AppLocalizations.of(context)!.lunch),
-                                                  Text(
-                                                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: lunchPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: lunchKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 100),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 80,
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: GaugeDistribution(startValue: dinnerStartPoint, endValue: dinnerEndpoint),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              margin: const EdgeInsets.only(top: 11),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(AppLocalizations.of(context)!.dinner),
-                                                  Text(
-                                                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: dinnerPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: dinnerKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 150),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 80,
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: GaugeDistribution(startValue: snacksStartPoint, endValue: snacksEndpoint),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              margin: const EdgeInsets.only(top: 11),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(AppLocalizations.of(context)!.snacks),
-                                                  Text(
-                                                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: snacksPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: snacksKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 200),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(width: 20),
-                                          SizedBox(
-                                            width: 60,
-                                            height: 54,
-                                            child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child: Icon(Icons.scale, size: 45, color: colorScheme.primary),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              margin: const EdgeInsets.only(top: 11),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(AppLocalizations.of(context)!.weight),
-                                                  ListenableBuilder(
-                                                    listenable: eatsJournalScreenViewModel.currentWeightChanged,
-                                                    builder: (_, _) {
-                                                      return FutureBuilder<WeightJournalEntry?>(
-                                                        future: eatsJournalScreenViewModel.currentWeight,
-                                                        builder: (BuildContext context, AsyncSnapshot<WeightJournalEntry?> snapshot) {
-                                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                                            return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
-                                                          } else if (snapshot.hasError) {
-                                                            throw StateError("Something went wrong: ${snapshot.error}");
-                                                          } else if (snapshot.hasData) {
-                                                            return ListenableBuilder(
-                                                              listenable: eatsJournalScreenViewModel.settingsChanged,
-                                                              builder: (_, _) {
-                                                                return Text(
-                                                                  snapshot.data != null
-                                                                      ? "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)}"
-                                                                      : AppLocalizations.of(context)!.na,
-                                                                );
-                                                              },
-                                                            );
-                                                          } else {
-                                                            return Text("No Data Available");
-                                                          }
-                                                        },
-                                                      );
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 7),
-                                      Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                //breakfast nutrition button
-                                                child: SizedBox(
-                                                  height: 48,
-                                                  child: OutlinedButton(
-                                                    onPressed: () async {
-                                                      await showDialog<void>(
-                                                        useSafeArea: true,
-                                                        barrierDismissible: false,
-                                                        context: context,
-                                                        builder: (BuildContext contextBuilder) {
-                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
-                                                          return Dialog(
-                                                            insetPadding: EdgeInsets.fromLTRB(
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                            ),
-                                                            child: ChangeNotifierProvider(
-                                                              create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: journalRepository,
-                                                                settingsRepository: settingsRepository,
-                                                                meal: Meal.breakfast,
-                                                              ),
-                                                              child: EatsJournalEditScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-
-                                                      eatsJournalScreenViewModel.refreshNutritionData();
-                                                    },
-                                                    child: null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              IconButton.outlined(
-                                                onPressed: () {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.breakfast);
-                                                },
-                                                icon: Icon(Icons.check),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.breakfast);
-                                                  await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.speed),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.breakfast);
-                                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.add),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 57),
-                                      Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                //lunch nutrition button
-                                                child: SizedBox(
-                                                  height: 48,
-                                                  child: OutlinedButton(
-                                                    onPressed: () async {
-                                                      await showDialog<void>(
-                                                        useSafeArea: true,
-                                                        barrierDismissible: false,
-                                                        context: context,
-                                                        builder: (BuildContext contextBuilder) {
-                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
-                                                          return Dialog(
-                                                            insetPadding: EdgeInsets.fromLTRB(
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                            ),
-                                                            child: ChangeNotifierProvider(
-                                                              create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: journalRepository,
-                                                                settingsRepository: settingsRepository,
-                                                                meal: Meal.lunch,
-                                                              ),
-                                                              child: EatsJournalEditScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-
-                                                      eatsJournalScreenViewModel.refreshNutritionData();
-                                                    },
-                                                    child: null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              IconButton.outlined(
-                                                onPressed: () {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.lunch);
-                                                },
-                                                icon: Icon(Icons.check),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.lunch);
-                                                  await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.speed),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.lunch);
-                                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.add),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 107),
-                                      Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                //dinner nutrition button
-                                                child: SizedBox(
-                                                  height: 48,
-                                                  child: OutlinedButton(
-                                                    onPressed: () async {
-                                                      await showDialog<void>(
-                                                        useSafeArea: true,
-                                                        barrierDismissible: false,
-                                                        context: context,
-                                                        builder: (BuildContext contextBuilder) {
-                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
-                                                          return Dialog(
-                                                            insetPadding: EdgeInsets.fromLTRB(
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                            ),
-                                                            child: ChangeNotifierProvider(
-                                                              create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: journalRepository,
-                                                                settingsRepository: settingsRepository,
-                                                                meal: Meal.dinner,
-                                                              ),
-                                                              child: EatsJournalEditScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-
-                                                      eatsJournalScreenViewModel.refreshNutritionData();
-                                                    },
-                                                    child: null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              IconButton.outlined(
-                                                onPressed: () {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.dinner);
-                                                },
-                                                icon: Icon(Icons.check),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.dinner);
-                                                  await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.speed),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.dinner);
-                                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.add),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 157),
-                                      Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                //snacks nutrition button
-                                                child: SizedBox(
-                                                  height: 48,
-                                                  child: OutlinedButton(
-                                                    onPressed: () async {
-                                                      await showDialog<void>(
-                                                        useSafeArea: true,
-                                                        barrierDismissible: false,
-                                                        context: context,
-                                                        builder: (BuildContext contextBuilder) {
-                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
-                                                          return Dialog(
-                                                            insetPadding: EdgeInsets.fromLTRB(
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                            ),
-                                                            child: ChangeNotifierProvider(
-                                                              create: (context) => EatsJournalEditScreenViewModel(
-                                                                journalRepository: journalRepository,
-                                                                settingsRepository: settingsRepository,
-                                                                meal: Meal.snacks,
-                                                              ),
-                                                              child: EatsJournalEditScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-
-                                                      eatsJournalScreenViewModel.refreshNutritionData();
-                                                    },
-                                                    child: null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              IconButton.outlined(
-                                                onPressed: () {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.snacks);
-                                                },
-                                                icon: Icon(Icons.check),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.snacks);
-                                                  await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.speed),
-                                              ),
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  _changeMeal(eatsJournalScreenViewModel: eatsJournalScreenViewModel, meal: Meal.snacks);
-                                                  await Navigator.pushNamed(context, OpenEatsJournalStrings.navigatorRouteFood);
-                                                  eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
-                                                  eatsJournalScreenViewModel.refreshNutritionData();
-                                                },
-                                                icon: Icon(Icons.add),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 207),
-                                      Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: SizedBox(
-                                                  height: 48,
-                                                  //weight button
-                                                  child: OutlinedButton(
-                                                    onPressed: () async {
-                                                      await showDialog<void>(
-                                                        useSafeArea: true,
-                                                        barrierDismissible: false,
-                                                        context: context,
-                                                        builder: (BuildContext contextBuilder) {
-                                                          double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                                          double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
-                                                          return Dialog(
-                                                            insetPadding: EdgeInsets.fromLTRB(
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                              horizontalPadding,
-                                                              verticalPadding,
-                                                            ),
-                                                            child: ChangeNotifierProvider(
-                                                              create: (context) => WeightJournalEditScreenViewModel(journalRepository: journalRepository),
-                                                              child: WeightJournalEditScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-
-                                                      eatsJournalScreenViewModel.refreshCurrentWeight();
-                                                    },
-                                                    child: null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              IconButton.outlined(
-                                                onPressed: () async {
-                                                  if (await _showAddWeightDialog(
-                                                    context: AppGlobal.navigatorKey.currentContext!,
-                                                    eatsJournalScreenViewModel: eatsJournalScreenViewModel,
-                                                    initialDate: eatsJournalScreenViewModel.currentJournalDate.value,
-                                                    initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
-                                                    convert: convert,
-                                                  )) {
-                                                    eatsJournalScreenViewModel.refreshCurrentWeight();
-                                                    overlayDisplay.enqueue(
-                                                      overlayInfo: OverlayInfo(
-                                                        message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
-                                                        spacer: overlaySpacer,
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                                icon: Icon(Icons.add),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      //empty space to ensure that floating action button is not blocking controls, so controls can be scrolled higher than
-                                      //the FAB's position
-                                      SizedBox(height: 70),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              SizedBox(height: 7),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 220,
-                                      //main nutrition button
-                                      child: OutlinedButton(
-                                        style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-                                        onPressed: () async {
-                                          await showDialog<void>(
-                                            useSafeArea: true,
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext contextBuilder) {
-                                              double horizontalPadding = MediaQuery.sizeOf(contextBuilder).width * 0.05;
-                                              double verticalPadding = MediaQuery.sizeOf(contextBuilder).height * 0.03;
-
-                                              return Dialog(
-                                                insetPadding: EdgeInsets.fromLTRB(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding),
-                                                child: ChangeNotifierProvider(
-                                                  create: (context) => EatsJournalEditScreenViewModel(
-                                                    journalRepository: journalRepository,
-                                                    settingsRepository: settingsRepository,
-                                                  ),
-                                                  child: EatsJournalEditScreen(),
-                                                ),
-                                              );
-                                            },
-                                          );
-
-                                          eatsJournalScreenViewModel.refreshNutritionData();
-                                        },
-                                        child: null,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              SizedBox(height: 15),
-                              Row(
-                                children: [
+                                  SizedBox(width: 8),
                                   Expanded(
                                     child: Align(
-                                      alignment: Alignment.centerRight,
-                                      //settings button
-                                      child: PopupMenuButton<String>(
-                                        onSelected: (selected) {},
-                                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                                          PopupMenuItem(
-                                            onTap: () async {
-                                              DayEnergyTargetEditorScreenViewModel dayEnergyTargetEditorScreenViewModel = DayEnergyTargetEditorScreenViewModel(
-                                                initialEnergyTargetKJoule: kJouleGaugeData.maxValue.toDouble(),
-                                                convert: convert,
-                                              );
-
-                                              if ((await showDialog<bool>(
-                                                useSafeArea: true,
-                                                barrierDismissible: false,
-                                                context: AppGlobal.navigatorKey.currentContext!,
-                                                builder: (BuildContext contextBuilder) {
-                                                  return Dialog(
-                                                    insetPadding: EdgeInsets.fromLTRB(
-                                                      dialogHorizontalPadding,
-                                                      dialogVerticalPadding,
-                                                      dialogHorizontalPadding,
-                                                      dialogVerticalPadding,
-                                                    ),
-                                                    child: ChangeNotifierProvider(
-                                                      create: (context) => dayEnergyTargetEditorScreenViewModel,
-                                                      child: DayEnergyTargetEditorScreen(date: eatsJournalScreenViewModel.currentJournalDate.value),
-                                                    ),
-                                                  );
-                                                },
-                                              ))!) {
-                                                await eatsJournalScreenViewModel.setDayEnergyTarget(
-                                                  day: eatsJournalScreenViewModel.currentJournalDate.value,
-                                                  energyTargetKJoule: dayEnergyTargetEditorScreenViewModel.lastValidEnergyTargetKJoule,
-                                                );
-                                                //does reload stored day targets
-                                                eatsJournalScreenViewModel.refreshNutritionData();
-                                              }
-                                            },
-                                            child: ListTile(
-                                              leading: Icon(Icons.vertical_align_top),
-                                              title: Text(
-                                                AppLocalizations.of(context)!.edit_day_energy_target(convert.getLocalizedEnergyUnit(context: context)),
-                                              ),
-                                            ),
-                                          ),
-                                          PopupMenuDivider(indent: 10, endIndent: 10),
-                                          PopupMenuItem(
-                                            onTap: () async {
-                                              double weightKg = await eatsJournalScreenViewModel.getLastWeightJournalEntry();
-
-                                              await showDialog<void>(
-                                                useSafeArea: true,
-                                                barrierDismissible: false,
-                                                context: AppGlobal.navigatorKey.currentContext!,
-                                                builder: (BuildContext contextBuilder) {
-                                                  return Dialog(
-                                                    insetPadding: EdgeInsets.fromLTRB(
-                                                      dialogHorizontalPadding,
-                                                      dialogVerticalPadding,
-                                                      dialogHorizontalPadding,
-                                                      dialogVerticalPadding,
-                                                    ),
-                                                    child: ChangeNotifierProvider(
-                                                      create: (context) => SettingsScreenViewModel(
-                                                        settingsRepository: settingsRepository,
-                                                        convert: convert,
-                                                        currentWeightKg: weightKg,
-                                                      ),
-                                                      child: SettingsScreen(),
-                                                    ),
-                                                  );
+                                      alignment: Alignment.centerLeft,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(AppLocalizations.of(context)!.weight),
+                                          ListenableBuilder(
+                                            listenable: eatsJournalScreenViewModel.currentWeightChanged,
+                                            builder: (_, _) {
+                                              return FutureBuilder<WeightJournalEntry?>(
+                                                future: eatsJournalScreenViewModel.currentWeight,
+                                                builder: (BuildContext context, AsyncSnapshot<WeightJournalEntry?> snapshot) {
+                                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                                    return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
+                                                  } else if (snapshot.hasError) {
+                                                    throw StateError("Something went wrong: ${snapshot.error}");
+                                                  } else if (snapshot.hasData) {
+                                                    return ListenableBuilder(
+                                                      listenable: eatsJournalScreenViewModel.settingsChanged,
+                                                      builder: (_, _) {
+                                                        return Text(
+                                                          snapshot.data != null
+                                                              ? "${convert.getCleanDoubleString1DecimalDigit(doubleValue: convert.getDisplayWeightKg(weightKg: snapshot.data!.weight))}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)}"
+                                                              : AppLocalizations.of(context)!.na,
+                                                        );
+                                                      },
+                                                    );
+                                                  } else {
+                                                    return Text("No Data Available");
+                                                  }
                                                 },
                                               );
-
-                                              eatsJournalScreenViewModel.refreshEnergyTarget();
-                                              eatsJournalScreenViewModel.notifySettingsChanged();
                                             },
-                                            child: ListTile(leading: Icon(Icons.settings), title: Text(AppLocalizations.of(context)!.settings)),
                                           ),
                                         ],
-
-                                        child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
                                       ),
                                     ),
                                   ),
+
+                                  IconButton.outlined(
+                                    onPressed: () async {
+                                      if (await _showAddWeightDialog(
+                                        context: AppGlobal.navigatorKey.currentContext!,
+                                        eatsJournalScreenViewModel: eatsJournalScreenViewModel,
+                                        initialDate: eatsJournalScreenViewModel.currentJournalDate.value,
+                                        initialWeight: await eatsJournalScreenViewModel.getLastWeightJournalEntry(),
+                                        convert: convert,
+                                      )) {
+                                        eatsJournalScreenViewModel.refreshCurrentWeight();
+                                        overlayDisplay.enqueue(
+                                          overlayInfo: OverlayInfo(
+                                            message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.weight_journal_entry_added,
+                                            spacer: overlaySpacer,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    icon: Icon(Icons.add),
+                                  ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
+                          //empty space to ensure that floating action button is not blocking controls, so controls can be scrolled higher than
+                          //the FAB's position
+                          SizedBox(height: 70),
                         ],
                       );
                     } else {
@@ -1098,7 +548,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                         heroTag: "2",
                         onPressed: () async {
                           eatsJournalScreenViewModel.toggleFloatingActionButtons();
-                          await _pushQuickEntryScreen(context, eatsJournalScreenViewModel);
+                          await _pushQuickEntryScreen(context: context, eatsJournalScreenViewModel: eatsJournalScreenViewModel);
                           eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                           eatsJournalScreenViewModel.refreshNutritionData();
                         },
@@ -1122,17 +572,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Future<void> _pushQuickEntryScreen(BuildContext context, EatsJournalScreenViewModel eatsJournalScreenViewModel) async {
-    await Navigator.pushNamed(
-      context,
-      OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
-      arguments: eatsJournalScreenViewModel.getNewQuickEntry(
-        entryDate: eatsJournalScreenViewModel.currentJournalDate.value,
-        meal: eatsJournalScreenViewModel.currentMeal.value,
       ),
     );
   }
@@ -1281,11 +720,6 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     return kJoule;
   }
 
-  void _changeMeal({required EatsJournalScreenViewModel eatsJournalScreenViewModel, required Meal meal}) {
-    eatsJournalScreenViewModel.currentMeal.value = meal;
-    eatsJournalScreenViewModel.updateCurrentMealInSettingsRepository();
-  }
-
   void _changeDate({required EatsJournalScreenViewModel eatsJournalScreenViewModel, required DateTime date}) {
     eatsJournalScreenViewModel.currentJournalDate.value = date;
     eatsJournalScreenViewModel.updateCurrentJournalDateInSettingsRepository();
@@ -1332,9 +766,20 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     return false;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _changeMeal({required EatsJournalScreenViewModel eatsJournalScreenViewModel, required Meal meal}) {
+    eatsJournalScreenViewModel.currentMeal.value = meal;
+    eatsJournalScreenViewModel.updateCurrentMealInSettingsRepository();
+  }
+
+  Future<void> _pushQuickEntryScreen({required BuildContext context, required EatsJournalScreenViewModel eatsJournalScreenViewModel}) async {
+    await Navigator.pushNamed(
+      context,
+      OpenEatsJournalStrings.navigatorRouteQuickEntryEdit,
+      arguments: eatsJournalScreenViewModel.getNewQuickEntry(
+        entryDate: eatsJournalScreenViewModel.currentJournalDate.value,
+        meal: eatsJournalScreenViewModel.currentMeal.value,
+      ),
+    );
   }
 
   String _getDay1CharAbbreviation({required BuildContext context, required DateTime date}) {
@@ -1363,5 +808,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
     }
 
     return AppLocalizations.of(context)!.sunday_abbreviated_1char;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

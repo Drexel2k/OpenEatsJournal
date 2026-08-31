@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:graphic/graphic.dart";
+import "package:gauge_indicator/gauge_indicator.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/ui/widgets/gauge_data.dart";
 import "package:provider/provider.dart";
@@ -14,54 +14,50 @@ class GaugeNutritionFactSmall extends StatelessWidget {
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final double height = 80;
-    final double width = 85;
-    final double radius = 0.85;
-
-    return Stack(
+    return Column(
       children: [
-        Column(
+        Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
+        Stack(
+          alignment: AlignmentGeometry.center,
           children: [
-            SizedBox(height: 3),
             SizedBox(
-              height: height,
-              width: width,
-              child: Chart(
-                data: [
-                  {"type": "100Percent", "percent": 100},
-                  {"type": "currentPercent", "percent": _gaugeData.percentageFilled},
-                ],
-                variables: {
-                  "type": Variable(accessor: (Map map) => map["type"] as String),
-                  "percent": Variable(accessor: (Map map) => map["percent"] as num, scale: LinearScale(min: 0, max: 100)),
-                },
-                marks: [
-                  IntervalMark(
-                    size: SizeEncode(value: 8),
-                    shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(4)))),
-                    color: ColorEncode(variable: "type", values: _gaugeData.colors),
+              height: 45,
+              child: Column(
+                children: [
+                  SizedBox(height: 13),
+                  Text(
+                    "${convert.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.currentValue as double)}/\n${convert.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.maxValue as double)}",
+                    style: textTheme.labelSmall,
+                    textAlign: TextAlign.center,
                   ),
                 ],
-                coord: PolarCoord(transposed: true, startAngle: 2.5, endAngle: 6.93, startRadius: radius, endRadius: radius),
+              ),
+            ),
+            SizedBox(
+              height: 47,
+              child: RadialGauge(
+                radius: 150.0,
+                value: _gaugeData.percentageFilled.toDouble(),
+                axis: GaugeAxis(
+                  pointer: null,
+                  min: 0,
+                  max: 100,
+                  sweepDegrees: 260.0,
+                  progressBar: GaugeProgressBar.rounded(
+                    color: _gaugeData.currentValue < _gaugeData.maxValue ? colorScheme.primary : colorScheme.error,
+                    placement: GaugeProgressPlacement.inside,
+                  ),
+                  style: GaugeAxisStyle(
+                    thickness: 8,
+                    background: _gaugeData.currentValue < _gaugeData.maxValue ? colorScheme.inversePrimary : colorScheme.primary,
+                    cornerRadius: Radius.circular(8.0),
+                  ),
+                ),
               ),
             ),
           ],
-        ),
-        SizedBox(
-          height: height,
-          width: width,
-          child: Column(
-            children: [
-              Text(_factName, style: textTheme.labelMedium, textAlign: TextAlign.center),
-              SizedBox(height: 13),
-              Text(
-                "${convert.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.currentValue as double)}/\n${convert.getCleanDoubleString1DecimalDigit(doubleValue: _gaugeData.maxValue as double)}",
-                style: textTheme.labelSmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
         ),
       ],
     );

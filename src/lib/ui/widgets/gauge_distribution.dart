@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:graphic/graphic.dart";
+import "package:gauge_indicator/gauge_indicator.dart";
 
 class GaugeDistribution extends StatelessWidget {
   GaugeDistribution({super.key, required double startValue, required endValue})
@@ -22,13 +22,7 @@ class GaugeDistribution extends StatelessWidget {
   }
 
   static double _getEndValue({required double startValue, required double endValue}) {
-    if (startValue < 0) {
-      startValue = 0;
-    }
-
-    if (startValue > 100) {
-      startValue = 100;
-    }
+    startValue = _getStartValue(startValue: startValue);
 
     if (endValue < startValue) {
       endValue = startValue;
@@ -44,34 +38,39 @@ class GaugeDistribution extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final List<Color> colors = [colorScheme.inversePrimary, colorScheme.primary, colorScheme.inversePrimary];
-
-    final double dimension = 75;
-    final double radius = 0.85;
-
-    return SizedBox(
-      height: dimension,
-      width: dimension,
-      child: Chart(
-        data: [
-          {"type": "100Percent", "min": 0, "max": 100},
-          {"type": "currentRange", "min": _startValue, "max": _endValue},
-        ],
-        variables: {
-          "type": Variable(accessor: (Map map) => map["type"] as String),
-          "min": Variable(accessor: (Map map) => map["min"] as num, scale: LinearScale(min: 0, max: 100)),
-          "max": Variable(accessor: (Map map) => map["max"] as num, scale: LinearScale(min: 0, max: 100)),
-        },
-        marks: [
-          IntervalMark(
-            position: Varset("type") * (Varset("min") + Varset("max")),
-            size: SizeEncode(value: 8),
-            shape: ShapeEncode(value: RectShape(borderRadius: const BorderRadius.all(Radius.circular(4)))),
-            color: ColorEncode(variable: "type", values: colors),
+    return Stack(
+      children: [
+        SizedBox(
+          height: 43,
+          child: RadialGauge(
+            radius: 150.0,
+            value: _getEndValue(startValue: _startValue, endValue: _endValue),
+            axis: GaugeAxis(
+              pointer: null,
+              min: 0,
+              max: 100,
+              sweepDegrees: 260.0,
+              progressBar: GaugeProgressBar.rounded(color: colorScheme.primary, placement: GaugeProgressPlacement.inside),
+              style: GaugeAxisStyle(thickness: 8, background: colorScheme.inversePrimary, cornerRadius: Radius.circular(8.0)),
+            ),
           ),
-        ],
-        coord: PolarCoord(transposed: true, startAngle: 2.5, endAngle: 6.93, startRadius: radius, endRadius: radius),
-      ),
+        ),
+        SizedBox(
+          height: 43,
+          child: RadialGauge(
+            radius: 150.0,
+            value: _getStartValue(startValue: _startValue),
+            axis: GaugeAxis(
+              pointer: null,
+              min: 0,
+              max: 100,
+              sweepDegrees: 260.0,
+              progressBar: GaugeProgressBar.rounded(color: colorScheme.inversePrimary, placement: GaugeProgressPlacement.inside),
+              style: GaugeAxisStyle(thickness: 8, background: Colors.transparent, cornerRadius: Radius.circular(8.0)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
