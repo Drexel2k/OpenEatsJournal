@@ -43,6 +43,7 @@ void main() async {
     _database = OpenEatsJournalDatabaseService(databaseFileName: "oej_onboarded_with_data.db");
 
     File dbSourceFile = File(join(Directory.current.path, r"test\data\oej_onboarded_with_data.db"));
+    Directory(await _database!.getDatabasePath()).createSync(recursive: true);
     dbSourceFile.copySync(join(await _database!.getDatabasePath(), _database!.databaseFileName));
   });
 

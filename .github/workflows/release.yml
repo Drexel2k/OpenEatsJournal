@@ -35,6 +35,11 @@ jobs:
         working-directory: ./src
         run: flutter pub get --enforce-lockfile
 
+      - name: Remove build id for C++ dependant packages
+        run: |
+          sed -i -e 's/-Wl,/-Wl,--build-id=none,/' "${{ steps.flutter-action.outputs.PUB-CACHE-PATH }}/hosted/pub.dev/"jni-*/src/CMakeLists.txt
+          sed -i -e 's/-Wl,/-Wl,--build-id=none,/' "${{ steps.flutter-action.outputs.PUB-CACHE-PATH }}/hosted/pub.dev/"flutter_zxing-*/src/CMakeLists.txt
+
       - name: Add app contact data
         working-directory: ./src
         run: |
@@ -97,6 +102,11 @@ jobs:
       - name: Install dependencies
         working-directory: ./src
         run: flutter pub get --enforce-lockfile
+
+      - name: Remove build id for C++ dependant packages
+        run: |
+          sed -i -e 's/-Wl,/-Wl,--build-id=none,/' "${{ steps.flutter-action.outputs.PUB-CACHE-PATH }}/hosted/pub.dev/"jni-*/src/CMakeLists.txt
+          sed -i -e 's/-Wl,/-Wl,--build-id=none,/' "${{ steps.flutter-action.outputs.PUB-CACHE-PATH }}/hosted/pub.dev/"flutter_zxing-*/src/CMakeLists.txt
 
       - name: Add app contact data
         working-directory: ./src

@@ -394,7 +394,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                               },
                               child: Row(
                                 children: [
-                                  SizedBox(width: 17),
+                                  SizedBox(width: 21),
                                   SizedBox(
                                     width: 60,
                                     height: 54,
