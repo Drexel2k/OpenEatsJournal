@@ -1,142 +1,76 @@
-import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
-import "package:mobile_scanner/mobile_scanner.dart";
+import "package:flutter_zxing/flutter_zxing.dart";
+import "package:image_picker/image_picker.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
-import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:provider/provider.dart";
 
 class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({super.key, required Color iconBackGroundColor, String? scanResult})
-    : _iconBackGroundColor = iconBackGroundColor,
-      _scanResult = scanResult;
-
-  final Color _iconBackGroundColor;
-  final String? _scanResult;
+  const BarcodeScannerScreen({super.key, String? scanResult});
 
   @override
   State<BarcodeScannerScreen> createState() => _BarcodeScannerScreenState();
 }
 
 class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
-  //onDetect triggers fast and may pop multiple times...
   bool _barcodeReturned = false;
-  bool _flashOn = false;
-  final MobileScannerController _mobileScannerController = MobileScannerController(autoStart: false);
-
-  @override
-  void initState() {
-    super.initState();
-
-    _mobileScannerController.start();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (widget._scanResult != null) {
-      Navigator.pop(context, widget._scanResult);
-    }
-
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(context, listen: false);
 
-    final double overlaySpacer = 170;
+    return Stack(
+      children: [
+        ReaderWidget(
+          showToggleCamera: false,
+          showGallery: false,
+          cropPercent: 0.9,
+          actionButtonsBackgroundColor: colorScheme.surface,
+          flashOnIcon: Icon(Icons.flash_on, color: colorScheme.primary),
+          flashOffIcon: Icon(Icons.flash_off, color: colorScheme.primary),
 
-    return SafeArea(
-      child: Stack(
-        alignment: AlignmentGeometry.bottomCenter,
-        children: [
-          MobileScanner(
-            controller: _mobileScannerController,
-            onDetect: (result) {
-              if (!_barcodeReturned) {
-                setState(() {
-                  _barcodeReturned = true;
-                });
+          onScan: (result) {
+            if (result.isValid && !_barcodeReturned) {
+              _barcodeReturned = true;
+              Navigator.pop(context, result.text);
+            }
+          },
+        ),
 
-                Navigator.pop(context, result.barcodes.first.rawValue);
-              }
-            },
+        Positioned(
+          bottom: 34,
+          right: 9,
+          child: Material(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () async {
+                final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+                if (file != null) {
+                  final Code result = await zx.readBarcodeImagePath(file, DecodeParams(format: Format.any, tryHarder: true, tryInverted: true));
+
+                  if (result.isValid && !_barcodeReturned) {
+                    _barcodeReturned = true;
+                    Navigator.pop(AppGlobal.navigatorKey.currentContext!, result.text);
+                    return;
+                  }
+
+                  final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(AppGlobal.navigatorKey.currentContext!, listen: false);
+
+                  overlayDisplay.enqueue(
+                    overlayInfo: OverlayInfo(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.no_barcode_found_on_picture, spacer: 170),
+                  );
+                }
+              },
+              child: SizedBox(width: 48, height: 48, child: Icon(Icons.photo_library, color: colorScheme.primary, size: 26)),
+            ),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 15),
-              Row(
-                children: [
-                  SizedBox(width: 15),
-                  RoundOutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    backgroundColor: widget._iconBackGroundColor,
-                    child: Icon(Icons.arrow_back, size: 36, color: colorScheme.primary),
-                  ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                children: [
-                  SizedBox(width: 15),
-                  RoundOutlinedButton(
-                    onPressed: () async {
-                      List<PlatformFile> result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ["jpg", "jpeg", "png"]);
-
-                      if (result.isNotEmpty) {
-                        BarcodeCapture? barcodeCapture = await _mobileScannerController.analyzeImage(result.first.path!);
-                        if (barcodeCapture != null && barcodeCapture.barcodes.isNotEmpty) {
-                          Navigator.pop(AppGlobal.navigatorKey.currentContext!, barcodeCapture.barcodes.first.rawValue);
-                        } else {
-                          overlayDisplay.enqueue(
-                            overlayInfo: OverlayInfo(
-                              message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.no_barcode_found_on_picture,
-                              spacer: overlaySpacer,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    backgroundColor: widget._iconBackGroundColor,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: Icon(Icons.folder, size: 38, color: colorScheme.primary),
-                    ),
-                  ),
-                  Spacer(),
-                  RoundOutlinedButton(
-                    onPressed: () {
-                      _mobileScannerController.toggleTorch();
-
-                      setState(() {
-                        _flashOn = !_flashOn;
-                      });
-                    },
-                    backgroundColor: widget._iconBackGroundColor,
-                    child: Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: _flashOn
-                          ? Icon(Icons.flash_off, size: 38, color: colorScheme.primary)
-                          : Icon(Icons.flash_on, size: 38, color: colorScheme.primary),
-                    ),
-                  ),
-                  SizedBox(width: 15),
-                ],
-              ),
-              SizedBox(height: 15),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-
-  @override
-  void dispose() {
-    _mobileScannerController.dispose();
-
-    super.dispose();
   }
 }

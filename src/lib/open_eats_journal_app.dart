@@ -228,9 +228,7 @@ class _OpenEatsJournalAppState extends State<OpenEatsJournalApp> with SingleTick
                                 child: OnboardingScreen(onboardingFinishedCallback: _onboardingFinished),
                               );
                             },
-                            OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(
-                              iconBackGroundColor: openEatsJournalAppViewModel.darkMode ? Color.fromARGB(255, 83, 83, 83) : Color.fromARGB(255, 255, 255, 255),
-                            ),
+                            OpenEatsJournalStrings.navigatorRouteBarcodeScanner: (contextBuilder) => BarcodeScannerScreen(),
                             OpenEatsJournalStrings.navigatorRouteFoodEntryEdit: (contextBuilder) {
                               EatsJournalEntry eatsJournalEntry = ModalRoute.of(contextBuilder)!.settings.arguments as EatsJournalEntry;
                               return ChangeNotifierProvider<EatsJournalFoodEntryEditScreenViewModel>(
