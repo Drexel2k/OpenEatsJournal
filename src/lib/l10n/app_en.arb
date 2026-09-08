@@ -287,5 +287,7 @@
   "valid_energy_target": "Please enter a valid {energy_unit} target {valid_range}.",
   "waiting_offline_results": "Waiting for offline results",
   "waiting_online_results": "Waiting for online results",
-  "no_barcode_found_on_picture": "No qr or barcode found on picture."
+  "no_barcode_found_on_picture": "No qr or barcode found on picture.",
+  "search_eats_journal": "Search eats journal",
+  "search": "Search"
 }

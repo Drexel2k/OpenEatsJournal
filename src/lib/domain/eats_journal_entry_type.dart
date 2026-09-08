@@ -1,0 +1,1 @@
+enum EatsJournalEntryType { quickEntry, foodEntry }

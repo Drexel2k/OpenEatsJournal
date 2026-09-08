@@ -41,7 +41,10 @@ class EatsJournalEntryRow extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton(
-            style: OutlinedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            style: OutlinedButton.styleFrom(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            ),
             onPressed: () {
               _onPressed(eatsJournalEntry: _eatsJournalEntry);
             },

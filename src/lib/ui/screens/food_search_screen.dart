@@ -332,7 +332,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             ListenableBuilder(
               listenable: foodSearchScreenViewModel.foodSearchResultChanged,
               builder: (contextBuilder, _) {
-                final borderRadius = BorderRadius.circular(8);
+                final borderRadius = BorderRadius.circular(20);
 
                 return Expanded(
                   child: ListView.builder(
@@ -447,7 +447,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         );
 
                         return Card(
-                          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: colorScheme.outline),
+                            borderRadius: borderRadius,
+                          ),
                           child: InkWell(
                             borderRadius: borderRadius,
                             onTap: () async {
@@ -520,7 +523,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         );
 
                         return Card(
-                          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: colorScheme.outline),
+                            borderRadius: borderRadius,
+                          ),
                           child: InkWell(
                             borderRadius: borderRadius,
                             onTap: () async {

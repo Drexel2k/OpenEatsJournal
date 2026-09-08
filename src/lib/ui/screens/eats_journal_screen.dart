@@ -12,6 +12,8 @@ import "package:openeatsjournal/ui/main_layout.dart";
 import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen.dart";
 import "package:openeatsjournal/ui/screens/day_energy_target_editor_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_search_screen.dart";
+import "package:openeatsjournal/ui/screens/eats_journal_search_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/settings_screen.dart";
 import "package:openeatsjournal/ui/screens/settings_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/weight_journal_edit_screen.dart";
@@ -184,6 +186,36 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                 child: PopupMenuButton<String>(
                                   onSelected: (selected) {},
                                   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                    PopupMenuItem(
+                                      onTap: () async {
+                                        EatsJournalSearchScreenViewModel eatsJournalSearchScreenViewModel = EatsJournalSearchScreenViewModel(
+                                          journalRepository: journalRepository,
+                                        );
+
+                                        if ((await showDialog<bool>(
+                                          useSafeArea: true,
+                                          barrierDismissible: false,
+                                          context: AppGlobal.navigatorKey.currentContext!,
+                                          builder: (BuildContext contextBuilder) {
+                                            return Dialog(
+                                              insetPadding: EdgeInsets.fromLTRB(
+                                                dialogHorizontalPadding,
+                                                dialogVerticalPadding,
+                                                dialogHorizontalPadding,
+                                                dialogVerticalPadding,
+                                              ),
+                                              child: ChangeNotifierProvider(
+                                                create: (context) => eatsJournalSearchScreenViewModel,
+                                                child: EatsJournalSearchScreen(),
+                                              ),
+                                            );
+                                          },
+                                        ))!) {
+                                          //TODO: Do something with eats search result
+                                        }
+                                      },
+                                      child: ListTile(leading: Icon(Icons.search), title: Text(AppLocalizations.of(context)!.search_eats_journal)),
+                                    ),
                                     PopupMenuItem(
                                       onTap: () async {
                                         DayEnergyTargetEditorScreenViewModel dayEnergyTargetEditorScreenViewModel = DayEnergyTargetEditorScreenViewModel(
