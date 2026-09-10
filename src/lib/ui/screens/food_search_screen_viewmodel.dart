@@ -56,11 +56,11 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   int _currentPage = 1;
   String _currentSearchText = OpenEatsJournalStrings.emptyString;
-  final ExternalTriggerChangedNotifier _foodSearchResultChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _foodSearchResultChanged = ExternalTriggerChangeNotifier();
   final ValueNotifier<int?> _errorCode = ValueNotifier(null);
   String _errorMessage = OpenEatsJournalStrings.emptyString;
   final ValueNotifier<int?> _searchMessageCode = ValueNotifier(null);
-  final ExternalTriggerChangedNotifier _sortButtonChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _sortButtonChanged = ExternalTriggerChangeNotifier();
   bool _sortButtonEnabled = true;
   SortOrder _sortOrder = SortOrder.popularity;
   final ValueNotifier<bool> _sortDesc = ValueNotifier(true);
@@ -73,11 +73,11 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
   ValueNotifier<bool> get floatingActionMenuElapsed => _floatincActionMenuElapsed;
 
   List<ObjectWithOrder<FoodSearchResultEntry>> get foodSearchResult => _foodSearchResult;
-  ExternalTriggerChangedNotifier get foodSearchResultChanged => _foodSearchResultChanged;
+  ExternalTriggerChangeNotifier get foodSearchResultChanged => _foodSearchResultChanged;
   ValueNotifier<int?> get errorCode => _errorCode;
   String get errorMessage => _errorMessage;
   ValueNotifier<int?> get searchMessageCode => _searchMessageCode;
-  ExternalTriggerChangedNotifier get sortButtonChanged => _sortButtonChanged;
+  ExternalTriggerChangeNotifier get sortButtonChanged => _sortButtonChanged;
   bool get sortButtonEnabled => _sortButtonEnabled;
   SortOrder get sortOrder => _sortOrder;
   ValueNotifier<bool> get sortDesc => _sortDesc;
@@ -596,7 +596,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
     if (searchMode == SearchMode.online) {
       ObjectWithOrder<FoodSearchResultEntry> openFoodFactsIsLoading = ObjectWithOrder(
-        object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.openFoodFactsIsLoading),
+        object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.openFoodFactsIsLoading, moreRequested: true),
         order: 0,
       );
 

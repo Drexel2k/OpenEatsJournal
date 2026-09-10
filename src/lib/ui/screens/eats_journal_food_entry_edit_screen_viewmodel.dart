@@ -64,7 +64,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _eatsAmount;
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final bool _measurementSelectionEnabled;
-  final ExternalTriggerChangedNotifier _amountRelvantChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _amountRelvantChanged = ExternalTriggerChangeNotifier();
 
   final ValueNotifier<int?> _energy;
   final ValueNotifier<double?> _carbohydrates;
@@ -83,7 +83,7 @@ class EatsJournalFoodEntryEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get eatsAmount => _eatsAmount;
   ValueNotifier<MeasurementUnit> get currentMeasurementUnit => _currentMeasurementUnit;
   bool get measurementSelectionEnabled => _measurementSelectionEnabled;
-  ExternalTriggerChangedNotifier get amountRelvantChanged => _amountRelvantChanged;
+  ExternalTriggerChangeNotifier get amountRelvantChanged => _amountRelvantChanged;
 
   ValueNotifier<int?> get kJoule => _energy;
   ValueNotifier<double?> get carbohydrates => _carbohydrates;

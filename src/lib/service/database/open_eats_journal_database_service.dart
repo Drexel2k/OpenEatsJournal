@@ -702,8 +702,6 @@ class OpenEatsJournalDatabaseService {
   }
 
   Future<List<Map<String, Object?>>?> getEatsJournalEntries({required DateTime date, int? mealValue}) async {
-    Database db = await database;
-
     final String formattedDate = ConvertValidate.dateformatterDatabaseDateOnly.format(date);
     String where = "WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} = ?";
     List<Object?> whereArgs = [formattedDate];
@@ -714,7 +712,114 @@ class OpenEatsJournalDatabaseService {
     }
 
     //first block of columns from dbTableEatsJournal, second from dbTableFood, third from dbTableFoodUnit
+    final List<Map<String, Object?>> dbResult = await _getEatsJournalEntries(whereSql: where, whereArgs: whereArgs);
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    return dbResult;
+  }
+
+  Future<List<Map<String, Object?>>?> getEatsJournalEntriesBySearchText({
+    required DateTime from,
+    int? entryType,
+    String? searchText,
+    int? limit,
+    int? offset,
+  }) async {
+    Database db = await database;
+
+    if (entryType != null) {
+      if (entryType < 1 || entryType > 2) {
+        throw ArgumentError("Invalid entry type.");
+      }
+    }
+
+    final String formattedFromDate = ConvertValidate.dateformatterDatabaseDateOnly.format(from);
+    String where = "WHERE ${OpenEatsJournalStrings.dbColumnEntryDate} >= ?";
+    List<Object?> whereArgs = [formattedFromDate];
+
+    if (entryType != null) {
+      if (entryType == 1) {
+        //quick entry
+        where = "$where AND ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NULL";
+      } else {
+        //fod entry
+        where = "$where AND ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFoodIdRef} IS NOT NULL";
+      }
+    }
+
+    if (searchText != null) {
+      List<String> searchWords = _getSearchWord(searchText: searchText);
+
+      if (searchWords.isNotEmpty) {
+        for (String word in searchWords) {
+          where = "$where AND ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSearchText} LIKE ?";
+          whereArgs.add("%$word%");
+        }
+      }
+    }
+
+    String rowLimitation = OpenEatsJournalStrings.emptyString;
+    if (limit != null) {
+      if (offset != null) {
+        rowLimitation = "LIMIT ? OFFSET ?";
+        whereArgs.add(limit);
+        whereArgs.add(offset);
+      } else {
+        rowLimitation = "LIMIT ?";
+        whereArgs.add(limit);
+      }
+    }
+
+    //first block of columns from dbTableEatsJournal, second from dbTableFood, third from dbTableFoodUnit
     final List<Map<String, Object?>> dbResult = await db.rawQuery("""
+        SELECT
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryId}
+        FROM
+              ${OpenEatsJournalStrings.dbTableEatsJournal}
+        LEFT JOIN
+              ${OpenEatsJournalStrings.dbTableFood}
+        ON
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
+        $where
+        ORDER BY
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} DESC,
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} ASC,
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} ASC
+        $rowLimitation
+        """, whereArgs);
+
+    if (dbResult.isEmpty) {
+      return null;
+    }
+
+    final List<int> ids = List.from(dbResult.map((row) => row[OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int));
+    final placeholders = List.filled(ids.length, '?').join(',');
+
+    final List<Map<String, Object?>> dbResultFinal = await _getEatsJournalEntries(
+      whereSql: "WHERE ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} IN ($placeholders)",
+      whereArgs: ids,
+    );
+
+    if (dbResultFinal.isEmpty) {
+      return null;
+    }
+
+    return dbResultFinal;
+  }
+
+  Future<List<Map<String, Object?>>> _getEatsJournalEntries({String? whereSql, List<Object?>? whereArgs}) async {
+    Database db = await database;
+
+    String where = OpenEatsJournalStrings.emptyString;
+    if (whereSql != null) {
+      where = whereSql;
+    }
+
+    //first block of columns from dbTableEatsJournal, second from dbTableFood, third from dbTableFoodUnit
+    return await db.rawQuery("""
         SELECT
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryId},
               ${OpenEatsJournalStrings.dbColumnEntryDate},
@@ -740,16 +845,11 @@ class OpenEatsJournalDatabaseService {
         $_sqlFoodUnitJoin
         $where
         ORDER BY
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} DESC,
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} ASC,
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} ASC,
               ${OpenEatsJournalStrings.dbTableFoodUnit}.${OpenEatsJournalStrings.dbColumnId} ASC
         """, whereArgs);
-
-    if (dbResult.isEmpty) {
-      return null;
-    }
-
-    return dbResult;
   }
 
   Future<bool> deleteEatsJournalEntry({required int id}) async {

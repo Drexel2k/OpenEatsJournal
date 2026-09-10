@@ -280,7 +280,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               if (foodSearchScreenViewModel.searchMessageCode.value == 1) {
                                 return Text(AppLocalizations.of(context)!.too_many_results_for_sorting, style: style);
                               } else {
-                                return Text(AppLocalizations.of(context)!.unknow_sorting_message, style: style);
+                                return Text(AppLocalizations.of(context)!.unknown_sorting_message, style: style);
                               }
                             } else {
                               return SizedBox();

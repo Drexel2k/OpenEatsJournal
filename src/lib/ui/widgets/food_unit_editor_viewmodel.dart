@@ -59,19 +59,19 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   final ValueNotifier<MeasurementUnit> _currentMeasurementUnit;
   final ValueNotifier<bool> _measurementUnitSwitchButtonEnabled;
   final void Function(FoodUnitEditorData) _changeDefaultCallback;
-  final ExternalTriggerChangedNotifier _defaultButtonChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _defaultButtonChanged = ExternalTriggerChangeNotifier();
   final VoidCallback _changeMeasurementUnit;
   final void Function(FoodUnitEditorData) _removeFoodUnitCallback;
   final ValueNotifier<bool> _foodUnitsEditMode;
   final ValueNotifier<double?> _foodNutritionPerGram;
   final ValueNotifier<double?> _foodNutritionPerMilliliter;
 
-  final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangeNotifier();
 
   FoodUnitEditorData get foodUnitEditorData => _foodUnitEditorData;
   ValueNotifier<bool> get defaultFoodUnit => _defaultFoodUnit;
 
-  ExternalTriggerChangedNotifier get defaultButtonChanged => _defaultButtonChanged;
+  ExternalTriggerChangeNotifier get defaultButtonChanged => _defaultButtonChanged;
   ValueNotifier<String> get name => _name;
   ValueNotifier<bool> get nameValid => _nameValid;
   ValueNotifier<double?> get amount => _amount;
@@ -80,7 +80,7 @@ class FoodUnitEditorViewModel extends ChangeNotifier {
   ValueNotifier<bool> get foodUnitsEditMode => _foodUnitsEditMode;
   ValueNotifier<bool> get amountValid => _amountValid;
 
-  ExternalTriggerChangedNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
+  ExternalTriggerChangeNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
 
   void _nameChanged() {
     _foodUnitEditorData.name = _name.value;

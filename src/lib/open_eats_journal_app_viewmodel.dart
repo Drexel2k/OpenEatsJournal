@@ -17,7 +17,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   final SettingsRepository _settingsRepository;
   final FoodRepository _foodRepository;
   //for everything which changes MaterialApp property
-  final ExternalTriggerChangedNotifier _appWideSettingChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _appWideSettingChanged = ExternalTriggerChangeNotifier();
   final Future<void> _settingsLoaded;
   Future<DateTime>? _dataInitialized;
 
@@ -27,7 +27,7 @@ class OpenEatsJournalAppViewModel extends ChangeNotifier {
   bool get onboarded => _settingsRepository.onboarded.value;
   bool get darkMode => _settingsRepository.darkMode.value;
   String get languageCode => _settingsRepository.languageCode.value;
-  ExternalTriggerChangedNotifier get appWideSettingChanged => _appWideSettingChanged;
+  ExternalTriggerChangeNotifier get appWideSettingChanged => _appWideSettingChanged;
   Future<void> get settingsLoaded => _settingsLoaded;
   Future<DateTime>? get dataInitialized => _dataInitialized;
 

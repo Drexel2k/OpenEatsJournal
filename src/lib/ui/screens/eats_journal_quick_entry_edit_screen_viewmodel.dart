@@ -70,7 +70,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _protein;
   final ValueNotifier<double?> _salt;
 
-  final ExternalTriggerChangedNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _measurementUnitSwitchButtonChanged = ExternalTriggerChangeNotifier();
 
   ValueNotifier<DateTime> get currentEntryDate => _currentEntryDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
@@ -90,7 +90,7 @@ class EatsJournalQuickEntryEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get protein => _protein;
   ValueNotifier<double?> get salt => _salt;
 
-  ExternalTriggerChangedNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
+  ExternalTriggerChangeNotifier get measurementUnitSwitchButtonChanged => _measurementUnitSwitchButtonChanged;
 
   void _currentJournalDateChanged() {
     //set value back to global settings onyl when creating new entries not on editing existing ones

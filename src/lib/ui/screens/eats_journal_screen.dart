@@ -190,9 +190,10 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                       onTap: () async {
                                         EatsJournalSearchScreenViewModel eatsJournalSearchScreenViewModel = EatsJournalSearchScreenViewModel(
                                           journalRepository: journalRepository,
+                                          today: eatsJournalScreenViewModel.today,
                                         );
 
-                                        if ((await showDialog<bool>(
+                                        await showDialog<bool>(
                                           useSafeArea: true,
                                           barrierDismissible: false,
                                           context: AppGlobal.navigatorKey.currentContext!,
@@ -210,9 +211,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                               ),
                                             );
                                           },
-                                        ))!) {
-                                          //TODO: Do something with eats search result
-                                        }
+                                        );
                                       },
                                       child: ListTile(leading: Icon(Icons.search), title: Text(AppLocalizations.of(context)!.search_eats_journal)),
                                     ),

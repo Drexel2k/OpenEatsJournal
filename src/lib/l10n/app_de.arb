@@ -130,7 +130,7 @@
   "no_brand": "-keine Marke-",
   "per": "pro",
   "too_many_results_for_sorting": "Zu viele Ergebnisse für individuelle Sortierung (>500).",
-  "unknow_sorting_message": "Unbekannter Sortierhinweis.",
+  "unknown_sorting_message": "Unbekannter Sortierhinweis.",
   "breakfast": "Frühstück",
   "lunch": "Mittagessen",
   "dinner": "Abendessen",
@@ -156,6 +156,7 @@
   "eats_journal_entry": "Essenseintrag",
   "weight_journal_entry": "Gewichtseintrag",
   "quick_entry": "Schnelleintrag",
+  "food_entry": "Lebensmitteleintrag",
   "amount_for_nutrition_values" : "Mengen der Nährwerte",
   "gram": "Gramm",
   "gram_abbreviated": "g",
@@ -289,5 +290,10 @@
   "waiting_online_results": "Warte auf online Ergebnisse",
   "no_barcode_found_on_picture": "Kein QR- oder Barcode auf dem Bild gefunden.",
   "search_eats_journal": "Essenstagebuch durchsuchen",
-  "search": "Suchen"
+  "search": "Suchen",
+  "search_from": "Suche von:",
+  "filter": "Filter",
+  "entry_type": "Eintragstyp:",
+  "no_search_result": "Kein Sucherebnis.",
+  "unknown_search_message": "Unbekannter Suchhinweis."
 }

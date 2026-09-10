@@ -15,13 +15,13 @@ class EatsJournalEditScreenViewModel extends ChangeNotifier {
   final JournalRepository _journalRepository;
   final SettingsRepository _settingsRepository;
   final Meal? _meal;
-  final ExternalTriggerChangedNotifier _eatsJournalEntriesChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _eatsJournalEntriesChanged = ExternalTriggerChangeNotifier();
 
   Future<List<EatsJournalEntry>?> _eatsJournalEntriesResult;
 
   DateTime get currentJournalDate => _settingsRepository.currentJournalDate.value;
   Meal? get meal => _meal;
-  ExternalTriggerChangedNotifier get eatsJournalEntriesChanged => _eatsJournalEntriesChanged;
+  ExternalTriggerChangeNotifier get eatsJournalEntriesChanged => _eatsJournalEntriesChanged;
 
   Future<List<EatsJournalEntry>?> get eatsJournalEntriesResult => _eatsJournalEntriesResult;
 

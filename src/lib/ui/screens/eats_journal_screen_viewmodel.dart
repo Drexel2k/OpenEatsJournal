@@ -32,25 +32,25 @@ class EatsJournalScreenViewModel extends ChangeNotifier {
   final ValueNotifier<DateTime> _currentJournalDate = ValueNotifier(DateTime.utc(1900));
   final ValueNotifier<Meal> _currentMeal = ValueNotifier(Meal.breakfast);
   final ValueNotifier<bool> _floatingActionMenuElapsed = ValueNotifier(false);
-  final ExternalTriggerChangedNotifier _eatsJournalDataChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _eatsJournalDataChanged = ExternalTriggerChangeNotifier();
   Future<FoodRepositoryGetDayMealSumsResult> _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> _currentWeight;
   Future<Map<int, bool>> _eatsJournalEntriesAvailableForLast8Days;
-  final ExternalTriggerChangedNotifier _currentWeightChanged = ExternalTriggerChangedNotifier();
-  final ExternalTriggerChangedNotifier _settingsChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _currentWeightChanged = ExternalTriggerChangeNotifier();
+  final ExternalTriggerChangeNotifier _settingsChanged = ExternalTriggerChangeNotifier();
 
   ValueNotifier<DateTime> get currentJournalDate => _currentJournalDate;
   ValueNotifier<Meal> get currentMeal => _currentMeal;
 
   String get languageCode => _settingsRepository.languageCode.value;
   ValueNotifier<bool> get floatingActionMenuElapsed => _floatingActionMenuElapsed;
-  ExternalTriggerChangedNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
+  ExternalTriggerChangeNotifier get eatsJournalDataChanged => _eatsJournalDataChanged;
   Future<FoodRepositoryGetDayMealSumsResult> get dayNutritionDataPerMeal => _dayNutritionDataPerMeal;
   Future<WeightJournalEntry?> get currentWeight => _currentWeight;
   Future<Map<int, bool>> get eatsJournalEntriesAvailableForLast8Days => _eatsJournalEntriesAvailableForLast8Days;
 
-  ExternalTriggerChangedNotifier get currentWeightChanged => _currentWeightChanged;
-  ExternalTriggerChangedNotifier get settingsChanged => _settingsChanged;
+  ExternalTriggerChangeNotifier get currentWeightChanged => _currentWeightChanged;
+  ExternalTriggerChangeNotifier get settingsChanged => _settingsChanged;
 
   bool get darkMode => _settingsRepository.darkMode.value;
   DateTime get today => _settingsRepository.today;

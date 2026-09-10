@@ -79,7 +79,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   final ValueNotifier<double?> _protein;
   final ValueNotifier<double?> _salt;
 
-  final ExternalTriggerChangedNotifier _reorderableStateChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _reorderableStateChanged = ExternalTriggerChangeNotifier();
   final ValueNotifier<bool> _foodUnitEditorsDataValid = ValueNotifier(true);
   final ValueNotifier<bool> _foodUnitsEditMode = ValueNotifier(true);
   final int? _foodId;
@@ -108,7 +108,7 @@ class FoodEditScreenViewModel extends ChangeNotifier {
   ValueNotifier<double?> get protein => _protein;
   ValueNotifier<double?> get salt => _salt;
 
-  ExternalTriggerChangedNotifier get reorderableStateChanged => _reorderableStateChanged;
+  ExternalTriggerChangeNotifier get reorderableStateChanged => _reorderableStateChanged;
   ValueNotifier<bool> get foodUnitEditorsDataValid => _foodUnitEditorsDataValid;
   ValueNotifier<bool> get foodUnitsEditMode => _foodUnitsEditMode;
 

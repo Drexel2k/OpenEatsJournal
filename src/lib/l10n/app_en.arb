@@ -130,7 +130,7 @@
   "no_brand": "-no brand-",
   "per": "per",
   "too_many_results_for_sorting": "Too many results for individual sorting (>500).",
-  "unknow_sorting_message": "Unknown sorting hint.",
+  "unknown_sorting_message": "Unknown sorting hint.",
   "breakfast": "breakfast",
   "lunch": "lunch",
   "dinner": "dinner",
@@ -155,7 +155,8 @@
   "as_new_food": "As New Food",
   "eats_journal_entry": "Eats Journal Entry",
   "weight_journal_entry": "Weight Journal Entry",
-  "quick_entry": "Quick Entry",
+  "quick_entry": "Quick entry",
+  "food_entry": "Food entry",
   "amount_for_nutrition_values" : "Amount for nutrition values",
   "gram": "gram",
   "gram_abbreviated": "g",
@@ -289,5 +290,10 @@
   "waiting_online_results": "Waiting for online results",
   "no_barcode_found_on_picture": "No qr or barcode found on picture.",
   "search_eats_journal": "Search eats journal",
-  "search": "Search"
+  "search": "Search",
+  "search_from": "Search from:",
+  "filter": "Filter",
+  "entry_type": "Entry type:",
+  "no_search_result": "No search result.",
+  "unknown_search_message": "Unknown search hint."
 }

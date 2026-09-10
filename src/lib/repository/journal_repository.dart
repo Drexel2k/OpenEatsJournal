@@ -1,5 +1,6 @@
 import "package:collection/collection.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/eats_journal_entry_type.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/measurement_unit.dart";
 import "package:openeatsjournal/domain/nutrition_calculator.dart";
@@ -62,6 +63,49 @@ class JournalRepository {
 
   Future<List<EatsJournalEntry>?> getEatsJournalEntries({required DateTime date, Meal? meal}) async {
     List<Map<String, Object?>>? dbResult = await _oejDatabase.getEatsJournalEntries(date: date, mealValue: meal?.value);
+    if (dbResult == null) {
+      return null;
+    }
+
+    List<EatsJournalEntry> eatsJournalEntries = [];
+
+    int currentRowEatsJournalEntryId = -1;
+    int currentEatsJournalEntryId = -1;
+
+    List<Map<String, Object?>> eatsJournalEntriesRows = [];
+    for (Map<String, Object?> eatsJournalEntryRow in dbResult) {
+      currentRowEatsJournalEntryId = eatsJournalEntryRow[OpenEatsJournalStrings.dbResultEatsJournalEntryId] as int;
+      if (currentEatsJournalEntryId != currentRowEatsJournalEntryId) {
+        if (currentEatsJournalEntryId != -1) {
+          eatsJournalEntries.add(_getEatsJournalEntryFromDbResult(eatsJournalEntriesRows: eatsJournalEntriesRows));
+          eatsJournalEntriesRows.clear();
+        }
+
+        currentEatsJournalEntryId = currentRowEatsJournalEntryId;
+      }
+
+      eatsJournalEntriesRows.add(eatsJournalEntryRow);
+    }
+
+    eatsJournalEntries.add(_getEatsJournalEntryFromDbResult(eatsJournalEntriesRows: eatsJournalEntriesRows));
+
+    return eatsJournalEntries;
+  }
+
+  Future<List<EatsJournalEntry>?> getEatsJournalEntriesBySearchText({
+    required DateTime from,
+    EatsJournalEntryType? entryType,
+    String? searchText,
+    int? limit,
+    int? offset,
+  }) async {
+    List<Map<String, Object?>>? dbResult = await _oejDatabase.getEatsJournalEntriesBySearchText(
+      from: from,
+      entryType: entryType?.value,
+      searchText: searchText,
+      limit: limit,
+      offset: offset,
+    );
     if (dbResult == null) {
       return null;
     }

@@ -14,9 +14,9 @@ class WeightJournalEditScreenViewModel extends ChangeNotifier {
   int _currentPage = 1;
   final ValueNotifier<bool> _showInitialLoading = ValueNotifier(false);
 
-  final ExternalTriggerChangedNotifier _weightEntriesChanged = ExternalTriggerChangedNotifier();
+  final ExternalTriggerChangeNotifier _weightEntriesChanged = ExternalTriggerChangeNotifier();
 
-  ExternalTriggerChangedNotifier get weightEntriesChanged => _weightEntriesChanged;
+  ExternalTriggerChangeNotifier get weightEntriesChanged => _weightEntriesChanged;
 
   List<WeightJournalEntry> get weightEntriesResult => _weightEntriesResult;
   bool get hasMore => _hasMore;
