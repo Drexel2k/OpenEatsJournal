@@ -1,8 +1,8 @@
 import "package:async/async.dart";
 import "package:flutter/material.dart";
-import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/eats_journal_entry_type.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
@@ -33,6 +33,8 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
 
   final List<EatsJournalEntrySearchResultEntry> _searchResult = [];
 
+  set currentDate(DateTime value) => _settingsRepository.currentJournalDate.value = value;
+
   ValueNotifier<int?> get errorCode => _errorCode;
   ValueNotifier<String> get searchText => _searchText;
   ValueNotifier<DateTime> get searchFrom => _searchFrom;
@@ -42,6 +44,9 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
   ExternalTriggerChangeNotifier get searchResultChanged => _searchResultChanged;
 
   List<EatsJournalEntrySearchResultEntry> get searchResults => _searchResult;
+
+  DateTime get currentJournalDate => _settingsRepository.currentJournalDate.value;
+  Meal? get meal => _settingsRepository.currentMeal.value;
 
   static DateTime _initDate({required DateTime today}) {
     int month = today.month - 3;
@@ -179,13 +184,13 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
     _searchOperations.clear();
   }
 
-  Future<void> goTo({required DateTime date}) async {
-    _settingsRepository.currentJournalDate.value = date;
-    await Navigator.pushNamedAndRemoveUntil(
-      AppGlobal.navigatorKey.currentContext!,
-      OpenEatsJournalStrings.navigatorRouteEatsJournal,
-      (Route<dynamic> route) => false,
+  Future<void> copyEatsJournalEntry({required EatsJournalEntry eatsJournalEntry, required DateTime toDate, required int toMeal}) async {
+    await _journalRepository.saveOnceDayNutritionTarget(
+      entryDate: toDate,
+      dayTargetKJoule: _settingsRepository.getTargetKJouleForDay(day: toDate),
     );
+
+    await _journalRepository.copyEatsJournalEntries(eatsJournalEntries: [eatsJournalEntry], toDate: toDate, toMeal: toMeal);
   }
 
   @override

@@ -271,6 +271,7 @@
   "date": "Date",
   "meal": "Meal",
   "as_is": "as is",
+  "eats_journal_entry_copied": "Eats journal entry copied.",
   "eats_journal_entries_copied": "Eats journal entries copied.",
   "weight_journal_entry_added": "Weight entry added.",
   "monday_abbreviated_1char": "M",

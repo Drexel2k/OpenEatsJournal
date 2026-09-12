@@ -271,6 +271,7 @@
   "date": "Datum",
   "meal": "Mahlzeit",
   "as_is": "wie es ist",
+  "eats_journal_entry_copied": "Essenstagebucheintrag kopiert.",
   "eats_journal_entries_copied": "Essenstagebucheinträge kopiert.",
   "weight_journal_entry_added": "Gewichtseintrag hinzugefügt.",
   "monday_abbreviated_1char": "M",

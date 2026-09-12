@@ -38,7 +38,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
     final double overlaySpacer = 170;
 
     return Consumer<EatsJournalEditScreenViewModel>(
-      builder: (context, eatsJournalEditScreenViewModel, _) => Padding(
+      builder: (BuildContext contextBuilder1, EatsJournalEditScreenViewModel eatsJournalEditScreenViewModel, _) => Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 7, 10),
 
         child: ListenableBuilder(
@@ -46,7 +46,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
           builder: (_, _) {
             return FutureBuilder<List<EatsJournalEntry>?>(
               future: eatsJournalEditScreenViewModel.eatsJournalEntriesResult,
-              builder: (BuildContext context, AsyncSnapshot<List<EatsJournalEntry>?> snapshot) {
+              builder: (BuildContext contextBuilder2, AsyncSnapshot<List<EatsJournalEntry>?> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator()));
                 } else if (snapshot.hasError) {
@@ -54,7 +54,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                 } else {
                   return Column(
                     children: [
-                      AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(context)!.eats_journal)),
+                      AppBar(backgroundColor: Color.fromARGB(0, 0, 0, 0), title: Text(AppLocalizations.of(contextBuilder2)!.eats_journal)),
                       Row(
                         children: [
                           Text(
@@ -63,7 +63,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                           ),
                           Spacer(),
                           Text(
-                            _getLocalizedMeal(meal: eatsJournalEditScreenViewModel.meal, context: context),
+                            _getLocalizedMeal(meal: eatsJournalEditScreenViewModel.meal, context: contextBuilder2),
                             style: textTheme.titleMedium,
                           ),
                           SizedBox(width: 5),
@@ -79,9 +79,9 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                                       useSafeArea: true,
                                       barrierDismissible: false,
                                       context: AppGlobal.navigatorKey.currentContext!,
-                                      builder: (BuildContext contextBuilder) {
-                                        double dialogHorizontalPadding = MediaQuery.sizeOf(context).width * 0.075;
-                                        double dialogVerticalPadding = MediaQuery.sizeOf(context).height * 0.045;
+                                      builder: (BuildContext contextBuilder3) {
+                                        double dialogHorizontalPadding = MediaQuery.sizeOf(contextBuilder2).width * 0.075;
+                                        double dialogVerticalPadding = MediaQuery.sizeOf(contextBuilder2).height * 0.045;
 
                                         return Dialog(
                                           insetPadding: EdgeInsets.fromLTRB(

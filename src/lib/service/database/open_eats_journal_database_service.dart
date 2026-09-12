@@ -755,7 +755,7 @@ class OpenEatsJournalDatabaseService {
 
       if (searchWords.isNotEmpty) {
         for (String word in searchWords) {
-          where = "$where AND ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnSearchText} LIKE ?";
+          where = "$where AND ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnName} LIKE ?";
           whereArgs.add("%$word%");
         }
       }
@@ -779,15 +779,10 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} AS ${OpenEatsJournalStrings.dbResultEatsJournalEntryId}
         FROM
               ${OpenEatsJournalStrings.dbTableEatsJournal}
-        LEFT JOIN
-              ${OpenEatsJournalStrings.dbTableFood}
-        ON
-              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnFoodIdRef} = ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId}
         $where
         ORDER BY
               ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnEntryDate} DESC,
-              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} ASC,
-              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnId} ASC
+              ${OpenEatsJournalStrings.dbTableEatsJournal}.${OpenEatsJournalStrings.dbColumnId} ASC
         $rowLimitation
         """, whereArgs);
 

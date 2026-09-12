@@ -12,7 +12,7 @@ class EatsJournalEntrySearchResultRow extends StatelessWidget {
     super.key,
     required EatsJournalEntry eatsJournalEntry,
     required void Function({required EatsJournalEntry eatsJournalEntry}) onPressed,
-    required Future<void> Function({required int eatsJournalEntryId}) onCopyPressed,
+    required Future<void> Function({required EatsJournalEntry eatsJournalEntry}) onCopyPressed,
     required Future<void> Function({required DateTime date}) onGotoPressed,
   }) : _eatsJournalEntry = eatsJournalEntry,
        _onPressed = onPressed,
@@ -21,7 +21,7 @@ class EatsJournalEntrySearchResultRow extends StatelessWidget {
 
   final EatsJournalEntry _eatsJournalEntry;
   final void Function({required EatsJournalEntry eatsJournalEntry}) _onPressed;
-  final Future<void> Function({required int eatsJournalEntryId}) _onCopyPressed;
+  final Future<void> Function({required EatsJournalEntry eatsJournalEntry}) _onCopyPressed;
   final Future<void> Function({required DateTime date}) _onGotoPressed;
 
   @override
@@ -76,7 +76,7 @@ class EatsJournalEntrySearchResultRow extends StatelessWidget {
         SizedBox(width: 5),
         RoundOutlinedButton(
           onPressed: () async {
-            await _onCopyPressed(eatsJournalEntryId: _eatsJournalEntry.id!);
+            await _onCopyPressed(eatsJournalEntry: _eatsJournalEntry);
           },
           child: Icon(Icons.content_copy),
         ),
