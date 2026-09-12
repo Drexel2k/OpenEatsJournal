@@ -16,7 +16,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_svg: ^2.2.0
-  flutter_zxing: ^2.3.0
+  flutter_zxing: ^3.0.1
   gauge_indicator: ^0.6.0
   graphic: ^2.6.0
   http: ^1.6.0
