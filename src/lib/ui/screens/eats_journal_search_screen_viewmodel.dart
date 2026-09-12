@@ -1,21 +1,26 @@
 import "package:async/async.dart";
-import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/eats_journal_entry_type.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
+import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/utils/eats_journal_enty_search_result_entry.dart";
 import "package:openeatsjournal/ui/utils/eats_journal_enty_search_result_status_code.dart";
 import "package:openeatsjournal/ui/utils/external_trigger_change_notifier.dart";
 
 class EatsJournalSearchScreenViewModel extends ChangeNotifier {
-  EatsJournalSearchScreenViewModel({required JournalRepository journalRepository, required DateTime today})
+  EatsJournalSearchScreenViewModel({required JournalRepository journalRepository, required SettingsRepository settingsRepository, required DateTime today})
     : _journalRepository = journalRepository,
+      _settingsRepository = settingsRepository,
       _searchText = ValueNotifier(OpenEatsJournalStrings.emptyString),
       _searchFrom = ValueNotifier(_initDate(today: today));
 
   final JournalRepository _journalRepository;
+  final SettingsRepository _settingsRepository;
 
+  final ValueNotifier<int?> _errorCode = ValueNotifier(null);
   final ValueNotifier<String> _searchText;
   final ValueNotifier<DateTime> _searchFrom;
   final ValueNotifier<bool> _quickEntrySelected = ValueNotifier(true);
@@ -28,6 +33,7 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
 
   final List<EatsJournalEntrySearchResultEntry> _searchResult = [];
 
+  ValueNotifier<int?> get errorCode => _errorCode;
   ValueNotifier<String> get searchText => _searchText;
   ValueNotifier<DateTime> get searchFrom => _searchFrom;
   ValueNotifier<bool> get quickEntrySelected => _quickEntrySelected;
@@ -49,8 +55,15 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
 
   Future<void> search() async {
     _cancelSearchOperations();
+    _errorCode.value = null;
     _currentPage = 1;
     _searchResult.clear();
+
+    if (_searchText.value.trim() == OpenEatsJournalStrings.emptyString) {
+      _errorCode.value = 1;
+      return;
+    }
+
     _searchResult.add(
       EatsJournalEntrySearchResultEntry(eatsJournalEntrySearchResultStatusCode: EatsJournalEntrySearchResultStatusCode.offlineMoreResults, moreRequested: true),
     );
@@ -166,10 +179,23 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
     _searchOperations.clear();
   }
 
+  Future<void> goTo({required DateTime date}) async {
+    _settingsRepository.currentJournalDate.value = date;
+    await Navigator.pushNamedAndRemoveUntil(
+      AppGlobal.navigatorKey.currentContext!,
+      OpenEatsJournalStrings.navigatorRouteEatsJournal,
+      (Route<dynamic> route) => false,
+    );
+  }
+
   @override
   void dispose() {
+    _errorCode.dispose();
+    _foodEntrySelected.dispose();
+    _quickEntrySelected.dispose();
     _searchFrom.dispose();
     _searchResultChanged.dispose();
+    _searchText.dispose();
 
     super.dispose();
   }

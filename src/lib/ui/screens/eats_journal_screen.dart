@@ -190,6 +190,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                       onTap: () async {
                                         EatsJournalSearchScreenViewModel eatsJournalSearchScreenViewModel = EatsJournalSearchScreenViewModel(
                                           journalRepository: journalRepository,
+                                          settingsRepository: settingsRepository,
                                           today: eatsJournalScreenViewModel.today,
                                         );
 

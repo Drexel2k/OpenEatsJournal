@@ -198,6 +198,22 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                 ],
               ),
               SizedBox(height: 10),
+              ValueListenableBuilder(
+                valueListenable: eatsJournalSearchScreenViewModel.errorCode,
+                builder: (_, _, _) {
+                  if (eatsJournalSearchScreenViewModel.errorCode.value != null) {
+                    TextStyle? style = _getRedText(textTheme);
+
+                    if (eatsJournalSearchScreenViewModel.errorCode.value == 1) {
+                      return Text(AppLocalizations.of(context)!.enter_search_criteria, style: style);
+                    } else {
+                      return Text(AppLocalizations.of(context)!.search_unexpected_error, style: style);
+                    }
+                  } else {
+                    return SizedBox();
+                  }
+                },
+              ),
               Expanded(
                 child: ListenableBuilder(
                   listenable: eatsJournalSearchScreenViewModel.searchResultChanged,
@@ -226,7 +242,9 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                             },
                             onCopyPressed: ({required int eatsJournalEntryId}) async {},
 
-                            onGotoPressed: ({required EatsJournalEntry eatsJournalEntry}) async {},
+                            onGotoPressed: ({required DateTime date}) async {
+                              await eatsJournalSearchScreenViewModel.goTo(date: date);
+                            },
                           );
                         }
 
@@ -251,6 +269,16 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
         ),
       ),
     );
+  }
+
+  TextStyle? _getRedText(TextTheme textTheme) {
+    TextStyle? style = textTheme.bodyMedium;
+    if (style != null) {
+      style = style.copyWith(color: Colors.red);
+    } else {
+      style = TextStyle(color: Colors.red);
+    }
+    return style;
   }
 
   @override
