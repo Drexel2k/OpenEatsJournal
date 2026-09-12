@@ -20,29 +20,47 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    return ReaderWidget(
-      showToggleCamera: false,
-      cropPercent: 0.9,
-      actionButtonsBackgroundColor: colorScheme.surface,
-      flashOnIcon: Icon(Icons.flash_on, color: colorScheme.primary),
-      flashOffIcon: Icon(Icons.flash_off, color: colorScheme.primary),
+    return Stack(
+      children: [
+        ReaderWidget(
+          showToggleCamera: false,
+          cropPercent: 0.9,
+          actionButtonsBackgroundColor: colorScheme.surface,
+          flashOnIcon: Icon(Icons.flash_on, color: colorScheme.primary),
+          flashOffIcon: Icon(Icons.flash_off, color: colorScheme.primary),
 
-      onScan: (result) {
-        if (result.isValid && !_barcodeReturned) {
-          _barcodeReturned = true;
-          Navigator.pop(context, result.text);
-        }
-      },
+          onScan: (result) {
+            if (result.isValid && !_barcodeReturned) {
+              _barcodeReturned = true;
+              Navigator.pop(context, result.text);
+            }
+          },
 
-      onScanFailure: (result) {
-        if (result.source != null && result.source == CodeSource.localImageFile) {
-          final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(AppGlobal.navigatorKey.currentContext!, listen: false);
+          onScanFailure: (result) {
+            if (result.source != null && result.source == CodeSource.localImageFile) {
+              final OverlayDisplay overlayDisplay = Provider.of<OverlayDisplay>(AppGlobal.navigatorKey.currentContext!, listen: false);
 
-          overlayDisplay.enqueue(
-            overlayInfo: OverlayInfo(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.no_barcode_found_on_picture, spacer: 170),
-          );
-        }
-      },
+              overlayDisplay.enqueue(
+                overlayInfo: OverlayInfo(message: AppLocalizations.of(AppGlobal.navigatorKey.currentContext!)!.no_barcode_found_on_picture, spacer: 170),
+              );
+            }
+          },
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 28, left: 8),
+            child: Container(
+              decoration: BoxDecoration(color: colorScheme.surface, borderRadius: BorderRadius.circular(12)),
+              child: BackButton(
+                color: colorScheme.primary,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

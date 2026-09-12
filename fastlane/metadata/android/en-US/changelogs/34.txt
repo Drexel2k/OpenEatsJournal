@@ -1,0 +1,3 @@
+- Added a search functionality for the eats journal.
+- Updated barcode scanner to use internal picture gallery.
+- Added foods.

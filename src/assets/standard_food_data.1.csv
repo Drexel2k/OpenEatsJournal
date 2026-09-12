@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-08-23 00-00-00","2026-01-15 00-00-00"
+"2026-09-12 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -410,3 +410,15 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","204","2026-08-23 00-00-00","Cheesecake","Käsekuchen",,,"100",,"1134 ","16.5","11.6","24.1","14.1","6.7","0.1",
 "foodunit","1","Serving","Portion","150","g","true"
 "food","205","2026-08-23 00-00-00","Salted peanuts","Erdnüsse gesalzen",,,"100",,"2569 ","51.2","7.8","11","5.2","2.4","1",
+"food","206","2026-09-12 00-00-00","Crêpes / Crepes","Crêpes / Crepes",,,"100",,"858 ","6","2.5","28.5","3.5","8","0.3",
+"foodunit","1","Serving","Portion","60","g","true"
+"food","207","2026-09-12 00-00-00","Cheese roll / cheese bun (gratinated)","Käsebrötchen (überbacken)",,,"100",,"1349","9.4","5.4","46","0.7","12","1.8",
+"foodunit","1","Roll","Brötchen","80","g","true"
+"food","208","2026-09-12 00-00-00","Brownies","Brownies",,,"100",,"1982","25","4.1","55","46","5.5","0.4",
+"foodunit","1","Piece","Stück","40","g","true"
+"food","209","2026-09-12 00-00-00","Cornflakes","Cornflakes",,,"100",,"1604","0.9","0.2","84","8","7","1.1",
+"food","210","2026-09-12 00-00-00","Smacks","Smacks",,,"100",,"1597","1.6","0.3","81","34","7.1","0",
+"food","211","2026-09-12 00-00-00","Cocoa Krispies","Choco Krispies",,,"100",,"1608","2.2","1","77","22","10","0.7",
+"food","212","2026-09-12 00-00-00","Cocoa Krispies","Choco Krispies",,,"100",,"1608","2.2","1","77","22","10","0.7",
+"food","213","2026-09-12 00-00-00","Wholegrain oat cereals chocolate (puffed)","Haferfleks Schoko (gepufft)",,,"100",,"1666","5.2","1.7","73","27","10","1",
+"food","214","2026-09-12 00-00-00","Wholegrain oat cereals (puffed)","Haferfleks (gepufft)",,,"100",,"1656","5.4","1.1","72","17","9.7","1.1",
