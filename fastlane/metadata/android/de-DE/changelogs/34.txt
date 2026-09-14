@@ -1,3 +1,4 @@
+1.17
 - Eine Suchfunktion für das Ernährungstagebuch hinzugefügt.
 - Den Barcocdescanner aktualisiert, so dass dieser die interne Bildergallerie benutzt.
 - Lebensmittel hinzugefügt.

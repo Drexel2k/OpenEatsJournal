@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_apk:
-    name: Build Android APKs (Split)
+    name: Build F-Droid APKs (Split)
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -76,7 +76,7 @@ jobs:
             openeatsjournal-fdroid-v${{ github.ref_name }}-x86_64.apk
 
   build_aab:
-    name: Build Android App Bundle
+    name: Build Play Store App Bundle
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -114,46 +114,50 @@ jobs:
           sed -i 's|String? get appContactMail => null;|String? get appContactMail => "${{ secrets.APP_CONTACT_EMAIL }}";|g' ./lib/repository/settings_repository.dart
           sed -i 's|String? get appContactAddress => null;|String? get appContactAddress => "${{ secrets.APP_CONTACT_ADDRESS }}";|g' ./lib/repository/settings_repository.dart
 
-      - name: Decode F-Droid Keystore
+      - name: Decode Play Store Keystore
         working-directory: ./src
-        run: echo "${{ secrets.KEYSTORE_BASE64_FDROID }}" | base64 --decode > android/app/release-keystore-fdroid.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64_PLAYSTORE }}" | base64 --decode > android/app/release-keystore-playstore.jks
 
-      - name: Build F-Droid App Bundle
+      - name: Build Play Store App Bundle
         working-directory: ./src
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD_FDROID }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD_FDROID }}
-          KEYSTORE_PATH: release-keystore-fdroid.jks
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD_PLAYSTORE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD_PLAYSTORE }}
+          KEYSTORE_PATH: release-keystore-playstore.jks
         run: flutter build appbundle --release
 
-      - name: Rename F-Droid AAB Artifact
+      - name: Rename Play Store AAB Artifact
         working-directory: ./src
         run: |
-          mv build/app/outputs/bundle/release/app-release.aab ../openeatsjournal-fdroid-v${{ github.ref_name }}.aab
+          mv build/app/outputs/bundle/release/app-release.aab ../openeatsjournal-playstore-v${{ github.ref_name }}.aab
 
-      - name: Upload F-Droid AAB Artifact
+      - name: Upload Play Store AAB Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: openeatsjournal-aab-fdroid
+          name: openeatsjournal-aab-playstore
           path: |
-            openeatsjournal-fdroid-v${{ github.ref_name }}.aab
+            openeatsjournal-playstore-v${{ github.ref_name }}.aab
 
   upload_to_github_release:
     name: Upload to GitHub Release
     runs-on: ubuntu-latest
     permissions: write-all
-    needs: [build_apk, build_aab]
+    needs: [build_apk]
     steps:
-      - uses: actions/download-artifact@v8
+      - name: Checkout code
+        uses: actions/checkout@v7
         with:
-          name: openeatsjournal-apk-fdroid
-          path: artifacts-fdroid
-          merge-multiple: true
+          ref: ${{ github.ref_name }}
+
+      - name: Get build number from pubspec.yaml
+        run: |
+          BUILD_NUMBER=$(grep '^version:' src/pubspec.yaml | sed -E 's/.*\+([0-9]+).*/\1/')
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
 
       - uses: actions/download-artifact@v8
         with:
-          name: openeatsjournal-aab-fdroid
+          name: openeatsjournal-apk-fdroid
           path: artifacts-fdroid
           merge-multiple: true
 
@@ -162,15 +166,82 @@ jobs:
         with:
           subject-path: |
             artifacts-fdroid/*.apk
-            artifacts-fdroid/*.aab
+
+      - name: Prepare release title and notes
+        run: |
+          CHANGELOG="fastlane/metadata/android/en-US/changelogs/${{ env.BUILD_NUMBER }}.txt"
+ 
+          VERSION_NAME=$(head -n 1 "$CHANGELOG")
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+ 
+          tail -n +2 "$CHANGELOG" | sed '/./,$!d' > release_notes.txt
 
       - name: Release to GitHub
         uses: softprops/action-gh-release@v3
         with:
-          draft: true
-          generate_release_notes: true
+          name: ${{ env.VERSION_NAME }}
+          body_path: release_notes.txt
           overwrite_files: false
           tag_name: ${{ github.ref_name }}
+          make_latest: 'true'
           files: |
             artifacts-fdroid/*.apk
-            artifacts-fdroid/*.aab
+
+  upload_to_play_console:
+    name: Upload to Play Console (Closed Testing - Alpha)
+    runs-on: ubuntu-latest
+    needs: [build_aab]
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+ 
+      - name: Get build number from pubspec.yaml
+        run: |
+          BUILD_NUMBER=$(grep '^version:' src/pubspec.yaml | sed -E 's/.*\+([0-9]+).*/\1/')
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: openeatsjournal-aab-playstore
+          path: artifacts-playstore
+          merge-multiple: true
+
+      - name: Create attestation for build
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            artifacts-playstore/*.aab
+
+      - name: Prepare Play Console release notes
+        run: |
+          CHANGELOG_EN="fastlane/metadata/android/en-US/changelogs/${{ env.BUILD_NUMBER }}.txt"
+          CHANGELOG_DE="fastlane/metadata/android/de-DE/changelogs/${{ env.BUILD_NUMBER }}.txt"
+ 
+          VERSION_NAME=$(head -n 1 "$CHANGELOG_EN")
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+ 
+          mkdir -p whatsnew/en-US whatsnew/de-DE
+          cp "$CHANGELOG_EN" whatsnew/en-US/whatsnew
+          cp "$CHANGELOG_DE" whatsnew/de-DE/whatsnew
+ 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: 'open-eats-journal'
+          workload_identity_provider: 'projects/342645382955/locations/global/workloadIdentityPools/github/providers/github'
+          service_account: 'open-eats-journal@open-eats-journal.iam.gserviceaccount.com'
+ 
+      - name: Upload to Play Console
+        uses: r0adkll/upload-google-play@v1
+        with:
+          packageName: com.drexeldevelopment.openeatsjournal
+          releaseFiles: artifacts-playstore/*.aab
+          track: Alpha
+          status: completed
+          whatsNewDirectory: whatsnew
+          releaseName: ${{ env.VERSION_NAME }}
