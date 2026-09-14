@@ -235,6 +235,10 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                           return Center(child: Text(AppLocalizations.of(contextBuilder6)!.no_search_result));
                         }
 
+                        if (entry.eatsJournalEntrySearchResultStatusCode == EatsJournalEntrySearchResultStatusCode.dateHeader) {
+                          return Text(convert.dateFormatterDisplayLongDateOnly.format(entry.date!));
+                        }
+
                         if (entry.eatsJournalEntrySearchResultStatusCode == EatsJournalEntrySearchResultStatusCode.searchResult) {
                           return EatsJournalEntrySearchResultRow(
                             key: UniqueKey(),

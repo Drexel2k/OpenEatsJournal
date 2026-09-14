@@ -290,15 +290,38 @@ class ConvertValidate {
     return decimalString;
   }
 
-  //if original string ended with decimal separator, leave it to allow adding of decimals durign editing.
+  /// Same as getCleanDoubleString3DecimalDigits, but while editing we don't want
+  /// a trailing separator or trailing zero(s) the user just typed to vanish out from
+  /// under them. We restore up to _maxEditFractionZeroPadding decimal places if the
+  /// last typed digit was a "0" that the clean version would otherwise strip.
   String getCleanDoubleEditString3DecimalDigits({required double doubleValue, required String doubleValueString}) {
-    String decimalString = getCleanDoubleString3DecimalDigits(doubleValue: doubleValue);
+    final int maxEditFractionZeroPadding = 2;
+    final String cleaned = getCleanDoubleString3DecimalDigits(doubleValue: doubleValue);
 
+    // User just typed the separator itself, e.g. "12." -> keep it.
     if (doubleValueString.endsWith(_decimalSeparator)) {
-      decimalString = "$decimalString$_decimalSeparator";
+      return "$cleaned$_decimalSeparator";
     }
 
-    return decimalString;
+    final List<String> typedParts = doubleValueString.split(_decimalSeparator);
+    if (typedParts.length != 2) return cleaned;
+
+    final String typedFraction = typedParts[1];
+    if (typedFraction.isEmpty || !typedFraction.endsWith('0')) {
+      // Last typed digit isn't a zero that clean() would have stripped.
+      return cleaned;
+    }
+
+    final int targetFractionLength = typedFraction.length > maxEditFractionZeroPadding ? maxEditFractionZeroPadding : typedFraction.length;
+
+    final List<String> cleanedParts = cleaned.split(_decimalSeparator);
+    final String cleanedInteger = cleanedParts[0];
+    final String cleanedFraction = cleanedParts.length == 2 ? cleanedParts[1] : "";
+
+    if (cleanedFraction.length >= targetFractionLength) return cleaned;
+
+    final int zerosToAdd = targetFractionLength - cleanedFraction.length;
+    return "$cleanedInteger$_decimalSeparator$cleanedFraction${"0" * zerosToAdd}";
   }
 
   //Currently all editors accept only decimal numbers with one number after the decimal separator. Returning the old value if the user wants to enter a 2nd

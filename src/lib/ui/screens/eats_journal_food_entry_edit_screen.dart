@@ -508,7 +508,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                             num? doubleValue = convert.numberFomatterDouble1DecimalDigit.tryParse(text);
                             if (doubleValue != null) {
-                              if (convert.decimalHasMoreThan1DecimalDigit(decimalstring: text)) {
+                              if (convert.decimalHasMoreThan3DecimalDigits(decimalstring: text)) {
                                 return oldValue;
                               }
 
@@ -531,7 +531,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                           eatsJournalFoodEntryEditScreenViewModel.amount.value = doubleValue;
 
                           if (doubleValue != null) {
-                            _amountController.text = convert.getCleanDoubleEditString1DecimalDigit(doubleValue: doubleValue, doubleValueString: value);
+                            _amountController.text = convert.getCleanDoubleEditString3DecimalDigits(doubleValue: doubleValue, doubleValueString: value);
                           }
                         },
                       ),

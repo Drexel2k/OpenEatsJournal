@@ -154,14 +154,27 @@ class EatsJournalSearchScreenViewModel extends ChangeNotifier {
     );
 
     if ((result != null && result.isNotEmpty)) {
-      _searchResult.addAll(
-        result.map(
-          (EatsJournalEntry entry) => EatsJournalEntrySearchResultEntry(
+      DateTime currentDate = DateTime(0);
+
+      for (EatsJournalEntry eatsJournalEntry in result) {
+        if (eatsJournalEntry.entryDate != currentDate) {
+          _searchResult.add(
+            EatsJournalEntrySearchResultEntry(
+              eatsJournalEntrySearchResultStatusCode: EatsJournalEntrySearchResultStatusCode.dateHeader,
+              date: eatsJournalEntry.entryDate,
+            ),
+          );
+
+          currentDate = eatsJournalEntry.entryDate;
+        }
+
+        _searchResult.add(
+          EatsJournalEntrySearchResultEntry(
             eatsJournalEntrySearchResultStatusCode: EatsJournalEntrySearchResultStatusCode.searchResult,
-            eatsJournalEntry: entry,
+            eatsJournalEntry: eatsJournalEntry,
           ),
-        ),
-      );
+        );
+      }
 
       if (result.length >= _pageSize) {
         _searchResult.add(

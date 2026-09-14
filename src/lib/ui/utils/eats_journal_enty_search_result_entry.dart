@@ -7,9 +7,11 @@ class EatsJournalEntrySearchResultEntry {
     required EatsJournalEntrySearchResultStatusCode eatsJournalEntrySearchResultStatusCode,
     EatsJournalEntry? eatsJournalEntry,
     bool? moreRequested,
+    DateTime? date,
   }) : _eatsJournalEntry = eatsJournalEntry,
        _eatsJournalEntrySearchResultStatusCode = eatsJournalEntrySearchResultStatusCode,
-       _moreRequested = moreRequested;
+       _moreRequested = moreRequested,
+       _date = date;
 
   //0 = no more results, 1 more results available
   final EatsJournalEntrySearchResultStatusCode _eatsJournalEntrySearchResultStatusCode;
@@ -18,10 +20,12 @@ class EatsJournalEntrySearchResultEntry {
 
   //Can be null on other FoodSearchResultStatusCode than 0
   final EatsJournalEntry? _eatsJournalEntry;
+  final DateTime? _date;
 
   set moreRequested(bool? value) => _moreRequested = value;
 
   EatsJournalEntrySearchResultStatusCode get eatsJournalEntrySearchResultStatusCode => _eatsJournalEntrySearchResultStatusCode;
   bool? get moreRequested => _moreRequested;
   EatsJournalEntry? get eatsJournalEntry => _eatsJournalEntry;
+  DateTime? get date => _date;
 }
