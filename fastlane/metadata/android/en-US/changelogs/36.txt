@@ -1,0 +1,4 @@
+1.18
+- Added dates to eats journal search result.
+- Fixed issue with entering small decimal fractions with leading 0s.
+- Optimized/unified date editing.

@@ -3,22 +3,22 @@ import "package:openeatsjournal/domain/meal.dart";
 
 class CopyTargetScreenViewModel extends ChangeNotifier {
   CopyTargetScreenViewModel({required DateTime currentDate, required Meal? currentMeal})
-    : _currentDate = ValueNotifier(currentDate),
-      _currentMeal = ValueNotifier(currentMeal != null ? currentMeal.value : -1),
+    : _targetDate = ValueNotifier(currentDate),
+      _targetMeal = ValueNotifier(currentMeal != null ? currentMeal.value : -1),
       _originalMeal = currentMeal;
 
-  final ValueNotifier<DateTime> _currentDate;
-  final ValueNotifier<int> _currentMeal;
+  final ValueNotifier<DateTime> _targetDate;
+  final ValueNotifier<int> _targetMeal;
   final Meal? _originalMeal;
 
-  ValueNotifier<DateTime> get currentDate => _currentDate;
-  ValueNotifier<int> get currentMeal => _currentMeal;
+  ValueNotifier<DateTime> get targetDate => _targetDate;
+  ValueNotifier<int> get targetMeal => _targetMeal;
   Meal? get originalMeal => _originalMeal;
 
   @override
   void dispose() {
-    _currentDate.dispose();
-    _currentMeal.dispose();
+    _targetDate.dispose();
+    _targetMeal.dispose();
 
     super.dispose();
   }

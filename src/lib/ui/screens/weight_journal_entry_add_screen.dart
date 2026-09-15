@@ -49,7 +49,7 @@ class _WeightJournalEntryAddScreenState extends State<WeightJournalEntryAddScree
                 Expanded(
                   flex: 3,
                   child: Text(
-                    "${AppLocalizations.of(context)!.weight} ${convert.dateFormatterDisplayLongDateOnly.format(widget._date)} (${convert.getLocalizedWeightUnitKgAbbreviated(context: context)})",
+                    "${AppLocalizations.of(context)!.weight} ${convert.dateFormatterDisplayMediumDateOnly.format(widget._date)} (${convert.getLocalizedWeightUnitKgAbbreviated(context: context)})",
                     style: textTheme.titleSmall,
                   ),
                 ),

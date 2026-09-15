@@ -49,7 +49,7 @@ class _DayEnergyTargetEditorScreen extends State<DayEnergyTargetEditorScreen> {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    "${AppLocalizations.of(context)!.target} ${convert.dateFormatterDisplayLongDateOnly.format(widget._date)} (${convert.getLocalizedEnergyUnitAbbreviated(context: context)})",
+                    "${AppLocalizations.of(context)!.target} ${convert.dateFormatterDisplayMediumDateOnly.format(widget._date)} (${convert.getLocalizedEnergyUnitAbbreviated(context: context)})",
                     style: textTheme.titleSmall,
                   ),
                 ),

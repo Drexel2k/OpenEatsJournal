@@ -114,7 +114,7 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                                   );
 
                                   if (dateSelected != null) {
-                                    _searchFromController.text = convert.dateFormatterDisplayLongDateOnly.format(dateSelected);
+                                    _searchFromController.text = convert.dateFormatterDisplayMediumDateOnly.format(dateSelected);
                                     eatsJournalSearchScreenViewModel.searchFrom.value = dateSelected;
                                   }
                                 },
@@ -281,8 +281,8 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                               if (copy) {
                                 await eatsJournalSearchScreenViewModel.copyEatsJournalEntry(
                                   eatsJournalEntry: eatsJournalEntry,
-                                  toDate: copyTargetScreenViewModel.currentDate.value,
-                                  toMeal: copyTargetScreenViewModel.currentMeal.value,
+                                  toDate: copyTargetScreenViewModel.targetDate.value,
+                                  toMeal: copyTargetScreenViewModel.targetMeal.value,
                                 );
 
                                 overlayDisplay.enqueue(
@@ -293,7 +293,7 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                                 );
                               }
 
-                              eatsJournalSearchScreenViewModel.currentDate = copyTargetScreenViewModel.currentDate.value;
+                              eatsJournalSearchScreenViewModel.currentDate = copyTargetScreenViewModel.targetDate.value;
                               await Navigator.pushNamedAndRemoveUntil(
                                 AppGlobal.navigatorKey.currentContext!,
                                 OpenEatsJournalStrings.navigatorRouteEatsJournal,

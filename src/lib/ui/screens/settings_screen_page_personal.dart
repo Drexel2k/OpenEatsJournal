@@ -35,7 +35,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     super.initState();
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
 
-    _birthDayController.text = convert.dateFormatterDisplayLongDateOnly.format(widget._settingsScreenViewModel.birthday.value);
+    _birthDayController.text = convert.dateFormatterDisplayMediumDateOnly.format(widget._settingsScreenViewModel.birthday.value);
 
     _heightController.text = convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
   }
@@ -533,7 +533,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     DateTime? date = await showDatePicker(context: context, initialDate: initialDate, firstDate: DateTime.utc(1900), lastDate: today);
 
     if (date != null) {
-      _birthDayController.text = convert.dateFormatterDisplayLongDateOnly.format(date);
+      _birthDayController.text = convert.dateFormatterDisplayMediumDateOnly.format(date);
       widget._settingsScreenViewModel.birthday.value = date;
     }
   }

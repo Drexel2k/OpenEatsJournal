@@ -101,8 +101,8 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                                     if (copy) {
                                       await eatsJournalEditScreenViewModel.copyEatsJournalEntries(
                                         eatsJournalEntries: snapshot.data!,
-                                        toDate: copyTargetScreenViewModel.currentDate.value,
-                                        toMeal: copyTargetScreenViewModel.currentMeal.value,
+                                        toDate: copyTargetScreenViewModel.targetDate.value,
+                                        toMeal: copyTargetScreenViewModel.targetMeal.value,
                                       );
 
                                       overlayDisplay.enqueue(

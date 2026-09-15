@@ -1,0 +1,4 @@
+1.18
+- Datum zum Essenstagebuch Suchergebnis hinzugefügt.
+- Problem bei der Eingabe von kleinen Nachakommastellen mit führenden 0en behoben.
+- Datumseingabe optimiert/vereinheitlicht.
