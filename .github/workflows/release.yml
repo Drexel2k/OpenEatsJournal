@@ -227,14 +227,14 @@ jobs:
         run: |
           CHANGELOG_EN="fastlane/metadata/android/en-US/changelogs/${{ env.BUILD_NUMBER }}.txt"
           CHANGELOG_DE="fastlane/metadata/android/de-DE/changelogs/${{ env.BUILD_NUMBER }}.txt"
- 
+
           VERSION_NAME=$(head -n 1 "$CHANGELOG_EN")
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
- 
-          mkdir -p whatsnew/en-US whatsnew/de-DE
-          cp "$CHANGELOG_EN" whatsnew/en-US/whatsnew
-          cp "$CHANGELOG_DE" whatsnew/de-DE/whatsnew
- 
+
+          mkdir -p whatsnew
+          cp "$CHANGELOG_EN" whatsnew/whatsnew-en-US
+          cp "$CHANGELOG_DE" whatsnew/whatsnew-de-DE
+
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v3
