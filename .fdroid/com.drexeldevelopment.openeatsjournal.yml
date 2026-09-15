@@ -15,15 +15,15 @@ RepoType: git
 Repo: https://github.com/Drexel2k/OpenEatsJournal.git
 
 Builds:
-  - versionName: '1.16'
-    versionCode: 331
+  - versionName: '1.17'
+    versionCode: 341
     commit: <GIT_HASH_HERE>
     sudo:
       - mkdir -p /home/runner/work/OpenEatsJournal
       - chown -R vagrant /home/runner
     output: src/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     binary: 
-      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/oej-v%v-armeabi-v7a.apk
+      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/openeatsjournal-fdroid-v%v-armeabi-v7a.apk
     srclibs:
       - flutter@stable
     rm:
@@ -66,15 +66,15 @@ Builds:
       - popd
       - mv $repo com.drexeldevelopment.openeatsjournal
 
-  - versionName: '1.16'
-    versionCode: 332
+  - versionName: '1.17'
+    versionCode: 342
     commit: <GIT_HASH_HERE>
     sudo:
       - mkdir -p /home/runner/work/OpenEatsJournal
       - chown -R vagrant /home/runner
     output: src/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     binary: 
-      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/oej-v%v-arm64-v8a.apk
+      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/openeatsjournal-fdroid-v%v-arm64-v8a.apk
     srclibs:
       - flutter@stable
     rm:
@@ -117,15 +117,15 @@ Builds:
       - popd
       - mv $repo com.drexeldevelopment.openeatsjournal
 
-  - versionName: '1.16'
-    versionCode: 333
+  - versionName: '1.17'
+    versionCode: 343
     commit: <GIT_HASH_HERE>
     sudo:
       - mkdir -p /home/runner/work/OpenEatsJournal
       - chown -R vagrant /home/runner
     output: src/build/app/outputs/flutter-apk/app-x86_64-release.apk
     binary: 
-      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/oej-v%v-x86_64.apk
+      https://github.com/Drexel2k/OpenEatsJournal/releases/download/%v/openeatsjournal-fdroid-v%v-x86_64.apk
     srclibs:
       - flutter@stable
     rm:
@@ -168,7 +168,7 @@ Builds:
       - popd
       - mv $repo com.drexeldevelopment.openeatsjournal
 
-AllowedAPKSigningKeys: <KEY_HERE>
+AllowedAPKSigningKeys: <KEY_FINGERPRINT_HERE>
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
@@ -177,5 +177,5 @@ VercodeOperation:
   - '%c * 10 + 2'
   - '%c * 10 + 3'
 UpdateCheckData: src/pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: 1.16.0
-CurrentVersionCode: 333
+CurrentVersion: 1.17.0
+CurrentVersionCode: 343
