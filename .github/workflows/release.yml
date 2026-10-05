@@ -7,12 +7,52 @@ on:
       - '*' 
 
 jobs:
-  build_apk:
-    name: Build F-Droid APKs (Split)
+  check_changelogs:
+    name: Check F-Droid changelogs
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
 
+      - name: Check changelog files exist
+        run: |
+          BUILD_NUMBER=$(grep '^version:' src/pubspec.yaml | sed -E 's/.*\+([0-9]+).*/\1/')
+
+          errors=0
+          for loc in en-US de-DE; do
+            dir="fastlane/metadata/android/$loc/changelogs"
+
+            # source changelog used by the GitHub release and Play Console steps
+            files=("$dir/$BUILD_NUMBER.txt")
+
+            # per-versionCode copies for F-Droid (%c * 10 + 1/2/3)
+            for abi in 1 2 3; do
+              files+=("$dir/${BUILD_NUMBER}${abi}.txt")
+            done
+
+            for f in "${files[@]}"; do
+              if [ ! -s "$f" ]; then
+                echo "::error file=$f::Missing or empty changelog file"
+                errors=$((errors + 1))
+              elif [ "$(wc -m < "$f")" -gt 500 ]; then
+                echo "::error file=$f::Changelog is longer than 500 characters"
+                errors=$((errors + 1))
+              fi
+            done
+          done
+
+          exit $((errors > 0 ? 1 : 0))
+
+  build_apk:
+    name: Build F-Droid APKs (Split)
+    needs: [check_changelogs]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -78,6 +118,7 @@ jobs:
 
   build_aab:
     name: Build Play Store App Bundle
+    needs: [check_changelogs]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -143,12 +184,12 @@ jobs:
 
   upload_to_github_release:
     name: Upload to GitHub Release
+    needs: [build_apk]
     runs-on: ubuntu-latest
     permissions:
       contents: write
       attestations: write
       id-token: write
-    needs: [build_apk]
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -194,8 +235,8 @@ jobs:
 
   upload_to_play_console:
     name: Upload to Play Console (Closed Testing - Alpha)
-    runs-on: ubuntu-latest
     needs: [build_aab]
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       attestations: write
