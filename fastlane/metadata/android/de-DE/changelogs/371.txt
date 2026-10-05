@@ -1,0 +1,4 @@
+1.19
+- Nahrungsmittel aktualisiert/hinzugefügt.
+- Semantische Beschriftungen zu Icons hinzugefügt.
+- Nicht benötigte Berechtigungen entfernt.

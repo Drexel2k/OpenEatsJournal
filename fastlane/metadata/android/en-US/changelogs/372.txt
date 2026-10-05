@@ -1,0 +1,4 @@
+1.19
+- Updated/added foods.
+- Added semantic labels to icons.
+- Removed unnecessary permissions.
