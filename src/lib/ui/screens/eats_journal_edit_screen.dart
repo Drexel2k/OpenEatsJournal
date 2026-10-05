@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:openeatsjournal/app_global.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
-import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/domain/utils/open_eats_journal_strings.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
@@ -10,6 +9,7 @@ import "package:openeatsjournal/ui/screens/copy_target_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/utils/overlay_display.dart";
 import "package:openeatsjournal/ui/utils/overlay_info.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/eats_journal_entry_row.dart";
 import "package:openeatsjournal/ui/widgets/round_outlined_button.dart";
 import "package:provider/provider.dart";
@@ -63,7 +63,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                           ),
                           Spacer(),
                           Text(
-                            _getLocalizedMeal(meal: eatsJournalEditScreenViewModel.meal, context: contextBuilder2),
+                            UiHelpers.getLocalizedMealCapital(meal: eatsJournalEditScreenViewModel.meal, context: contextBuilder2),
                             style: textTheme.titleMedium,
                           ),
                           SizedBox(width: 5),
@@ -113,7 +113,7 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
                                       );
                                     }
                                   },
-                                  child: Icon(Icons.copy),
+                                  child: Icon(Icons.copy, semanticLabel: AppLocalizations.of(context)!.copy_eats_journal_entries),
                                 )
                               : SizedBox(),
                         ],
@@ -141,24 +141,6 @@ class _EatsJournalEditScreenState extends State<EatsJournalEditScreen> {
         ),
       ),
     );
-  }
-
-  static String _getLocalizedMeal({required Meal? meal, required BuildContext context}) {
-    String localized = OpenEatsJournalStrings.emptyString;
-
-    if (meal == null) {
-      localized = AppLocalizations.of(context)!.whole_day;
-    } else if (meal == Meal.breakfast) {
-      localized = AppLocalizations.of(context)!.breakfast_capital;
-    } else if (meal == Meal.lunch) {
-      localized = AppLocalizations.of(context)!.lunch_capital;
-    } else if (meal == Meal.dinner) {
-      localized = AppLocalizations.of(context)!.dinner_capital;
-    } else if (meal == Meal.snacks) {
-      localized = AppLocalizations.of(context)!.snacks_capital;
-    }
-
-    return localized;
   }
 
   @override

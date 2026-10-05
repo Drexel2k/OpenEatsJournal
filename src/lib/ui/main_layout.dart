@@ -84,9 +84,18 @@ class MainLayout extends StatelessWidget {
         },
         selectedIndex: currentNavigationIndex,
         destinations: <Widget>[
-          NavigationDestination(icon: Icon(Icons.lunch_dining), label: AppLocalizations.of(context)!.food),
-          NavigationDestination(icon: Icon(Icons.menu_book), label: AppLocalizations.of(context)!.eats_journal),
-          NavigationDestination(icon: Icon(Icons.assessment), label: AppLocalizations.of(context)!.statistics),
+          NavigationDestination(
+            icon: Icon(Icons.lunch_dining, semanticLabel: AppLocalizations.of(context)!.food_management),
+            label: AppLocalizations.of(context)!.food,
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.menu_book, semanticLabel: AppLocalizations.of(context)!.eats_journal),
+            label: AppLocalizations.of(context)!.eats_journal,
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.assessment, semanticLabel: AppLocalizations.of(context)!.statistics),
+            label: AppLocalizations.of(context)!.statistics,
+          ),
         ],
       ),
       floatingActionButton: _floatingActionButton,

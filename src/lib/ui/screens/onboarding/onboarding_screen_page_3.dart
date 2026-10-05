@@ -268,7 +268,7 @@ class _OnboardingScreenPage3State extends State<OnboardingScreenPage3> {
                               triggerMode: TooltipTriggerMode.tap,
                               showDuration: Duration(seconds: 60),
                               message: AppLocalizations.of(context)!.acitivity_level_explanation,
-                              child: Icon(Icons.help_outline),
+                              child: Icon(Icons.help_outline, semanticLabel: AppLocalizations.of(context)!.help),
                             ),
                           ],
                         ),

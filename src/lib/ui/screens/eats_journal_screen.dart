@@ -291,7 +291,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                     ),
                                   ],
 
-                                  child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+                                  child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert, semanticLabel: AppLocalizations.of(context)!.more)),
                                 ),
                               ),
                             ],
@@ -432,7 +432,12 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                     height: 54,
                                     child: Align(
                                       alignment: Alignment.centerLeft,
-                                      child: Icon(Icons.scale, size: 45, color: colorScheme.primary),
+                                      child: Icon(
+                                        Icons.scale,
+                                        size: 45,
+                                        color: colorScheme.primary,
+                                        semanticLabel: AppLocalizations.of(context)!.weight_journal,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: 8),
@@ -495,7 +500,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
                                         );
                                       }
                                     },
-                                    icon: Icon(Icons.add),
+                                    icon: Icon(Icons.add, semanticLabel: AppLocalizations.of(context)!.add_weight_journal_entry),
                                   ),
                                 ],
                               ),
@@ -600,7 +605,7 @@ class _EatsJournalScreenState extends State<EatsJournalScreen> {
               onPressed: () {
                 eatsJournalScreenViewModel.toggleFloatingActionButtons();
               },
-              child: Icon(Icons.add),
+              child: Icon(Icons.add, semanticLabel: AppLocalizations.of(context)!.action_menu),
             ),
           ],
         ),

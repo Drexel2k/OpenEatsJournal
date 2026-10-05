@@ -259,7 +259,7 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
 
                     return menuItems;
                   },
-                  child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+                  child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert, semanticLabel: AppLocalizations.of(context)!.more)),
                 ),
               ],
             ),
@@ -667,8 +667,8 @@ class _EatsJournalFoodEntryEditScreenState extends State<EatsJournalFoodEntryEdi
                     }
                   },
                   child: eatsJournalFoodEntryEditScreenViewModel.foodEntry.id == null
-                      ? Icon(Icons.add_circle_outline, size: 36)
-                      : Icon(Icons.save_alt, size: 30),
+                      ? Icon(Icons.add_circle_outline, size: 36, semanticLabel: AppLocalizations.of(context)!.add)
+                      : Icon(Icons.save_alt, size: 30, semanticLabel: AppLocalizations.of(context)!.update),
                 ),
               ],
             ),

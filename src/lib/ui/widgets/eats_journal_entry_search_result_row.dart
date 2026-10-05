@@ -78,14 +78,14 @@ class EatsJournalEntrySearchResultRow extends StatelessWidget {
           onPressed: () async {
             await _onCopyPressed(eatsJournalEntry: _eatsJournalEntry);
           },
-          child: Icon(Icons.content_copy),
+          child: Icon(Icons.content_copy, semanticLabel: AppLocalizations.of(context)!.copy_eats_journal_entry),
         ),
         SizedBox(width: 5),
         RoundOutlinedButton(
           onPressed: () async {
             await _onGotoPressed(date: _eatsJournalEntry.entryDate);
           },
-          child: Icon(Icons.event),
+          child: Icon(Icons.event, semanticLabel: AppLocalizations.of(context)!.go_to_eats_journal_entry_day),
         ),
       ],
     );

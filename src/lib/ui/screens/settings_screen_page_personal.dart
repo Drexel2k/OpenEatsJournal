@@ -120,7 +120,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                             await widget._settingsScreenViewModel.recalculateDailykJouleTargetsAndSave();
                           }
                         },
-                        child: Icon(Icons.calculate),
+                        child: Icon(Icons.calculate, semanticLabel: AppLocalizations.of(context)!.calculate_enegery_target),
                       ),
                       SizedBox(width: 5),
                       RoundOutlinedButton(
@@ -161,7 +161,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
                           widget._settingsScreenViewModel.setDailyTargetKJoule();
                         },
-                        child: Icon(Icons.edit),
+                        child: Icon(Icons.edit, semanticLabel: AppLocalizations.of(context)!.edit_daily_energy_target),
                       ),
                     ],
                   ),
@@ -325,7 +325,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
                         triggerMode: TooltipTriggerMode.tap,
                         showDuration: Duration(seconds: 60),
                         message: AppLocalizations.of(context)!.acitivity_level_explanation,
-                        child: Icon(Icons.help_outline),
+                        child: Icon(Icons.help_outline, semanticLabel: AppLocalizations.of(context)!.help),
                       ),
                     ],
                   ),

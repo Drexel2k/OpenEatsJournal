@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
+import "package:flutter_zxing/flutter_zxing.dart";
 import "package:openeatsjournal/domain/food.dart";
 import "package:openeatsjournal/domain/food_source.dart";
+import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/l10n/app_localizations.dart";
 import "package:openeatsjournal/ui/utils/open_eats_journal_colors.dart";
 
@@ -51,5 +53,45 @@ class UiHelpers {
     }
 
     return label;
+  }
+
+  static String getLocalizedMealCapital({Meal? meal, required BuildContext context}) {
+    if (meal == null) {
+      return AppLocalizations.of(context)!.whole_day;
+    }
+
+    String localized = meal.value.name;
+
+    if (meal == Meal.breakfast) {
+      localized = AppLocalizations.of(context)!.breakfast_capital;
+    } else if (meal == Meal.lunch) {
+      localized = AppLocalizations.of(context)!.lunch_capital;
+    } else if (meal == Meal.dinner) {
+      localized = AppLocalizations.of(context)!.dinner_capital;
+    } else if (meal == Meal.snacks) {
+      localized = AppLocalizations.of(context)!.snacks_capital;
+    }
+
+    return localized;
+  }
+
+  static String getLocalizedMeal({Meal? meal, required BuildContext context}) {
+    if (meal == null) {
+      return AppLocalizations.of(context)!.whole_day;
+    }
+
+    String localized = meal.value.name;
+
+    if (meal == Meal.breakfast) {
+      localized = AppLocalizations.of(context)!.breakfast;
+    } else if (meal == Meal.lunch) {
+      localized = AppLocalizations.of(context)!.lunch;
+    } else if (meal == Meal.dinner) {
+      localized = AppLocalizations.of(context)!.dinner;
+    } else if (meal == Meal.snacks) {
+      localized = AppLocalizations.of(context)!.snacks;
+    }
+
+    return localized;
   }
 }

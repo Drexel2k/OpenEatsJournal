@@ -109,7 +109,7 @@ class _FoodCardState extends State<FoodCard> {
 
                       return menuItems;
                     },
-                    child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert)),
+                    child: SizedBox(height: 30, width: 40, child: Icon(Icons.more_vert, semanticLabel: AppLocalizations.of(context)!.more)),
                   ),
                 ],
               ),

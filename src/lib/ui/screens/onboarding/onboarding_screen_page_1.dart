@@ -51,7 +51,7 @@ class _OnboardingScreenPage1State extends State<OnboardingScreenPage1> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(AppLocalizations.of(context)!.welcome, style: textTheme.headlineSmall),
-                      Icon(Icons.waving_hand_outlined),
+                      Icon(Icons.waving_hand_outlined, semanticLabel: AppLocalizations.of(context)!.hello),
                     ],
                   ),
                   SizedBox(height: 12),

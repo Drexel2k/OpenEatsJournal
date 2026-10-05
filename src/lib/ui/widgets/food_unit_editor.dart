@@ -52,9 +52,9 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                   valueListenable: foodUnitEditorViewModel.foodUnitsEditMode,
                   builder: (_, _, _) {
                     if (foodUnitEditorViewModel.foodUnitsEditMode.value) {
-                      return Icon(Icons.mode_edit);
+                      return Icon(Icons.mode_edit, semanticLabel: AppLocalizations.of(context)!.edit);
                     } else {
-                      return Icon(Icons.drag_handle);
+                      return Icon(Icons.drag_handle, semanticLabel: AppLocalizations.of(context)!.hold_to_sort);
                     }
                   },
                 ),
@@ -185,7 +185,7 @@ class _FoodUnitEditorState extends State<FoodUnitEditor> {
                               foodUnitEditorViewModel.removeFoodUnit();
                             }
                           : null,
-                      child: Icon(Icons.delete),
+                      child: Icon(Icons.delete, semanticLabel: AppLocalizations.of(context)!.delete),
                     );
                   },
                 ),

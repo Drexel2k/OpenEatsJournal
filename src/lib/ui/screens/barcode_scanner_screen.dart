@@ -26,8 +26,8 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
           showToggleCamera: false,
           cropPercent: 0.9,
           actionButtonsBackgroundColor: colorScheme.surface,
-          flashOnIcon: Icon(Icons.flash_on, color: colorScheme.primary),
-          flashOffIcon: Icon(Icons.flash_off, color: colorScheme.primary),
+          flashOnIcon: Icon(Icons.flash_on, color: colorScheme.primary, semanticLabel: AppLocalizations.of(context)!.flash_on),
+          flashOffIcon: Icon(Icons.flash_off, color: colorScheme.primary, semanticLabel: AppLocalizations.of(context)!.flash_off),
 
           onScan: (result) {
             if (result.isValid && !_barcodeReturned) {

@@ -189,7 +189,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                                 _barcodeController.text = barcodeScanResult;
                               }
                             },
-                            child: Icon(Icons.qr_code_scanner),
+                            child: Icon(Icons.qr_code_scanner, semanticLabel: AppLocalizations.of(context)!.scan_qr_code),
                           ),
                         ],
                       ),
@@ -742,7 +742,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                             : MeasurementUnit.gram,
                       );
                     },
-                    child: Icon(Icons.add),
+                    child: Icon(Icons.add, semanticLabel: AppLocalizations.of(context)!.add),
                   ),
                 ),
                 ValueListenableBuilder(
@@ -754,7 +754,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           foodEditScreenViewModel.foodUnitsEditMode.value = false;
                           foodEditScreenViewModel.reorderableStateChanged.notify();
                         },
-                        child: Icon(Icons.swap_vert),
+                        child: Icon(Icons.swap_vert, semanticLabel: AppLocalizations.of(context)!.enable_sorting),
                       );
                     } else {
                       return RoundOutlinedButton(
@@ -762,7 +762,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           foodEditScreenViewModel.foodUnitsEditMode.value = true;
                           foodEditScreenViewModel.reorderableStateChanged.notify();
                         },
-                        child: Icon(Icons.mode_edit),
+                        child: Icon(Icons.mode_edit, semanticLabel: AppLocalizations.of(context)!.enable_editing),
                       );
                     }
                   },
@@ -851,7 +851,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           spacer: overlaySpacer,
                         ),
                       );
-                      
+
                       Navigator.pop(AppGlobal.navigatorKey.currentContext!);
                     }
                   },
@@ -865,7 +865,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                         children: [
                           SizedBox(width: 10),
                           RoundOutlinedButton(
-                            child: Icon(Icons.delete, color: colorScheme.error),
+                            child: Icon(Icons.delete, color: colorScheme.error, semanticLabel: AppLocalizations.of(context)!.delete),
                             onPressed: () async {
                               bool continueDelete = await showDialog(
                                 context: context,

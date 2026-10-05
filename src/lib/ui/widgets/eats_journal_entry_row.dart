@@ -81,14 +81,14 @@ class EatsJournalEntryRow extends StatelessWidget {
           onPressed: () async {
             await _onDuplicatePressed(eatsJournalEntry: _eatsJournalEntry);
           },
-          child: Icon(Icons.control_point_duplicate, color: _deleteIconColor),
+          child: Icon(Icons.control_point_duplicate, semanticLabel: AppLocalizations.of(context)!.duplicate_eats_journal_entry),
         ),
         SizedBox(width: 5),
         RoundOutlinedButton(
           onPressed: () async {
             await _onDeletePressed(eatsJournalEntryId: _eatsJournalEntry.id!);
           },
-          child: Icon(Icons.delete, color: _deleteIconColor),
+          child: Icon(Icons.delete, color: _deleteIconColor, semanticLabel: AppLocalizations.of(context)!.delete_eats_journal_entry),
         ),
       ],
     );

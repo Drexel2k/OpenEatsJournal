@@ -111,7 +111,7 @@ class EatsJournalMainButton extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.restaurant, size: 15, color: colorScheme.primary),
+                            Icon(Icons.restaurant, size: 15, color: colorScheme.primary, semanticLabel: AppLocalizations.of(context)!.energy_left),
                             Text(
                               " ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: (_kJouleGaugeData.maxValue - _kJouleGaugeData.currentValue).toDouble()))}",
                               style: textTheme.titleMedium,

@@ -119,7 +119,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       onPressed: () {
                         _searchTextController.clear();
                       },
-                      icon: Icon(Icons.clear),
+                      icon: Icon(Icons.clear, semanticLabel: AppLocalizations.of(context)!.clear_search_term),
                       padding: EdgeInsets.zero,
                     ),
                     onSubmitted: (value) async {
@@ -132,7 +132,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   onPressed: () async {
                     await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
                   },
-                  child: Icon(Icons.search),
+                  child: Icon(Icons.search, semanticLabel: AppLocalizations.of(context)!.search),
                 ),
                 SizedBox(width: 5),
                 RoundOutlinedButton(
@@ -144,7 +144,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
                     }
                   },
-                  child: Icon(Icons.qr_code_scanner),
+                  child: Icon(Icons.qr_code_scanner, semanticLabel: AppLocalizations.of(context)!.scan_qr_code),
                 ),
               ],
             ),
@@ -235,7 +235,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       },
                     );
                   },
-                  icon: Icon(Icons.help_outline),
+                  icon: Icon(Icons.help_outline, semanticLabel: AppLocalizations.of(context)!.help),
                 ),
               ],
             ),
@@ -297,8 +297,14 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           valueListenable: foodSearchScreenViewModel.sortDesc,
                           builder: (_, _, _) {
                             return foodSearchScreenViewModel.sortOrder != SortOrder.popularity
-                                ? Transform.flip(flipY: foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort))
-                                : Transform.flip(flipY: !foodSearchScreenViewModel.sortDesc.value, child: const Icon(Icons.sort));
+                                ? Transform.flip(
+                                    flipY: foodSearchScreenViewModel.sortDesc.value,
+                                    child: Icon(Icons.sort, semanticLabel: AppLocalizations.of(context)!.sort_ascending),
+                                  )
+                                : Transform.flip(
+                                    flipY: !foodSearchScreenViewModel.sortDesc.value,
+                                    child: Icon(Icons.sort, semanticLabel: AppLocalizations.of(context)!.sort_descending),
+                                  );
                           },
                         ),
                       ),
@@ -646,7 +652,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               onPressed: () {
                 foodSearchScreenViewModel.toggleFloatingActionButtons();
               },
-              child: Icon(Icons.add),
+              child: Icon(Icons.add, semanticLabel: AppLocalizations.of(context)!.action_menu),
             ),
           ],
         ),

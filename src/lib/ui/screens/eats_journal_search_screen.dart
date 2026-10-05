@@ -59,7 +59,7 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
           actions: [
             Builder(
               builder: (contextBuilder2) => IconButton(
-                icon: Icon(Icons.filter_list),
+                icon: Icon(Icons.filter_list, semanticLabel: AppLocalizations.of(context)!.filter),
                 onPressed: () {
                   Scaffold.of(contextBuilder2).openEndDrawer();
                 },
@@ -184,7 +184,7 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                         onPressed: () {
                           _searchController.clear();
                         },
-                        icon: Icon(Icons.clear),
+                        icon: Icon(Icons.clear, semanticLabel: AppLocalizations.of(context)!.clear_search_term),
                         padding: EdgeInsets.zero,
                       ),
                       onChanged: (value) {
@@ -200,7 +200,7 @@ class _EatsJournalSearchScreen extends State<EatsJournalSearchScreen> {
                     onPressed: () async {
                       eatsJournalSearchScreenViewModel.search();
                     },
-                    child: Icon(Icons.search),
+                    child: Icon(Icons.search, semanticLabel: AppLocalizations.of(context)!.search),
                   ),
                 ],
               ),

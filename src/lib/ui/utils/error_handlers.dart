@@ -14,7 +14,7 @@ class ErrorHandlers {
     if (logFile.existsSync() && logFile.lengthSync() > 1048576) {
       logFile.deleteSync();
     }
-    
+
     String stack = stackTrace != null ? stackTrace.toString() : "";
     logFile.writeAsString("${DateTime.now()} ${error.toString()} $stack", mode: FileMode.append, flush: true);
 
@@ -31,7 +31,7 @@ class ErrorHandlers {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 15),
-                  Icon(Icons.warning, size: 100, color: Colors.amber),
+                  Icon(Icons.warning, size: 100, color: Colors.amber, semanticLabel: "Warning!"),
                   SizedBox(height: 10),
                   Text(
                     "Unexpected error Encountered",
@@ -76,7 +76,7 @@ class ErrorHandlers {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 15),
-                Icon(Icons.warning, size: 100, color: Colors.amber),
+                Icon(Icons.warning, size: 100, color: Colors.amber, semanticLabel: "Warning!"),
                 SizedBox(height: 10),
                 Text(
                   "Unexpected error Encountered",

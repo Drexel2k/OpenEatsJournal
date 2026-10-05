@@ -8,6 +8,7 @@ import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_edit_screen_viewmodel.dart";
 import "package:openeatsjournal/ui/screens/eats_journal_screen_viewmodel.dart";
+import "package:openeatsjournal/ui/utils/ui_helpers.dart";
 import "package:openeatsjournal/ui/widgets/gauge_distribution.dart";
 import "package:provider/provider.dart";
 
@@ -88,7 +89,7 @@ class EatsJournalMealButton extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_getMealText(context)),
+                    Text(UiHelpers.getLocalizedMeal(meal: _meal, context: context)),
                     Text(
                       "${convert.getCleanDoubleString1DecimalDigit(doubleValue: _mealPercent)}% / ${convert.numberFomatterInt.format(convert.getDisplayEnergy(energyKJ: _mealKJoule))}${convert.getLocalizedEnergyUnitAbbreviated(context: context)}",
                     ),
@@ -101,7 +102,10 @@ class EatsJournalMealButton extends StatelessWidget {
               onPressed: () {
                 _changeMealCallback(meal: _meal);
               },
-              icon: Icon(Icons.check),
+              icon: Icon(
+                Icons.check,
+                semanticLabel: AppLocalizations.of(context)!.select_meal(UiHelpers.getLocalizedMealCapital(meal: _meal, context: context)),
+              ),
             ),
             IconButton.outlined(
               onPressed: () async {
@@ -110,7 +114,10 @@ class EatsJournalMealButton extends StatelessWidget {
                 _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                 _eatsJournalScreenViewModel.refreshNutritionData();
               },
-              icon: Icon(Icons.speed),
+              icon: Icon(
+                Icons.speed,
+                semanticLabel: AppLocalizations.of(context)!.add_quick_entry_to_meal(UiHelpers.getLocalizedMealCapital(meal: _meal, context: context)),
+              ),
             ),
             IconButton.outlined(
               onPressed: () async {
@@ -119,27 +126,14 @@ class EatsJournalMealButton extends StatelessWidget {
                 _eatsJournalScreenViewModel.refreshCurrentJournalDateAndMeal();
                 _eatsJournalScreenViewModel.refreshNutritionData();
               },
-              icon: Icon(Icons.add),
+              icon: Icon(
+                Icons.add,
+                semanticLabel: AppLocalizations.of(context)!.add_food_entry_to_meal(UiHelpers.getLocalizedMealCapital(meal: _meal, context: context)),
+              ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  String _getMealText(BuildContext context) {
-    if (_meal == Meal.breakfast) {
-      return AppLocalizations.of(context)!.breakfast;
-    }
-
-    if (_meal == Meal.lunch) {
-      return AppLocalizations.of(context)!.lunch;
-    }
-
-    if (_meal == Meal.dinner) {
-      return AppLocalizations.of(context)!.dinner;
-    }
-
-    return AppLocalizations.of(context)!.snacks;
   }
 }

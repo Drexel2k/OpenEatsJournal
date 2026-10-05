@@ -32,7 +32,7 @@ class _WeightRowState extends State<WeightRow> {
   void initState() {
     super.initState();
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
-   final  WeightRowViewModel weightRowViewModel = Provider.of<WeightRowViewModel>(context, listen: false);
+    final WeightRowViewModel weightRowViewModel = Provider.of<WeightRowViewModel>(context, listen: false);
 
     _weightController.text = convert.getCleanDoubleString1DecimalDigit(doubleValue: weightRowViewModel.lastValidWeight);
   }
@@ -97,7 +97,7 @@ class _WeightRowState extends State<WeightRow> {
               ),
               Expanded(
                 child: IconButton(
-                  icon: Icon(Icons.delete, color: widget._deleteIconColor),
+                  icon: Icon(Icons.delete, color: widget._deleteIconColor, semanticLabel: AppLocalizations.of(context)!.delete),
                   onPressed: () async {
                     if (widget._deleteEnabled) {
                       await widget._onDeletePressed(date: weightRowViewModel.date);
