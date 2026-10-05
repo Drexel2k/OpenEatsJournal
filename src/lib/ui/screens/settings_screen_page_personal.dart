@@ -36,7 +36,6 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
 
     _birthDayController.text = convert.dateFormatterDisplayMediumDateOnly.format(widget._settingsScreenViewModel.birthday.value);
-
     _heightController.text = convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.height.value!);
   }
 
