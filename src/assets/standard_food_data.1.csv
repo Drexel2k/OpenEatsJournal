@@ -1,6 +1,6 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-09-29 00-00-00","2026-01-15 00-00-00"
+"2026-10-10 00-00-00","2026-01-15 00-00-00"
 ---comments---
 food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
@@ -100,8 +100,8 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "foodunit","4","1l bottle","1l Flasche","1000","ml","false"
 "foodunit","5","1.5l bottle","1,5l Flasche","1500","ml","false"
 "foodunit","6","2l bottle","2l Flasche","2000","ml","false"
-"food","38","2026-01-16 01-00-00","Döner Kebap in pita/flatbread veal","Dönertasche mit Kalbfleisch",,,"100",,"921","11.5","4.8","20.8","1.8","10.5","0.6",
-"foodunit","1","Serving","Portion","350","g","true"
+"food","38","2026-10-10 00-00-00","Döner Kebap in pita/flatbread veal","Dönertasche mit Kalbfleisch",,,"100",,"921","11.5","4.8","20.8","1.8","10.5","0.6",
+"foodunit","1","Serving","Portion","450","g","true"
 "food","39","2026-01-16 01-00-00","Lahmacun, turkish pizza with veal","Lahmacun, türkische Pizza mit Kalbfleisch",,,"100",,"961","12","5","21.7","1.9","11","0.6",
 "foodunit","1","Serving","Portion","450","g","true"
 "food","40","2026-01-18 00-00-00","Mashed potatoes","Kartoffelpüree, -stock, - stampf, -brei",,,"100",,"402","2.4","1.6","16","1.6","2.4","0.3",
@@ -427,3 +427,5 @@ food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_def
 "food","217","2026-09-29 00-00-00","Coffee cream 10%","Kaffesahne 10%",,,"100",,"491","10","6.9","4","4","3.1","0.1",
 "food","218","2026-10-05 00-00-00","Covered apple pie","Gedeckter Apfelkuchen",,,"100",,"1025","9","5","38","23","3","0.1",
 "foodunit","1","Piece","Stück","160","g","true"
+"food","219","2026-10-10 00-00-00","Baklava","Baklava",,,"100",,"1883","24","8","55","30","6","0.4",
+"foodunit","1","Piece","Stück","40","g","true"

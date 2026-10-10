@@ -1,7 +1,8 @@
 # Open Eats Journal
 Open Eats Journal is a free, data minimized and privacy friendly open source eats journal to track your food intake, nutritions, calories and weight.
 
-[<img width="239" height="71" alt="Get It On Google Play Store" src="https://github.com/user-attachments/assets/8efb6d63-dafb-4ee1-b9bd-ebc7fd223bf9" />](https://play.google.com/store/apps/details?id=com.drexeldevelopment.openeatsjournal)
+[<img width="239" height="71" alt="Get It On Google Play Store" src="https://github.com/user-attachments/assets/8efb6d63-dafb-4ee1-b9bd-ebc7fd223bf9" />](https://play.google.com/store/apps/details?id=com.drexeldevelopment.openeatsjournal)&nbsp;&nbsp;
+[<img width="239" height="71" alt="Get it on F-Droid" src="https://github.com/user-attachments/assets/e604443c-c6df-4f2b-9e3c-f7a4e51368c0" />](https://f-droid.org/packages/com.drexeldevelopment.openeatsjournal)
 
 <img width="260" height="550" alt="Open Eats Journal Home Screen" src="https://github.com/user-attachments/assets/1f0d3aa5-2bdd-430e-a150-986f2e3d9793" />&nbsp;&nbsp;
 <img width="260" height="550" alt="Open Eats Journal Statistics Screen Dark" src="https://github.com/user-attachments/assets/8c009943-4c53-4a3e-8b32-5bc3ddf2ffd8" />&nbsp;&nbsp;
