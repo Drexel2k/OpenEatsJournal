@@ -116,7 +116,7 @@ void main() async {
     expect(settingsRepository.onboarded.value, false);
 
     //page1
-    expect(find.textContaining("Welcome"), findsOneWidget);
+    expect(find.textContaining("Welcome!"), findsOneWidget);
     await tester.tap(find.textContaining("Proceed"));
     await tester.pumpAndSettle();
 

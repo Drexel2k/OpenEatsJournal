@@ -60,6 +60,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       OpenEatsJournalStrings.serving: AppLocalizations.of(context)!.serving,
     };
 
+    final Map<String, String> nameEndLocalizations = {OpenEatsJournalStrings.prepared: AppLocalizations.of(context)!.prepared};
+
     return Consumer<FoodSearchScreenViewModel>(
       builder: (context, foodSearchScreenViewModel, _) => MainLayout(
         route: OpenEatsJournalStrings.navigatorRouteFood,
@@ -123,14 +125,22 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       padding: EdgeInsets.zero,
                     ),
                     onSubmitted: (value) async {
-                      await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
+                      await _search(
+                        foodSearchScreenViewModel: foodSearchScreenViewModel,
+                        standardFoodUnitLocalizations: standardFoodUnitLocalizations,
+                        nameEndLocalizations: nameEndLocalizations,
+                      );
                     },
                   ),
                 ),
                 SizedBox(width: 5),
                 RoundOutlinedButton(
                   onPressed: () async {
-                    await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
+                    await _search(
+                      foodSearchScreenViewModel: foodSearchScreenViewModel,
+                      standardFoodUnitLocalizations: standardFoodUnitLocalizations,
+                      nameEndLocalizations: nameEndLocalizations,
+                    );
                   },
                   child: Icon(Icons.search, semanticLabel: AppLocalizations.of(context)!.search),
                 ),
@@ -141,7 +151,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     if (barcodeScanResult != null) {
                       String barcode = barcodeScanResult as String;
                       _searchTextController.text = "${OpenEatsJournalStrings.code}${OpenEatsJournalStrings.doublepoint}$barcode";
-                      await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
+                      await _search(
+                        foodSearchScreenViewModel: foodSearchScreenViewModel,
+                        standardFoodUnitLocalizations: standardFoodUnitLocalizations,
+                        nameEndLocalizations: nameEndLocalizations,
+                      );
                     }
                   },
                   child: Icon(Icons.qr_code_scanner, semanticLabel: AppLocalizations.of(context)!.scan_qr_code),
@@ -173,7 +187,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                             if (tabIndex == 2) {
                               _searchMode = SearchMode.recent;
-                              await _search(foodSearchScreenViewModel: foodSearchScreenViewModel, standardFoodUnitLocalizations: standardFoodUnitLocalizations);
+                              await _search(
+                                foodSearchScreenViewModel: foodSearchScreenViewModel,
+                                standardFoodUnitLocalizations: standardFoodUnitLocalizations,
+                                nameEndLocalizations: nameEndLocalizations,
+                              );
                             }
                           },
                         ),
@@ -378,7 +396,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           FoodSearchResultStatusCode.openFoodFactsMoreResults) {
                         if (!foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.moreRequested!) {
                           foodSearchScreenViewModel.foodSearchResult[listViewItemIndex].object.moreRequested = true;
-                          foodSearchScreenViewModel.getFoodBySearchTextLoadMore(foodUnitLocalizations: standardFoodUnitLocalizations);
+                          foodSearchScreenViewModel.getFoodBySearchTextLoadMore(
+                            foodUnitLocalizations: standardFoodUnitLocalizations,
+                            nameEndLocalizations: nameEndLocalizations,
+                          );
                         }
 
                         return Padding(
@@ -670,18 +691,28 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
     return style;
   }
 
-  Future<void> _search({required FoodSearchScreenViewModel foodSearchScreenViewModel, required Map<String, String> standardFoodUnitLocalizations}) async {
+  Future<void> _search({
+    required FoodSearchScreenViewModel foodSearchScreenViewModel,
+    required Map<String, String> standardFoodUnitLocalizations,
+    required Map<String, String> nameEndLocalizations,
+  }) async {
     String cleanSearchText = _searchTextController.text.trim();
 
     List<String> parts = cleanSearchText.split(OpenEatsJournalStrings.doublepoint);
 
     if (parts.length == 2 && parts[0].trim().toLowerCase() == OpenEatsJournalStrings.code) {
       int? barcode = int.tryParse(parts[1]);
-      await foodSearchScreenViewModel.getFoodByBarcode(barcode: barcode, foodUnitLocalizations: standardFoodUnitLocalizations, searchMode: _searchMode);
+      await foodSearchScreenViewModel.getFoodByBarcode(
+        barcode: barcode,
+        foodUnitLocalizations: standardFoodUnitLocalizations,
+        nameEndLocalizations: nameEndLocalizations,
+        searchMode: _searchMode,
+      );
     } else {
       await foodSearchScreenViewModel.getFoodsBySearchText(
         searchText: cleanSearchText,
         foodUnitLocalizations: standardFoodUnitLocalizations,
+        nameEndLocalizations: nameEndLocalizations,
         searchMode: _searchMode,
       );
     }

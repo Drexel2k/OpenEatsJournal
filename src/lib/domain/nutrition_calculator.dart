@@ -11,7 +11,7 @@ class NutritionCalculator {
   //calculation according to Mifflin St Jeor equation
   static double calculateBasalMetabolicRateInKJoule({required double weightKg, required double heightCm, required int ageYear, required Gender gender}) {
     final int genderFactor = gender == Gender.male ? 5 : -161;
-    return (10 * weightKg + 6.25 * heightCm - 5 * ageYear + genderFactor) * ConvertValidate.kJoulekCalConversionFactor;
+    return ConvertValidate.getKJoulesFromKCals(kCals: 10 * weightKg + 6.25 * heightCm - 5 * ageYear + genderFactor);
   }
 
   static double calculateTotalKJoulePerDay({required double kJoulePerDay, required double activityFactor}) {

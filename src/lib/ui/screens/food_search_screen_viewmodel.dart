@@ -90,7 +90,12 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _settingsRepository.currentMeal.value = _currentMeal.value;
   }
 
-  Future<void> getFoodByBarcode({required Map<String, String> foodUnitLocalizations, required SearchMode searchMode, int? barcode}) async {
+  Future<void> getFoodByBarcode({
+    required Map<String, String> foodUnitLocalizations,
+    required Map<String, String> nameEndLocalizations,
+    required SearchMode searchMode,
+    int? barcode,
+  }) async {
     _initSearch(searchMode: searchMode);
 
     if (searchMode != SearchMode.recent) {
@@ -109,7 +114,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _searchOperations.add(searchOperation);
 
         searchOperation.then((result) {
-          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
         });
       }
 
@@ -117,7 +122,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _searchOperations.add(searchOperation);
 
       searchOperation.then((result) {
-        _processResult(result: result, foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+        _processResult(result: result, foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
       });
     } else {
       if (barcode == null) {
@@ -129,20 +134,25 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _searchOperations.add(searchOperation);
 
         searchOperation.then((result) {
-          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
         });
       } else {
         searchOperation = CancelableOperation.fromFuture(_foodRepository.getFoodsByBarcodeByUsageDb(barcode: barcode, languageCode: languageCode));
         _searchOperations.add(searchOperation);
 
         searchOperation.then((result) {
-          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
         });
       }
     }
   }
 
-  Future<void> getFoodsBySearchText({required String searchText, required Map<String, String> foodUnitLocalizations, required SearchMode searchMode}) async {
+  Future<void> getFoodsBySearchText({
+    required String searchText,
+    required Map<String, String> foodUnitLocalizations,
+    required Map<String, String> nameEndLocalizations,
+    required SearchMode searchMode,
+  }) async {
     _initSearch(searchMode: searchMode);
     _currentSearchText = searchText.trim();
 
@@ -161,7 +171,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _searchOperations.add(searchOperation);
 
         searchOperation.then((result) {
-          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
         });
       }
 
@@ -171,19 +181,24 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       _searchOperations.add(searchOperation);
 
       searchOperation.then((result) {
-        _processResult(result: result, foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+        _processResult(result: result, foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
       });
     } else {
       searchOperation = CancelableOperation.fromFuture(_foodRepository.getFoodsBySearchTextByUsageDb(searchText: searchText, languageCode: languageCode));
       _searchOperations.add(searchOperation);
 
       searchOperation.then((result) {
-        _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: searchMode);
+        _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations, searchmode: searchMode);
       });
     }
   }
 
-  void _processResult({required List<FoodRepositoryResult> result, required Map<String, String> foodUnitLocalizations, required SearchMode searchmode}) {
+  void _processResult({
+    required List<FoodRepositoryResult> result,
+    required Map<String, String> foodUnitLocalizations,
+    required Map<String, String> nameEndLocalizations,
+    required SearchMode searchmode,
+  }) {
     if (searchmode != SearchMode.recent) {
       //open food facts result is length 1, db result is length 3
       //open food facts result can call this code multiple times due to pagination, db result is only queried one time and therefore calls this code only once
@@ -258,7 +273,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
               }
 
               for (Food food in foodRepositoryResult.foods!) {
-                _translateStandardFoodUnits(food, foodUnitLocalizations);
+                _translateTextsFromOnlineSources(food: food, foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations);
                 foodSearchResultWithOrder = ObjectWithOrder(
                   object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.searchResult, food: food),
                   order: order++,
@@ -302,7 +317,7 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       if (result[0].foods != null && result[0].foods!.isNotEmpty) {
         int order = 0;
         for (Food food in result[0].foods!) {
-          _translateStandardFoodUnits(food, foodUnitLocalizations);
+          _translateTextsFromOnlineSources(food: food, foodUnitLocalizations: foodUnitLocalizations, nameEndLocalizations: nameEndLocalizations);
 
           //Popularity in recent mode shall not be ordered by source first, but strictly after usage amount.
           _foodSearchResultRecent.add(
@@ -327,22 +342,40 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     }
   }
 
-  void _translateStandardFoodUnits(Food food, Map<String, String> foodUnitLocalizations) {
-    if (food.foodUnitsWithOrder.isNotEmpty) {
-      for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
-        if (foodUnitLocalizations.containsKey(unitWithOrder.object.name)) {
-          unitWithOrder.object.name = foodUnitLocalizations[unitWithOrder.object.name]!;
+  void _translateTextsFromOnlineSources({
+    required Food food,
+    required Map<String, String> foodUnitLocalizations,
+    required Map<String, String> nameEndLocalizations,
+  }) {
+    if (!food.fromDb) {
+      for (final entry in nameEndLocalizations.entries) {
+        if (food.name.endsWith(entry.key)) {
+          food.name = food.name.substring(0, food.name.length - entry.key.length) + entry.value;
+          break; // stop after the first match
+        }
+      }
+
+      if (food.foodUnitsWithOrder.isNotEmpty) {
+        for (ObjectWithOrder<FoodUnit> unitWithOrder in food.foodUnitsWithOrder) {
+          if (foodUnitLocalizations.containsKey(unitWithOrder.object.name)) {
+            unitWithOrder.object.name = foodUnitLocalizations[unitWithOrder.object.name]!;
+          }
         }
       }
     }
   }
 
-  Future<void> getFoodBySearchTextLoadMore({required Map<String, String> foodUnitLocalizations}) async {
+  Future<void> getFoodBySearchTextLoadMore({required Map<String, String> foodUnitLocalizations, required Map<String, String> nameEndLocalizations}) async {
     _currentPage++;
     await _foodRepository
         .getFoodsBySearchTextOpenFoodFactsApiV1(searchText: _currentSearchText, languageCode: _settingsRepository.languageCode.value, page: _currentPage)
         .then((FoodRepositoryResult result) {
-          _processResult(result: [result], foodUnitLocalizations: foodUnitLocalizations, searchmode: SearchMode.online);
+          _processResult(
+            result: [result],
+            foodUnitLocalizations: foodUnitLocalizations,
+            nameEndLocalizations: nameEndLocalizations,
+            searchmode: SearchMode.online,
+          );
         });
   }
 

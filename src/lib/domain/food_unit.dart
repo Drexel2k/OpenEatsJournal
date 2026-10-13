@@ -13,7 +13,7 @@ class FoodUnit {
   double _amount;
   MeasurementUnit _amountMeasurementUnit;
 
-  final String? _originalFoodSourceFoodUnitId;
+  String? _originalFoodSourceFoodUnitId;
 
   set id(int? id) {
     if (_id != null) {
@@ -39,6 +39,10 @@ class FoodUnit {
 
   set amountMeasurementUnit(MeasurementUnit value) {
     _amountMeasurementUnit = value;
+  }
+
+  set originalFoodSourceFoodUnitId(String? value) {
+    _originalFoodSourceFoodUnitId = value;
   }
 
   int? get id => _id;

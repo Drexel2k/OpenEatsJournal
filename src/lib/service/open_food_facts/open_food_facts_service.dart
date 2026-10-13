@@ -25,10 +25,10 @@ class OpenFoodFactsService {
        //for barcoded search
        //https://openfoodfacts.github.io/openfoodfacts-server/api/
        //https://openfoodfacts.github.io/openfoodfacts-server/api/ref-v2/
-       _apiV2Endpoint = "https://world.openfoodfacts.${useStaging ? "net" : "org"}/api/v2/product/";
+       _apiV36Endpoint = "https://world.openfoodfacts.${useStaging ? "net" : "org"}/api/v3.6/product/";
 
   final String _apiV1Endpoint;
-  final String _apiV2Endpoint;
+  final String _apiV36Endpoint;
   // late String _searchALiciousEndPoint;
 
   final String _appName;
@@ -44,7 +44,7 @@ class OpenFoodFactsService {
       headers[HttpHeaders.authorizationHeader] = "Basic ${base64.encode(utf8.encode("off:off"))}";
     }
 
-    Uri uri = Uri.parse("$_apiV2Endpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV1V2AllFields.join(",")}");
+    Uri uri = Uri.parse("$_apiV36Endpoint$barcode?product_type=food&fields=${OpenFoodFactsApiStrings.apiV3Fields.join(",")}");
 
     //404 means no food with barcode was found, which is still a normal result for us.
     return await _requestUri(uri: uri, headers: headers, validResponseCodes: [200, 404]);
@@ -61,7 +61,7 @@ class OpenFoodFactsService {
 
     //currently requesting specific nutriment fields results in HTTP 500, therefore we request all nutriments, this works.
     Uri uri = Uri.parse(
-      "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1V2AllFieldsAllNutriments.join(",")}&page=$page&page_size=$pageSize",
+      "${_apiV1Endpoint}search_terms=$searchText&fields=${OpenFoodFactsApiStrings.apiV1Fields.join(",")}&page=$page&page_size=$pageSize",
     );
 
     return await _requestUri(uri: uri, headers: headers, validResponseCodes: [200]);

@@ -320,5 +320,6 @@
   "select_meal": "Select {meal}",
   "add_quick_entry_to_meal": "Add quick entry to {meal}",
   "add_food_entry_to_meal": "Add food entry to {meal}",
-  "hold_to_sort": "Hold to sort"
+  "hold_to_sort": "Hold to sort",
+  "prepared": "(prepared)"
 }

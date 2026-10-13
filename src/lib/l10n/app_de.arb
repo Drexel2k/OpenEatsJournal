@@ -320,5 +320,6 @@
   "select_meal": "{meal} auswählen",
   "add_quick_entry_to_meal": "Schnelleintrag zu {meal} hinzufügen",
   "add_food_entry_to_meal": "Lebensmitteleintrag zu {meal} hinzufügen",
-  "hold_to_sort": "Halten zum Sortieren"
+  "hold_to_sort": "Halten zum Sortieren",
+  "prepared": "(zubereitet)"
 }

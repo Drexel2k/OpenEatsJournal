@@ -1,0 +1,41 @@
+class NutritionsPer {
+  NutritionsPer({
+    required double kJoule,
+    double? nutritionPerGramAmount,
+    double? nutritionPerMilliliterAmount,
+    double? carbohydrates,
+    double? sugar,
+    double? fat,
+    double? saturatedFat,
+    double? protein,
+    double? salt,
+  }) : _kJoule = kJoule,
+       _nutritionPerGramAmount = nutritionPerGramAmount,
+       _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
+       _carbohydrates = carbohydrates,
+       _sugar = sugar,
+       _fat = fat,
+       _saturatedFat = saturatedFat,
+       _protein = protein,
+       _salt = salt;
+
+  final double _kJoule;
+  final double? _nutritionPerGramAmount;
+  final double? _nutritionPerMilliliterAmount;
+  final double? _carbohydrates;
+  final double? _sugar;
+  final double? _fat;
+  final double? _saturatedFat;
+  final double? _protein;
+  final double? _salt;
+
+  double get kJoule => _kJoule;
+  double? get nutritionPerGramAmount => _nutritionPerGramAmount;
+  double? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
+  double? get carbohydrates => _carbohydrates;
+  double? get sugar => _sugar;
+  double? get fat => _fat;
+  double? get saturatedFat => _saturatedFat;
+  double? get protein => _protein;
+  double? get salt => _salt;
+}

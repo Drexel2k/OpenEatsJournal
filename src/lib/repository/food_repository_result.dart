@@ -18,6 +18,7 @@ class FoodRepositoryResult {
       _errorCode = errorCode,
       _errorMessage = errorMessage;
 
+  //One result can have foods of multiple sources, e.g. local result can have foods from cache, user and standard foods.
   final List<FoodSource> _foodSources;
   //to distinguish between data from objects from online services or cached versions which wer loaded from database
   final bool _fromDb;

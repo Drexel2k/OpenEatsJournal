@@ -1,9 +1,10 @@
+import "package:openeatsjournal/service/open_food_facts/data/api_v1_helpers.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
-import "package:openeatsjournal/service/open_food_facts/data/nutriments_api.dart";
+import "package:openeatsjournal/service/open_food_facts/data/nutriments_api_v1.dart";
 
-class FoodApi {
-  FoodApi({
-    String? code,
+class FoodApiV1 {
+  FoodApiV1({
+    required int code,
     String? productName,
     String? productNameEn,
     String? productNameDe,
@@ -21,7 +22,7 @@ class FoodApi {
     String? servingQuantityUnit,
     String? servingSize,
     String? nutritionDataPer,
-    NutrimentsApi? nutriments,
+    NutrimentsApiV1? nutriments,
     String? lang,
   }) : _code = code,
        _productName = productName,
@@ -44,7 +45,7 @@ class FoodApi {
        _nutritionDataPer = nutritionDataPer,
        _nutriments = nutriments;
 
-  final String? _code;
+  final int _code;
   final String? _productName;
   final String? _productNameEn;
   final String? _productNameDe;
@@ -63,9 +64,9 @@ class FoodApi {
   final String? _servingQuantityUnit;
   final String? _servingSize;
   final String? _nutritionDataPer;
-  final NutrimentsApi? _nutriments;
+  final NutrimentsApiV1? _nutriments;
 
-  String? get code => _code;
+  int get code => _code;
   String? get productName => _productName;
   String? get productNameEn => _productNameEn;
   String? get productNameDe => _productNameDe;
@@ -85,11 +86,11 @@ class FoodApi {
   String? get servingQuantityUnit => _servingQuantityUnit;
   String? get servingSize => _servingSize;
   String? get nutritionDataPer => _nutritionDataPer;
-  NutrimentsApi? get nutriments => _nutriments;
+  NutrimentsApiV1? get nutriments => _nutriments;
 
-  factory FoodApi.fromJsonApiV1V2(Map<String, dynamic> json) {
-    return FoodApi(
-      code: json.containsKey(OpenFoodFactsApiStrings.fieldCode) ? json[OpenFoodFactsApiStrings.fieldCode] : null,
+  factory FoodApiV1.fromJsonApiV1(Map<String, dynamic> json) {
+    return FoodApiV1(
+      code: ApiV1Helpers.getIntFromNumOrString(json[OpenFoodFactsApiStrings.fieldCode]),
       brandsTags: json.containsKey(OpenFoodFactsApiStrings.fieldBrandsTags) ? _getbrandList(json) : null,
       productName: json.containsKey(OpenFoodFactsApiStrings.fieldProductName) ? json[OpenFoodFactsApiStrings.fieldProductName] : null,
       productNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameEn) ? json[OpenFoodFactsApiStrings.fieldProductNameEn] : null,
@@ -115,7 +116,7 @@ class FoodApi {
       servingQuantityUnit: json.containsKey(OpenFoodFactsApiStrings.fieldServingQuantityUnit) ? json[OpenFoodFactsApiStrings.fieldServingQuantityUnit] : null,
       servingSize: json.containsKey(OpenFoodFactsApiStrings.fieldServingSize) ? json[OpenFoodFactsApiStrings.fieldServingSize] : null,
       nutritionDataPer: json.containsKey(OpenFoodFactsApiStrings.fieldNutritionDataPer) ? json[OpenFoodFactsApiStrings.fieldNutritionDataPer] : null,
-      nutriments: json.containsKey(OpenFoodFactsApiStrings.fieldNutriments) ? NutrimentsApi.fromJson(json[OpenFoodFactsApiStrings.fieldNutriments]) : null,
+      nutriments: json.containsKey(OpenFoodFactsApiStrings.fieldNutriments) ? NutrimentsApiV1.fromJson(json[OpenFoodFactsApiStrings.fieldNutriments]) : null,
     );
   }
 
@@ -132,32 +133,5 @@ class FoodApi {
     }
 
     return null;
-  }
-
-  factory FoodApi.fromJsonSearALiciousApi(Map<String, dynamic> json) {
-    return FoodApi(
-      code: json[OpenFoodFactsApiStrings.fieldCode],
-      brandsTags: json.containsKey(OpenFoodFactsApiStrings.fieldBrands)
-          ? (json[OpenFoodFactsApiStrings.fieldBrands] as List<dynamic>).map((brand) => brand as String).toList()
-          : null,
-      productName: json.containsKey(OpenFoodFactsApiStrings.fieldProductName) ? json[OpenFoodFactsApiStrings.fieldProductName] : null,
-      productNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameEn) ? json[OpenFoodFactsApiStrings.fieldProductNameEn] : null,
-      productNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameDe) ? json[OpenFoodFactsApiStrings.fieldProductNameDe] : null,
-      genericName: json.containsKey(OpenFoodFactsApiStrings.fieldGenericName) ? json[OpenFoodFactsApiStrings.fieldGenericName] : null,
-      genericNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldGenericNameEn) ? json[OpenFoodFactsApiStrings.fieldGenericNameEn] : null,
-      genericNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldGenericNameDe) ? json[OpenFoodFactsApiStrings.fieldGenericNameDe] : null,
-      abbreviatedProductName: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductName)
-          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductName]
-          : null,
-      abbreviatedProductNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductNameEn)
-          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductNameEn]
-          : null,
-      abbreviatedProductNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldAbbreviatedProductNameDe)
-          ? json[OpenFoodFactsApiStrings.fieldAbbreviatedProductNameDe]
-          : null,
-      lang: json.containsKey(OpenFoodFactsApiStrings.fieldLang) ? json[OpenFoodFactsApiStrings.fieldLang] : null,
-      quantity: json.containsKey(OpenFoodFactsApiStrings.fieldQuantity) ? json[OpenFoodFactsApiStrings.fieldQuantity] : null,
-      nutriments: json.containsKey(OpenFoodFactsApiStrings.fieldNutriments) ? NutrimentsApi.fromJson(json[OpenFoodFactsApiStrings.fieldNutriments]) : null,
-    );
   }
 }

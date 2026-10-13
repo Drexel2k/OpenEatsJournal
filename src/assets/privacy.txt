@@ -1,5 +1,5 @@
 PRIVACY POLICY
-Last update: January 31, 2026
+Last update: October 10, 2026
 
     INTRODUCTION
 Open Eats Journal is a free, open source, data minimized and data privacy friendly eats, nutrition and calories journal app for Android. The developer does not collect any personal data via Open Eats Journal, data is not shared in any way, there are no ads and no tracking or profiling takes place. If you search for foods online to retrieve nutrition values and names, the request is sent to the Open Food Facts API  (https://world.openfoodfacts.org/). However, if the functionality is not desired or needed, you can also only search offline. Questions and suggestions regarding the privacy of Open Eats Journal can be sent to us via the e-mail address drexel.development@gmail.com. 
@@ -91,7 +91,7 @@ When you contact us by e-mail, the data you provide (usually your e-mail address
   V. Sub-processors
 a) Open Eats Journal mobile app
 Open Food Facts (French "Loi 1901" Association) – privacy policy: https://world.openfoodfacts.org/privacy
-If you search for foods online to retrieve nutrition values and name, the request is send to the Open Food Facts API (https://world.openfoodfacts.org/). Beside the requested data (Food name, brands, nutrition data) needed by Open Eats Journal, as on every internet communication your IP address is visible to them. 
+If you search for foods online to retrieve nutrition values and name, the request is send to the Open Food Facts API (https://world.openfoodfacts.org/). Beside the requested data (Food name, brands, nutrition data) needed by Open Eats Journal and the name and version of the app which is sending the request (as demanded by Open Food Facts), as on every internet communication your IP address is visible to them. 
 b) E-Mail requests regarding the privacy of Open Eats Journal
 Google LLC - privacy policy: https://policies.google.com/privacy?hl=en-US
 E-mailbox is operated by Google LLC (Gmail).

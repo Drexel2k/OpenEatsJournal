@@ -683,12 +683,8 @@ class OpenEatsJournalDatabaseService {
         whereArgs: [id],
       );
 
-      if (dbResult.length > 1) {
-        throw StateError("Only one eats journal entry may exist for a given  eats journal id, multiple entries found for $id.");
-      }
-
       if (dbResult.isEmpty) {
-        throw StateError("No record for a given  eats journal id,  eats journal id was not null, a food entry should exist.");
+        throw StateError("No record for a given  eats journal id, eats journal id was not null, a food entry should exist.");
       }
     }
 
@@ -908,54 +904,45 @@ class OpenEatsJournalDatabaseService {
       throw ArgumentError("Food update by external id required an external food source id.");
     }
 
-    final List<Map<String, Object?>> dbResultExternalId = await db.query(
+    final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableFood,
       columns: [OpenEatsJournalStrings.dbColumnId],
       where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} = ?",
       whereArgs: [foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef], foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]],
     );
 
-    if (dbResultExternalId.length > 1) {
+    if (dbResult.length > 1) {
       throw StateError(
         "Only one food entry may exist for a given external food id and food source, multiple entries found for ${foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]}, food source ${foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef]}.",
       );
     }
 
-    if (id != null) {
-      if (dbResultExternalId.isEmpty) {
-        throw StateError("No record for a given external id and food source, food id was not null, a food entry should exist.");
-      }
+    int? dbId;
+    if (dbResult.isNotEmpty) {
+      dbId = dbResult[0][OpenEatsJournalStrings.dbColumnId] as int;
     }
 
     if (id != null) {
-      final List<Map<String, Object?>> dbResultId = await db.query(
-        OpenEatsJournalStrings.dbTableFood,
-        columns: [OpenEatsJournalStrings.dbColumnId],
-        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
-        whereArgs: [id],
-      );
-
-      if (dbResultId.length > 1) {
-        throw StateError("Only one food entry may exist for a given food id, multiple entries found for $id.");
+      if (dbResult.isEmpty) {
+        throw StateError("No food record for a given external id and food source, food id was not null, a food entry should exist.");
       }
 
-      if (dbResultId.isEmpty) {
-        throw StateError("No record for a given food id, food id was not null, a food entry should exist.");
+      if (dbId != id) {
+        throw StateError("Db food id for a given external id differs from the given id.");
       }
     } else {
-      //If food comes from external API and is used for the first time in the food search result screen e.g. it has id null.
-      //If we know already the food in the food table, the id from the food table is assigned here.
-      if (dbResultExternalId.isNotEmpty) {
-        id = dbResultExternalId[0][OpenEatsJournalStrings.dbColumnId] as int;
-      }
+      id = dbId;
     }
 
-    id = await _setFoodInternal(foodData: foodData, id: id);
+    if (id == null) {
+      id = await db.insert(OpenEatsJournalStrings.dbTableFood, foodData);
+    } else {
+      await db.update(OpenEatsJournalStrings.dbTableFood, foodData, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [id]);
+    }
 
     return id;
   }
 
-  //todo: maybe merge setFood and setFoodByExternalId as done in setFoodUnit
   Future<int> setFood({required Map<String, Object?> foodData, int? id}) async {
     Database db = await database;
     if (foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef] == 2) {
@@ -971,20 +958,10 @@ class OpenEatsJournalDatabaseService {
         whereArgs: [id],
       );
 
-      if (dbResult.length > 1) {
-        throw StateError("Only one food entry may exist for a given food id, multiple entries found for $id.");
-      }
-
       if (dbResult.isEmpty) {
         throw StateError("No record for a given food id, food id was not null, a food entry should exist.");
       }
     }
-
-    return await _setFoodInternal(foodData: foodData, id: id);
-  }
-
-  Future<int> _setFoodInternal({required Map<String, Object?> foodData, int? id}) async {
-    Database db = await database;
 
     if (id == null) {
       id = await db.insert(OpenEatsJournalStrings.dbTableFood, foodData);
@@ -998,34 +975,65 @@ class OpenEatsJournalDatabaseService {
   Future<int> setFoodUnit({required Map<String, Object?> foodUnitData, int? id}) async {
     Database db = await database;
 
-    if (foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef] != null) {
-      List<Map<String, Object?>>? dbResult;
-
-      dbResult = await db.query(
+    if (id != null) {
+      final List<Map<String, Object?>> dbResult = await db.query(
         OpenEatsJournalStrings.dbTableFoodUnit,
         columns: [OpenEatsJournalStrings.dbColumnId],
-        where: "${OpenEatsJournalStrings.dbColumnFoodIdRef}= ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef} = ?",
-        whereArgs: [foodUnitData[OpenEatsJournalStrings.dbColumnFoodIdRef], foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef]],
+        where: "${OpenEatsJournalStrings.dbColumnId} = ?",
+        whereArgs: [id],
       );
 
-      if (dbResult.length > 1) {
-        throw StateError(
-          "Only one food unit entry with original food source food unit id ${foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef]} may exist for a food, multiple entries found for food ${foodUnitData[OpenEatsJournalStrings.dbColumnFoodIdRef]}.",
-        );
+      if (dbResult.isEmpty) {
+        throw StateError("No record for a given food unit id, food unit id was not null, a food unit entry should exist.");
+      }
+    }
+
+    if (id == null) {
+      id = await db.insert(OpenEatsJournalStrings.dbTableFoodUnit, foodUnitData);
+    } else {
+      await db.update(OpenEatsJournalStrings.dbTableFoodUnit, foodUnitData, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [id]);
+    }
+
+    return id;
+  }
+
+  Future<int> setFoodUnitByExternalId({required Map<String, Object?> foodUnitData, int? id}) async {
+    Database db = await database;
+
+    if (foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef] == null) {
+      throw ArgumentError("Food update by external id required an external food source id.");
+    }
+
+    List<Map<String, Object?>>? dbResult;
+
+    dbResult = await db.query(
+      OpenEatsJournalStrings.dbTableFoodUnit,
+      columns: [OpenEatsJournalStrings.dbColumnId],
+      where: "${OpenEatsJournalStrings.dbColumnFoodIdRef}= ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef} = ?",
+      whereArgs: [foodUnitData[OpenEatsJournalStrings.dbColumnFoodIdRef], foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef]],
+    );
+
+    if (dbResult.length > 1) {
+      throw StateError(
+        "Only one food unit entry may exist for a given external food unit id, multiple entries found for ${foodUnitData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodUnitIdRef]}.",
+      );
+    }
+
+    int? dbId;
+    if (dbResult.isNotEmpty) {
+      dbId = dbResult[0][OpenEatsJournalStrings.dbColumnId] as int;
+    }
+
+    if (id != null) {
+      if (dbResult.isEmpty) {
+        throw StateError("No food unit record for a given external id, food unit id was not null, a food unit entry should exist.");
       }
 
-      if (dbResult.isNotEmpty) {
-        //If food comes from external API and the food unit is used for the first time in the food search result screen e.g. it has id null.
-        //If we know already the food unit, the id is assigned here.
-        int dbId = dbResult[0][OpenEatsJournalStrings.dbColumnId] as int;
-        if (id == null) {
-          id = dbId;
-        } else {
-          if (id != dbId) {
-            throw StateError("Data base id $dbId of food unit with orignal food source food unit it is different from argument id $id.");
-          }
-        }
+      if (dbId != id) {
+        throw StateError("Db food unit id for a given external id differs from the given id.");
       }
+    } else {
+      id = dbId;
     }
 
     if (id == null) {
@@ -1669,7 +1677,7 @@ class OpenEatsJournalDatabaseService {
     await db.delete(OpenEatsJournalStrings.dbTableFood, where: "${OpenEatsJournalStrings.dbColumnId} = ?", whereArgs: [foodId]);
   }
 
-  Future<void> deleteFoodUnits({required int foodId, required List<int> exceptIds}) async {
+  Future<void> deleteFoodUnitsByFoodRef({required int foodId, required List<int> exceptIds}) async {
     Database db = await database;
 
     List<String> wheres = [];

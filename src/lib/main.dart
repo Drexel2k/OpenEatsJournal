@@ -42,6 +42,7 @@ void main() async {
     appName: settingsRepository.appName,
     appVersion: settingsRepository.appVersion,
     appContactMail: settingsRepository.appContactMail!,
+    useStaging: settingsRepository.useStagingServices,
   );
 
   FoodRepository foodRepository = FoodRepository(

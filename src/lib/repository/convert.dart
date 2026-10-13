@@ -66,7 +66,7 @@ class Convert {
       protein: dbResult[0][OpenEatsJournalStrings.dbResultFoodProtein] as double?,
       salt: dbResult[0][OpenEatsJournalStrings.dbResultFoodSalt] as double?,
       quantity: dbResult[0][OpenEatsJournalStrings.dbResultFoodQuantity] as String?,
-      orderedDefaultFoodUnits: orderedDefaultFoodUnits,
+      orderedFoodUnitsWithDefault: orderedDefaultFoodUnits,
     );
 
     return food;

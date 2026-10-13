@@ -109,7 +109,7 @@ class Food {
     double? protein,
     double? salt,
     String? quantity,
-    List<OrderedDefaultFoodUnit>? orderedDefaultFoodUnits,
+    List<OrderedDefaultFoodUnit>? orderedFoodUnitsWithDefault,
   }) : _name = name,
        _brands = brands ?? [],
        _id = id,
@@ -129,8 +129,8 @@ class Food {
        _salt = salt,
        _quantity = quantity,
        _foodUnitsWithOrder = [] {
-    if (orderedDefaultFoodUnits != null && orderedDefaultFoodUnits.isNotEmpty) {
-      for (OrderedDefaultFoodUnit orderedDefaultFoodUnit in orderedDefaultFoodUnits) {
+    if (orderedFoodUnitsWithDefault != null && orderedFoodUnitsWithDefault.isNotEmpty) {
+      for (OrderedDefaultFoodUnit orderedDefaultFoodUnit in orderedFoodUnitsWithDefault) {
         _addFoodUnitWithOrder(orderedDefaultFoodUnit.foodUnitWithOrder);
 
         if (orderedDefaultFoodUnit.isDefault) {
@@ -183,20 +183,14 @@ class Food {
   }
 
   set name(String value) {
-    _checkUserFood();
-
     _name = value;
   }
 
   set barcode(int? value) {
-    _checkUserFood();
-
     _barcode = value;
   }
 
   set nutritionPerGramAmount(double? value) {
-    _checkUserFood();
-
     if (value != null || _nutritionPerMilliliterAmount != null) {
       if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.gram);
@@ -209,8 +203,6 @@ class Food {
   }
 
   set nutritionPerMilliliterAmount(double? value) {
-    _checkUserFood();
-
     if (value != null || _nutritionPerGramAmount != null) {
       if (value == null) {
         _removeFoodUnitWithMeasurementUnit(measurementUnit: MeasurementUnit.milliliter);
@@ -223,50 +215,34 @@ class Food {
   }
 
   set kJoule(double value) {
-    _checkUserFood();
-
     _kJoule = value;
   }
 
   set carbohydrates(double? value) {
-    _checkUserFood();
-
     _carbohydrates = value;
   }
 
   set sugar(double? value) {
-    _checkUserFood();
-
     _sugar = value;
   }
 
   set fat(double? value) {
-    _checkUserFood();
-
     _fat = value;
   }
 
   set saturatedFat(double? value) {
-    _checkUserFood();
-
     _saturatedFat = value;
   }
 
   set protein(double? value) {
-    _checkUserFood();
-
     _protein = value;
   }
 
   set salt(double? value) {
-    _checkUserFood();
-
     _salt = value;
   }
 
   set defaultFoodUnit(FoodUnit? value) {
-    _checkUserFood();
-
     if (value == null) {
       throw ArgumentError("Default food unit must not be null.");
     }
@@ -309,8 +285,6 @@ class Food {
   }
 
   bool addFoodUnit({required FoodUnit foodUnit, int? order}) {
-    _checkUserFood();
-
     if (foodUnit.amountMeasurementUnit == MeasurementUnit.gram) {
       if (_nutritionPerGramAmount == null) {
         return false;
@@ -358,8 +332,6 @@ class Food {
   }
 
   void upadteFoodUnitOrder({required FoodUnit foodUnit, required int newOrder}) {
-    _checkUserFood();
-
     if (_foodUnitsWithOrder.length < newOrder) {
       throw ArgumentError("Can't add fodd unit at newOrder $newOrder, _foodUnitsWithOrder.length is ${_foodUnitsWithOrder.length}");
     }
@@ -415,8 +387,6 @@ class Food {
   }
 
   void removeFoodUnit({required FoodUnit foodUnit}) {
-    _checkUserFood();
-
     _foodUnitsWithOrder.removeWhere((ObjectWithOrder<FoodUnit> foodUnitWithOrderInternal) => foodUnitWithOrderInternal.object == foodUnit);
     _ensureDefaultFoodUnit();
   }
@@ -447,12 +417,6 @@ class Food {
       if (foodUnitWithOrder == null) {
         _defaultFoodUnit = _foodUnitsWithOrder[0].object;
       }
-    }
-  }
-
-  void _checkUserFood() {
-    if (_foodSource != FoodSource.user) {
-      throw StateError("Only user foods can be updated.");
     }
   }
 }

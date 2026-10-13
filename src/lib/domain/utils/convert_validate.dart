@@ -36,11 +36,11 @@ class ConvertValidate {
   late VolumeUnit _volumeUnit;
 
   //https://de.wikipedia.org/wiki/Energie https://www.gesundheit.gv.at/leben/ernaehrung/info/grundumsatz.html https://www.tk.de/techniker/gesundheit-foerdern/gesunde-ernaehrung/uebergewicht-und-diaet/wie-viele-kalorien-pro-tag-2006758
-  static const double kJoulekCalConversionFactor = 4.184;
-  static const double cmInchConversionFactor = 2.54; //https://de.wikipedia.org/wiki/Zoll_(Einheit)
-  static const double mlFlOzGbConversionFactor = 28.4130642624675; //https://de.wikipedia.org/wiki/Fluid_ounce
-  static const double mlFlOzUsConversionFactor = 29.5735295625; //https://de.wikipedia.org/wiki/Fluid_ounce
-  static const double gOzConversionFactor = 28.349523125; //https://de.wikipedia.org/wiki/Unze
+  static const double _kJoulekCalConversionFactor = 4.184;
+  static const double _cmInchConversionFactor = 2.54; //https://de.wikipedia.org/wiki/Zoll_(Einheit)
+  static const double _mlFlOzGbConversionFactor = 28.4130642624675; //https://de.wikipedia.org/wiki/Fluid_ounce
+  static const double _mlFlOzUsConversionFactor = 29.5735295625; //https://de.wikipedia.org/wiki/Fluid_ounce
+  static const double _gOzConversionFactor = 28.349523125; //https://de.wikipedia.org/wiki/Unze
   static const double maxKJoulePerDay = 41840;
   static const int maxHeightCm = 400;
   static const int maxWeightKg = 1000;
@@ -381,43 +381,43 @@ class ConvertValidate {
   }
 
   static double _getCmFromInch({required num inch}) {
-    return inch * ConvertValidate.cmInchConversionFactor;
+    return inch * ConvertValidate._cmInchConversionFactor;
   }
 
   static double _getInchFromCm({required num cm}) {
-    return cm / ConvertValidate.cmInchConversionFactor;
+    return cm / ConvertValidate._cmInchConversionFactor;
   }
 
   static double _getMlFromFlOzGb({required num flOz}) {
-    return flOz * ConvertValidate.mlFlOzGbConversionFactor;
+    return flOz * ConvertValidate._mlFlOzGbConversionFactor;
   }
 
   static double _getFlOzGbFromMl({required num ml}) {
-    return ml / ConvertValidate.mlFlOzGbConversionFactor;
+    return ml / ConvertValidate._mlFlOzGbConversionFactor;
   }
 
   static double _getMlFromFlOzUs({required num flOz}) {
-    return flOz * ConvertValidate.mlFlOzUsConversionFactor;
+    return flOz * ConvertValidate._mlFlOzUsConversionFactor;
   }
 
   static double _getFlOzUsFromMl({required num ml}) {
-    return ml / ConvertValidate.mlFlOzUsConversionFactor;
+    return ml / ConvertValidate._mlFlOzUsConversionFactor;
   }
 
   static double _getGFromOz({required num oz}) {
-    return oz * ConvertValidate.gOzConversionFactor;
+    return oz * ConvertValidate._gOzConversionFactor;
   }
 
   static double _getOzFromG({required num g}) {
-    return g / ConvertValidate.gOzConversionFactor;
+    return g / ConvertValidate._gOzConversionFactor;
   }
 
   static double getKCalsFromKJoules({required num kJoules}) {
-    return (kJoules / ConvertValidate.kJoulekCalConversionFactor);
+    return (kJoules / ConvertValidate._kJoulekCalConversionFactor);
   }
 
   static double getKJoulesFromKCals({required num kCals}) {
-    return (kCals * ConvertValidate.kJoulekCalConversionFactor);
+    return (kCals * ConvertValidate._kJoulekCalConversionFactor);
   }
 
   static WeekOfYear getweekOfYear({required DateTime date}) {
