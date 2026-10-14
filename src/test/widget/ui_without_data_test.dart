@@ -173,10 +173,10 @@ void main() async {
       //birthday
       if (textFieldIndex == 0) {
         await tester.tap(find.byWidgetPredicate((widgetInternal) => widgetInternal == settingsTextField));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byIcon(Icons.edit_outlined));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.enterText(find.descendant(of: find.byType(Dialog), matching: find.byType(TextField)), "7/1/1980");
         await tester.tap(find.text("OK"));
@@ -213,7 +213,7 @@ void main() async {
     await tester.pumpAndSettle();
 
     await tester.tap(find.textContaining("-0.5"));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text("2,571"), findsOneWidget);
     expect(find.text("2,071"), findsOneWidget);

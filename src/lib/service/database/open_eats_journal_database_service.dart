@@ -14,23 +14,27 @@ class OpenEatsJournalDatabaseService {
   late String _databaseFile;
   late String _databaseDirectory;
 
-  static final List<String> _currentTableCreations = [
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableSetting} (
+  static final Map<int, String> _currentTableCreations = {
+    0:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableSetting} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnSetting} TEXT,
         ${OpenEatsJournalStrings.dbColumnDartType} TEXT,
         ${OpenEatsJournalStrings.dbColumnvalue} TEXT
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableWeightJournal} (
+    1:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableWeightJournal} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE,
         ${OpenEatsJournalStrings.dbColumnWeight} REAL
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableFood} (
+    2:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableFood} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} TEXT,
+        ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef} TEXT,
         ${OpenEatsJournalStrings.dbColumnBarcode} INT,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnBrands} TEXT,
@@ -48,7 +52,8 @@ class OpenEatsJournalDatabaseService {
       );""",
     //removed fts4 table, as fts4 can only search in the beginning of words, not if a word contains a search text.
     //fts5 would be able to search within words, but is not available on Android...
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUnit} (
+    3:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodUnit} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
@@ -58,7 +63,8 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnOrderNumber} INT NOT NULL,
         ${OpenEatsJournalStrings.dbColumnIsDefault} BOOLEAN NOT NULL
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableEatsJournal} (
+    4:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableEatsJournal} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnFoodIdRef} INT,
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
@@ -74,74 +80,97 @@ class OpenEatsJournalDatabaseService {
         ${OpenEatsJournalStrings.dbColumnSalt} REAL,
         ${OpenEatsJournalStrings.dbColumnMealIdRef} INT NOT NULL
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} (
+    5:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnEntryDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnKiloJoule} REAL NOT NULL
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableDateInfo} (
+    6:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableDateInfo} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnMonthStartDate} DATE NOT NULL,
         ${OpenEatsJournalStrings.dbColumnWeekStartDate} DATE NOT NULL
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodSource} (
+    7:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableFoodSource} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnName} TEXT,
         ${OpenEatsJournalStrings.dbColumnDescription} TEXT,
         ${OpenEatsJournalStrings.dbColumnUrl} Text
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableMeal} (
+    8:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableMeal} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnName} TEXT
       );""",
-    """CREATE TABLE ${OpenEatsJournalStrings.dbTableMeasurementUnit} (
+    9:
+        """CREATE TABLE ${OpenEatsJournalStrings.dbTableMeasurementUnit} (
         ${OpenEatsJournalStrings.dbColumnId} INTEGER PRIMARY KEY,
         ${OpenEatsJournalStrings.dbColumnName} TEXT
       );""",
-  ];
+  };
 
-  static final List<String> _currentIndexCreations = [
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexSettingTableSetting} ON
+  //Use a map, so that we don't rely on order
+  static final Map<int, String> _currentIndexCreations = {
+    0:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexSettingTableSetting} ON
         ${OpenEatsJournalStrings.dbTableSetting}(${OpenEatsJournalStrings.dbColumnSetting})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodSourceIdRefTableFood} ON
+    1:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodSourceIdRefTableFood} ON
         ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnFoodSourceIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceIdRefTableFood} ON
+    2:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceIdRefTableFood} ON
         ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceFoodIdRefTableFood} ON
+    3:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceFoodIdRefTableFood} ON
         ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexBarcodeTableFood} ON
+    13:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexOriginalFoodSourceFoodVariantIdRefTableFood} ON
+        ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef})
+      ;""",
+    4:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexBarcodeTableFood} ON
         ${OpenEatsJournalStrings.dbTableFood}(${OpenEatsJournalStrings.dbColumnBarcode})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableFoodUnit} ON
+    5:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableFoodUnit} ON
         ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableFoodUnit} ON
+    6:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableFoodUnit} ON
         ${OpenEatsJournalStrings.dbTableFoodUnit}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableEatsJournal} ON
+    7:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexFoodIdRefTableEatsJournal} ON
         ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnFoodIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexEntryDateTableEatsJournal} ON
+    8:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexEntryDateTableEatsJournal} ON
         ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnEntryDate})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableEatsJournal} ON
+    9:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexAmountMeasurementUnitIdRefTableEatsJournal} ON
         ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnAmountMeasurementUnitIdRef})
       ;""",
-    """CREATE INDEX ${OpenEatsJournalStrings.dbIndexMealIdRefTableEatsJournal} ON
+    10:
+        """CREATE INDEX ${OpenEatsJournalStrings.dbIndexMealIdRefTableEatsJournal} ON
         ${OpenEatsJournalStrings.dbTableEatsJournal}(${OpenEatsJournalStrings.dbColumnMealIdRef})
       ;""",
-    """CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDailyNutritionTarget} ON
+    11:
+        """CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDailyNutritionTarget} ON
         ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}(${OpenEatsJournalStrings.dbColumnEntryDate})
       ;""",
-    """CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDateInfo} ON
+    12:
+        """CREATE UNIQUE INDEX ${OpenEatsJournalStrings.dbIndexDateTableDateInfo} ON
         ${OpenEatsJournalStrings.dbTableDateInfo}(${OpenEatsJournalStrings.dbColumnDate})
       ;""",
-  ];
+  };
 
   static final Map<String, List<Map<String, Object?>>> _currentInserts = {
     OpenEatsJournalStrings.dbTableFoodSource: [
@@ -175,6 +204,7 @@ class OpenEatsJournalDatabaseService {
     ],
   };
 
+  //Update version in _initDb() when adding a new migration section.
   static final List<List<String>> _migrationScripts = [
     //kilojoule data type change from int to real
     [
@@ -184,9 +214,9 @@ class OpenEatsJournalDatabaseService {
         RENAME TO ${OpenEatsJournalStrings.dbTableEatsJournal}_V1""",
       """ALTER TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}
         RENAME TO ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1""",
-      _currentTableCreations[2],
-      _currentTableCreations[4],
-      _currentTableCreations[5],
+      _currentTableCreations[2]!,
+      _currentTableCreations[4]!,
+      _currentTableCreations[5]!,
       """INSERT INTO ${OpenEatsJournalStrings.dbTableFood} (
           ${OpenEatsJournalStrings.dbColumnId},
           ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
@@ -270,15 +300,68 @@ class OpenEatsJournalDatabaseService {
       """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_V1""",
       """DROP TABLE ${OpenEatsJournalStrings.dbTableEatsJournal}_V1""",
       """DROP TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1""",
-      _currentIndexCreations[1],
-      _currentIndexCreations[2],
-      _currentIndexCreations[3],
-      _currentIndexCreations[4],
-      _currentIndexCreations[7],
-      _currentIndexCreations[8],
-      _currentIndexCreations[9],
-      _currentIndexCreations[10],
-      _currentIndexCreations[11],
+      _currentIndexCreations[1]!,
+      _currentIndexCreations[2]!,
+      _currentIndexCreations[3]!,
+      _currentIndexCreations[4]!,
+      _currentIndexCreations[7]!,
+      _currentIndexCreations[8]!,
+      _currentIndexCreations[9]!,
+      _currentIndexCreations[10]!,
+      _currentIndexCreations[11]!,
+    ],
+    [
+      //Wrong index name in an early version, unintended...
+      """DROP INDEX i_${OpenEatsJournalStrings.dbColumnEntryDate}_${OpenEatsJournalStrings.dbTableSetting}""",
+      """ALTER TABLE ${OpenEatsJournalStrings.dbTableFood}
+        RENAME TO ${OpenEatsJournalStrings.dbTableFood}_V2""",
+      _currentTableCreations[2]!,
+      """INSERT INTO ${OpenEatsJournalStrings.dbTableFood} (
+          ${OpenEatsJournalStrings.dbColumnId},
+          ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+          ${OpenEatsJournalStrings.dbColumnBarcode},
+          ${OpenEatsJournalStrings.dbColumnName},
+          ${OpenEatsJournalStrings.dbColumnBrands},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+          ${OpenEatsJournalStrings.dbColumnKiloJoule},
+          ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+          ${OpenEatsJournalStrings.dbColumnSugar},
+          ${OpenEatsJournalStrings.dbColumnFat},
+          ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+          ${OpenEatsJournalStrings.dbColumnProtein},
+          ${OpenEatsJournalStrings.dbColumnSalt},
+          ${OpenEatsJournalStrings.dbColumnQuantity},
+          ${OpenEatsJournalStrings.dbColumnSearchText})  
+        SELECT 
+          ${OpenEatsJournalStrings.dbColumnId},
+          ${OpenEatsJournalStrings.dbColumnFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef},
+          ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef},
+          ${OpenEatsJournalStrings.dbColumnBarcode},
+          ${OpenEatsJournalStrings.dbColumnName},
+          ${OpenEatsJournalStrings.dbColumnBrands},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerGramAmount},
+          ${OpenEatsJournalStrings.dbColumnNutritionPerMilliliterAmount},
+          ${OpenEatsJournalStrings.dbColumnKiloJoule},
+          ${OpenEatsJournalStrings.dbColumnCarbohydrates},
+          ${OpenEatsJournalStrings.dbColumnSugar},
+          ${OpenEatsJournalStrings.dbColumnFat},
+          ${OpenEatsJournalStrings.dbColumnSaturatedFat},
+          ${OpenEatsJournalStrings.dbColumnProtein},
+          ${OpenEatsJournalStrings.dbColumnSalt},
+          ${OpenEatsJournalStrings.dbColumnQuantity},
+          ${OpenEatsJournalStrings.dbColumnSearchText}
+        FROM ${OpenEatsJournalStrings.dbTableFood}_V2;""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_V2""",
+      _currentIndexCreations[0]!,
+      _currentIndexCreations[1]!,
+      _currentIndexCreations[2]!,
+      _currentIndexCreations[3]!,
+      _currentIndexCreations[13]!,
+      _currentIndexCreations[4]!,
     ],
   ];
 
@@ -288,6 +371,7 @@ class OpenEatsJournalDatabaseService {
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} AS ${OpenEatsJournalStrings.dbResultFoodFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef} AS ${OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceIdRef},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} AS ${OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceFoodIdRef},
+              ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef} AS ${OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceFoodVariantIdRef},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnBarcode} AS ${OpenEatsJournalStrings.dbResultFoodBarcode},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnName} AS ${OpenEatsJournalStrings.dbResultFoodName},
               ${OpenEatsJournalStrings.dbTableFood}.${OpenEatsJournalStrings.dbColumnBrands} AS ${OpenEatsJournalStrings.dbResultFoodBrands},
@@ -342,7 +426,7 @@ class OpenEatsJournalDatabaseService {
     DatabaseFactory dbFactory = databaseFactory;
     return await dbFactory.openDatabase(
       _databaseFile,
-      options: OpenDatabaseOptions(version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade),
+      options: OpenDatabaseOptions(version: 3, onCreate: _onCreate, onUpgrade: _onUpgrade),
     );
   }
 
@@ -353,11 +437,11 @@ class OpenEatsJournalDatabaseService {
   Future _onCreate(Database db, int version) async {
     Batch batch = db.batch();
 
-    for (String sql in _currentTableCreations) {
+    for (String sql in _currentTableCreations.values) {
       batch.execute(sql);
     }
 
-    for (String sql in _currentIndexCreations) {
+    for (String sql in _currentIndexCreations.values) {
       batch.execute(sql);
     }
 
@@ -904,16 +988,27 @@ class OpenEatsJournalDatabaseService {
       throw ArgumentError("Food update by external id required an external food source id.");
     }
 
+    String originalFoodSourceFoodVariantIdRefComparer = foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef] == null ? "IS" : "=";
+
     final List<Map<String, Object?>> dbResult = await db.query(
       OpenEatsJournalStrings.dbTableFood,
       columns: [OpenEatsJournalStrings.dbColumnId],
-      where: "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} = ?",
-      whereArgs: [foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef], foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]],
+      where:
+          "${OpenEatsJournalStrings.dbColumnFoodSourceIdRef} = ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef} = ? AND ${OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef} $originalFoodSourceFoodVariantIdRefComparer ?",
+      whereArgs: [
+        foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef],
+        foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef],
+        foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef],
+      ],
     );
+
+    String originalFoodSourceFoodVariantIdRefValue = foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef] == null
+        ? "NULL"
+        : foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef] as String;
 
     if (dbResult.length > 1) {
       throw StateError(
-        "Only one food entry may exist for a given external food id and food source, multiple entries found for ${foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]}, food source ${foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef]}.",
+        "Only one food entry may exist for a given external food id, food source and variant, multiple entries found for ${foodData[OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef]}, food source ${foodData[OpenEatsJournalStrings.dbColumnFoodSourceIdRef]}, food variant $originalFoodSourceFoodVariantIdRefValue.",
       );
     }
 

@@ -14,6 +14,7 @@ class Food {
     int? id,
     FoodSource? originalFoodSource,
     String? originalFoodSourceFoodId,
+    String? originalFoodSourceFoodVariantId,
     int? barcode,
     List<String>? brands,
     double? nutritionPerGramAmount,
@@ -32,6 +33,7 @@ class Food {
        _originalFoodSource = originalFoodSource,
        _fromDb = fromDb,
        _originalFoodSourceFoodId = originalFoodSourceFoodId,
+       _originalFoodSourceFoodVariantId = originalFoodSourceFoodId,
        _barcode = barcode,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
@@ -58,6 +60,7 @@ class Food {
           food.originalFoodSource ??
           food.foodSource, //when set it must be a user food, keep the original source. If not set it comes from a different source, so take the orignal source.
       _originalFoodSourceFoodId = food.originalFoodSourceFoodId,
+      _originalFoodSourceFoodVariantId = food.originalFoodSourceFoodVariantId,
       _barcode = food.barcode,
       _kJoule = food.kJoule,
       _nutritionPerGramAmount = food.nutritionPerGramAmount,
@@ -99,6 +102,7 @@ class Food {
     List<String>? brands,
     FoodSource? originalFoodSource,
     String? originalFoodSourceFoodId,
+    String? originalFoodSourceFoodVariantId,
     int? barcode,
     double? nutritionPerGramAmount,
     double? nutritionPerMilliliterAmount,
@@ -118,6 +122,7 @@ class Food {
        _originalFoodSource = originalFoodSource,
        _fromDb = fromDb,
        _originalFoodSourceFoodId = originalFoodSourceFoodId,
+       _originalFoodSourceFoodVariantId = originalFoodSourceFoodVariantId,
        _barcode = barcode,
        _nutritionPerGramAmount = nutritionPerGramAmount,
        _nutritionPerMilliliterAmount = nutritionPerMilliliterAmount,
@@ -154,8 +159,12 @@ class Food {
   final FoodSource _foodSource;
   //to distinguish between data from objects from online services or cached versions which wer loaded from database
   final bool _fromDb;
+  //When copying a food from an online service as user food, this is set
   final FoodSource? _originalFoodSource;
   final String? _originalFoodSourceFoodId;
+  //Used when there exist multiple nutrition sets for one barcode, e.g. as sold and as prepared, this results in two foods in Open Eats journal. So the variant
+  //info is needed to distinguish the food on update e.g.
+  final String? _originalFoodSourceFoodVariantId;
   int? _barcode;
   double _kJoule;
   double? _nutritionPerGramAmount;
@@ -267,6 +276,7 @@ class Food {
   int? get barcode => _barcode;
   int? get id => _id;
   String? get originalFoodSourceFoodId => _originalFoodSourceFoodId;
+  String? get originalFoodSourceFoodVariantId => _originalFoodSourceFoodVariantId;
   double? get nutritionPerGramAmount => _nutritionPerGramAmount;
   double? get nutritionPerMilliliterAmount => _nutritionPerMilliliterAmount;
   double get kJoule => _kJoule;

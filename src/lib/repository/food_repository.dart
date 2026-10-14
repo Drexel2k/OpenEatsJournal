@@ -16,6 +16,7 @@ import "package:openeatsjournal/repository/convert.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
 import "package:openeatsjournal/service/assets/open_eats_journal_assets_service.dart";
 import "package:openeatsjournal/service/database/open_eats_journal_database_service.dart";
+import "package:openeatsjournal/service/open_food_facts/data/food_api_base.dart";
 import "package:openeatsjournal/service/open_food_facts/data/food_api_v3.dart";
 import "package:openeatsjournal/service/open_food_facts/data/nutriments_api_v3.dart";
 import "package:openeatsjournal/service/open_food_facts/data/nutritions_per.dart";
@@ -371,7 +372,7 @@ class FoodRepository {
         }
 
         Food food = Food.fromData(
-          name: _getFoodNameApiV1(foodApi: foodApi, languageCode: languageCode),
+          name: _getFoodNameApi(foodApi: foodApi, languageCode: languageCode),
           brands: _getCleanBrands(foodApi.brandsTags),
           foodSource: FoodSource.openFoodFacts,
           fromDb: false,
@@ -445,11 +446,12 @@ class FoodRepository {
 
       return Food.fromData(
         name:
-            "${_getFoodNameApiV3(foodApi: foodApi, languageCode: languageCode)}${preparation == OpenFoodFactsApiStrings.prepared ? " (prepared)" : OpenEatsJournalStrings.emptyString}",
+            "${_getFoodNameApi(foodApi: foodApi, languageCode: languageCode)}${preparation == OpenFoodFactsApiStrings.prepared ? " (prepared)" : OpenEatsJournalStrings.emptyString}",
         brands: _getCleanBrands(foodApi.brandsTags),
         foodSource: FoodSource.openFoodFacts,
         fromDb: false,
         originalFoodSourceFoodId: foodApi.code.toString(),
+        originalFoodSourceFoodVariantId: preparation == OpenFoodFactsApiStrings.asSold ? null : preparation,
         barcode: foodApi.code,
         nutritionPerGramAmount: nutritionsPer.nutritionPerGramAmount,
         nutritionPerMilliliterAmount: nutritionsPer.nutritionPerMilliliterAmount,
@@ -569,67 +571,7 @@ class FoodRepository {
 
   //removed searchAlicious / search a licious code on 16th January 2026
 
-  String _getFoodNameApiV1({required FoodApiV1 foodApi, required String languageCode}) {
-    String name = OpenEatsJournalStrings.emptyString;
-
-    if (languageCode == OpenEatsJournalStrings.de) {
-      if (foodApi.productNameDe != null) {
-        name = foodApi.productNameDe!;
-      }
-
-      if (name.trim().isEmpty) {
-        if (foodApi.abbreviatedProductNameDe != null) {
-          name = foodApi.abbreviatedProductNameDe!;
-        }
-      }
-
-      if (name.trim().isEmpty) {
-        if (foodApi.genericNameDe != null) {
-          name = foodApi.genericNameDe!;
-        }
-      }
-    }
-
-    if (languageCode == OpenEatsJournalStrings.en || name.trim().isEmpty) {
-      if (foodApi.productNameEn != null) {
-        name = foodApi.productNameEn!;
-      }
-
-      if (name.trim().isEmpty) {
-        if (foodApi.abbreviatedProductNameEn != null) {
-          name = foodApi.abbreviatedProductNameEn!;
-        }
-      }
-
-      if (name.trim().isEmpty) {
-        if (foodApi.genericNameEn != null) {
-          name = foodApi.genericNameEn!;
-        }
-      }
-    }
-
-    if (name.trim().isEmpty) {
-      if (foodApi.productName != null) {
-        name = foodApi.productName!;
-      }
-
-      if (name.trim().isEmpty) {
-        if (foodApi.abbreviatedProductName != null) {
-          name = foodApi.abbreviatedProductName!;
-        }
-      }
-
-      if (name.trim().isEmpty) {
-        if (foodApi.genericName != null) {
-          name = foodApi.genericName!;
-        }
-      }
-    }
-
-    return name;
-  }
-
-  String _getFoodNameApiV3({required FoodApiV3 foodApi, required String languageCode}) {
+  String _getFoodNameApi({required FoodApiBase foodApi, required String languageCode}) {
     String name = OpenEatsJournalStrings.emptyString;
 
     if (languageCode == OpenEatsJournalStrings.de) {
@@ -990,6 +932,7 @@ class FoodRepository {
       OpenEatsJournalStrings.dbColumnFoodSourceIdRef: food.foodSource.value,
       OpenEatsJournalStrings.dbColumnOriginalFoodSourceIdRef: food.originalFoodSource?.value,
       OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodIdRef: food.originalFoodSourceFoodId,
+      OpenEatsJournalStrings.dbColumnOriginalFoodSourceFoodVariantIdRef: food.originalFoodSourceFoodVariantId,
       OpenEatsJournalStrings.dbColumnBarcode: food.barcode,
       OpenEatsJournalStrings.dbColumnName: food.name.trim() != OpenEatsJournalStrings.emptyString ? food.name : null,
       OpenEatsJournalStrings.dbColumnBrands: (food.brands.isNotEmpty) ? food.brands.join(",") : null,

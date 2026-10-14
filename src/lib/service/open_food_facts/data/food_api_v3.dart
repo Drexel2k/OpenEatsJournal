@@ -1,7 +1,8 @@
+import "package:openeatsjournal/service/open_food_facts/data/food_api_base.dart";
 import "package:openeatsjournal/service/open_food_facts/data/nutriments_api_v3.dart";
 import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_strings.dart";
 
-class FoodApiV3 {
+class FoodApiV3 implements FoodApiBase {
   FoodApiV3({
     required int code,
     String? productName,
@@ -66,14 +67,23 @@ class FoodApiV3 {
   final List<NutrimentsApiV3>? _nutriments;
 
   int get code => _code;
+  @override
   String? get productName => _productName;
+  @override
   String? get productNameEn => _productNameEn;
+  @override
   String? get productNameDe => _productNameDe;
+  @override
   String? get genericName => _genericName;
+  @override
   String? get genericNameEn => _genericNameEn;
+  @override
   String? get genericNameDe => _genericNameDe;
+  @override
   String? get abbreviatedProductName => _abbreviatedProductName;
+  @override
   String? get abbreviatedProductNameEn => _abbreviatedProductNameEn;
+  @override
   String? get abbreviatedProductNameDe => _abbreviatedProductNameDe;
   List<String>? get brandsTags => _brandsTags;
   String? get lang => _lang;

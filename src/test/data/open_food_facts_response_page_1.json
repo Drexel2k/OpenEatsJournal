@@ -198,7 +198,7 @@
             "brands_tags": [
                 null
             ],
-            "code": null,
+            "code": "1",
             "generic_name": null,
             "generic_name_en": null,
             "lang": null,
@@ -232,7 +232,7 @@
             "brands_tags": [
                 null
             ],
-            "code": null,
+            "code": "2",
             "generic_name": "Null value test 2",
             "generic_name_en": null,
             "lang": null,
@@ -247,6 +247,7 @@
             "serving_size": null
         },
         {
+            "code": "3",
             "generic_name": "Null value test 3",
             "nutriments": {
                 "energy": null

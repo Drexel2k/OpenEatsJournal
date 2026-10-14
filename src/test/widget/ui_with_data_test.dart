@@ -171,7 +171,7 @@ void main() async {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(FloatingActionButton));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     FinderResult<Element> fabs = find.byType(FloatingActionButton).evaluate();
     FloatingActionButton fab;
@@ -711,7 +711,7 @@ void main() async {
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(FloatingActionButton));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     FinderResult<Element> fabs = find.byType(FloatingActionButton).evaluate();
     FloatingActionButton fab;
@@ -939,12 +939,12 @@ void main() async {
       textFieldIndex++;
     }
 
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     //new average daily target
     expect(find.text("2,164kCal"), findsAny);
 
     //wait for the debouncer timer to end, otherwise we get a pending timers exception at the end..
-    await tester.pump(const Duration(milliseconds: 550));
+    await tester.pumpAndSettle(const Duration(milliseconds: 550));
   });
 }

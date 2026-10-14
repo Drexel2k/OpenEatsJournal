@@ -88,6 +88,7 @@ class OpenEatsJournalStrings {
   static const String dbColumnFoodSourceIdRef = "food_source_id_ref";
   static const String dbColumnOriginalFoodSourceIdRef = "original_food_source_id_ref";
   static const String dbColumnOriginalFoodSourceFoodIdRef = "original_food_source_food_id_ref";
+  static const String dbColumnOriginalFoodSourceFoodVariantIdRef = "original_food_source_food_variant_id_ref";
   static const String dbColumnBarcode = "barcode";
   static const String dbColumnFoodIdRef = "food_id_ref";
   static const String dbColumnName = "name";
@@ -129,6 +130,7 @@ class OpenEatsJournalStrings {
   static const String dbResultFoodFoodSourceIdRef = "food_food_source_id_ref";
   static const String dbResultFoodOriginalFoodSourceIdRef = "food_original_food_source_id_ref";
   static const String dbResultFoodOriginalFoodSourceFoodIdRef = "food_original_food_source_food_id_ref";
+  static const String dbResultFoodOriginalFoodSourceFoodVariantIdRef = "food_original_food_source_food_variant_id_ref";
   static const String dbResultFoodBarcode = "food_barcode";
   static const String dbResultFoodUnitId = "food_unit_id";
   static const String dbResultEatsJournalEntryName = "eats_journal_entry_name";
@@ -160,10 +162,11 @@ class OpenEatsJournalStrings {
   static const String dbResultFoodQuantity = "food_quantity";
   static const String dbResultEatsJournalEntrySalt = "eats_journal_entry_salt";
 
-  static const String dbIndexSettingTableSetting = "i_${dbColumnEntryDate}_$dbTableSetting";
+  static const String dbIndexSettingTableSetting = "i_${dbColumnSetting}_$dbTableSetting";
   static const String dbIndexFoodSourceIdRefTableFood = "i_${dbColumnFoodSourceIdRef}_$dbTableFood";
   static const String dbIndexOriginalFoodSourceIdRefTableFood = "i_${dbColumnOriginalFoodSourceIdRef}_$dbTableFood";
   static const String dbIndexOriginalFoodSourceFoodIdRefTableFood = "i_${dbColumnOriginalFoodSourceFoodIdRef}_$dbTableFood";
+  static const String dbIndexOriginalFoodSourceFoodVariantIdRefTableFood = "i_${dbColumnOriginalFoodSourceFoodVariantIdRef}_$dbTableFood";
   static const String dbIndexBarcodeTableFood = "i_${dbColumnBarcode}_$dbTableFood";
   static const String dbIndexFoodIdRefTableFoodUnit = "i_${dbColumnFoodIdRef}_$dbTableFoodUnit";
   static const String dbIndexAmountMeasurementUnitIdRefTableFoodUnit = "i_${dbColumnAmountMeasurementUnitIdRef}_$dbTableFoodUnit";

@@ -53,6 +53,7 @@ class Convert {
           ? FoodSource.getByValue(dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceIdRef] as int)
           : null,
       originalFoodSourceFoodId: dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceFoodIdRef] as String?,
+      originalFoodSourceFoodVariantId: dbResult[0][OpenEatsJournalStrings.dbResultFoodOriginalFoodSourceFoodVariantIdRef] as String?,
       barcode: dbResult[0][OpenEatsJournalStrings.dbResultFoodBarcode] as int?,
       brands: dbResult[0][OpenEatsJournalStrings.dbResultFoodBrands] != null
           ? (dbResult[0][OpenEatsJournalStrings.dbResultFoodBrands] as String).split(",").map((String brand) => brand.trim()).toList()
