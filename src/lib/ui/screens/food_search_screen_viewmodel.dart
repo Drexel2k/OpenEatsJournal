@@ -415,9 +415,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortOrder = sortOrder;
     _sortButtonChanged.notify();
 
-    ObjectWithOrder<FoodSearchResultEntry>? foodSearchResultEntryPaginationError = _getAndRemoveStatusOnResultEntries(
+    ObjectWithOrder<FoodSearchResultEntry>? openFoodFactsPaginationError = _getAndRemoveStatusOnResultEntries(
       resultEntries: _foodSearchResultOpenFoodFacts,
       foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsError,
+    );
+
+    ObjectWithOrder<FoodSearchResultEntry>? openFoodFactsMoreResults = _getAndRemoveStatusOnResultEntries(
+      resultEntries: _foodSearchResultOpenFoodFacts,
+      foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsMoreResults,
     );
 
     //Sorting with no result hint doesn't trigger null reference on food object, because sort doesn't do anything when there is only one item in the list.
@@ -501,9 +506,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultCache);
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts);
 
-        if (foodSearchResultEntryPaginationError != null) {
-          _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryPaginationError);
-          _foodSearchResult.add(foodSearchResultEntryPaginationError);
+        if (openFoodFactsPaginationError != null) {
+          _foodSearchResultOpenFoodFacts.add(openFoodFactsPaginationError);
+          _foodSearchResult.add(openFoodFactsPaginationError);
+        }
+
+        if (openFoodFactsMoreResults != null) {
+          _foodSearchResultOpenFoodFacts.add(openFoodFactsMoreResults);
+          _foodSearchResult.add(openFoodFactsMoreResults);
         }
       }
     } else {
@@ -516,9 +526,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
 
         //ensure hint that loading more foods on pagination failed is still at the end on reverse sorting
-        if (foodSearchResultEntryPaginationError != null) {
-          _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryPaginationError);
-          _foodSearchResult.add(foodSearchResultEntryPaginationError);
+        if (openFoodFactsPaginationError != null) {
+          _foodSearchResultOpenFoodFacts.add(openFoodFactsPaginationError);
+          _foodSearchResult.add(openFoodFactsPaginationError);
+        }
+
+        if (openFoodFactsMoreResults != null) {
+          _foodSearchResultOpenFoodFacts.add(openFoodFactsMoreResults);
+          _foodSearchResult.add(openFoodFactsMoreResults);
         }
       }
     }
@@ -564,17 +579,27 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultStandard.reversed);
         _foodSearchResult.addAll(_foodSearchResultCache.reversed);
 
-        ObjectWithOrder<FoodSearchResultEntry>? foodSearchResultEntryPaginationError = _getAndRemoveStatusOnResultEntries(
+        ObjectWithOrder<FoodSearchResultEntry>? openfoodFactsPaginationError = _getAndRemoveStatusOnResultEntries(
           resultEntries: _foodSearchResultOpenFoodFacts,
           foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsError,
         );
 
+        ObjectWithOrder<FoodSearchResultEntry>? openfoodFactsMoreResults = _getAndRemoveStatusOnResultEntries(
+          resultEntries: _foodSearchResultOpenFoodFacts,
+          foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsMoreResults,
+        );
+
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
 
-        //ensure hint that loading more foods on pagination failed is still at the end on reverse sorting
-        if (foodSearchResultEntryPaginationError != null) {
-          _foodSearchResultOpenFoodFacts.add(foodSearchResultEntryPaginationError);
-          _foodSearchResult.add(foodSearchResultEntryPaginationError);
+        //ensure hints are still at the end on reverse sorting
+        if (openfoodFactsPaginationError != null) {
+          _foodSearchResultOpenFoodFacts.add(openfoodFactsPaginationError);
+          _foodSearchResult.add(openfoodFactsPaginationError);
+        }
+
+        if (openfoodFactsMoreResults != null) {
+          _foodSearchResultOpenFoodFacts.add(openfoodFactsMoreResults);
+          _foodSearchResult.add(openfoodFactsMoreResults);
         }
       }
     }

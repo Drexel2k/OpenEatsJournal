@@ -64,12 +64,9 @@ void main() async {
       }),
     );
 
-    var responses = [
-      Future(() async => Response.bytes((await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()), 200)),
-    ];
-
+    var responses = [await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()];
     var getCallback = MockFunctions().httpGet;
-    when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) => Future(() async => responses.removeAt(0)));
+    when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) async => Response.bytes(responses[0], 200));
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: getCallback,

@@ -2,6 +2,7 @@ import "dart:io";
 import "package:csv/csv.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
+import "package:http/http.dart";
 import "package:intl/date_symbol_data_local.dart";
 import "package:mockito/mockito.dart";
 import "package:openeatsjournal/app_global.dart";
@@ -63,6 +64,7 @@ void main() async {
     Food Function()? getFoodFunction,
     String? barcodeScannerResult,
     EatsJournalEntry Function()? getEatsJournalEntryFunction,
+    bool openFoodFactsLongRepsonse = false,
   }) async {
     List<Object> result = [];
     SettingsRepository settingsRepository = SettingsRepository(oejDatabase: _database!, today: today);
@@ -82,8 +84,15 @@ void main() async {
       }),
     );
 
+    //real IO doesn't work in fake times during test runs, so we read the file in memory here.
+    var responses = openFoodFactsLongRepsonse
+        ? [await File(join(Directory.current.path, r"test\data\open_food_facts_response_long_page_1.json")).readAsBytes()]
+        : [await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()];
+    var getCallback = MockFunctions().httpGet;
+    when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) async => Response.bytes(responses[0], 200));
+
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
-      httpGet: MockFunctions().httpGet,
+      httpGet: getCallback,
       appName: settingsRepository.appName,
       appVersion: settingsRepository.appVersion,
       appContactMail: settingsRepository.appContactMail!,
@@ -946,5 +955,53 @@ void main() async {
 
     //wait for the debouncer timer to end, otherwise we get a pending timers exception at the end..
     await tester.pumpAndSettle(const Duration(milliseconds: 550));
+  });
+
+  testWidgets("Search and order foods with pagination", (tester) async {
+    List<Object> repositories = (await tester.runAsync<List<Object>>(() async {
+      return await testSetup(openFoodFactsLongRepsonse: true);
+    }))!;
+
+    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
+    FoodRepository foodRepository = repositories[1] as FoodRepository;
+    JournalRepository journalRepository = repositories[2] as JournalRepository;
+
+    OverlayDisplay overlayDisplay = MockOverlayDisplay();
+
+    Widget widget = MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsRepository>.value(value: settingsRepository),
+        Provider<FoodRepository>.value(value: foodRepository),
+        Provider<JournalRepository>.value(value: journalRepository),
+        ChangeNotifierProvider(
+          create: (context) => OpenEatsJournalAppViewModel(settingsRepository: settingsRepository, foodRepository: foodRepository),
+        ),
+        Provider.value(value: overlayDisplay),
+      ],
+      child: OpenEatsJournalApp(),
+    );
+
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    //Searching food
+    await tester.tap(find.byIcon(Icons.lunch_dining));
+    await tester.pumpAndSettle();
+
+    FinderResult<Element> textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    textFields = find.byType(OpenEatsJournalTextField).evaluate();
+    OpenEatsJournalTextField openEatsJournalTextField = textFields.elementAt(0).widget as OpenEatsJournalTextField;
+
+    await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "Burger");
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("popularity"));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("kCal"));
+    await tester.pumpAndSettle();
+
+    textFields = find.byType(OpenEatsJournalTextField).evaluate();
   });
 }
