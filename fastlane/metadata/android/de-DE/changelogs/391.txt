@@ -1,0 +1,5 @@
+1.20
+- Aus Online Services werden jetzt Nährwertvarianten der Lebensmittel (z.B. "wie verkauft", "zubereitet") übernommen (Open Food Facts API v3.6).
+- Gewichtszunahme Ziele hinzugefügt.
+- Nahrungsmittel aktualisiert/hinzugefügt.
+- Problem beim Sortieren des Lebensmittel Suchergebnisses behoben.

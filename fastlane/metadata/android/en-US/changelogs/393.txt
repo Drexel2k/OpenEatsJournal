@@ -1,0 +1,5 @@
+1.20
+- Nutritional variants of foods (e.g., “as sold,” “prepared”) are now imported from Online Services (Open Food Facts API v3.6).
+- Added weight gain targets.
+- Updated/added foods.
+- Fixed issue on food search result ordering.

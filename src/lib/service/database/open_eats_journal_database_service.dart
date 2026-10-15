@@ -14,6 +14,7 @@ class OpenEatsJournalDatabaseService {
   late String _databaseFile;
   late String _databaseDirectory;
 
+  //Use a map, so that we don't rely on order
   static final Map<int, String> _currentTableCreations = {
     0:
         """CREATE TABLE ${OpenEatsJournalStrings.dbTableSetting} (
