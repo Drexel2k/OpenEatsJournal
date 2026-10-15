@@ -230,20 +230,32 @@ class SettingsScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> recalculateDailykJouleTargetsAndSave() async {
-    double weightLossKg = 0;
+    double weightAdjustKg = 0;
     if (_settingsRepository.weightTarget == WeightTarget.lose025) {
-      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget1);
+      weightAdjustKg = -1 * _convert.getWeightKg(displayWeight: displayWeightTarget1);
     }
 
     if (_settingsRepository.weightTarget == WeightTarget.lose05) {
-      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget2);
+      weightAdjustKg = -1 * _convert.getWeightKg(displayWeight: displayWeightTarget2);
     }
 
     if (_settingsRepository.weightTarget == WeightTarget.lose075) {
-      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget3);
+      weightAdjustKg = -1 * _convert.getWeightKg(displayWeight: displayWeightTarget3);
     }
 
-    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _dailyNeedKJoule.value, weightLossPerWeekKg: weightLossKg);
+    if (_settingsRepository.weightTarget == WeightTarget.gain025) {
+      weightAdjustKg = _convert.getWeightKg(displayWeight: displayWeightTarget1);
+    }
+
+    if (_settingsRepository.weightTarget == WeightTarget.gain05) {
+      weightAdjustKg = _convert.getWeightKg(displayWeight: displayWeightTarget2);
+    }
+
+    if (_settingsRepository.weightTarget == WeightTarget.gain075) {
+      weightAdjustKg = _convert.getWeightKg(displayWeight: displayWeightTarget3);
+    }
+
+    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: _dailyNeedKJoule.value, weightAdjustmentPerWeekKg: weightAdjustKg);
     if (dailyTargetKJoule < 1) {
       dailyTargetKJoule = 1;
     }

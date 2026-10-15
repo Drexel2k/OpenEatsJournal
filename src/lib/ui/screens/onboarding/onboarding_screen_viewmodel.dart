@@ -96,7 +96,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       age = age - 1;
     }
 
-    double weightLossKg = _getWeightLossKg();
+    double weightAdjustKg = _getAdjustKg();
 
     double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
       kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
@@ -112,7 +112,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       dailyNeedKJouleDouble = 1;
     }
 
-    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightLossPerWeekKg: weightLossKg);
+    double dailyTargetKJoule = NutritionCalculator.calculateTargetKJoulePerDay(kJoulePerDay: dailyNeedKJouleDouble, weightAdjustmentPerWeekKg: weightAdjustKg);
     if (dailyTargetKJoule < 1) {
       dailyTargetKJoule = 1;
     }
@@ -169,7 +169,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
         age = age - 1;
       }
 
-      double weightLossKg = _getWeightLossKg();
+      double weightAdjustKg = _getAdjustKg();
 
       double dailyNeedKJouleDouble = NutritionCalculator.calculateTotalKJoulePerDay(
         kJoulePerDay: NutritionCalculator.calculateBasalMetabolicRateInKJoule(
@@ -190,7 +190,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
       if (dailyTargetKJouleCalculationPossible) {
         double dailyTargetKJouleDouble = NutritionCalculator.calculateTargetKJoulePerDay(
           kJoulePerDay: dailyNeedKJouleDouble,
-          weightLossPerWeekKg: weightLossKg,
+          weightAdjustmentPerWeekKg: weightAdjustKg,
         );
         if (dailyTargetKJouleDouble < 1) {
           dailyTargetKJouleDouble = 1;
@@ -201,21 +201,33 @@ class OnboardingScreenViewModel extends ChangeNotifier {
     }
   }
 
-  double _getWeightLossKg() {
-    double weightLossKg = 0;
+  double _getAdjustKg() {
+    double weightAdjustKg = 0;
     if (_weightTarget.value == WeightTarget.lose025) {
-      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget1);
+      weightAdjustKg = -1 * _convert.getWeightKg(displayWeight: displayWeightTarget1);
     }
 
     if (_weightTarget.value == WeightTarget.lose05) {
-      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget2);
+      weightAdjustKg = -1 * _convert.getWeightKg(displayWeight: displayWeightTarget2);
     }
 
     if (_weightTarget.value == WeightTarget.lose075) {
-      weightLossKg = _convert.getWeightKg(displayWeight: displayWeightTarget3);
+      weightAdjustKg = -1 * _convert.getWeightKg(displayWeight: displayWeightTarget3);
     }
 
-    return weightLossKg;
+    if (_weightTarget.value == WeightTarget.gain025) {
+      weightAdjustKg = _convert.getWeightKg(displayWeight: displayWeightTarget1);
+    }
+
+    if (_weightTarget.value == WeightTarget.gain05) {
+      weightAdjustKg = _convert.getWeightKg(displayWeight: displayWeightTarget2);
+    }
+
+    if (_weightTarget.value == WeightTarget.gain075) {
+      weightAdjustKg = _convert.getWeightKg(displayWeight: displayWeightTarget3);
+    }
+
+    return weightAdjustKg;
   }
 
   HeightUnit _getHeightUnit() {

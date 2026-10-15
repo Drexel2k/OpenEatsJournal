@@ -18,8 +18,8 @@ class NutritionCalculator {
     return kJoulePerDay * activityFactor;
   }
 
-  static double calculateTargetKJoulePerDay({required double kJoulePerDay, required double weightLossPerWeekKg}) {
-    return kJoulePerDay - (weightLossPerWeekKg * 29288 / 7);
+  static double calculateTargetKJoulePerDay({required double kJoulePerDay, required double weightAdjustmentPerWeekKg}) {
+    return kJoulePerDay + (weightAdjustmentPerWeekKg * 29288 / 7);
   }
 
   //Deutsche Gesellschaft für Ernährung

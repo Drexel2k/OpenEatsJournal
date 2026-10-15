@@ -992,7 +992,7 @@ void main() async {
     textFields = find.byType(OpenEatsJournalTextField).evaluate();
     OpenEatsJournalTextField openEatsJournalTextField = textFields.elementAt(0).widget as OpenEatsJournalTextField;
 
-    await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "Burger");
+    await tester.enterText(find.byWidgetPredicate((widgetInternal) => widgetInternal == openEatsJournalTextField), "B");
     await tester.tap(find.byIcon(Icons.search));
     await tester.pumpAndSettle();
 

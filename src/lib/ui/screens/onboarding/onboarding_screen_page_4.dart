@@ -20,7 +20,7 @@ class OnboardingScreenPage4 extends StatelessWidget {
   Widget build(BuildContext context) {
     final ConvertValidate convert = Provider.of<ConvertValidate>(context, listen: false);
     final TextTheme textTheme = Theme.of(context).textTheme;
-    
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
@@ -31,70 +31,121 @@ class OnboardingScreenPage4 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10),
+                  Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleSmall),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleSmall)),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ValueListenableBuilder(
-                              valueListenable: _onboardingScreenViewModel.weightTarget,
-                              builder: (contextBuilder, _, _) {
-                                return TransparentChoiceChip(
-                                  label: AppLocalizations.of(contextBuilder)!.keep_weight,
-                                  selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.keep,
-                                  onSelected: (bool selected) {
-                                    _onboardingScreenViewModel.weightTarget.value = WeightTarget.keep;
-                                  },
-                                );
+                      Expanded(
+                        child: ValueListenableBuilder(
+                          valueListenable: _onboardingScreenViewModel.weightTarget,
+                          builder: (contextBuilder, _, _) {
+                            return TransparentChoiceChip(
+                              label: AppLocalizations.of(contextBuilder)!.keep_weight,
+                              selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.keep,
+                              onSelected: (bool selected) {
+                                _onboardingScreenViewModel.weightTarget.value = WeightTarget.keep;
                               },
-                            ),
-                            SizedBox(height: 8),
-                            ValueListenableBuilder(
-                              valueListenable: _onboardingScreenViewModel.weightTarget,
-                              builder: (contextBuilder, _, _) {
-                                return TransparentChoiceChip(
-                                  label:
-                                      "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
-                                  selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose025,
-                                  onSelected: (bool selected) {
-                                    _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose025;
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(height: 8),
-                            ValueListenableBuilder(
-                              valueListenable: _onboardingScreenViewModel.weightTarget,
-                              builder: (contextBuilder, _, _) {
-                                return TransparentChoiceChip(
-                                  label:
-                                      "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
-                                  selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose05,
-                                  onSelected: (bool selected) {
-                                    _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose05;
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(height: 8),
-                            ValueListenableBuilder(
-                              valueListenable: _onboardingScreenViewModel.weightTarget,
-                              builder: (contextBuilder, _, _) {
-                                return TransparentChoiceChip(
-                                  label:
-                                      "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
-                                  selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose075,
-                                  onSelected: (bool selected) {
-                                    _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose075;
-                                  },
-                                );
-                              },
-                            ),
-                          ],
+                            );
+                          },
                         ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingScreenViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label:
+                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose025,
+                            onSelected: (bool selected) {
+                              _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose025;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(width: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingScreenViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label:
+                                "+${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.gain025,
+                            onSelected: (bool selected) {
+                              _onboardingScreenViewModel.weightTarget.value = WeightTarget.gain025;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingScreenViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label:
+                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose05,
+                            onSelected: (bool selected) {
+                              _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose05;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(width: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingScreenViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label:
+                                "+${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.gain05,
+                            onSelected: (bool selected) {
+                              _onboardingScreenViewModel.weightTarget.value = WeightTarget.gain05;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingScreenViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label:
+                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.lose075,
+                            onSelected: (bool selected) {
+                              _onboardingScreenViewModel.weightTarget.value = WeightTarget.lose075;
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(width: 8),
+                      ValueListenableBuilder(
+                        valueListenable: _onboardingScreenViewModel.weightTarget,
+                        builder: (contextBuilder, _, _) {
+                          return TransparentChoiceChip(
+                            label:
+                                "+${convert.getCleanDoubleString3DecimalDigits(doubleValue: _onboardingScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                            selected: _onboardingScreenViewModel.weightTarget.value == WeightTarget.gain075,
+                            onSelected: (bool selected) {
+                              _onboardingScreenViewModel.weightTarget.value = WeightTarget.gain075;
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),

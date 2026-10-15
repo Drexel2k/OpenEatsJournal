@@ -212,6 +212,7 @@ void main() async {
     await tester.tap(find.text("Close"));
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.textContaining("-0.5"));
     await tester.tap(find.textContaining("-0.5"));
     await tester.pumpAndSettle();
 

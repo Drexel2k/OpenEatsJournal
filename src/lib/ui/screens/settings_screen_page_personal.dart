@@ -50,6 +50,7 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
 
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,70 +418,121 @@ class _SettingsScreenPagePersonalState extends State<SettingsScreenPagePersonal>
               ],
             ),
             SizedBox(height: 10),
+            Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleSmall),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(AppLocalizations.of(context)!.your_weight_target, style: textTheme.titleSmall)),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: widget._settingsScreenViewModel.weightTarget,
-                        builder: (contextBuilder, _, _) {
-                          return TransparentChoiceChip(
-                            label: AppLocalizations.of(contextBuilder)!.keep_weight,
-                            selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.keep,
-                            onSelected: (bool selected) {
-                              widget._settingsScreenViewModel.weightTarget.value = WeightTarget.keep;
-                            },
-                          );
+                Expanded(
+                  child: ValueListenableBuilder(
+                    valueListenable: widget._settingsScreenViewModel.weightTarget,
+                    builder: (contextBuilder, _, _) {
+                      return TransparentChoiceChip(
+                        label: AppLocalizations.of(contextBuilder)!.keep_weight,
+                        selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.keep,
+                        onSelected: (bool selected) {
+                          widget._settingsScreenViewModel.weightTarget.value = WeightTarget.keep;
                         },
-                      ),
-                      SizedBox(height: 8),
-                      ValueListenableBuilder(
-                        valueListenable: widget._settingsScreenViewModel.weightTarget,
-                        builder: (contextBuilder, _, _) {
-                          return TransparentChoiceChip(
-                            label:
-                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
-                            selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose025,
-                            onSelected: (bool selected) {
-                              widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose025;
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 8),
-                      ValueListenableBuilder(
-                        valueListenable: widget._settingsScreenViewModel.weightTarget,
-                        builder: (contextBuilder, _, _) {
-                          return TransparentChoiceChip(
-                            label:
-                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
-                            selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose05,
-                            onSelected: (bool selected) {
-                              widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose05;
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 8),
-                      ValueListenableBuilder(
-                        valueListenable: widget._settingsScreenViewModel.weightTarget,
-                        builder: (contextBuilder, _, _) {
-                          return TransparentChoiceChip(
-                            label:
-                                "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
-                            selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose075,
-                            onSelected: (bool selected) {
-                              widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose075;
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                      );
+                    },
                   ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: widget._settingsScreenViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return TransparentChoiceChip(
+                      label:
+                          "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                      selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose025,
+                      onSelected: (bool selected) {
+                        widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose025;
+                      },
+                    );
+                  },
+                ),
+                SizedBox(width: 8),
+                ValueListenableBuilder(
+                  valueListenable: widget._settingsScreenViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return TransparentChoiceChip(
+                      label:
+                          "+${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget1)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                      selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.gain025,
+                      onSelected: (bool selected) {
+                        widget._settingsScreenViewModel.weightTarget.value = WeightTarget.gain025;
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: widget._settingsScreenViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return TransparentChoiceChip(
+                      label:
+                          "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                      selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose05,
+                      onSelected: (bool selected) {
+                        widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose05;
+                      },
+                    );
+                  },
+                ),
+                SizedBox(width: 8),
+                ValueListenableBuilder(
+                  valueListenable: widget._settingsScreenViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return TransparentChoiceChip(
+                      label:
+                          "+${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget2)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                      selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.gain05,
+                      onSelected: (bool selected) {
+                        widget._settingsScreenViewModel.weightTarget.value = WeightTarget.gain05;
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: widget._settingsScreenViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return TransparentChoiceChip(
+                      label:
+                          "-${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                      selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.lose075,
+                      onSelected: (bool selected) {
+                        widget._settingsScreenViewModel.weightTarget.value = WeightTarget.lose075;
+                      },
+                    );
+                  },
+                ),
+                SizedBox(width: 8),
+                ValueListenableBuilder(
+                  valueListenable: widget._settingsScreenViewModel.weightTarget,
+                  builder: (contextBuilder, _, _) {
+                    return TransparentChoiceChip(
+                      label:
+                          "+${convert.getCleanDoubleString3DecimalDigits(doubleValue: widget._settingsScreenViewModel.displayWeightTarget3)}${convert.getLocalizedWeightUnitKgAbbreviated(context: context)} ${AppLocalizations.of(contextBuilder)!.per_week}",
+                      selected: widget._settingsScreenViewModel.weightTarget.value == WeightTarget.gain075,
+                      onSelected: (bool selected) {
+                        widget._settingsScreenViewModel.weightTarget.value = WeightTarget.gain075;
+                      },
+                    );
+                  },
                 ),
               ],
             ),

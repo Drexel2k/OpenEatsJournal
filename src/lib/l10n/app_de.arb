@@ -60,7 +60,7 @@
   "keep_weight": "Gewicht halten",
   "per_week": "pro Woche",
   "proposed_values": "Der Kalorienbedarf basiert auf der Mifflin-St. Jeor-Formel und dem Phyischen Aktivitätslevel Faktor der Food and Agriculture Organization of the United Nations. Das Ziel wird unter der Annahme berechnet, dass 1 KG Körperfett ca. 7.000 kCal hat. In den Einstellungen können diese Werte noch angepasst werden (Zielwerte auch pro Wochentag).",
-  "in_doubt_consult_doctor": "Individuelle Werte können abweichen, zu schnell Gewicht zu verlieren ist ungesund und kann gefährlich sein. Im Zweifel konsultiere einen Ernährungsexperten oder Arzt.",
+  "in_doubt_consult_doctor": "Individuelle Werte können abweichen, zu schnell Gewicht zu verlieren oder zuzunehmen ist ungesund und kann gefährlich sein. Im Zweifel konsultiere einen Ernährungsexperten oder Arzt.",
   "select_target": "Bitte wähle ein Ziel.",
   "daily_calories_need": "Täglicher Kalorienbedarf",
   "daily_calories_target": "Tägliches Kalorienziel",

@@ -1,5 +1,4 @@
 import "package:async/async.dart";
-import "package:collection/collection.dart";
 import "package:flutter/foundation.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
 import "package:openeatsjournal/domain/food.dart";
@@ -204,21 +203,22 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
       //open food facts result can call this code multiple times due to pagination, db result is only queried one time and therefore calls this code only once
       if (result.length > 1) {
         //results from db
-        _getAndRemoveStatusOnResultEntries(resultEntries: _foodSearchResultUser, foodSearchResultStatusCode: FoodSearchResultStatusCode.offlineIsLoading);
+        _getAndRemoveMatchingResultEntries(
+          resultEntries: _foodSearchResultUser,
+          predicate: (ObjectWithOrder<FoodSearchResultEntry> foodSearchResultEntryWithOrder) =>
+              foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.offlineIsLoading,
+        );
 
         if (result.every((resultInternal) => resultInternal.foods == null || resultInternal.foods!.isEmpty)) {
           _foodSearchResultUser.add(ObjectWithOrder(object: FoodSearchResultEntry(foodSearchResultCode: FoodSearchResultStatusCode.offlineNoResult), order: 0));
         }
       } else {
         //results from open food facts
-        _getAndRemoveStatusOnResultEntries(
+        _getAndRemoveMatchingResultEntries(
           resultEntries: _foodSearchResultOpenFoodFacts,
-          foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsIsLoading,
-        );
-
-        _getAndRemoveStatusOnResultEntries(
-          resultEntries: _foodSearchResultOpenFoodFacts,
-          foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsMoreResults,
+          predicate: (ObjectWithOrder<FoodSearchResultEntry> foodSearchResultEntryWithOrder) =>
+              foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsIsLoading ||
+              foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsMoreResults,
         );
 
         if (result[0].errorCode == null && (result[0].foods == null || result[0].foods!.isEmpty)) {
@@ -415,14 +415,11 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
     _sortOrder = sortOrder;
     _sortButtonChanged.notify();
 
-    ObjectWithOrder<FoodSearchResultEntry>? openFoodFactsPaginationError = _getAndRemoveStatusOnResultEntries(
+    List<ObjectWithOrder<FoodSearchResultEntry>> statusFoodSearchResultEntriesWithOrder = _getAndRemoveMatchingResultEntries(
       resultEntries: _foodSearchResultOpenFoodFacts,
-      foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsError,
-    );
-
-    ObjectWithOrder<FoodSearchResultEntry>? openFoodFactsMoreResults = _getAndRemoveStatusOnResultEntries(
-      resultEntries: _foodSearchResultOpenFoodFacts,
-      foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsMoreResults,
+      predicate: (ObjectWithOrder<FoodSearchResultEntry> foodSearchResultEntryWithOrder) =>
+          foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsError ||
+          foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsMoreResults,
     );
 
     //Sorting with no result hint doesn't trigger null reference on food object, because sort doesn't do anything when there is only one item in the list.
@@ -506,14 +503,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultCache);
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts);
 
-        if (openFoodFactsPaginationError != null) {
-          _foodSearchResultOpenFoodFacts.add(openFoodFactsPaginationError);
-          _foodSearchResult.add(openFoodFactsPaginationError);
-        }
-
-        if (openFoodFactsMoreResults != null) {
-          _foodSearchResultOpenFoodFacts.add(openFoodFactsMoreResults);
-          _foodSearchResult.add(openFoodFactsMoreResults);
+        if (statusFoodSearchResultEntriesWithOrder.isNotEmpty) {
+          _foodSearchResultOpenFoodFacts.addAll(statusFoodSearchResultEntriesWithOrder);
+          _foodSearchResult.addAll(statusFoodSearchResultEntriesWithOrder);
         }
       }
     } else {
@@ -526,14 +518,9 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
 
         //ensure hint that loading more foods on pagination failed is still at the end on reverse sorting
-        if (openFoodFactsPaginationError != null) {
-          _foodSearchResultOpenFoodFacts.add(openFoodFactsPaginationError);
-          _foodSearchResult.add(openFoodFactsPaginationError);
-        }
-
-        if (openFoodFactsMoreResults != null) {
-          _foodSearchResultOpenFoodFacts.add(openFoodFactsMoreResults);
-          _foodSearchResult.add(openFoodFactsMoreResults);
+        if (statusFoodSearchResultEntriesWithOrder.isNotEmpty) {
+          _foodSearchResultOpenFoodFacts.addAll(statusFoodSearchResultEntriesWithOrder);
+          _foodSearchResult.addAll(statusFoodSearchResultEntriesWithOrder);
         }
       }
     }
@@ -543,19 +530,14 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
 
   //Open food facts result may have results and at the end a hint that loading more foods on pagination failed e.g.. We need to remove the hint (it has no food
   //which will result in a null reference excpetion), sort, and then add it again at the end.
-  ObjectWithOrder<FoodSearchResultEntry>? _getAndRemoveStatusOnResultEntries({
+  List<ObjectWithOrder<FoodSearchResultEntry>> _getAndRemoveMatchingResultEntries({
     required List<ObjectWithOrder<FoodSearchResultEntry>> resultEntries,
-    required FoodSearchResultStatusCode foodSearchResultStatusCode,
+    required bool Function(ObjectWithOrder<FoodSearchResultEntry> foodSearchResultEntryWithOrder) predicate,
   }) {
-    ObjectWithOrder<FoodSearchResultEntry>? foodSearchResultWithStatus = resultEntries.firstWhereOrNull(
-      (foodSearchResultEntryWithOrder) => foodSearchResultEntryWithOrder.object.foodSearchResultCode == foodSearchResultStatusCode,
-    );
+    final List<ObjectWithOrder<FoodSearchResultEntry>> matchingEntries = resultEntries.where(predicate).toList();
+    resultEntries.removeWhere(predicate);
 
-    if (foodSearchResultWithStatus != null) {
-      resultEntries.remove(foodSearchResultWithStatus);
-    }
-
-    return foodSearchResultWithStatus;
+    return matchingEntries;
   }
 
   void changeSortDirection({required SearchMode searchMode}) {
@@ -579,27 +561,19 @@ class FoodSearchScreenViewModel extends ChangeNotifier {
         _foodSearchResult.addAll(_foodSearchResultStandard.reversed);
         _foodSearchResult.addAll(_foodSearchResultCache.reversed);
 
-        ObjectWithOrder<FoodSearchResultEntry>? openfoodFactsPaginationError = _getAndRemoveStatusOnResultEntries(
+        List<ObjectWithOrder<FoodSearchResultEntry>> statusFoodSearchResultEntriesWithOrder = _getAndRemoveMatchingResultEntries(
           resultEntries: _foodSearchResultOpenFoodFacts,
-          foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsError,
-        );
-
-        ObjectWithOrder<FoodSearchResultEntry>? openfoodFactsMoreResults = _getAndRemoveStatusOnResultEntries(
-          resultEntries: _foodSearchResultOpenFoodFacts,
-          foodSearchResultStatusCode: FoodSearchResultStatusCode.openFoodFactsMoreResults,
+          predicate: (ObjectWithOrder<FoodSearchResultEntry> foodSearchResultEntryWithOrder) =>
+              foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsError ||
+              foodSearchResultEntryWithOrder.object.foodSearchResultCode == FoodSearchResultStatusCode.openFoodFactsMoreResults,
         );
 
         _foodSearchResult.addAll(_foodSearchResultOpenFoodFacts.reversed);
 
         //ensure hints are still at the end on reverse sorting
-        if (openfoodFactsPaginationError != null) {
-          _foodSearchResultOpenFoodFacts.add(openfoodFactsPaginationError);
-          _foodSearchResult.add(openfoodFactsPaginationError);
-        }
-
-        if (openfoodFactsMoreResults != null) {
-          _foodSearchResultOpenFoodFacts.add(openfoodFactsMoreResults);
-          _foodSearchResult.add(openfoodFactsMoreResults);
+        if (statusFoodSearchResultEntriesWithOrder.isNotEmpty) {
+          _foodSearchResultOpenFoodFacts.addAll(statusFoodSearchResultEntriesWithOrder);
+          _foodSearchResult.addAll(statusFoodSearchResultEntriesWithOrder);
         }
       }
     }
