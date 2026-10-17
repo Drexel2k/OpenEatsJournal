@@ -1,0 +1,2 @@
+1.21
+- Fixed issues processing serving sizes/food units with Open Food Facts API v3.6.

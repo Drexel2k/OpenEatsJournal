@@ -1,0 +1,2 @@
+1.21
+- Probleme bei der Verarbeitung von Portionsgrößen/Lebensmitteleinheiten mit der Open Food Facts API v3.6 behoben.
