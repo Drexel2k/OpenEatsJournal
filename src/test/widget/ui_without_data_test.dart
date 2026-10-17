@@ -54,16 +54,16 @@ void main() async {
 
     await initializeDateFormatting();
 
+    List<List<List<String>>> localCsvResponses = [
+      csv
+          .decode(await File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsString())
+          .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
+          .toList(),
+    ];
+
     MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
-    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
-      (_) => Future(() async {
-        return csv
-            .decode(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync())
-            .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
-            .toList();
-      }),
-    );
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer((_) => Future(() async => localCsvResponses[0]));
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: MockFunctions().httpGet,

@@ -1,431 +1,431 @@
 ---header---
 "last_content_update","last_file_format_change"
-"2026-10-10 00-00-00","2026-01-15 00-00-00"
+"2026-10-17 00-00-00","2026-10-17 00-00-00"
 ---comments---
-food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt,quantity
+food_row_columns:row_type,id,last_update,name_en,name_de,brand_en,brand_de,nutrition_per_gram_amount,nutrition_per_milliliter_amount,energy_kj,fat,saturated_fat,carbohydrates,sugar,protein,salt
 food_unit_row_columns:row_type,id,name_en,name_de,amount,measurement_unit,is_default
 ---data---
-"food","1","2026-01-10 00-00-00","Banana (without peel)","Banane (ohne Schale)",,,"100",,"389","0.2","0","20","17.3","1.1","0",
+"food","1","2026-01-10 00-00-00","Banana (without peel)","Banane (ohne Schale)",,,"100",,"389","0.2","0","20","17.3","1.1","0"
 "foodunit","1","fruit small","Frucht klein","80","g","false"
 "foodunit","2","fruit mid sized","Frucht mittelgroß","110","g","true"
 "foodunit","3","fruit big","Frucht groß","140","g","false"
-"food","2","2026-01-10 00-00-00","Cappuccino (whole milk 3.5%)","Cappuccino (Vollmilch 3,5%)",,,"95","100","205","2.7","1.8","3.6","3.6","2.7","0.1",
+"food","2","2026-01-10 00-00-00","Cappuccino (whole milk 3.5%)","Cappuccino (Vollmilch 3,5%)",,,"95","100","205","2.7","1.8","3.6","3.6","2.7","0.1"
 "foodunit","1","cup","Tasse","1650","ml","false"
 "foodunit","2","big cup","große Tasse","225","ml","true"
-"food","3","2026-01-10 00-00-00","Cappuccino (low-fat milk 1.5%)","Cappuccino (Fettarme Milch 1.5%)",,,"95","100","151","1.1","0.8","3.7","3.7","2.7","0.1",
+"food","3","2026-01-10 00-00-00","Cappuccino (low-fat milk 1.5%)","Cappuccino (Fettarme Milch 1.5%)",,,"95","100","151","1.1","0.8","3.7","3.7","2.7","0.1"
 "foodunit","1","cup","Tasse","150","ml","false"
 "foodunit","2","big cup","große Tasse","225","ml","true"
-"food","4","2026-01-10 00-00-00","Apple, raw","Apfel, roh",,,"100",,"226","0.1","0","14.4","10.3","0.3","0",
+"food","4","2026-01-10 00-00-00","Apple, raw","Apfel, roh",,,"100",,"226","0.1","0","14.4","10.3","0.3","0"
 "foodunit","1","middle","mittel","130","g","true"
 "foodunit","2","big","groß","200","g","false"
-"food","5","2026-02-11 00-00-00","Dinner rolls, wheat","Brötchen, Semmel, Weißbrot, Weizen",,,"100",,"1142","6.3","1.5","46","1.6","8.6","0.9",
+"food","5","2026-02-11 00-00-00","Dinner rolls, wheat","Brötchen, Semmel, Weißbrot, Weizen",,,"100",,"1142","6.3","1.5","46","1.6","8.6","0.9"
 "foodunit","1","Roll","Brötchen","80","g","true"
 "foodunit","2","Slice","Scheibe","50","g","false"
-"food","6","2026-01-10 00-00-00","Onion mince","Zwiebelmett",,,"100",,"828","14","5.7","1","1","17","3.2",
+"food","6","2026-01-10 00-00-00","Onion mince","Zwiebelmett",,,"100",,"828","14","5.7","1","1","17","3.2"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","7","2026-01-10 00-00-00","Cream Cheese","Frischkäse",,,"100",,"984","22.5","15.7","3","3","5.5","0.7",
+"food","7","2026-01-10 00-00-00","Cream Cheese","Frischkäse",,,"100",,"984","22.5","15.7","3","3","5.5","0.7"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","8","2026-01-10 00-00-00","Fried egg","Spiegelei",,,"100",,"772","15.4","6.6","1.5","1.5","12.3","0.3",
+"food","8","2026-01-10 00-00-00","Fried egg","Spiegelei",,,"100",,"772","15.4","6.6","1.5","1.5","12.3","0.3"
 "foodunit","1","1 egg","1 Ei","65","g","true"
-"food","9","2026-01-10 00-00-00","Scrambled egg","Rührei",,,"100",,"669","13","5.2","1.5","1.5","11","0.4",
+"food","9","2026-01-10 00-00-00","Scrambled egg","Rührei",,,"100",,"669","13","5.2","1.5","1.5","11","0.4"
 "foodunit","1","Serving","Portion","125","g","true"
-"food","10","2026-01-10 00-00-00","Eggs","Eier",,,"100",,"572","10","2","1.6","1.6","12",,
+"food","10","2026-01-10 00-00-00","Eggs","Eier",,,"100",,"572","10","2","1.6","1.6","12",
 "foodunit","1","Size M","Größe M","58","g","false"
 "foodunit","2","Size L","Größe L","68","g","true"
-"food","11","2026-01-14 00-00-00","Butter","Butter",,,"100",,"3102","83","53.8","0.6","0.6","0.7",,
+"food","11","2026-01-14 00-00-00","Butter","Butter",,,"100",,"3102","83","53.8","0.6","0.6","0.7",
 "foodunit","1","Serving","Portion","10","g","true"
-"food","12","2026-06-01 00-00-00","Roast pork (lunch meats, cold cuts)","Schweinebraten (Aufschnitt)",,,"100",,"740","10.6","4.3","0.8","0.6","19.5","1.17",
+"food","12","2026-06-01 00-00-00","Roast pork (lunch meats, cold cuts)","Schweinebraten (Aufschnitt)",,,"100",,"740","10.6","4.3","0.8","0.6","19.5","1.17"
 "foodunit","1","Slice","Scheibe","17","g","true"
-"food","13","2026-01-14 00-00-00","Mozzarella","Mozzarella",,,"100",,"1035","19","13","1.5","1.5","18","0.5",
+"food","13","2026-01-14 00-00-00","Mozzarella","Mozzarella",,,"100",,"1035","19","13","1.5","1.5","18","0.5"
 "foodunit","1","Ball","Kugel","125","g","true"
-"food","14","2026-01-14 00-00-00","Gugelhupf (Sponge cake, bundt cake, batter)","Gugelhupf (Rührkuchen, Napfkuchen, Rührteig)",,,"100",,"1674","18.8","11.6","49","26","6.5","0.5",
-"food","15","2026-01-14 00-00-00","Genoise/Genoese/Genovese cake","Biskuit",,,"100",,"1462","5.4","1.9","68.8","35.9","5.9","0.8",
+"food","14","2026-01-14 00-00-00","Gugelhupf (Sponge cake, bundt cake, batter)","Gugelhupf (Rührkuchen, Napfkuchen, Rührteig)",,,"100",,"1674","18.8","11.6","49","26","6.5","0.5"
+"food","15","2026-01-14 00-00-00","Genoise/Genoese/Genovese cake","Biskuit",,,"100",,"1462","5.4","1.9","68.8","35.9","5.9","0.8"
 "foodunit","1","Cake base","Tortenboden","250","g","false"
 "foodunit","2","Piece of cake base (eighth)","Stück Tortenboden (Achtel)","31.25","g","true"
-"food","16","2026-01-14 00-00-00","Fruit soft/chewy candy, soft caramels","Frucht-/Weichkaramelle, Kaubonbon",,,"100",,"1715","5.8","4.7","88","63","0.3",,
+"food","16","2026-01-14 00-00-00","Fruit soft/chewy candy, soft caramels","Frucht-/Weichkaramelle, Kaubonbon",,,"100",,"1715","5.8","4.7","88","63","0.3",
 "foodunit","1","Small piece","Kleines Stück","2.2","g","false"
 "foodunit","2","Normal piece","Normales Stück","5","g","true"
-"food","17","2026-01-15 00-00-00","Chocolate bar","Schokoriegel",,,"100",,"2070","23.9","13.8","64.6","48.6","4.5","0.4",
+"food","17","2026-01-15 00-00-00","Chocolate bar","Schokoriegel",,,"100",,"2070","23.9","13.8","64.6","48.6","4.5","0.4"
 "foodunit","1","Bar small","Riegel klein","25","g","false"
 "foodunit","2","Bar big","Riegel groß","50","g","true"
-"food","18","2026-01-15 00-00-00","Gouda cheese","Gouda Käse",,,"100",,"1464","28","19","0.5","0.5","24","1.7",
+"food","18","2026-01-15 00-00-00","Gouda cheese","Gouda Käse",,,"100",,"1464","28","19","0.5","0.5","24","1.7"
 "foodunit","1","Slice","Scheibe","36","g","true"
-"food","19","2026-05-22 00-00-00","Milk chocolate","Schokolade Vollmilch",,,"100",,"2251","31","19","57","55","6.5","0.3",
+"food","19","2026-05-22 00-00-00","Milk chocolate","Schokolade Vollmilch",,,"100",,"2251","31","19","57","55","6.5","0.3"
 "foodunit","1","Bar","Tafel","100","g","false"
 "foodunit","2","1/6 bar","Riegel","16.7","g","true"
 "foodunit","3","Piece","Stück","4.2","g","false"
-"food","20","2026-05-22 00-00-00","Dark chocolate 70%","Schokolade dunkel/bitter 70%",,,"100",,"2353","43.1","26.4","29.7","27.4","9.0",,
+"food","20","2026-05-22 00-00-00","Dark chocolate 70%","Schokolade dunkel/bitter 70%",,,"100",,"2353","43.1","26.4","29.7","27.4","9.0",
 "foodunit","1","Bar","Tafel","100","g","false"
 "foodunit","2","1/6 bar","Riegel","16.7","g","true"
 "foodunit","3","Piece","Stück","4.2","g","false"
-"food","21","2026-01-15 00-00-00","Muesli/granola/cereal bar chocolate","Müsliriegel Schoko",,,"100",,"1764","13.8","9.4","66.8","31.2","5","0.4",
+"food","21","2026-01-15 00-00-00","Muesli/granola/cereal bar chocolate","Müsliriegel Schoko",,,"100",,"1764","13.8","9.4","66.8","31.2","5","0.4"
 "foodunit","1","Bar","Riegel","50","g","true"
-"food","22","2026-02-11 00-00-00","Rye mixed bread, Röggelchen","Roggenmischbrot, Graubrot, Röggelchen",,,"100",,"1047","1","0.2","50","0.6","7.6","1.6",
+"food","22","2026-02-11 00-00-00","Rye mixed bread, Röggelchen","Roggenmischbrot, Graubrot, Röggelchen",,,"100",,"1047","1","0.2","50","0.6","7.6","1.6"
 "foodunit","1","Slice","Scheibe","50","g","true"
 "foodunit","2","Röggelchen","Röggelchen","80","g","false"
-"food","23","2026-01-15 00-00-00","Wheat mixed bread","Weizenmischbrot, Graubrot",,,"100",,"1026","0.8","0.1","49","0.6","7.4","1.7",
+"food","23","2026-01-15 00-00-00","Wheat mixed bread","Weizenmischbrot, Graubrot",,,"100",,"1026","0.8","0.1","49","0.6","7.4","1.7"
 "foodunit","1","Slice","Scheibe","50","g","true"
-"food","24","2026-02-26 00-00-00","Wholemeal/whole-grain bread/roll","Vollkornbrot/Vollkornbrötchen",,,"100",,"995","7","0.8","32","3.5","7.5","1.1",
+"food","24","2026-02-26 00-00-00","Wholemeal/whole-grain bread/roll","Vollkornbrot/Vollkornbrötchen",,,"100",,"995","7","0.8","32","3.5","7.5","1.1"
 "foodunit","1","Slice","Scheibe","50","g","true"
 "foodunit","2","Roll","Brötchen","80","g","false"
-"food","25","2026-01-15 00-00-00","Noodles durum wheat semolina boiled","Nudeln Hartweizengries gekocht",,,"100",,"599","0.5",,"28.1","0.2","5","0.1",
-"food","26","2026-01-15 00-00-00","Noodles durum wheat semolina dry","Nudeln Hartweizengries trocken",,,"100",,"1525","1.3","0.2","73","3","12.5","0.1",
-"food","27","2026-01-15 00-00-00","Rice boiled","Reis gekocht",,,"100",,"544","0.2","0.1","28.7",,"2.4",,
-"food","28","2026-01-15 00-00-00","Rice dry","Reis trocken",,,"100",,"1505","0.9","0.2","77.1","0.1","8.5","0.1",
-"food","29","2026-01-15 00-00-00","Lemonade (Cola etc.)","Limonade (Cola etc.)",,,,"100","180",,,"10.6","10.6",,,
+"food","25","2026-01-15 00-00-00","Noodles durum wheat semolina boiled","Nudeln Hartweizengries gekocht",,,"100",,"599","0.5",,"28.1","0.2","5","0.1"
+"food","26","2026-01-15 00-00-00","Noodles durum wheat semolina dry","Nudeln Hartweizengries trocken",,,"100",,"1525","1.3","0.2","73","3","12.5","0.1"
+"food","27","2026-01-15 00-00-00","Rice boiled","Reis gekocht",,,"100",,"544","0.2","0.1","28.7",,"2.4",
+"food","28","2026-01-15 00-00-00","Rice dry","Reis trocken",,,"100",,"1505","0.9","0.2","77.1","0.1","8.5","0.1"
+"food","29","2026-01-15 00-00-00","Lemonade (Cola etc.)","Limonade (Cola etc.)",,,,"100","180",,,"10.6","10.6",,
 "foodunit","1","Glas","Glas","200","ml","true"
 "foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
 "foodunit","3","0.5l bottle","0,5l Flasche","500","ml","false"
 "foodunit","4","1l bottle","1l Flasche","1000","ml","false"
 "foodunit","5","1.5l bottle","1,5l Flasche","1500","ml","false"
 "foodunit","6","2l bottle","2l Flasche","2000","ml","false"
-"food","30","2026-02-09 00-00-00","Patatoes boiled/fresh","Kartoffeln gekocht/frisch",,,"100",,"320",,,"15.6","0.7","1.9",,
+"food","30","2026-02-09 00-00-00","Patatoes boiled/fresh","Kartoffeln gekocht/frisch",,,"100",,"320",,,"15.6","0.7","1.9",
 "foodunit","1","Piece","Stück","125","g","true"
-"food","31","2026-01-15 01-00-00","Strawberry","Erdbeere",,,"100",,"151","0.4",,"5.5","5.5","0.8",,
+"food","31","2026-01-15 01-00-00","Strawberry","Erdbeere",,,"100",,"151","0.4",,"5.5","5.5","0.8",
 "foodunit","1","Piece","Stück","15","g","true"
-"food","32","2026-05-25 01-00-00","French Fries oven / air fryer","Pommes Frites Ofen / Heißluftfriteuse",,,"100",,"729","4.4","0.5","29","0.6","3.1","0.5",
+"food","32","2026-10-17 01-00-00","French Fries / wedges oven / air fryer","Pommes Frites / Wedges Ofen / Heißluftfriteuse",,,"100",,"729","4.4","0.5","29","0.6","3.1","0.5"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","33","2026-01-15 01-00-00","Fried patatoes","Bratkartoffeln",,,"100",,"502","5.9","0.7","14.1","0.6","1.8","0.2",
+"food","33","2026-01-15 01-00-00","Fried patatoes","Bratkartoffeln",,,"100",,"502","5.9","0.7","14.1","0.6","1.8","0.2"
 "foodunit","1","Serving","Portion","200","g","true"
-"food","34","2026-01-15 01-00-00","Tomato","Tomate",,,"100",,"75","0.2",,"3.9","2.6","0.9",,
+"food","34","2026-01-15 01-00-00","Tomato","Tomate",,,"100",,"75","0.2",,"3.9","2.6","0.9",
 "foodunit","1","Piece","Stück","120","g","true"
-"food","35","2026-01-15 01-00-00","Sweet patato Fries fried","Süßkartoffelpommes fritiert",,,"100",,"1360","9.9","1.5","52.6","11","3.1","0.5",
+"food","35","2026-01-15 01-00-00","Sweet patato Fries fried","Süßkartoffelpommes fritiert",,,"100",,"1360","9.9","1.5","52.6","11","3.1","0.5"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","36","2026-05-25 01-00-00","Sweet patato fries oven / air fryer","Süßkartoffelpommes Ofen / Heißluftfriteuse",,,"100",,"838","7.1","1.1","29","14","2.3","0.6",
+"food","36","2026-05-25 01-00-00","Sweet patato fries oven / air fryer","Süßkartoffelpommes Ofen / Heißluftfriteuse",,,"100",,"838","7.1","1.1","29","14","2.3","0.6"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","37","2026-01-16 00-00-00","Lemonade (Fanta/Sprite etc.)","Limonade (Fanta/Sprite etc.)",,,,"100","136",,,"7.7","7.7",,,
+"food","37","2026-01-16 00-00-00","Lemonade (Fanta/Sprite etc.)","Limonade (Fanta/Sprite etc.)",,,,"100","136",,,"7.7","7.7",,
 "foodunit","1","Glas","Glas","200","ml","true"
 "foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
 "foodunit","3","0.5l bottle","0,5l Flasche","500","ml","false"
 "foodunit","4","1l bottle","1l Flasche","1000","ml","false"
 "foodunit","5","1.5l bottle","1,5l Flasche","1500","ml","false"
 "foodunit","6","2l bottle","2l Flasche","2000","ml","false"
-"food","38","2026-10-10 00-00-00","Döner Kebap in pita/flatbread veal","Dönertasche mit Kalbfleisch",,,"100",,"921","11.5","4.8","20.8","1.8","10.5","0.6",
+"food","38","2026-10-10 00-00-00","Döner Kebap in pita/flatbread veal","Dönertasche mit Kalbfleisch",,,"100",,"921","11.5","4.8","20.8","1.8","10.5","0.6"
 "foodunit","1","Serving","Portion","450","g","true"
-"food","39","2026-01-16 01-00-00","Lahmacun, turkish pizza with veal","Lahmacun, türkische Pizza mit Kalbfleisch",,,"100",,"961","12","5","21.7","1.9","11","0.6",
+"food","39","2026-01-16 01-00-00","Lahmacun, turkish pizza with veal","Lahmacun, türkische Pizza mit Kalbfleisch",,,"100",,"961","12","5","21.7","1.9","11","0.6"
 "foodunit","1","Serving","Portion","450","g","true"
-"food","40","2026-01-18 00-00-00","Mashed potatoes","Kartoffelpüree, -stock, - stampf, -brei",,,"100",,"402","2.4","1.6","16","1.6","2.4","0.3",
+"food","40","2026-01-18 00-00-00","Mashed potatoes","Kartoffelpüree, -stock, - stampf, -brei",,,"100",,"402","2.4","1.6","16","1.6","2.4","0.3"
 "foodunit","1","Serving","Portion","250","g","true"
-"food","41","2026-01-18 00-00-00","Meatball","Frikadelle, Boulette, Fleischpflanzerl",,,"100",,"876","9.3","2.5","7.3",,"22","1.2",
+"food","41","2026-01-18 00-00-00","Meatball","Frikadelle, Boulette, Fleischpflanzerl",,,"100",,"876","9.3","2.5","7.3",,"22","1.2"
 "foodunit","1","Serving","Portion","60","g","true"
-"food","42","2026-01-18 00-00-00","Spam","Frühstücksfleisch",,,"100",,"1192","26","10.4","0.5",,"13","2.3",
+"food","42","2026-01-18 00-00-00","Spam","Frühstücksfleisch",,,"100",,"1192","26","10.4","0.5",,"13","2.3"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","43","2026-01-18 00-00-00","Spam low-fat","Frühstücksfleisch fettarm",,,"100",,"569","4.9","2","1.2","1.1","21.5","2.2",
+"food","43","2026-01-18 00-00-00","Spam low-fat","Frühstücksfleisch fettarm",,,"100",,"569","4.9","2","1.2","1.1","21.5","2.2"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","44","2026-01-18 00-00-00","Gummy candy","Weingummi",,,"100",,"1459","0.5","0.1","77","46","6.9","0.1",
+"food","44","2026-01-18 00-00-00","Gummy candy","Weingummi",,,"100",,"1459","0.5","0.1","77","46","6.9","0.1"
 "foodunit","1","Gummy bear","Gummibärchen","2.4","g","true"
-"food","45","2026-01-21 00-00-00","Waffles","Waffeln",,,"100",,"2022","29","5.1","49","24","6.2","0.3",
+"food","45","2026-01-21 00-00-00","Waffles","Waffeln",,,"100",,"2022","29","5.1","49","24","6.2","0.3"
 "foodunit","1","Heart piece","Herzstück","11","g","true"
 "foodunit","2","Waffle","Waffel","66","g","false"
 "foodunit","3","Belgian waffle","Belgische Waffel","90","g","false"
-"food","46","2026-01-21 00-00-00","Lye pastries / pretzel","Laugengebäck",,,"100",,"1209","5.4","0.8","50","1.1","7.8","3.9",
+"food","46","2026-01-21 00-00-00","Lye pastries / pretzel","Laugengebäck",,,"100",,"1209","5.4","0.8","50","1.1","7.8","3.9"
 "foodunit","1","Pretzel stick","Laugenstange","80","g","true"
 "foodunit","2","Lye pretzel","Laugenbrezel","90","g","false"
-"food","47","2026-01-22 00-00-00","Apple /Gourmet red cabbage","Apfel-/Gourmetrotkohl",,,"100",,"310","2.1","0.8","11","11","1.1","1.3",
+"food","47","2026-01-22 00-00-00","Apple /Gourmet red cabbage","Apfel-/Gourmetrotkohl",,,"100",,"310","2.1","0.8","11","11","1.1","1.3"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","48","2026-06-01 00-00-00","Wiener Schnitzel / Wiener-style pork schnitzel","Wiener Schnitzel / Schweineschnitzel Wiener Art",,,"100",,"889","10","1.5","15","0.8","16","1.2",
+"food","48","2026-06-01 00-00-00","Wiener Schnitzel / Wiener-style pork schnitzel","Wiener Schnitzel / Schweineschnitzel Wiener Art",,,"100",,"889","10","1.5","15","0.8","16","1.2"
 "foodunit","1","Wiener-style pork schnitzel","Schweineschnitzel Wiener Art","175","g","true"
 "foodunit","2","Wiener Schnitzel","Wiener Schnitzel","125","g","false"
-"food","49","2026-01-25 00-00-00","Jam doughnut","Berliner",,,"100",,"1482","12","5.6","55","32","5.9","0.6",
+"food","49","2026-01-25 00-00-00","Jam doughnut","Berliner",,,"100",,"1482","12","5.6","55","32","5.9","0.6"
 "foodunit","1","Serving","Portion","90","g","true"
-"food","50","2026-01-25 00-00-00","Chelsea bun","Rosinenschnecke",,,"100",,"1622","15","6.8","57","28","4.8","0.6",
+"food","50","2026-01-25 00-00-00","Chelsea bun","Rosinenschnecke",,,"100",,"1622","15","6.8","57","28","4.8","0.6"
 "foodunit","1","Serving","Portion","110","g","true"
-"food","51","2026-01-25 00-00-00","Cucumber","Gurke",,,"100",,"59","0.2",,"1.8","1.8","0.6",,
+"food","51","2026-01-25 00-00-00","Cucumber","Gurke",,,"100",,"59","0.2",,"1.8","1.8","0.6",
 "foodunit","1","Cucumber","Gurke","300","g","true"
-"food","52","2026-07-28 00-00-00","Carrot","Karotte / Möhre",,,"100",,"172","0.2",,"9.6","4.7","0.9",,
+"food","52","2026-07-28 00-00-00","Carrot","Karotte / Möhre",,,"100",,"172","0.2",,"9.6","4.7","0.9",
 "foodunit","1","Carrot","Karotte","75","g","true"
-"food","53","2026-01-25 00-00-00","Green salad / lettuce / Iceberg lettuce","Blattsalat / Kopfsalat / Eisbergsalat",,,"100",,"63","0.2",,"1.6","1.6","1",,
+"food","53","2026-01-25 00-00-00","Green salad / lettuce / Iceberg lettuce","Blattsalat / Kopfsalat / Eisbergsalat",,,"100",,"63","0.2",,"1.6","1.6","1",
 "foodunit","1","Head","Kopf","400","g","true"
-"food","54","2026-01-28 00-00-00","Chocolate Cookies / American Style Cookies","Schokokekse / American Style Cookies",,,"100",,"2081","25.7","13.5","59","35","5.6","0.6",
+"food","54","2026-01-28 00-00-00","Chocolate Cookies / American Style Cookies","Schokokekse / American Style Cookies",,,"100",,"2081","25.7","13.5","59","35","5.6","0.6"
 "foodunit","1","Cookie","Keks","50","g","true"
-"food","55","2026-01-28 00-00-00","Cream fresh 30% fat unprepared","Schlagsahne frisch 30% Fett unzubereitet",,,"100",,"1207","30","20.1","3.2","3.2","2.5","0.1",
-"food","56","2026-01-28 00-00-00","Whipped Cream fresh 30% fat + sugar","Schlagsahne geschlagen 30% Fett + Zucker",,,"100",,"1462","30","20.1","18.25","18.2","2.5","0.1",
+"food","55","2026-01-28 00-00-00","Cream fresh 30% fat unprepared","Schlagsahne frisch 30% Fett unzubereitet",,,"100",,"1207","30","20.1","3.2","3.2","2.5","0.1"
+"food","56","2026-01-28 00-00-00","Whipped Cream fresh 30% fat + sugar","Schlagsahne geschlagen 30% Fett + Zucker",,,"100",,"1462","30","20.1","18.25","18.2","2.5","0.1"
 "foodunit","1","Tablespoon","Esslöffel","15","g","true"
-"food","57","2026-01-29 00-00-00","Pickled olives","Eingelegte Oliven",,,"100",,"780","18.8","2.3","1.3","0.3","1.3","4",
+"food","57","2026-01-29 00-00-00","Pickled olives","Eingelegte Oliven",,,"100",,"780","18.8","2.3","1.3","0.3","1.3","4"
 "foodunit","1","Olive","Olive","5","g","true"
-"food","58","2026-03-09 00-00-00","Sugar","Zucker",,,"100",,"1700",,,"100","100",,,
+"food","58","2026-03-09 00-00-00","Sugar","Zucker",,,"100",,"1700",,,"100","100",,
 "foodunit","1","Cube","Würfel","3","g","true"
 "foodunit","2","Teaspoon","Teelöffel","5","g","false"
 "foodunit","3","Tablespoon","Esslöffel","15","g","false"
-"food","59","2026-01-29 00-00-00","Vegetable oil","Pflanzenöl",,,,"100","3404","92","10",,,,,
-"food","60","2026-01-29 00-00-00","Fyring fat / Cooking fat / Clarified butter","Bratfett / Frittierfett / Butterschmalz",,,"100",,"3693","99.8","64.9",,,,,
-"food","61","2026-01-29 00-00-00","Rice pudding with full milk, butter and sugar","Milchreis mit Vollmilch, butter und Zucker",,,"100",,"586","3.9","2.5","22","7","4","0.1",
+"food","59","2026-01-29 00-00-00","Vegetable oil","Pflanzenöl",,,,"100","3404","92","10",,,,
+"food","60","2026-01-29 00-00-00","Fyring fat / Cooking fat / Clarified butter","Bratfett / Frittierfett / Butterschmalz",,,"100",,"3693","99.8","64.9",,,,
+"food","61","2026-01-29 00-00-00","Rice pudding with full milk, butter and sugar","Milchreis mit Vollmilch, butter und Zucker",,,"100",,"586","3.9","2.5","22","7","4","0.1"
 "foodunit","1","Serving","Portion","250","g","true"
-"food","62","2026-01-29 00-00-00","Semolina pudding with sugar and full milk","Grießbrei mit Zucker und Vollmilch",,,"100",,"486","3.1","2","18","11","3.6","0.1",
+"food","62","2026-01-29 00-00-00","Semolina pudding with sugar and full milk","Grießbrei mit Zucker und Vollmilch",,,"100",,"486","3.1","2","18","11","3.6","0.1"
 "foodunit","1","Serving","Portion","250","g","true"
-"food","63","2026-01-30 00-00-00","Vinaigrette / Salad dressing vinegar oil","Vinaigrette / Salatdressing Essig Öl",,,,"100","1883","49","5.8","4.1","3.9","0.8","1.6",
-"food","64","2026-01-30 00-00-00","Salad dressing french / thousand island","Salatdressing French / Thousand Island",,,,"100","1189","27.5","2.1","7.6","6.1","1.5","1.8",
-"food","65","2026-02-18 00-00-00","Salad dressing yogurt","Salatdressing Joghurt",,,,"100","812","16","1.2","11","8.2","1.3","1.5",
-"food","66","2026-01-30 00-00-00","Salad dressing balsamic","Salatdressing Balsamico",,,,"100","379","5.3","0.4","9.5","8.7","0.2","2.2",
-"food","67","2026-01-30 00-00-00","Salad dressing american","Salatdressing American",,,,"100","938","19.2","1.7","12","10.8","1.1","1.7",
-"food","68","2026-02-02 00-00-00","French Fries fried","Pommes Frites fritiert",,,"100",,"1210","14","1.3","36","0.3","3.4","0.5",
+"food","63","2026-01-30 00-00-00","Vinaigrette / Salad dressing vinegar oil","Vinaigrette / Salatdressing Essig Öl",,,,"100","1883","49","5.8","4.1","3.9","0.8","1.6"
+"food","64","2026-01-30 00-00-00","Salad dressing french / thousand island","Salatdressing French / Thousand Island",,,,"100","1189","27.5","2.1","7.6","6.1","1.5","1.8"
+"food","65","2026-02-18 00-00-00","Salad dressing yogurt","Salatdressing Joghurt",,,,"100","812","16","1.2","11","8.2","1.3","1.5"
+"food","66","2026-01-30 00-00-00","Salad dressing balsamic","Salatdressing Balsamico",,,,"100","379","5.3","0.4","9.5","8.7","0.2","2.2"
+"food","67","2026-01-30 00-00-00","Salad dressing american","Salatdressing American",,,,"100","938","19.2","1.7","12","10.8","1.1","1.7"
+"food","68","2026-10-17 00-00-00","French Fries / wedges fried","Pommes Frites / Wedges fritiert",,,"100",,"1210","14","1.3","36","0.3","3.4","0.5"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","69","2026-02-02 00-00-00","Grilled chicken","Hähnchen gegrillt",,,"100",,"728","10","2.5",,,"21.2","0.6",
+"food","69","2026-02-02 00-00-00","Grilled chicken","Hähnchen gegrillt",,,"100",,"728","10","2.5",,,"21.2","0.6"
 "foodunit","1","Half chicken","Halbes Hähnchen","320","g","true"
 "foodunit","2","Chickenleg","Hähnchenkeule","110","g","false"
-"food","70","2026-06-01 00-00-00","Pork schnitzel natural fried","Schweineschnitzel natur gebraten",,,"100",,"741","6",,,,"30.8",,
+"food","70","2026-06-01 00-00-00","Pork schnitzel natural fried","Schweineschnitzel natur gebraten",,,"100",,"741","6",,,,"30.8",
 "foodunit","1","Serving","Portion","175","g","true"
-"food","71","2026-02-02 00-00-00","Chicken / turky schnitzel natural fried","Hähnchenschnitzel/Putenschnitzel natur gebraten",,,"100",,"562","4","1.6",,,"24","0.9",
+"food","71","2026-02-02 00-00-00","Chicken / turky schnitzel natural fried","Hähnchenschnitzel/Putenschnitzel natur gebraten",,,"100",,"562","4","1.6",,,"24","0.9"
 "foodunit","1","Serving","Portion","175","g","true"
-"food","72","2026-07-11 00-00-00","Rump steak cattle / beef grilled","Rumpsteak Rind gegrillt",,,"100",,"875","6.3","2.5",,,"35.6","0.9",
+"food","72","2026-07-11 00-00-00","Rump steak cattle / beef grilled","Rumpsteak Rind gegrillt",,,"100",,"875","6.3","2.5",,,"35.6","0.9"
 "foodunit","1","Serving","Portion","200","g","true"
-"food","73","2026-02-02 00-00-00","Boiled beef","Tafelspitz",,,"100",,"682","7.4","2.5","0.4",,"23.6",,
+"food","73","2026-02-02 00-00-00","Boiled beef","Tafelspitz",,,"100",,"682","7.4","2.5","0.4",,"23.6",
 "foodunit","1","Serving","Portion","175","g","true"
-"food","74","2026-09-29 00-00-00","Bologna sausage / Mortadella /  Ham sausage","Fleischwurst / Mortadella / Lyoner / Schinkenwurst",,,"100",,"1203","27","11","1","1","11","2.1",
+"food","74","2026-09-29 00-00-00","Bologna sausage / Mortadella /  Ham sausage","Fleischwurst / Mortadella / Lyoner / Schinkenwurst",,,"100",,"1203","27","11","1","1","11","2.1"
 "foodunit","1","Slice of sausage ring","Scheibe vom Wurstring","20","g","true"
-"food","75","2026-02-04 00-00-00","Liver sausage","Leberwurst",,,"100",,"1439","33.3","12.9","0.9","0.6","11.8","2.1",
+"food","75","2026-02-04 00-00-00","Liver sausage","Leberwurst",,,"100",,"1439","33.3","12.9","0.9","0.6","11.8","2.1"
 "foodunit","1","Serving","Portion","35","g","true"
-"food","76","2026-02-04 00-00-00","Lye pastries / pretzel with cheese gratinated","Laugengebäck mit Käse überbacken",,,"100",,"1310","8.4","4.1","45.1","2.5","12","2.2",
+"food","76","2026-02-04 00-00-00","Lye pastries / pretzel with cheese gratinated","Laugengebäck mit Käse überbacken",,,"100",,"1310","8.4","4.1","45.1","2.5","12","2.2"
 "foodunit","1","Pretzel stick","Laugenstange","100","g","true"
 "foodunit","2","Lye pretzel","Laugenbrezel","110","g","false"
-"food","77","2026-02-09 00-00-00","Whole milk 3.5%","Vollmilch 3,5%",,,"100","100","269","3.5","2.3","4.7","4.7","3.5","0.1",
-"food","78","2026-02-09 00-00-00","Low-fat milk 1.5%","Fettarme Milch 1,5%",,,"100","100","199","1.5","1","4.9","4.9","3.5","0.1",
-"food","79","2026-02-11 00-00-00","Sunflower seeds","Sonnenblumenkerne",,,"100",,"2245","51.5","4.5","20","2.6","20.8",,
-"food","80","2026-02-11 00-00-00","Cucurbita/pumpkin seeds","Kürbiskerne",,,"100",,"2413","46","9.4","2","1.4","37",,
-"food","81","2026-02-11 00-00-00","Zucchini, raw","Zucchini, roh",,,"100",,"96","0.3",,"2.3","2.3","2",,
+"food","77","2026-02-09 00-00-00","Whole milk 3.5%","Vollmilch 3,5%",,,"100","100","269","3.5","2.3","4.7","4.7","3.5","0.1"
+"food","78","2026-02-09 00-00-00","Low-fat milk 1.5%","Fettarme Milch 1,5%",,,"100","100","199","1.5","1","4.9","4.9","3.5","0.1"
+"food","79","2026-02-11 00-00-00","Sunflower seeds","Sonnenblumenkerne",,,"100",,"2245","51.5","4.5","20","2.6","20.8",
+"food","80","2026-02-11 00-00-00","Cucurbita/pumpkin seeds","Kürbiskerne",,,"100",,"2413","46","9.4","2","1.4","37",
+"food","81","2026-02-11 00-00-00","Zucchini, raw","Zucchini, roh",,,"100",,"96","0.3",,"2.3","2.3","2",
 "foodunit","1","small","klein","120","g","false"
 "foodunit","2","middle","mittel","200","g","true"
 "foodunit","3","big","groß","300","g","false"
-"food","82","2026-02-13 01-00-00","Pita gyros","Gyros Pita",,,"100",,"741","8.1","2.7","14.4","1.2","9.3","1.2",
+"food","82","2026-02-13 01-00-00","Pita gyros","Gyros Pita",,,"100",,"741","8.1","2.7","14.4","1.2","9.3","1.2"
 "foodunit","1","Pita","Pita","400","g","true"
-"food","83","2026-02-13 00-00-00","Cocktail Sauce / seaffod sauce","Cocktail Sauce",,,"100",,"1682","39","3.8","11","9.1","1.4","1.9",
-"food","84","2026-02-13 00-00-00","Tsatsiki","Tsatsiki / Zaziki",,,"100",,"512","8.8","4.4","6.9","4.9","4","1",
-"food","85","2026-02-13 00-00-00","Döner meat veal","Dönerfleisch Kalb",,,"100",,"1060","17","6.9","1","0.5","25","1.3",
-"food","86","2026-02-13 00-00-00","Gyros","Gyros",,,"100",,"821","11.1","2.5","1.4","1","22.7","1.4",
-"food","87","2026-02-13 01-00-00","Curry saucage","Currywurst",,,"100",,"1155","25","10","2","2","13","2",
+"food","83","2026-02-13 00-00-00","Cocktail Sauce / seaffod sauce","Cocktail Sauce",,,"100",,"1682","39","3.8","11","9.1","1.4","1.9"
+"food","84","2026-02-13 00-00-00","Tsatsiki","Tsatsiki / Zaziki",,,"100",,"512","8.8","4.4","6.9","4.9","4","1"
+"food","85","2026-02-13 00-00-00","Döner meat veal","Dönerfleisch Kalb",,,"100",,"1060","17","6.9","1","0.5","25","1.3"
+"food","86","2026-02-13 00-00-00","Gyros","Gyros",,,"100",,"821","11.1","2.5","1.4","1","22.7","1.4"
+"food","87","2026-02-13 01-00-00","Curry saucage","Currywurst",,,"100",,"1155","25","10","2","2","13","2"
 "foodunit","1","Saucage","Wurst","185","g","true"
-"food","88","2026-02-13 01-00-00","Ketchup","Ketchup",,,"100",,"435","0.1",,"23.2","22.8","1.2","1.8",
-"food","89","2026-02-13 01-00-00","Mayonnaise","Mayonnaise",,,"100",,"2650","70","5.3","3","1.5","0.8","1",
-"food","90","2026-02-13 01-00-00","Curry ketchup","Curry Ketchup",,,"100",,"568","0.3",,"31.3","28.8","0.7","2",
-"food","91","2026-02-14 00-00-00","Beer (Pils/Alt)","Bier (Pils/Alt)",,,,"100","177",,,"3.1",,"0.5",,
+"food","88","2026-02-13 01-00-00","Ketchup","Ketchup",,,"100",,"435","0.1",,"23.2","22.8","1.2","1.8"
+"food","89","2026-02-13 01-00-00","Mayonnaise","Mayonnaise",,,"100",,"2650","70","5.3","3","1.5","0.8","1"
+"food","90","2026-02-13 01-00-00","Curry ketchup","Curry Ketchup",,,"100",,"568","0.3",,"31.3","28.8","0.7","2"
+"food","91","2026-02-14 00-00-00","Beer (Pils/Alt)","Bier (Pils/Alt)",,,,"100","177",,,"3.1",,"0.5",
 "foodunit","1","Glas","Glas","200","ml","false"
 "foodunit","2","0.33l bottle","0,33l Flasche","330","ml","false"
 "foodunit","3","0.5l bottle","0,5l Flasche","500","ml","true"
-"food","92","2026-07-24 00-00-00","Popcorn sweet","Popcorn süß",,,"100",,"2095","25","1.9","59","29","5.8",,
+"food","92","2026-07-24 00-00-00","Popcorn sweet","Popcorn süß",,,"100",,"2095","25","1.9","59","29","5.8",
 "foodunit","1","Small (UCI)","Klein (UCI)","230","g","true"
-"food","93","2026-07-24 00-00-00","Popcorn salty","Popcorn salzig",,,"100",,"1984","24","2","51","2.3","8.2",,
+"food","93","2026-07-24 00-00-00","Popcorn salty","Popcorn salzig",,,"100",,"1984","24","2","51","2.3","8.2",
 "foodunit","1","Small (UCI)","Klein (UCI)","230","g","true"
-"food","94","2026-02-14 00-00-00","Nachos","Nachos",,,"100",,"1979","20","2","64.4","0.8","6.6","0.9",
+"food","94","2026-02-14 00-00-00","Nachos","Nachos",,,"100",,"1979","20","2","64.4","0.8","6.6","0.9"
 "foodunit","1","small","klein","100","g","false"
 "foodunit","2","big","groß","150","g","true"
-"food","95","2026-02-14 00-00-00","Cheese sauce","Käsesauce",,,"100",,"775","14","3.3","12","0.3","2.8","1.8",
+"food","95","2026-02-14 00-00-00","Cheese sauce","Käsesauce",,,"100",,"775","14","3.3","12","0.3","2.8","1.8"
 "foodunit","1","Can","Dose","90","g","true"
-"food","96","2026-02-14 00-00-00","Salsa dip","Salsa Dip",,,"100",,"322","0.5","0.1","14","10","1.1","2.5",
+"food","96","2026-02-14 00-00-00","Salsa dip","Salsa Dip",,,"100",,"322","0.5","0.1","14","10","1.1","2.5"
 "foodunit","1","Can","Dose","90","g","true"
-"food","97","2026-02-15 00-00-00","Natural yogurt 3.5%","Naturjoghurt 3,5%",,,"100",,"303","3.5","2.4","5.1","5.1","4.4","0.1",
-"food","98","2026-02-15 00-00-00","Natural yogurt 1.5%","Naturjoghurt 1,5%",,,"100",,"261","1.5","1","6.3","6.3","5.3","0.2",
-"food","99","2026-02-15 00-00-00","Red fruit jelly","Rote Grütze",,,"100",,"380","0.2",,"20","18","0.6",,
-"food","100","2026-02-15 00-00-00","Mustard medium hot","Senf mittelscharf",,,"100",,"435","5.8","0.8","3.6","3.1","6","4",
-"food","101","2026-02-15 00-00-00","Mustard hot","Senf scharf",,,"100",,"535","7","0.4","7.2","3.6","6.2","4.4",
-"food","102","2026-02-15 00-00-00","Crispy fried bacon","Bacon/Speck kross gebraten",,,"100",,"1880","29","10","1",,"46","2",
+"food","97","2026-02-15 00-00-00","Natural yogurt 3.5%","Naturjoghurt 3,5%",,,"100",,"303","3.5","2.4","5.1","5.1","4.4","0.1"
+"food","98","2026-02-15 00-00-00","Natural yogurt 1.5%","Naturjoghurt 1,5%",,,"100",,"261","1.5","1","6.3","6.3","5.3","0.2"
+"food","99","2026-02-15 00-00-00","Red fruit jelly","Rote Grütze",,,"100",,"380","0.2",,"20","18","0.6",
+"food","100","2026-02-15 00-00-00","Mustard medium hot","Senf mittelscharf",,,"100",,"435","5.8","0.8","3.6","3.1","6","4"
+"food","101","2026-02-15 00-00-00","Mustard hot","Senf scharf",,,"100",,"535","7","0.4","7.2","3.6","6.2","4.4"
+"food","102","2026-02-15 00-00-00","Crispy fried bacon","Bacon/Speck kross gebraten",,,"100",,"1880","29","10","1",,"46","2"
 "foodunit","1","Strip","Streifen","15","g","true"
-"food","103","2026-02-15 00-00-00","Fruit salad","Obstsalat",,,"100",,"222","0.2",,"10.8","9","0.7",,
-"food","104","2026-02-15 00-00-00","Nuremberg sausages","Nürnberger Rostbratwürstchen",,,"100",,"1441","32","12","1","1","14","1.8",
+"food","103","2026-02-15 00-00-00","Fruit salad","Obstsalat",,,"100",,"222","0.2",,"10.8","9","0.7",
+"food","104","2026-02-15 00-00-00","Nuremberg sausages","Nürnberger Rostbratwürstchen",,,"100",,"1441","32","12","1","1","14","1.8"
 "foodunit","1","Sausage","Würstchen","22","g","true"
-"food","105","2026-02-15 00-00-00","Fruit yogurt (Strawberry, raspberry, blueberry, banana...)","Fruchtjoghurt (Erdbeere, Himbeere, Blaubeere, Banane...)",,,"100",,"380","3","2","12.1","12","3.5","0.1",
+"food","105","2026-02-15 00-00-00","Fruit yogurt (Strawberry, raspberry, blueberry, banana...)","Fruchtjoghurt (Erdbeere, Himbeere, Blaubeere, Banane...)",,,"100",,"380","3","2","12.1","12","3.5","0.1"
 "foodunit","1","Cup","Becher","200","g","true"
-"food","106","2026-02-26 00-00-00","Orange / Mandarin","Orange / Apfelsine / Mandarine",,,"100",,"197","0.1","0","11.8","9","0.9","0",
+"food","106","2026-02-26 00-00-00","Orange / Mandarin","Orange / Apfelsine / Mandarine",,,"100",,"197","0.1","0","11.8","9","0.9","0"
 "foodunit","1","Mandarin small","Mandarine klein","75","g","false"
 "foodunit","2","Mandarin middle","Mandarine mittel","110","g","false"
 "foodunit","3","Mandarin big","Mandarine groß","180","g","false"
 "foodunit","4","Orange small","Orange klein","150","g","false"
 "foodunit","5","Orange middle","Orange mittel","200","g","true"
 "foodunit","6","Orange big","Orange groß","250","g","false"
-"food","107","2026-02-26 00-00-00","Lemon","Zitrone",,,"100",,"121","0.3","0","9.3","2.5","1.1","0",
+"food","107","2026-02-26 00-00-00","Lemon","Zitrone",,,"100",,"121","0.3","0","9.3","2.5","1.1","0"
 "foodunit","1","Middle","Mittel","80","g","true"
 "foodunit","2","Big","Groß","125","g","false"
-"food","108","2026-02-27 00-00-00","Maki sushi avocado","Maki Sushi Avocado",,,"100",,"706","4.1","0.8","29.1","3.6","3.1","0.8",
+"food","108","2026-02-27 00-00-00","Maki sushi avocado","Maki Sushi Avocado",,,"100",,"706","4.1","0.8","29.1","3.6","3.1","0.8"
 "foodunit","1","Piece","Stück","20","g","true"
-"food","109","2026-02-27 00-00-00","Maki sushi Kappa / cucumber","Maki Sushi Kappa / Gurke",,,"100",,"564","0.8","0","29.1","3.6","2.6","0.8",
+"food","109","2026-02-27 00-00-00","Maki sushi Kappa / cucumber","Maki Sushi Kappa / Gurke",,,"100",,"564","0.8","0","29.1","3.6","2.6","0.8"
 "foodunit","1","Piece","Stück","20","g","true"
-"food","110","2026-02-27 00-00-00","Maki sushi sake / salmon","Maki Sushi Sake / Lachs",,,"100",,"828","3.2","0.7","29.1","3.4","8.3","0.8",
+"food","110","2026-02-27 00-00-00","Maki sushi sake / salmon","Maki Sushi Sake / Lachs",,,"100",,"828","3.2","0.7","29.1","3.4","8.3","0.8"
 "foodunit","1","Piece","Stück","20","g","true"
-"food","111","2026-02-27 00-00-00","Maki sushi tekka / tuna","Maki Sushi Tekka / Thunfisch",,,"100",,"697","1.3","0","28.9","3.4","8.8","0.8",
+"food","111","2026-02-27 00-00-00","Maki sushi tekka / tuna","Maki Sushi Tekka / Thunfisch",,,"100",,"697","1.3","0","28.9","3.4","8.8","0.8"
 "foodunit","1","Piece","Stück","20","g","true"
-"food","112","2026-05-15 00-00-00","California inside out sushi","California Inside Out Sushi",,,"100",,"685","4.7","0.7","26.5","8.5","2.8","1.2",
+"food","112","2026-05-15 00-00-00","California inside out sushi","California Inside Out Sushi",,,"100",,"685","4.7","0.7","26.5","8.5","2.8","1.2"
 "foodunit","1","Piece","Stück","30","g","true"
-"food","113","2026-02-27 00-00-00","Nigiri sushi sake / salmon","Nigiri Sushi Sake / Lachs",,,"100",,"870","4.8","1.1","23.5","2.7","10.6","0.6",
+"food","113","2026-02-27 00-00-00","Nigiri sushi sake / salmon","Nigiri Sushi Sake / Lachs",,,"100",,"870","4.8","1.1","23.5","2.7","10.6","0.6"
 "foodunit","1","Piece","Stück","35","g","true"
-"food","114","2026-02-27 00-00-00","Nigiri sushi tekka / tuna","Nigiri Sushi Tekka / Thunfisch",,,"100",,"665","1.8","0","23.2","2.7","11.5","0.7",
+"food","114","2026-02-27 00-00-00","Nigiri sushi tekka / tuna","Nigiri Sushi Tekka / Thunfisch",,,"100",,"665","1.8","0","23.2","2.7","11.5","0.7"
 "foodunit","1","Piece","Stück","35","g","true"
-"food","115","2026-02-28 00-00-00","Guacamole","Guacamole",,,"100",,"669","15","2.2","9.2","1","2","0.5",
-"food","116","2026-02-28 01-00-00","Avocado","Avocado",,,"100",,"670","14.7","2.1","8.5","0.7","2","0",
+"food","115","2026-02-28 00-00-00","Guacamole","Guacamole",,,"100",,"669","15","2.2","9.2","1","2","0.5"
+"food","116","2026-02-28 01-00-00","Avocado","Avocado",,,"100",,"670","14.7","2.1","8.5","0.7","2","0"
 "foodunit","1","Fruit","Frucht","250","g","true"
-"food","117","2026-03-04 00-00-00","Lasagna bolognese","Lasagne Bolognese",,,"100",,"666","7.4","3.6","13.3","2.5","8.9","1.3",
+"food","117","2026-03-04 00-00-00","Lasagna bolognese","Lasagne Bolognese",,,"100",,"666","7.4","3.6","13.3","2.5","8.9","1.3"
 "foodunit","1","Serving","Portion","450","g","true"
-"food","118","2026-03-04 00-00-00","Bolognese sauce","Bolognese Sauce",,,"100",,"476","8.4","2.3","3","2.7","6.6","1.2",
+"food","118","2026-03-04 00-00-00","Bolognese sauce","Bolognese Sauce",,,"100",,"476","8.4","2.3","3","2.7","6.6","1.2"
 "foodunit","1","Serving","Portion","450","g","true"
-"food","119","2026-03-04 00-00-00","Tomato sauce, Napoli, Napoletana","Tomaten Sauce, Napoli, Napoletana",,,"100",,"265","2.9","0.3","7.3","5.6","1.9","1",
-"food","120","2026-03-04 00-00-00","Parmesan cheese, hard cheese","Parmesankäse, Hartkäse",,,"100",,"1671","30","20","0","0","32","1.6",
+"food","119","2026-03-04 00-00-00","Tomato sauce, Napoli, Napoletana","Tomaten Sauce, Napoli, Napoletana",,,"100",,"265","2.9","0.3","7.3","5.6","1.9","1"
+"food","120","2026-03-04 00-00-00","Parmesan cheese, hard cheese","Parmesankäse, Hartkäse",,,"100",,"1671","30","20","0","0","32","1.6"
 "foodunit","1","Tablespoon grated","Esslöffel gerieben","5","g","true"
-"food","121","2026-03-09 00-00-00","Smoked salmon","Räucherlachs",,,"100",,"784","12","2.3","0.5","0.5","20","1.9",
-"food","122","2026-03-19 00-00-00","Croissant","Croissant",,,"100",,"1807","26","17","43","6.5","7.4","1.2",
+"food","121","2026-03-09 00-00-00","Smoked salmon","Räucherlachs",,,"100",,"784","12","2.3","0.5","0.5","20","1.9"
+"food","122","2026-03-19 00-00-00","Croissant","Croissant",,,"100",,"1807","26","17","43","6.5","7.4","1.2"
 "foodunit","1","Croissant","Croissant","70","g","true"
-"food","123","2026-03-09 00-00-00","Fruit spread (Confiture / Marmelade)","Fruchtaufstrich (Konfitüre / Marmelade)",,,"100",,"966","0.3","0.1","54.5","54.1","0.5","0",
-"food","124","2026-03-09 00-00-00","Seed roll / seed siwrl / seed pastry","Mohnschnecke / Mohnschleife / Mohnplunder",,,"100",,"1630","20.7","10.9","43.4","26.4","5.7","0.5",
+"food","123","2026-03-09 00-00-00","Fruit spread (Confiture / Marmelade)","Fruchtaufstrich (Konfitüre / Marmelade)",,,"100",,"966","0.3","0.1","54.5","54.1","0.5","0"
+"food","124","2026-03-09 00-00-00","Seed roll / seed siwrl / seed pastry","Mohnschnecke / Mohnschleife / Mohnplunder",,,"100",,"1630","20.7","10.9","43.4","26.4","5.7","0.5"
 "foodunit","1","Piece","Stück","140","g","true"
-"food","125","2026-03-09 00-00-00","Nut roll / nut siwrl / nut pastry","Nussschnecke / Nussschleife / Nussplunder",,,"100",,"1928","19.9","7.9","61.3","30.3","7.4","0.5",
+"food","125","2026-03-09 00-00-00","Nut roll / nut siwrl / nut pastry","Nussschnecke / Nussschleife / Nussplunder",,,"100",,"1928","19.9","7.9","61.3","30.3","7.4","0.5"
 "foodunit","1","Piece","Stück","140","g","true"
-"food","126","2026-03-09 00-00-00","Honey","Honig",,,"100",,"1283","0","0","75","75","0.4","0",
+"food","126","2026-03-09 00-00-00","Honey","Honig",,,"100",,"1283","0","0","75","75","0.4","0"
 "foodunit","1","Teaspoon","Teelöffel","10","g","false"
 "foodunit","2","Tablespoon","Esslöffel","20","g","true"
-"food","127","2026-03-11 00-00-00","Goulash soup with potatoe","Gulaschsuppe mit Kartoffel",,,"100",,"477","5.8","2","5.2","0.4","9.6","0.9",
+"food","127","2026-03-11 00-00-00","Goulash soup with potatoe","Gulaschsuppe mit Kartoffel",,,"100",,"477","5.8","2","5.2","0.4","9.6","0.9"
 "foodunit","1","Serving","Portion","450","g","true"
-"food","128","2026-03-11 00-00-00","Pretzel croissant / corner","Laugencroissant / Laugeneck",,,"100",,"1498","20.6","8.2","36.3","3.4","6","2",
+"food","128","2026-03-11 00-00-00","Pretzel croissant / corner","Laugencroissant / Laugeneck",,,"100",,"1498","20.6","8.2","36.3","3.4","6","2"
 "foodunit","1","Croissant","Croissant","80","g","true"
 "foodunit","2","Corner","Eck","90","g","false"
-"food","129","2026-04-07 00-00-00","Croquettes","Kroketten",,,"100",,"708","6.8","0.9","23.5","0.6","2.4","0.8",
+"food","129","2026-04-07 00-00-00","Croquettes","Kroketten",,,"100",,"708","6.8","0.9","23.5","0.6","2.4","0.8"
 "foodunit","1","Piece","Stück","20","g","true"
-"food","130","2026-04-07 00-00-00","Camembert","Camembert",,,"100",,"1163","22","14","0.5","0.5","20","1.8",
-"food","131","2026-04-07 00-00-00","Chocolate Muesli","Schoko Müsli",,,"100",,"1705","11","4.7","61","22","11","0.25",
+"food","130","2026-04-07 00-00-00","Camembert","Camembert",,,"100",,"1163","22","14","0.5","0.5","20","1.8"
+"food","131","2026-04-07 00-00-00","Chocolate Muesli","Schoko Müsli",,,"100",,"1705","11","4.7","61","22","11","0.25"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","132","2026-04-07 00-00-00","Muesli basis (with sunflower seeds, raisins)","Müsli Basis (mit Sonnenblumenkernen, Rosinen)",,,"100",,"1528","7.3","1.1","58","7.6","11","0",
+"food","132","2026-04-07 00-00-00","Muesli basis (with sunflower seeds, raisins)","Müsli Basis (mit Sonnenblumenkernen, Rosinen)",,,"100",,"1528","7.3","1.1","58","7.6","11","0"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","133","2026-04-07 00-00-00","Crunchy Muesli","Knusper Müsli",,,"100",,"1855","15","5.5","64","18","8.4","0.22",
+"food","133","2026-04-07 00-00-00","Crunchy Muesli","Knusper Müsli",,,"100",,"1855","15","5.5","64","18","8.4","0.22"
 "foodunit","1","Serving","Portion","40","g","true"
-"food","134","2026-04-07 00-00-00","Potato pancake","Reibekuchen / Kartoffelpuffer",,,"100",,"742","8.5","0.7","21","2","2.8","1.5",
-"food","135","2026-04-07 00-00-00","Pancake","Pfannkuchen",,,"100",,"862","9","2.1","24","4","8","0.3",
+"food","134","2026-04-07 00-00-00","Potato pancake","Reibekuchen / Kartoffelpuffer",,,"100",,"742","8.5","0.7","21","2","2.8","1.5"
+"food","135","2026-04-07 00-00-00","Pancake","Pfannkuchen",,,"100",,"862","9","2.1","24","4","8","0.3"
 "foodunit","1","Serving","Portion","100","g","true"
-"food","136","2026-04-07 00-00-00","Apple pancake","Apfelpfannkuchen",,,"100",,"691","6.1","1.7","21.7","17","5.2","0.1",
+"food","136","2026-04-07 00-00-00","Apple pancake","Apfelpfannkuchen",,,"100",,"691","6.1","1.7","21.7","17","5.2","0.1"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","137","2026-04-22 00-00-00","Pancake with ham and cheese","Pfannkuchen mit Schinken und Käse",,,"100",,"955","10.5","4.2","22.1","1.3","10.6","1.5",
+"food","137","2026-04-22 00-00-00","Pancake with ham and cheese","Pfannkuchen mit Schinken und Käse",,,"100",,"955","10.5","4.2","22.1","1.3","10.6","1.5"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","138","2026-04-07 00-00-00","Crumb cake","Streuselkuchen",,,"100",,"1580","17.4","8.7","47.8","14.6","6.4","0.6",
+"food","138","2026-04-07 00-00-00","Crumb cake","Streuselkuchen",,,"100",,"1580","17.4","8.7","47.8","14.6","6.4","0.6"
 "foodunit","1","Piece","Stück","120","g","true"
-"food","139","2026-04-20 00-00-00","Salami","Salami",,,"100",,"1552","30","12","0","0","26","4.5",
-"food","140","2026-04-22 00-00-00","Cervelat / smoked dry saucage (Katenrauchwurst) ","Cervelatwurst / Katenrauchwurst",,,"100",,"1269","25","10","1","0.5","19","3.3",
+"food","139","2026-04-20 00-00-00","Salami","Salami",,,"100",,"1552","30","12","0","0","26","4.5"
+"food","140","2026-04-22 00-00-00","Cervelat / smoked dry saucage (Katenrauchwurst) ","Cervelatwurst / Katenrauchwurst",,,"100",,"1269","25","10","1","0.5","19","3.3"
 "foodunit","1","Slice","Scheibe","20","g","true"
-"food","141","2026-04-22 00-00-00","Cinnamon roll / Cinnamon pastry","Zimtschnecke / Zimtplunder",,,"100",,"1576","17.1","8.8","48.4","17.2","6.1","0.9",
+"food","141","2026-04-22 00-00-00","Cinnamon roll / Cinnamon pastry","Zimtschnecke / Zimtplunder",,,"100",,"1576","17.1","8.8","48.4","17.2","6.1","0.9"
 "foodunit","1","Piece","Stück","110","g","true"
-"food","142","2026-04-20 00-00-00","Gnocchi","Gnocchi",,,"100",,"632","1","0.3","31","4","2.8","0.7",
+"food","142","2026-04-20 00-00-00","Gnocchi","Gnocchi",,,"100",,"632","1","0.3","31","4","2.8","0.7"
 "foodunit","1","Serving","Portion","175","g","true"
-"food","143","2026-04-21 00-00-00","Ice cream vanilla / chocolate","Eiscreme Vanille / Schokolade",,,"100",,"775","8","6","24.5","23","3.5","0.1",
+"food","143","2026-04-21 00-00-00","Ice cream vanilla / chocolate","Eiscreme Vanille / Schokolade",,,"100",,"775","8","6","24.5","23","3.5","0.1"
 "foodunit","1","Ball","Kugel","75","g","true"
-"food","144","2026-04-20 00-00-00","Ice cream strawberry / cherry / raspberry / lemon","Eiscreme Erdbeer / Kirsche / Himbeere / Zitrone",,,"100",,"490","2.1","1.9","23","23","0","0.1",
+"food","144","2026-04-20 00-00-00","Ice cream strawberry / cherry / raspberry / lemon","Eiscreme Erdbeer / Kirsche / Himbeere / Zitrone",,,"100",,"490","2.1","1.9","23","23","0","0.1"
 "foodunit","1","Ball","Kugel","75","g","true"
-"food","145","2026-04-20 00-00-00","Ice cream cookie / Oreo","Eiscreme Cookie / Oreo",,,"100",,"941","11.4","8.1","27.2","23.8","3.3","0.2",
+"food","145","2026-04-20 00-00-00","Ice cream cookie / Oreo","Eiscreme Cookie / Oreo",,,"100",,"941","11.4","8.1","27.2","23.8","3.3","0.2"
 "foodunit","1","Ball","Kugel","75","g","true"
-"food","146","2026-04-22 00-00-00","Wine / red wine / white wine / sparkling wine","Wein / Weißwein / Rotwein / Sekt",,,,"100","320","0","0","1.5","0.5","0","0",
-"food","147","2026-04-22 00-00-00","Grilled sausage / barbecue sausage","Bratuwrst / Rostbratwurst",,,"100",,"1137 ","23.8","7.9","1.1","0.7","14.2","2.4",
+"food","146","2026-04-22 00-00-00","Wine / red wine / white wine / sparkling wine","Wein / Weißwein / Rotwein / Sekt",,,,"100","320","0","0","1.5","0.5","0","0"
+"food","147","2026-04-22 00-00-00","Grilled sausage / barbecue sausage","Bratuwrst / Rostbratwurst",,,"100",,"1137 ","23.8","7.9","1.1","0.7","14.2","2.4"
 "foodunit","1","Sausage","Wurst","100","g","true"
-"food","148","2026-04-22 00-00-00","Chocolate marshamallow","Schokokuss",,,"100",,"1567","9.9","6.1","67.1","50.5","3.2","0.1",
+"food","148","2026-04-22 00-00-00","Chocolate marshamallow","Schokokuss",,,"100",,"1567","9.9","6.1","67.1","50.5","3.2","0.1"
 "foodunit","1","Piece","Stück","28","g","true"
-"food","149","2026-04-20 00-00-00","Crunchy salmon sushi","Crunchy Lachs Sushi",,,"100",,"900","10","3","25","5.3","5.3","1.2",
+"food","149","2026-04-20 00-00-00","Crunchy salmon sushi","Crunchy Lachs Sushi",,,"100",,"900","10","3","25","5.3","5.3","1.2"
 "foodunit","1","Piece","Stück","35","g","true"
-"food","150","2026-05-13 00-00-00","Potato chips","Kartoffelchips",,,"100",,"2221","33","2.8","49","2.5","6.1","1.5",
+"food","150","2026-05-13 00-00-00","Potato chips","Kartoffelchips",,,"100",,"2221","33","2.8","49","2.5","6.1","1.5"
 "foodunit","1","Serving","Portion","30","g","true"
-"food","151","2026-05-13 00-00-00","Bamba ","Erdnussflips",,,"100",,"2056","24","3.5","52","3","14","1.7",
+"food","151","2026-05-13 00-00-00","Bamba ","Erdnussflips",,,"100",,"2056","24","3.5","52","3","14","1.7"
 "foodunit","1","Serving","Portion","30","g","true"
-"food","152","2026-05-13 00-00-00","Vodka / whisky / rum / alcohol 40%","Wodka / Vodka / Whisky / Rum / Alkohol 40%",,,,"100","950","","","","","","",
-"food","153","2026-05-13 00-00-00","Poultry (lunch meats, cold cuts, turkey / chicken)","Geflügelaufschnitt (Hähnchen / Pute)",,,"100",,"435","1.2","0.5","0.5","0.5","23","2.4",
+"food","152","2026-05-13 00-00-00","Vodka / whisky / rum / alcohol 40%","Wodka / Vodka / Whisky / Rum / Alkohol 40%",,,,"100","950","","","","","",""
+"food","153","2026-05-13 00-00-00","Poultry (lunch meats, cold cuts, turkey / chicken)","Geflügelaufschnitt (Hähnchen / Pute)",,,"100",,"435","1.2","0.5","0.5","0.5","23","2.4"
 "foodunit","1","Slice","Scheibe","15","g","true"
-"food","154","2026-05-13 00-00-00","Red / green coconut milk or peanut curry vegetarian with rice","Rotes / grünes Kokosmilch oder Erdnuss Curry vegetarisch mit Reis",,,"100",,"545","6.4","4.6","15","2.4","3.2","0.6",
+"food","154","2026-05-13 00-00-00","Red / green coconut milk or peanut curry vegetarian with rice","Rotes / grünes Kokosmilch oder Erdnuss Curry vegetarisch mit Reis",,,"100",,"545","6.4","4.6","15","2.4","3.2","0.6"
 "foodunit","1","Serving","Portion","500","g","true"
-"food","155","2026-05-13 00-00-00","Red / green coconut milk or peanut curry with meat and rice","Rotes / grünes Kokosmilch oder Erdnuss Curry mit Fleisch und Reis",,,"100",,"555","5.5","2.5","14.6","4.5","6.3","0.6",
+"food","155","2026-05-13 00-00-00","Red / green coconut milk or peanut curry with meat and rice","Rotes / grünes Kokosmilch oder Erdnuss Curry mit Fleisch und Reis",,,"100",,"555","5.5","2.5","14.6","4.5","6.3","0.6"
 "foodunit","1","Serving","Portion","500","g","true"
-"food","156","2026-07-11 00-00-00","Pizza margherita","Pizza Margherita",,,"100",,"1018","8.9","3.9","28.7","3.6","10.9","1",
+"food","156","2026-07-11 00-00-00","Pizza margherita","Pizza Margherita",,,"100",,"1018","8.9","3.9","28.7","3.6","10.9","1"
 "foodunit","1","Pizza","Pizza","370","g","true"
-"food","157","2026-07-11 00-00-00","Pizza tuna / tonno","Pizza Tuna / Tonno / Thunfisch",,,"100",,"922","8.9","3.0","24.1","3.6","9.7","1.1",
+"food","157","2026-07-11 00-00-00","Pizza tuna / tonno","Pizza Tuna / Tonno / Thunfisch",,,"100",,"922","8.9","3.0","24.1","3.6","9.7","1.1"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","158","2026-07-11 00-00-00","Pizza salami / pepperoni","Pizza Salami",,,"100",,"1057","10.4","4.2","27.6","3.8","10.9","1.2",
+"food","158","2026-07-11 00-00-00","Pizza salami / pepperoni","Pizza Salami",,,"100",,"1057","10.4","4.2","27.6","3.8","10.9","1.2"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","159","2026-07-11 00-00-00","Pizza vegetarian","Pizza Vegetaria",,,"100",,"771","6.3","2","23.5","3.9","7.1","0.9",
+"food","159","2026-07-11 00-00-00","Pizza vegetarian","Pizza Vegetaria",,,"100",,"771","6.3","2","23.5","3.9","7.1","0.9"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","160","2026-07-11 00-00-00","Pizza prosciutto / ham","Pizza Prosciutto / Schinken",,,"100",,"863","9","3.3","22.5","2.9","7.5","1.6",
+"food","160","2026-07-11 00-00-00","Pizza prosciutto / ham","Pizza Prosciutto / Schinken",,,"100",,"863","9","3.3","22.5","2.9","7.5","1.6"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","161","2026-07-11 00-00-00","Pizza spinaci / spinach","Pizza Spinaci / Spinat",,,"100",,"795","5.9","3.8","24","2.4","10","1.2",
+"food","161","2026-07-11 00-00-00","Pizza spinaci / spinach","Pizza Spinaci / Spinat",,,"100",,"795","5.9","3.8","24","2.4","10","1.2"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","162","2026-07-11 00-00-00","Pizza funghi / mushrooms","Pizza Funghi / Pilze / Champigons",,,"100",,"871","8","2.8","24.4","3.2","8.3","0.9",
+"food","162","2026-07-11 00-00-00","Pizza funghi / mushrooms","Pizza Funghi / Pilze / Champigons",,,"100",,"871","8","2.8","24.4","3.2","8.3","0.9"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","163","2026-07-11 00-00-00","Pizza Hawaii","Pizza Hawaii",,,"100",,"838","6.1","2.5","26","6.2","8.9","0.9",
+"food","163","2026-07-11 00-00-00","Pizza Hawaii","Pizza Hawaii",,,"100",,"838","6.1","2.5","26","6.2","8.9","0.9"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","164","2026-07-11 00-00-00","Pizza speciale (salami / ham / mushrooms)","Pizza Speciale (Salami / Schinken / Champignons)",,,"100",,"978","9.6","3.9","25.3","3.5","10.4","1.1",
+"food","164","2026-07-11 00-00-00","Pizza speciale (salami / ham / mushrooms)","Pizza Speciale (Salami / Schinken / Champignons)",,,"100",,"978","9.6","3.9","25.3","3.5","10.4","1.1"
 "foodunit","1","Pizza","Pizza","400","g","true"
-"food","165","2026-05-22 00-00-00","White chocolate","Schokolade weiß",,,"100",,"2359","35.4","21.3","55.1","55.1","6.6","0.3",
+"food","165","2026-05-22 00-00-00","White chocolate","Schokolade weiß",,,"100",,"2359","35.4","21.3","55.1","55.1","6.6","0.3"
 "foodunit","1","Bar","Tafel","100","g","false"
 "foodunit","2","1/6 bar","Riegel","16.7","g","true"
 "foodunit","3","Piece","Stück","4.2","g","false"
-"food","166","2026-05-24 00-00-00","Hamburger","Hamburger",,,"100",,"1021","8.9","3.5","27","6.5","13","1",
+"food","166","2026-05-24 00-00-00","Hamburger","Hamburger",,,"100",,"1021","8.9","3.5","27","6.5","13","1"
 "foodunit","1","Burger","Burger","260","g","true"
-"food","167","2026-05-24 00-00-00","Cheeseburger","Cheeseburger",,,"100",,"1069","11","5.2","25","6.1","13","1.3",
+"food","167","2026-05-24 00-00-00","Cheeseburger","Cheeseburger",,,"100",,"1069","11","5.2","25","6.1","13","1.3"
 "foodunit","1","Burger","Burger","285","g","true"
-"food","168","2026-05-24 00-00-00","Bacon Burger","Bacon Burger",,,"100",,"1131","17.9","7","11.4","3.1","15.9","1.2",
+"food","168","2026-05-24 00-00-00","Bacon Burger","Bacon Burger",,,"100",,"1131","17.9","7","11.4","3.1","15.9","1.2"
 "foodunit","1","Burger","Burger","360","g","true"
-"food","169","2026-05-25 00-00-00","Pistachios salted","Pistazien gesalzen",,,"100",,"2533","50.4","6.6","11.2","6.2","23.4","1.8",
-"food","170","2026-05-25 00-00-00","Chicken nuggets oven / air fryer","Chicken Nuggets Ofen / Heißluftfriteuse",,,"100",,"811","9.5","1.7","13","1.8","14","1.1",
+"food","169","2026-05-25 00-00-00","Pistachios salted","Pistazien gesalzen",,,"100",,"2533","50.4","6.6","11.2","6.2","23.4","1.8"
+"food","170","2026-05-25 00-00-00","Chicken nuggets oven / air fryer","Chicken Nuggets Ofen / Heißluftfriteuse",,,"100",,"811","9.5","1.7","13","1.8","14","1.1"
 "foodunit","1","Piece","Stück","19","g","true"
-"food","171","2026-05-25 00-00-00","Chicken nuggets fried","Chicken Nuggets fritiert",,,"100",,"1133","15","3","18","0.5","15","1.1",
+"food","171","2026-05-25 00-00-00","Chicken nuggets fried","Chicken Nuggets fritiert",,,"100",,"1133","15","3","18","0.5","15","1.1"
 "foodunit","1","Piece","Stück","19","g","true"
-"food","172","2026-07-10 00-00-00","Pork neck steak grilled","Schweinenackensteak gegrillt",,,"100",,"832","13.5","5.3","0","0","19.6","0.1",
+"food","172","2026-07-10 00-00-00","Pork neck steak grilled","Schweinenackensteak gegrillt",,,"100",,"832","13.5","5.3","0","0","19.6","0.1"
 "foodunit","1","Serving","Portion","175","g","true"
-"food","173","2026-06-01 00-00-00","Rolled oats","Haferflocken",,,"100",,"1562","7","1.3","59","0.7","14","0",
-"food","174","2026-06-13 00-00-00","Shortcrust pastry (cookies / cake base)","Mürbeteig (Kekse / Tortenboden)",,,"100",,"2005","25","6.5","57","31","5.7","0.4",
+"food","173","2026-06-01 00-00-00","Rolled oats","Haferflocken",,,"100",,"1562","7","1.3","59","0.7","14","0"
+"food","174","2026-06-13 00-00-00","Shortcrust pastry (cookies / cake base)","Mürbeteig (Kekse / Tortenboden)",,,"100",,"2005","25","6.5","57","31","5.7","0.4"
 "foodunit","1","Cake base","Tortenboden","300","g","false"
 "foodunit","2","Piece of cake base (eighth)","Stück Tortenboden (Achtel)","37.5","g","true"
-"food","175","2026-06-19 00-00-00","Franzbrötchen / Cinnamon roll","Franzbrötchen",,,"100",,"1954","30.1","15.1","43.1","15.2","5.6","0.7",
+"food","175","2026-06-19 00-00-00","Franzbrötchen / Cinnamon roll","Franzbrötchen",,,"100",,"1954","30.1","15.1","43.1","15.2","5.6","0.7"
 "foodunit","1","Piece","Stück","85","g","true"
-"food","176","2026-08-20 00-00-00","Kohlrabi","Kohlrabi",,,"100",,"116","0.2","0","3.7","3.7","2","0.1",
+"food","176","2026-08-20 00-00-00","Kohlrabi","Kohlrabi",,,"100",,"116","0.2","0","3.7","3.7","2","0.1"
 "foodunit","1","Piece","Stück","400","g","true"
-"food","177","2026-06-19 00-00-00","Wiener sausage","Wiener Würstchen",,,"100",,"1179","26","10","0.5","0.5","12","2",
+"food","177","2026-06-19 00-00-00","Wiener sausage","Wiener Würstchen",,,"100",,"1179","26","10","0.5","0.5","12","2"
 "foodunit","1","Sausage","Würstchen","50","g","true"
-"food","178","2026-06-19 00-00-00","Wiener sausage (poultry)","Wiener Würstchen (Geflügel)",,,"100",,"933","19","5.8","0.5","0.5","13","2.2",
+"food","178","2026-06-19 00-00-00","Wiener sausage (poultry)","Wiener Würstchen (Geflügel)",,,"100",,"933","19","5.8","0.5","0.5","13","2.2"
 "foodunit","1","Sausage","Würstchen","50","g","true"
-"food","179","2026-06-19 00-00-00","Grapes","Weintrauben",,,"100",,"280","0.3","0","15.2","15.1","0.7","0",
+"food","179","2026-06-19 00-00-00","Grapes","Weintrauben",,,"100",,"280","0.3","0","15.2","15.1","0.7","0"
 "foodunit","1","Grape","Traube","6","g","true"
-"food","180","2026-06-24 00-00-00","Jelly","Wackelpudding / Götterspeise",,,"100",,"325","0","0","18","17","1.4","0",
-"food","181","2026-06-24 00-00-00","Vanilla pudding / chocolate pudding","Vanillepudding / Schokoladenpudding",,,"100",,"650","8.7","5.9","15.9","12.4","3.4","0.2",
-"food","182","2026-06-24 00-00-00","Vanilla sauce / Dessert sauce","Vanillesauce / Vanillesoße / Dessertsauce / Dessertsoße",,,"100",,"508","4.4","2.7","17","14","3.4","0.1",
-"food","183","2026-06-24 00-00-00","Pulled pork","Pulled Pork",,,"100",,"830","13","4","0","0","18","0.2",
-"food","184","2026-06-24 00-00-00","Pulled chicken","Pulled Chicken",,,"100",,"567","3.4","1.1","3.2","3.1","23","1.9",
-"food","185","2026-06-30 00-00-00","Asia fried noodles with meat","Asiatische gebratene Nudeln mit Fleisch",,,"100",,"801","8.8","3.6","19.3","3.1","9.2","1.2",
+"food","180","2026-06-24 00-00-00","Jelly","Wackelpudding / Götterspeise",,,"100",,"325","0","0","18","17","1.4","0"
+"food","181","2026-06-24 00-00-00","Vanilla pudding / chocolate pudding","Vanillepudding / Schokoladenpudding",,,"100",,"650","8.7","5.9","15.9","12.4","3.4","0.2"
+"food","182","2026-06-24 00-00-00","Vanilla sauce / Dessert sauce","Vanillesauce / Vanillesoße / Dessertsauce / Dessertsoße",,,"100",,"508","4.4","2.7","17","14","3.4","0.1"
+"food","183","2026-06-24 00-00-00","Pulled pork","Pulled Pork",,,"100",,"830","13","4","0","0","18","0.2"
+"food","184","2026-06-24 00-00-00","Pulled chicken","Pulled Chicken",,,"100",,"567","3.4","1.1","3.2","3.1","23","1.9"
+"food","185","2026-06-30 00-00-00","Asia fried noodles with meat","Asiatische gebratene Nudeln mit Fleisch",,,"100",,"801","8.8","3.6","19.3","3.1","9.2","1.2"
 "foodunit","1","Serving","Portion","400","g","true"
-"food","186","2026-06-30 00-00-00","Asia fried noodles vegetarian","Asiatische gebratene Nudeln vegetarisch",,,"100",,"654","4.1","0.6","23.7","3.7","5.2","0.41",
+"food","186","2026-06-30 00-00-00","Asia fried noodles vegetarian","Asiatische gebratene Nudeln vegetarisch",,,"100",,"654","4.1","0.6","23.7","3.7","5.2","0.41"
 "foodunit","1","Serving","Portion","400","g","true"
-"food","187","2026-06-30 00-00-00","Asia fried rice with meat","Asiatische gebratener Reis mit Fleisch",,,"100",,"548","6.3","2.6","13.7","2.2","5.8","1",
+"food","187","2026-06-30 00-00-00","Asia fried rice with meat","Asiatische gebratener Reis mit Fleisch",,,"100",,"548","6.3","2.6","13.7","2.2","5.8","1"
 "foodunit","1","Serving","Portion","400","g","true"
-"food","188","2026-06-30 00-00-00","Asia fried rice vegetarian","Asiatische gebratener Reis vegetarisch",,,"100",,"454","3.4","2.2","16.6","3.9","2.8","0.6",
+"food","188","2026-06-30 00-00-00","Asia fried rice vegetarian","Asiatische gebratener Reis vegetarisch",,,"100",,"454","3.4","2.2","16.6","3.9","2.8","0.6"
 "foodunit","1","Serving","Portion","400","g","true"
-"food","189","2026-07-02 00-00-00","Kasseler (pork meat cured and smoked)","Kasseler (Schweinefleisch geräuchert und gepökelt)",,,"100",,"553","3","1.3","1","0.4","20","2.1",
-"food","190","2026-07-04 00-00-00","Feta / Sheep milk cheese (sheep / goat / cow milk)","Fetakäse / Schafskäse (Schafs- / Ziegen- / Kuhmilch)",,,"100",,"1194","24","17","0.5","0.5","18","2.4",
-"food","191","2026-07-04 00-00-00","Applesauce / Apple pulp","Apfelmus / Apfelmark ohne Zucker",,,"100",,"261","0.6","0.1","11.4","11.4","0.5","0",
-"food","192","2026-09-28 00-00-00","Risotto with parmesan and butter","Risotto mit Parmesan und Butter",,,"100",,"655","20.7","0.4","6.6","3.4","3.1","0.6",
-"food","193","2026-07-13 00-00-00","Ice cream cone","Eiswaffel / Eishörnchen / Eistüte",,,"100",,"1721","4","1.5","83.9","35.1","7.5","0.4",
+"food","189","2026-07-02 00-00-00","Kasseler (pork meat cured and smoked)","Kasseler (Schweinefleisch geräuchert und gepökelt)",,,"100",,"553","3","1.3","1","0.4","20","2.1"
+"food","190","2026-07-04 00-00-00","Feta / Sheep milk cheese (sheep / goat / cow milk)","Fetakäse / Schafskäse (Schafs- / Ziegen- / Kuhmilch)",,,"100",,"1194","24","17","0.5","0.5","18","2.4"
+"food","191","2026-07-04 00-00-00","Applesauce / Apple pulp","Apfelmus / Apfelmark ohne Zucker",,,"100",,"261","0.6","0.1","11.4","11.4","0.5","0"
+"food","192","2026-09-28 00-00-00","Risotto with parmesan and butter","Risotto mit Parmesan und Butter",,,"100",,"655","20.7","0.4","6.6","3.4","3.1","0.6"
+"food","193","2026-07-13 00-00-00","Ice cream cone","Eiswaffel / Eishörnchen / Eistüte",,,"100",,"1721","4","1.5","83.9","35.1","7.5","0.4"
 "foodunit","1","Piece","Stück","15","g","true"
-"food","194","2026-07-13 00-00-00","Trail mix / nuts and raisins","Studentenfutter / Nuss Rosinen Mix",,,"100",,"2230","37","5.4","32","20","16","0.1",
-"food","195","2026-07-13 00-00-00","Boiled ham","Kochschinken",,,"100",,"468","3","1.3","1","0.4","20","2.1",
+"food","194","2026-07-13 00-00-00","Trail mix / nuts and raisins","Studentenfutter / Nuss Rosinen Mix",,,"100",,"2230","37","5.4","32","20","16","0.1"
+"food","195","2026-07-13 00-00-00","Boiled ham","Kochschinken",,,"100",,"468","3","1.3","1","0.4","20","2.1"
 "foodunit","1","Slice","Scheibe","30","g","true"
-"food","196","2026-07-13 00-00-00","Dry-cured ham / Country ham","Rohschinken / Gepökelter Schinken / Schwarzwälder Schinken",,,"100",,"1121","18.5","6.8","0.5","0","25","2.4",
+"food","196","2026-07-13 00-00-00","Dry-cured ham / Country ham","Rohschinken / Gepökelter Schinken / Schwarzwälder Schinken",,,"100",,"1121","18.5","6.8","0.5","0","25","2.4"
 "foodunit","1","Slice","Scheibe","15","g","true"
-"food","197","2026-07-28 00-00-00","Salt sticks / Salted pretzel","Salzstangen / Salzbrezel",,,"100",,"1670 ","7.2","0.8","69","2","12","3.5",
-"food","198","2026-07-28 00-00-00","Apple strudel","Apfelstrudel",,,"100",,"829 ","9.1","4.4","25","15","3.8","0.1",
+"food","197","2026-07-28 00-00-00","Salt sticks / Salted pretzel","Salzstangen / Salzbrezel",,,"100",,"1670 ","7.2","0.8","69","2","12","3.5"
+"food","198","2026-07-28 00-00-00","Apple strudel","Apfelstrudel",,,"100",,"829 ","9.1","4.4","25","15","3.8","0.1"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","199","2026-07-28 00-00-00","Apple strudel (flaky / puffy pastry)","Apfelstrudel (Blätterteig)",,,"100",,"1192 ","13.3","6.3","35.8","16","3.9","0.5",
+"food","199","2026-07-28 00-00-00","Apple strudel (flaky / puffy pastry)","Apfelstrudel (Blätterteig)",,,"100",,"1192 ","13.3","6.3","35.8","16","3.9","0.5"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","200","2026-07-28 00-00-00","Sweet corn","Gemüsemais / Süßmais / Zuckermais",,,"100",,"309 ","1.4","0.2","11","5.1","2.7","0.3",
-"food","201","2026-08-20 00-00-00","Salad mix with carrot and corn","Salatmix / Salatmischung mit Karotte und Mais",,,"100",,"118","0","0","3.6","2.4","1.5","0.1",
-"food","202","2026-08-20 00-00-00","Hummus","Hummus",,,"100",,"1136 ","22","2.3","9.3","2.4","6.6","1",
-"food","203","2026-08-20 00-00-00","Chocolate donut","Schoko Donut",,,"100",,"1881 ","28","14","41","20","6.9","1.4",
+"food","200","2026-07-28 00-00-00","Sweet corn","Gemüsemais / Süßmais / Zuckermais",,,"100",,"309 ","1.4","0.2","11","5.1","2.7","0.3"
+"food","201","2026-08-20 00-00-00","Salad mix with carrot and corn","Salatmix / Salatmischung mit Karotte und Mais",,,"100",,"118","0","0","3.6","2.4","1.5","0.1"
+"food","202","2026-08-20 00-00-00","Hummus","Hummus",,,"100",,"1136 ","22","2.3","9.3","2.4","6.6","1"
+"food","203","2026-08-20 00-00-00","Chocolate donut","Schoko Donut",,,"100",,"1881 ","28","14","41","20","6.9","1.4"
 "foodunit","1","Normal","Normal","60","g","true"
 "foodunit","2","Mini","Mini","25","g","false"
-"food","204","2026-08-23 00-00-00","Cheesecake","Käsekuchen",,,"100",,"1134 ","16.5","11.6","24.1","14.1","6.7","0.1",
+"food","204","2026-08-23 00-00-00","Cheesecake","Käsekuchen",,,"100",,"1134 ","16.5","11.6","24.1","14.1","6.7","0.1"
 "foodunit","1","Serving","Portion","150","g","true"
-"food","205","2026-08-23 00-00-00","Salted peanuts","Erdnüsse gesalzen",,,"100",,"2569 ","51.2","7.8","11","5.2","2.4","1",
-"food","206","2026-09-12 00-00-00","Crêpes / Crepes","Crêpes / Crepes",,,"100",,"858 ","6","2.5","28.5","3.5","8","0.3",
+"food","205","2026-08-23 00-00-00","Salted peanuts","Erdnüsse gesalzen",,,"100",,"2569 ","51.2","7.8","11","5.2","2.4","1"
+"food","206","2026-09-12 00-00-00","Crêpes / Crepes","Crêpes / Crepes",,,"100",,"858 ","6","2.5","28.5","3.5","8","0.3"
 "foodunit","1","Serving","Portion","60","g","true"
-"food","207","2026-09-12 00-00-00","Cheese roll / cheese bun (gratinated)","Käsebrötchen (überbacken)",,,"100",,"1349","9.4","5.4","46","0.7","12","1.8",
+"food","207","2026-09-12 00-00-00","Cheese roll / cheese bun (gratinated)","Käsebrötchen (überbacken)",,,"100",,"1349","9.4","5.4","46","0.7","12","1.8"
 "foodunit","1","Roll","Brötchen","80","g","true"
-"food","208","2026-09-12 00-00-00","Brownies","Brownies",,,"100",,"1982","25","4.1","55","46","5.5","0.4",
+"food","208","2026-09-12 00-00-00","Brownies","Brownies",,,"100",,"1982","25","4.1","55","46","5.5","0.4"
 "foodunit","1","Piece","Stück","40","g","true"
-"food","209","2026-09-12 00-00-00","Cornflakes","Cornflakes",,,"100",,"1604","0.9","0.2","84","8","7","1.1",
-"food","210","2026-09-12 00-00-00","Smacks","Smacks",,,"100",,"1597","1.6","0.3","81","34","7.1","0",
-"food","211","2026-09-12 00-00-00","Cocoa Krispies","Choco Krispies",,,"100",,"1608","2.2","1","77","22","10","0.7",
-"food","212","2026-09-12 00-00-00","Cocoa Krispies","Choco Krispies",,,"100",,"1608","2.2","1","77","22","10","0.7",
-"food","213","2026-09-12 00-00-00","Wholegrain oat cereals chocolate (puffed)","Haferfleks Schoko (gepufft)",,,"100",,"1666","5.2","1.7","73","27","10","1",
-"food","214","2026-09-12 00-00-00","Wholegrain oat cereals (puffed)","Haferfleks (gepufft)",,,"100",,"1656","5.4","1.1","72","17","9.7","1.1",
-"food","215","2026-09-29 00-00-00","Condensed milk 7.5%","Kondensmilch 7,5%",,,"100",,"553","7.5","5","10.1","10.1","6.1","0.3",
-"food","216","2026-09-29 00-00-00","Condensed milk sweetened","Kondensmilch gezuckert (Milchmädchen)",,,"100",,"1397","9","6.1","55","55","7.6","0.3",
-"food","217","2026-09-29 00-00-00","Coffee cream 10%","Kaffesahne 10%",,,"100",,"491","10","6.9","4","4","3.1","0.1",
-"food","218","2026-10-05 00-00-00","Covered apple pie","Gedeckter Apfelkuchen",,,"100",,"1025","9","5","38","23","3","0.1",
+"food","209","2026-09-12 00-00-00","Cornflakes","Cornflakes",,,"100",,"1604","0.9","0.2","84","8","7","1.1"
+"food","210","2026-09-12 00-00-00","Smacks","Smacks",,,"100",,"1597","1.6","0.3","81","34","7.1","0"
+"food","211","2026-09-12 00-00-00","Cocoa Krispies","Choco Krispies",,,"100",,"1608","2.2","1","77","22","10","0.7"
+"food","212","2026-09-12 00-00-00","Cocoa Krispies","Choco Krispies",,,"100",,"1608","2.2","1","77","22","10","0.7"
+"food","213","2026-09-12 00-00-00","Wholegrain oat cereals chocolate (puffed)","Haferfleks Schoko (gepufft)",,,"100",,"1666","5.2","1.7","73","27","10","1"
+"food","214","2026-09-12 00-00-00","Wholegrain oat cereals (puffed)","Haferfleks (gepufft)",,,"100",,"1656","5.4","1.1","72","17","9.7","1.1"
+"food","215","2026-09-29 00-00-00","Condensed milk 7.5%","Kondensmilch 7,5%",,,"100",,"553","7.5","5","10.1","10.1","6.1","0.3"
+"food","216","2026-09-29 00-00-00","Condensed milk sweetened","Kondensmilch gezuckert (Milchmädchen)",,,"100",,"1397","9","6.1","55","55","7.6","0.3"
+"food","217","2026-09-29 00-00-00","Coffee cream 10%","Kaffesahne 10%",,,"100",,"491","10","6.9","4","4","3.1","0.1"
+"food","218","2026-10-05 00-00-00","Covered apple pie","Gedeckter Apfelkuchen",,,"100",,"1025","9","5","38","23","3","0.1"
 "foodunit","1","Piece","Stück","160","g","true"
-"food","219","2026-10-10 00-00-00","Baklava","Baklava",,,"100",,"1883","24","8","55","30","6","0.4",
+"food","219","2026-10-10 00-00-00","Baklava","Baklava",,,"100",,"1883","24","8","55","30","6","0.4"
 "foodunit","1","Piece","Stück","40","g","true"

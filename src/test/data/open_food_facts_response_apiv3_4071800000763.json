@@ -1,0 +1,133 @@
+{
+    "code": "4071800000763",
+    "errors": [
+    ],
+    "product": {
+        "brands_tags": [
+            "xx:Harry"
+        ],
+        "code": "4071800000763",
+        "generic_name": "",
+        "generic_name_de": "",
+        "generic_name_en": "",
+        "lang": "de",
+        "nutrition": {
+            "input_sets": [
+                {
+                    "last_updated_t": 1774464982,
+                    "nutrients": {
+                        "carbohydrates": {
+                            "unit": "g",
+                            "value": 38,
+                            "value_string": "38"
+                        },
+                        "energy-kcal": {
+                            "unit": "kcal",
+                            "value": 210,
+                            "value_computed": 210,
+                            "value_string": "210"
+                        },
+                        "energy-kj": {
+                            "unit": "kJ",
+                            "value": 886,
+                            "value_computed": 885.6,
+                            "value_string": "886"
+                        },
+                        "fat": {
+                            "unit": "g",
+                            "value": 1.8,
+                            "value_string": "1.8"
+                        },
+                        "fiber": {
+                            "unit": "g",
+                            "value": 9.3,
+                            "value_string": "9.3"
+                        },
+                        "nova-group": {
+                            "unit": "",
+                            "value": 4,
+                            "value_string": "4"
+                        },
+                        "proteins": {
+                            "unit": "g",
+                            "value": 5.8,
+                            "value_string": "5.8"
+                        },
+                        "salt": {
+                            "unit": "g",
+                            "value": 1.1,
+                            "value_computed": 1.1,
+                            "value_string": "1.1"
+                        },
+                        "saturated-fat": {
+                            "unit": "g",
+                            "value": 0.3,
+                            "value_string": "0.3"
+                        },
+                        "sodium": {
+                            "unit": "g",
+                            "value": 0.44,
+                            "value_computed": 0.44,
+                            "value_string": "0.44"
+                        },
+                        "sugars": {
+                            "unit": "g",
+                            "value": 3.7,
+                            "value_string": "3.7"
+                        }
+                    },
+                    "per": "100g",
+                    "per_quantity": 100,
+                    "per_unit": "g",
+                    "preparation": "as_sold",
+                    "source": "packaging"
+                },
+                {
+                    "nutrients": {
+                        "added-sugars": {
+                            "modifier": "~",
+                            "unit": "g",
+                            "value": 5.625,
+                            "value_string": "5.625"
+                        },
+                        "fruits-vegetables-legumes": {
+                            "modifier": "~",
+                            "unit": "%",
+                            "value": 0,
+                            "value_string": "0"
+                        },
+                        "fruits-vegetables-nuts": {
+                            "modifier": "~",
+                            "unit": "%",
+                            "value": 0,
+                            "value_string": "0"
+                        }
+                    },
+                    "per": "100g",
+                    "per_quantity": 100,
+                    "per_unit": "g",
+                    "preparation": "as_sold",
+                    "source": "estimate",
+                    "source_description": "Estimate from ingredients"
+                }
+            ]
+        },
+        "product_name": "Voll:Korn - Katen - Harry 1688",
+        "product_name_de": "Voll:Korn - Katen - Harry 1688",
+        "product_name_en": "Das volle Korn mit Keim und Randschicht, Katen",
+        "product_quantity": 500,
+        "product_quantity_unit": "g",
+        "quantity": "500 g",
+        "serving_quantity": 63,
+        "serving_quantity_unit": "g",
+        "serving_size": "63g"
+    },
+    "result": {
+        "id": "product_found",
+        "lc_name": "Product found",
+        "name": "Product found"
+    },
+    "status": "success",
+    "warnings": [
+    ]
+}

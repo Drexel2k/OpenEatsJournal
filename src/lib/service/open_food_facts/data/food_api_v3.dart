@@ -16,9 +16,9 @@ class FoodApiV3 implements FoodApiBase {
     String? abbreviatedProductNameDe,
     List<String>? brandsTags,
     String? quantity,
-    int? productQuantity,
+    double? productQuantity,
     String? productQuantityUnit,
-    int? servingQuantity,
+    double? servingQuantity,
     String? servingQuantityUnit,
     String? servingSize,
     String? nutritionDataPer,
@@ -58,9 +58,9 @@ class FoodApiV3 implements FoodApiBase {
   final List<String>? _brandsTags;
   final String? _lang;
   final String? _quantity;
-  final int? _productQuantity;
+  final double? _productQuantity;
   final String? _productQuantityUnit;
-  final int? _servingQuantity;
+  final double? _servingQuantity;
   final String? _servingQuantityUnit;
   final String? _servingSize;
   final String? _nutritionDataPer;
@@ -88,10 +88,10 @@ class FoodApiV3 implements FoodApiBase {
   List<String>? get brandsTags => _brandsTags;
   String? get lang => _lang;
   String? get quantity => _quantity;
-  int? get productQuantity => _productQuantity;
+  double? get productQuantity => _productQuantity;
   String? get productQuantityUnit => _productQuantityUnit;
 
-  int? get servingQuantity => _servingQuantity;
+  double? get servingQuantity => _servingQuantity;
   String? get servingQuantityUnit => _servingQuantityUnit;
   String? get servingSize => _servingSize;
   String? get nutritionDataPer => _nutritionDataPer;
@@ -101,6 +101,7 @@ class FoodApiV3 implements FoodApiBase {
     return FoodApiV3(
       code: int.parse(json[OpenFoodFactsApiStrings.fieldCode]),
       brandsTags: json.containsKey(OpenFoodFactsApiStrings.fieldBrandsTags) ? _getbrandList(json) : null,
+      quantity: json.containsKey(OpenFoodFactsApiStrings.fieldQuantity) ? json[OpenFoodFactsApiStrings.fieldQuantity] : null,
       productName: json.containsKey(OpenFoodFactsApiStrings.fieldProductName) ? json[OpenFoodFactsApiStrings.fieldProductName] : null,
       productNameEn: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameEn) ? json[OpenFoodFactsApiStrings.fieldProductNameEn] : null,
       productNameDe: json.containsKey(OpenFoodFactsApiStrings.fieldProductNameDe) ? json[OpenFoodFactsApiStrings.fieldProductNameDe] : null,
@@ -118,10 +119,14 @@ class FoodApiV3 implements FoodApiBase {
           : null,
       lang: json.containsKey(OpenFoodFactsApiStrings.fieldLang) ? json[OpenFoodFactsApiStrings.fieldLang] : null,
       //Api returns int, double or text...
-      productQuantity: json.containsKey(OpenFoodFactsApiStrings.fieldProductQuantity) ? json[OpenFoodFactsApiStrings.fieldProductQuantity] : null,
+      productQuantity: json.containsKey(OpenFoodFactsApiStrings.fieldProductQuantity)
+          ? (json[OpenFoodFactsApiStrings.fieldProductQuantity] as num).toDouble()
+          : null,
       productQuantityUnit: json.containsKey(OpenFoodFactsApiStrings.fieldProductQuantityUnit) ? json[OpenFoodFactsApiStrings.fieldProductQuantityUnit] : null,
       //Api returns int, double or text...
-      servingQuantity: json.containsKey(OpenFoodFactsApiStrings.fieldServingQuantity) ? json[OpenFoodFactsApiStrings.fieldServingQuantity] : null,
+      servingQuantity: json.containsKey(OpenFoodFactsApiStrings.fieldServingQuantity)
+          ? (json[OpenFoodFactsApiStrings.fieldServingQuantity] as num).toDouble()
+          : null,
       servingQuantityUnit: json.containsKey(OpenFoodFactsApiStrings.fieldServingQuantityUnit) ? json[OpenFoodFactsApiStrings.fieldServingQuantityUnit] : null,
       servingSize: json.containsKey(OpenFoodFactsApiStrings.fieldServingSize) ? json[OpenFoodFactsApiStrings.fieldServingSize] : null,
       nutritionDataPer: json.containsKey(OpenFoodFactsApiStrings.fieldNutritionDataPer) ? json[OpenFoodFactsApiStrings.fieldNutritionDataPer] : null,

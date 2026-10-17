@@ -1,0 +1,187 @@
+{
+    "code": "5000112546415",
+    "errors": [
+    ],
+    "product": {
+        "brands_tags": [
+            "xx:Coca-Cola",
+            "xx:Coca-Cola Company"
+        ],
+        "code": "5000112546415",
+        "generic_name": "koffeinhaltiges Erfrischungsgetränk mit Pflanzenextrakten",
+        "generic_name_de": "koffeinhaltiges Erfrischungsgetränk mit Pflanzenextrakten",
+        "generic_name_en": "",
+        "lang": "de",
+        "nutrition": {
+            "input_sets": [
+                {
+                    "nutrients": {
+                        "carbohydrates": {
+                            "unit": "g",
+                            "value": 10.6,
+                            "value_string": "10.6"
+                        },
+                        "energy-kcal": {
+                            "unit": "kcal",
+                            "value": 42,
+                            "value_string": "42"
+                        },
+                        "energy-kj": {
+                            "unit": "kJ",
+                            "value": 179,
+                            "value_string": "179"
+                        },
+                        "sugars": {
+                            "unit": "g",
+                            "value": 10.6,
+                            "value_string": "10.6"
+                        }
+                    },
+                    "per": "100g",
+                    "per_quantity": 100,
+                    "per_unit": "g",
+                    "preparation": "as_sold",
+                    "source": "packaging"
+                },
+                {
+                    "last_updated_t": 1774454467,
+                    "nutrients": {
+                        "carbohydrates": {
+                            "unit": "g",
+                            "value": 10.6,
+                            "value_string": "10.6"
+                        },
+                        "energy-kcal": {
+                            "unit": "kcal",
+                            "value": 42,
+                            "value_computed": 42.4,
+                            "value_string": "42"
+                        },
+                        "energy-kj": {
+                            "unit": "kJ",
+                            "value": 180,
+                            "value_computed": 180.2,
+                            "value_string": "180"
+                        },
+                        "fat": {
+                            "unit": "g",
+                            "value": 0,
+                            "value_string": "0"
+                        },
+                        "nova-group": {
+                            "unit": "",
+                            "value": 4,
+                            "value_string": "4"
+                        },
+                        "proteins": {
+                            "unit": "g",
+                            "value": 0,
+                            "value_string": "0"
+                        },
+                        "salt": {
+                            "unit": "g",
+                            "value": 0,
+                            "value_computed": 0,
+                            "value_string": "0"
+                        },
+                        "saturated-fat": {
+                            "unit": "g",
+                            "value": 0,
+                            "value_string": "0"
+                        },
+                        "sodium": {
+                            "unit": "g",
+                            "value": 0,
+                            "value_computed": 0,
+                            "value_string": "0"
+                        },
+                        "sugars": {
+                            "unit": "g",
+                            "value": 10.6,
+                            "value_string": "10.6"
+                        }
+                    },
+                    "per": "100ml",
+                    "per_quantity": 100,
+                    "per_unit": "ml",
+                    "preparation": "as_sold",
+                    "source": "packaging"
+                },
+                {
+                    "nutrients": {
+                        "energy-kj": {
+                            "unit": "kJ",
+                            "value": 181,
+                            "value_string": "181"
+                        }
+                    },
+                    "per": "1l",
+                    "per_quantity": 1000,
+                    "per_unit": "ml",
+                    "preparation": "as_sold",
+                    "source": "packaging"
+                },
+                {
+                    "nutrients": {
+                        "energy-kj": {
+                            "unit": "kJ",
+                            "value": 182,
+                            "value_string": "182"
+                        }
+                    },
+                    "per": "serving",
+                    "per_quantity": 333.3,
+                    "per_unit": "ml",
+                    "preparation": "as_sold",
+                    "source": "packaging"
+                },
+                {
+                    "nutrients": {
+                        "added-sugars": {
+                            "modifier": "~",
+                            "unit": "g",
+                            "value": 5.3,
+                            "value_string": "5.3"
+                        },
+                        "fruits-vegetables-legumes": {
+                            "modifier": "~",
+                            "unit": "%",
+                            "value": 0,
+                            "value_string": "0"
+                        },
+                        "fruits-vegetables-nuts": {
+                            "modifier": "~",
+                            "unit": "%",
+                            "value": 0,
+                            "value_string": "0"
+                        }
+                    },
+                    "per": "100g",
+                    "per_quantity": 100,
+                    "per_unit": "g",
+                    "preparation": "as_sold",
+                    "source": "estimate",
+                    "source_description": "Estimate from ingredients"
+                }
+            ]
+        },
+        "nutrition_data_per": "100g",
+        "product_name": "Coca-Cola Original",
+        "product_name_de": "Coca-Cola Original",
+        "product_name_en": "Coca-Cola Original",
+        "product_quantity": 1253.3,
+        "product_quantity_unit": "ml",
+        "quantity": "1.2533l",
+        "serving_quantity": 333.3,
+        "serving_quantity_unit": "ml",
+        "serving_size": "333,3 ml"
+    },
+    "result": {
+        "id": "product_found",
+        "lc_name": "Product found",
+        "name": "Product found"
+    },
+    "status": "success",
+    "warnings": [
+    ]
+}

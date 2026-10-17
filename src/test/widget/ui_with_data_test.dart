@@ -1,4 +1,5 @@
 import "dart:io";
+import "dart:typed_data";
 import "package:csv/csv.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
@@ -73,21 +74,21 @@ void main() async {
     //required for database initialization
     await Future.wait([initializeDateFormatting(OpenEatsJournalStrings.en), settingsRepository.initSettings()]);
 
+    List<List<List<String>>> localCsvResponses = [
+      csv
+          .decode(await File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsString())
+          .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
+          .toList(),
+    ];
+
     MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
-    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
-      (_) => Future(() async {
-        return csv
-            .decode(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync())
-            .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
-            .toList();
-      }),
-    );
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer((_) => Future(() async => localCsvResponses[0]));
 
     //real IO doesn't work in fake times during test runs, so we read the file in memory here.
-    var responses = openFoodFactsLongRepsonse
-        ? [await File(join(Directory.current.path, r"test\data\open_food_facts_response_long_page_1.json")).readAsBytes()]
-        : [await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()];
+    List<Uint8List> responses = openFoodFactsLongRepsonse
+        ? [await File(join(Directory.current.path, r"test\data\open_food_facts_response_apiv1_long_page_1.json")).readAsBytes()]
+        : [await File(join(Directory.current.path, r"test\data\open_food_facts_response_apiv1_page_1.json")).readAsBytes()];
     var getCallback = MockFunctions().httpGet;
     when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) async => Response.bytes(responses[0], 200));
 

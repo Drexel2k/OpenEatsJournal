@@ -3,7 +3,7 @@ import "package:openeatsjournal/service/open_food_facts/open_food_facts_api_stri
 class NutrimentsApiV3 {
   NutrimentsApiV3({
     required String per,
-    required int perQuantity,
+    required double perQuantity,
     required String perUnit,
     required String preparation,
     double? energyKj,
@@ -28,7 +28,7 @@ class NutrimentsApiV3 {
        _salt = salt;
 
   final String _per;
-  final int _perQuantity;
+  final double _perQuantity;
   final String _perUnit;
   final String _preparation;
   final double? _energyKj;
@@ -41,7 +41,7 @@ class NutrimentsApiV3 {
   final double? _salt;
 
   String get per => _per;
-  int get perQuantity => _perQuantity;
+  double get perQuantity => _perQuantity;
   String get perUnit => _perUnit;
   String get preparation => _preparation;
   double? get energyKj => _energyKj;
@@ -60,7 +60,7 @@ class NutrimentsApiV3 {
 
     return NutrimentsApiV3(
       per: json[OpenFoodFactsApiStrings.fieldPer],
-      perQuantity: json[OpenFoodFactsApiStrings.fieldPerQuantity],
+      perQuantity: (json[OpenFoodFactsApiStrings.fieldPerQuantity] as num).toDouble(),
       perUnit: json[OpenFoodFactsApiStrings.fieldPerUnit],
       preparation: json[OpenFoodFactsApiStrings.fieldPreparation],
       energyKj: nutrientsJson != null ? _getValueFromJson(OpenFoodFactsApiStrings.fieldEnergyKjoule, nutrientsJson) : null,

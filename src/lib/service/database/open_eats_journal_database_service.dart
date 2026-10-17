@@ -210,11 +210,11 @@ class OpenEatsJournalDatabaseService {
     //kilojoule data type change from int to real
     [
       """ALTER TABLE ${OpenEatsJournalStrings.dbTableFood}
-        RENAME TO ${OpenEatsJournalStrings.dbTableFood}_V1""",
+        RENAME TO ${OpenEatsJournalStrings.dbTableFood}_Old""",
       """ALTER TABLE ${OpenEatsJournalStrings.dbTableEatsJournal}
-        RENAME TO ${OpenEatsJournalStrings.dbTableEatsJournal}_V1""",
+        RENAME TO ${OpenEatsJournalStrings.dbTableEatsJournal}_Old""",
       """ALTER TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}
-        RENAME TO ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1""",
+        RENAME TO ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_Old""",
       _currentTableCreations[2]!,
       _currentTableCreations[4]!,
       _currentTableCreations[5]!,
@@ -256,7 +256,7 @@ class OpenEatsJournalDatabaseService {
           ${OpenEatsJournalStrings.dbColumnSalt},
           ${OpenEatsJournalStrings.dbColumnQuantity},
           ${OpenEatsJournalStrings.dbColumnSearchText}
-        FROM ${OpenEatsJournalStrings.dbTableFood}_V1;""",
+        FROM ${OpenEatsJournalStrings.dbTableFood}_Old;""",
       """INSERT INTO 
           ${OpenEatsJournalStrings.dbTableEatsJournal} (
           ${OpenEatsJournalStrings.dbColumnId},
@@ -288,7 +288,7 @@ class OpenEatsJournalDatabaseService {
           ${OpenEatsJournalStrings.dbColumnProtein},
           ${OpenEatsJournalStrings.dbColumnSalt},
           ${OpenEatsJournalStrings.dbColumnMealIdRef}
-        FROM ${OpenEatsJournalStrings.dbTableEatsJournal}_V1;""",
+        FROM ${OpenEatsJournalStrings.dbTableEatsJournal}_Old;""",
       """INSERT INTO ${OpenEatsJournalStrings.dbTableDailyNutritionTarget} (
             ${OpenEatsJournalStrings.dbColumnId},
             ${OpenEatsJournalStrings.dbColumnEntryDate},
@@ -297,10 +297,10 @@ class OpenEatsJournalDatabaseService {
             ${OpenEatsJournalStrings.dbColumnId},
             ${OpenEatsJournalStrings.dbColumnEntryDate},
             ${OpenEatsJournalStrings.dbColumnKiloJoule}
-          FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1;""",
-      """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_V1""",
-      """DROP TABLE ${OpenEatsJournalStrings.dbTableEatsJournal}_V1""",
-      """DROP TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_V1""",
+          FROM ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_Old;""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_Old""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableEatsJournal}_Old""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableDailyNutritionTarget}_Old""",
       _currentIndexCreations[1]!,
       _currentIndexCreations[2]!,
       _currentIndexCreations[3]!,
@@ -315,7 +315,7 @@ class OpenEatsJournalDatabaseService {
       //Wrong index name in an early version, unintended...
       """DROP INDEX i_${OpenEatsJournalStrings.dbColumnEntryDate}_${OpenEatsJournalStrings.dbTableSetting}""",
       """ALTER TABLE ${OpenEatsJournalStrings.dbTableFood}
-        RENAME TO ${OpenEatsJournalStrings.dbTableFood}_V2""",
+        RENAME TO ${OpenEatsJournalStrings.dbTableFood}_Old""",
       _currentTableCreations[2]!,
       """INSERT INTO ${OpenEatsJournalStrings.dbTableFood} (
           ${OpenEatsJournalStrings.dbColumnId},
@@ -355,8 +355,8 @@ class OpenEatsJournalDatabaseService {
           ${OpenEatsJournalStrings.dbColumnSalt},
           ${OpenEatsJournalStrings.dbColumnQuantity},
           ${OpenEatsJournalStrings.dbColumnSearchText}
-        FROM ${OpenEatsJournalStrings.dbTableFood}_V2;""",
-      """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_V2""",
+        FROM ${OpenEatsJournalStrings.dbTableFood}_Old;""",
+      """DROP TABLE ${OpenEatsJournalStrings.dbTableFood}_Old""",
       _currentIndexCreations[0]!,
       _currentIndexCreations[1]!,
       _currentIndexCreations[2]!,

@@ -425,7 +425,7 @@ class FoodRepository {
   Food? _getFoodFromOpenFoodFactsApiV3FoodByPreparation({required FoodApiV3 foodApi, required String preparation, required String languageCode}) {
     NutritionsPer? nutritionsPer = _getNutritons(foodApi: foodApi, preparation: preparation);
     if (nutritionsPer != null) {
-      List<OrderedDefaultFoodUnit> orderedFoodUnitsWithDefault = _getOpenFoodFactsFoodUnits(foodApi: foodApi, preparation: OpenFoodFactsApiStrings.asSold);
+      List<OrderedDefaultFoodUnit> orderedFoodUnitsWithDefault = _getOpenFoodFactsFoodUnits(foodApi: foodApi, preparation: preparation);
       List<OrderedDefaultFoodUnit> foodUnitsToRemove = [];
 
       for (OrderedDefaultFoodUnit orderedDefaultFoodUnit in orderedFoodUnitsWithDefault) {
@@ -473,27 +473,80 @@ class FoodRepository {
   List<OrderedDefaultFoodUnit> _getOpenFoodFactsFoodUnits({required FoodApiV3 foodApi, required String preparation}) {
     List<OrderedDefaultFoodUnit> orderedFoodUnitsWithDefault = [];
     int order = 1;
+
+    //get serving first
     NutrimentsApiV3? nutriments = foodApi.nutriments!.firstWhereOrNull(
       (NutrimentsApiV3 nutrimentsInternal) => nutrimentsInternal.preparation == preparation && nutrimentsInternal.per == OpenFoodFactsApiStrings.serving,
     );
 
     if (nutriments != null) {
-      orderedFoodUnitsWithDefault.add(
-        OrderedDefaultFoodUnit(
-          foodUnitWithOrder: ObjectWithOrder(
-            object: FoodUnit(
-              name: OpenEatsJournalStrings.serving,
-              amount: nutriments.perUnit == OpenFoodFactsApiStrings.liter ? nutriments.perQuantity.toDouble() * 1000 : nutriments.perQuantity.toDouble(),
-              amountMeasurementUnit: _getMeasurementUnitFromApiString(value: nutriments.perUnit)!,
-              originalFoodSourceFoodUnitId: nutriments.per,
+      MeasurementUnit? apiMeasurementUnit = _getMeasurementUnitFromApiString(value: nutriments.perUnit);
+      if (apiMeasurementUnit != null) {
+        orderedFoodUnitsWithDefault.add(
+          OrderedDefaultFoodUnit(
+            foodUnitWithOrder: ObjectWithOrder(
+              object: FoodUnit(
+                name: OpenFoodFactsApiStrings.serving,
+                amount: nutriments.perUnit == OpenFoodFactsApiStrings.liter ? nutriments.perQuantity.toDouble() * 1000 : nutriments.perQuantity.toDouble(),
+                amountMeasurementUnit: _getMeasurementUnitFromApiString(value: nutriments.perUnit)!,
+                originalFoodSourceFoodUnitId: OpenFoodFactsApiStrings.serving,
+              ),
+              order: order,
             ),
-            order: order,
+            isDefault: true,
           ),
-          isDefault: true,
-        ),
-      );
+        );
 
-      order++;
+        order++;
+      }
+    }
+
+    //if serving not in input sets, get it from directly
+    if (orderedFoodUnitsWithDefault.isEmpty) {
+      if (foodApi.servingQuantity != null && foodApi.servingQuantityUnit != null) {
+        MeasurementUnit? apiMeasurementUnit = _getMeasurementUnitFromApiString(value: foodApi.servingQuantityUnit);
+        if (apiMeasurementUnit != null) {
+          orderedFoodUnitsWithDefault.add(
+            OrderedDefaultFoodUnit(
+              foodUnitWithOrder: ObjectWithOrder(
+                object: FoodUnit(
+                  name: OpenFoodFactsApiStrings.serving,
+                  amount: foodApi.servingQuantity!.toDouble(),
+                  amountMeasurementUnit: apiMeasurementUnit,
+                  originalFoodSourceFoodUnitId: OpenEatsJournalStrings.serving,
+                ),
+                order: order,
+              ),
+              isDefault: true,
+            ),
+          );
+
+          order++;
+        }
+      }
+    }
+
+    //try piece quantity
+    if (foodApi.productQuantity != null && foodApi.productQuantityUnit != null) {
+      MeasurementUnit? apiMeasurementUnit = _getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit);
+      if (apiMeasurementUnit != null) {
+        orderedFoodUnitsWithDefault.add(
+          OrderedDefaultFoodUnit(
+            foodUnitWithOrder: ObjectWithOrder(
+              object: FoodUnit(
+                name: OpenEatsJournalStrings.piece,
+                amount: foodApi.productQuantity!.toDouble(),
+                amountMeasurementUnit: apiMeasurementUnit,
+                originalFoodSourceFoodUnitId: OpenEatsJournalStrings.piece,
+              ),
+              order: order,
+            ),
+            isDefault: orderedFoodUnitsWithDefault.isEmpty,
+          ),
+        );
+
+        order++;
+      }
     }
 
     for (NutrimentsApiV3 nutrimentsInternal in foodApi.nutriments!.where(
@@ -517,23 +570,6 @@ class FoodRepository {
       );
 
       order++;
-    }
-
-    if (foodApi.productQuantity != null && foodApi.productQuantityUnit != null) {
-      orderedFoodUnitsWithDefault.add(
-        OrderedDefaultFoodUnit(
-          foodUnitWithOrder: ObjectWithOrder(
-            object: FoodUnit(
-              name: OpenEatsJournalStrings.piece,
-              amount: foodApi.productQuantity!.toDouble(),
-              amountMeasurementUnit: _getMeasurementUnitFromApiString(value: foodApi.productQuantityUnit)!,
-              originalFoodSourceFoodUnitId: OpenEatsJournalStrings.piece,
-            ),
-            order: order,
-          ),
-          isDefault: orderedFoodUnitsWithDefault.isEmpty,
-        ),
-      );
     }
 
     //Null out originalFoodSourceFoodUnitId on all entries that share the same id.
@@ -737,7 +773,7 @@ class FoodRepository {
   // allNutriments and scaled to that amount.
   static NutritionsPer? _buildNutritionsPer({required List<NutrimentsApiV3> allNutriments, required NutrimentsApiV3 baseNutriments, required bool isLiquid}) {
     final List<NutrimentsApiV3> orderedOtherNutriments = allNutriments.where((NutrimentsApiV3 nutriment) => nutriment != baseNutriments).toList();
-    final int baseAmount = isLiquid ? _getAmountInGramOrMilliliter(nutriment: baseNutriments) : baseNutriments.perQuantity;
+    final double baseAmount = isLiquid ? _getAmountInGramOrMilliliter(nutriment: baseNutriments) : baseNutriments.perQuantity;
 
     // Energy: kJ is required, fall back to kcal if no entry has kJ.
     double? energyKiloJoule =
@@ -783,13 +819,13 @@ class FoodRepository {
   }
 
   // Amount in g or ml. Liters are converted to ml.
-  static int _getAmountInGramOrMilliliter({required NutrimentsApiV3 nutriment}) {
+  static double _getAmountInGramOrMilliliter({required NutrimentsApiV3 nutriment}) {
     return nutriment.perUnit == OpenFoodFactsApiStrings.liter ? nutriment.perQuantity * 1000 : nutriment.perQuantity;
   }
 
   static double? _getValuePerAmount({
     required List<NutrimentsApiV3> orderedNutriments,
-    required int amountGramOrMilliliter,
+    required double amountGramOrMilliliter,
     required double? Function(NutrimentsApiV3 nutriment) getValue,
   }) {
     for (NutrimentsApiV3 nutriment in orderedNutriments) {
@@ -1023,7 +1059,7 @@ class FoodRepository {
           if (standardFoodDataCsv[csvLineIndex].isNotEmpty) {
             if (standardFoodDataCsv[csvLineIndex][0] == OpenEatsJournalStrings.csvFood) {
               //if last data field of a row is not closed with " it may be unregognized without length check
-              if (standardFoodDataCsv[csvLineIndex].length != 17) {
+              if (standardFoodDataCsv[csvLineIndex].length != 16) {
                 throw FormatException("Csv food row invalid data field amount, row ${csvLineIndex + 1}.");
               }
 
@@ -1109,7 +1145,6 @@ class FoodRepository {
       saturatedFat: foodDataCsv[11] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[11]),
       protein: foodDataCsv[14] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[14]),
       salt: foodDataCsv[15] == OpenEatsJournalStrings.emptyString ? null : double.parse(foodDataCsv[15]),
-      quantity: foodDataCsv[16],
       orderedFoodUnitsWithDefault: foodUnitsWithOrder,
     );
 

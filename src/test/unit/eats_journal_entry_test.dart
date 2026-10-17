@@ -1,14 +1,16 @@
 import "dart:io";
+import "dart:typed_data";
 import "package:csv/csv.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:http/http.dart";
 import "package:intl/date_symbol_data_local.dart";
 import "package:mockito/mockito.dart";
 import "package:openeatsjournal/domain/eats_journal_entry.dart";
+import "package:openeatsjournal/domain/food.dart";
+import "package:openeatsjournal/domain/food_source.dart";
 import "package:openeatsjournal/domain/meal.dart";
 import "package:openeatsjournal/domain/utils/convert_validate.dart";
 import "package:openeatsjournal/repository/food_repository.dart";
-import "package:openeatsjournal/repository/food_repository_result.dart";
 import "package:openeatsjournal/repository/journal_repository.dart";
 import "package:openeatsjournal/repository/journal_repository_get_nutrition_sums_result.dart";
 import "package:openeatsjournal/repository/settings_repository.dart";
@@ -53,20 +55,20 @@ void main() async {
     //required for database initialization
     await Future.wait([initializeDateFormatting(), settingsRepository.initSettings()]);
 
+    var localCsvResponses = [
+      csv
+          .decode(await File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsString())
+          .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
+          .toList(),
+    ];
+
     MockOpenEatsJournalAssetsService openEatsJournalAssetsService = MockOpenEatsJournalAssetsService();
     when(openEatsJournalAssetsService.getStandardFoodFiles()).thenAnswer((_) => Future(() async => ["1.csv"]));
-    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer(
-      (_) => Future(() async {
-        return csv
-            .decode(File(join(Directory.current.path, r"test\data\standard_food_data.1.csv")).readAsStringSync())
-            .map<List<String>>((first) => first.map<String>((second) => second as String).toList())
-            .toList();
-      }),
-    );
+    when(openEatsJournalAssetsService.getCsvContent(path: anyNamed("path"))).thenAnswer((_) => Future(() async => localCsvResponses[0]));
 
-    var responses = [await File(join(Directory.current.path, r"test\data\open_food_facts_response_page_1.json")).readAsBytes()];
+    List<Uint8List> openFoodFactsResponses = [await File(join(Directory.current.path, r"test\data\open_food_facts_response_apiv1_page_1.json")).readAsBytes()];
     var getCallback = MockFunctions().httpGet;
-    when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) async => Response.bytes(responses[0], 200));
+    when(getCallback(any, headers: anyNamed("headers"))).thenAnswer((_) async => Response.bytes(openFoodFactsResponses[0], 200));
 
     OpenFoodFactsService openFoodFactsService = OpenFoodFactsService(
       httpGet: getCallback,
@@ -217,10 +219,8 @@ void main() async {
     expect(journalRepositoryGetNutritionSumsResultMonths.groupNutritionTargets![y2026m2d1]?.salt, null);
   });
 
-  test("Receive open food facts data and add food entry", () async {
+  test("Add food entry", () async {
     List<Object> repositories = await testSetup();
-    SettingsRepository settingsRepository = repositories[0] as SettingsRepository;
-    FoodRepository foodRepository = repositories[1] as FoodRepository;
     JournalRepository journalRepository = repositories[2] as JournalRepository;
 
     DateTime today = DateTime.utc(2026, 2, 11);
@@ -263,14 +263,31 @@ void main() async {
     double? orignalProteinMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.protein;
     double? orignalSaltMonth = journalRepositoryGetNutritionSumsResultMonths.groupNutritionSums![y2026m2d1]!.nutritions.salt;
 
-    FoodRepositoryResult foodRepositoryResult = await foodRepository.getFoodsBySearchTextOpenFoodFactsApiV1(
-      searchText: "",
-      languageCode: settingsRepository.languageCode.value,
-      page: 3,
+    DateTime entryDate = DateTime.utc(2026, 2, 10);
+    Food food = Food(
+      name: "Burger 1 nutr per 100g some null",
+      foodSource: FoodSource.openFoodFacts,
+      kJoule: 1004.0,
+      fromDb: false,
+      id: null,
+
+      originalFoodSource: null,
+      originalFoodSourceFoodId: "8722700125174",
+      originalFoodSourceFoodVariantId: null,
+      barcode: 8722700125174,
+      brands: ["Brand 1 nutr per 100g some null"],
+      nutritionPerGramAmount: 100.0,
+      nutritionPerMilliliterAmount: null,
+      carbohydrates: null,
+      sugar: null,
+      fat: 21.0,
+      saturatedFat: 1.7,
+      protein: 1.1,
+      salt: 1.3,
+      quantity: null,
     );
 
-    DateTime entryDate = DateTime.utc(2026, 2, 10);
-    EatsJournalEntry eatsJournalEntry = EatsJournalEntry.fromFood(entryDate: entryDate, food: foodRepositoryResult.foods![0], meal: Meal.lunch);
+    EatsJournalEntry eatsJournalEntry = EatsJournalEntry.fromFood(entryDate: entryDate, food: food, meal: Meal.lunch);
     eatsJournalEntry.amount = 500;
     double? addedKJoule = eatsJournalEntry.kJoule;
     double? addedFat = eatsJournalEntry.fat;
