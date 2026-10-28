@@ -1,0 +1,3 @@
+1.22
+- Qualität der Standard Lebensmitteldaten verbessert.
+- Lebensmittel hinzugefügt.
